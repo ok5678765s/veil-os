@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-11T12:47:43.606Z",
+  "exportedAt": "2026-10-11T21:15:10.633Z",
   "counts": {
-    "accounts": 26,
+    "accounts": 27,
     "messages": 39,
     "dms": 1
   },
@@ -475,6 +475,24 @@
       "legacy": false,
       "createdAt": "2026-10-11T05:43:38.286Z",
       "passwordHash": "$2b$10$b3ydRe97Ii/ctyqHglxL5Ozlw0vhy8PZMo3w.oIMRSW6oW8B9/UG."
+    },
+    {
+      "id": "cmv4bni760000j4q0p5dsqt1x",
+      "username": "king",
+      "displayName": "king",
+      "avatarColor": "#1abc9c",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-11T21:14:59.683Z",
+      "passwordHash": "$2b$10$FlFBXrVSvlQds7iT94NAwufkBIhgV7GVcU1DXxOONlfcU7xnH3al2"
     }
   ],
   "messages": [
