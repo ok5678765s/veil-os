@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-11T01:00:50.429Z",
+  "exportedAt": "2026-10-11T03:21:45.248Z",
   "counts": {
-    "accounts": 24,
+    "accounts": 25,
     "messages": 37,
     "dms": 0
   },
@@ -439,6 +439,24 @@
       "legacy": false,
       "createdAt": "2026-10-09T23:26:10.349Z",
       "passwordHash": "$2b$10$y9SMEaHkW7AbUptkrZdK9eQcW2YF/Q26TxM4SIgSNvOm9vfmRk2ky"
+    },
+    {
+      "id": "cmv39b8yz0000skxvqvf3dfai",
+      "username": "preppygirl",
+      "displayName": "preppygirl",
+      "avatarColor": "#c0392b",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-11T03:21:42.443Z",
+      "passwordHash": "$2b$10$WnvFAPfRAWEWVtCM952gIu3KygYmhqzulNoBYHIt8RZHHXo96wtbS"
     }
   ],
   "messages": [
