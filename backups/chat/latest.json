@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-11T03:22:18.595Z",
+  "exportedAt": "2026-10-11T05:43:43.824Z",
   "counts": {
-    "accounts": 25,
+    "accounts": 26,
     "messages": 38,
     "dms": 0
   },
@@ -457,6 +457,24 @@
       "legacy": false,
       "createdAt": "2026-10-11T03:21:42.443Z",
       "passwordHash": "$2b$10$WnvFAPfRAWEWVtCM952gIu3KygYmhqzulNoBYHIt8RZHHXo96wtbS"
+    },
+    {
+      "id": "cmv3edru50005skxv248pfu57",
+      "username": "momo",
+      "displayName": "momo",
+      "avatarColor": "#f39c12",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-11T05:43:38.286Z",
+      "passwordHash": "$2b$10$b3ydRe97Ii/ctyqHglxL5Ozlw0vhy8PZMo3w.oIMRSW6oW8B9/UG."
     }
   ],
   "messages": [
