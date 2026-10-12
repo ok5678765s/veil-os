@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-12T19:03:46.557Z",
+  "exportedAt": "2026-10-12T23:15:03.783Z",
   "counts": {
-    "accounts": 28,
+    "accounts": 29,
     "messages": 40,
     "dms": 1
   },
@@ -511,6 +511,24 @@
       "legacy": false,
       "createdAt": "2026-10-12T05:27:22.777Z",
       "passwordHash": "$2b$10$al8rzzXzn.0LHp7J3pLzIeBMlET5n7kTtq2FZ4I9Ghy7y81QVpPiG"
+    },
+    {
+      "id": "cmv5vd8kz0000q6qdwgiil7y3",
+      "username": "emmanDUd###123",
+      "displayName": "emmanDUd###123",
+      "avatarColor": "#16a085",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-12T23:14:39.155Z",
+      "passwordHash": "$2b$10$g.1q4K/KK6aqw0YH9h8O4OAJNuhmLp4cN1dxU56AXcXuh4UTMIVCW"
     }
   ],
   "messages": [
