@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-11T21:15:10.633Z",
+  "exportedAt": "2026-10-12T05:27:33.971Z",
   "counts": {
-    "accounts": 27,
+    "accounts": 28,
     "messages": 39,
     "dms": 1
   },
@@ -493,6 +493,24 @@
       "legacy": false,
       "createdAt": "2026-10-11T21:14:59.683Z",
       "passwordHash": "$2b$10$FlFBXrVSvlQds7iT94NAwufkBIhgV7GVcU1DXxOONlfcU7xnH3al2"
+    },
+    {
+      "id": "cmv4t8pso0006j4iv1fzs8mpu",
+      "username": "Terrence_Williams",
+      "displayName": "Terrence_Williams",
+      "avatarColor": "#16a085",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-12T05:27:22.777Z",
+      "passwordHash": "$2b$10$al8rzzXzn.0LHp7J3pLzIeBMlET5n7kTtq2FZ4I9Ghy7y81QVpPiG"
     }
   ],
   "messages": [
