@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T18:49:24.350Z",
+  "exportedAt": "2026-10-13T18:49:58.459Z",
   "counts": {
     "accounts": 34,
-    "messages": 46,
+    "messages": 48,
     "dms": 1
   },
   "accounts": [
@@ -612,7 +612,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 102,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1126,6 +1126,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-13T14:58:59.584Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv71c2ua0005r77y2fiqiz2l",
+      "channelId": "main",
+      "accountId": "cmv71bqqm0003r77yhspeq2a7",
+      "content": "yo",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-13T18:49:28.930Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv71cgrz0009r77y4hjccmsc",
+      "channelId": "main",
+      "accountId": "cmv71bqqm0003r77yhspeq2a7",
+      "content": "bro it keeps restarting every like 1 min",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-13T18:49:46.991Z",
       "editedAt": null
     }
   ],
