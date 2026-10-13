@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T01:32:38.041Z",
+  "exportedAt": "2026-10-13T01:40:13.842Z",
   "counts": {
-    "accounts": 29,
+    "accounts": 30,
     "messages": 42,
     "dms": 1
   },
@@ -529,6 +529,24 @@
       "legacy": false,
       "createdAt": "2026-10-12T23:14:39.155Z",
       "passwordHash": "$2b$10$g.1q4K/KK6aqw0YH9h8O4OAJNuhmLp4cN1dxU56AXcXuh4UTMIVCW"
+    },
+    {
+      "id": "cmv60kaif0000q6ces784ti22",
+      "username": "Philla",
+      "displayName": "Philla",
+      "avatarColor": "#1abc9c",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-13T01:40:06.327Z",
+      "passwordHash": "$2b$10$3L4KMYJGevpaZ.bq7p6FL.bTtj3slY9Qi6wZS9izjVxdUWjN9XKXO"
     }
   ],
   "messages": [
