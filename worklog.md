@@ -917,3 +917,41 @@ Stage Summary:
 
 Unresolved / risks:
 - If the user reports STILL seeing the pill after a hard refresh, check for a browser extension overlaying badges; the repo serves no such element.
+
+---
+Task ID: reload-restore-yt-removal-1013
+Agent: main (Z.ai Code)
+Task: User asks: "update git bundles and when doing something the website constantly reloads it brings me back to the main screen; remove the type-a-url search YouTube no-results played-through-the-veil stuff and descriptions (not the features description)"
+
+Work Log:
+- Diagnosed the "back to main screen" complaint — THREE stacked causes found:
+  1. Tab-switch privacy reset DEFAULTED to reset: switching away and returning dumped the user on the start page (page.tsx onVis handler, veil:keep-session was opt-in).
+  2. Reload restore only covered ai/chat sections; every other section + ALL browser tabs were lost on reload.
+  3. 6 watchdog planned restarts today (16:51→21:27) — dev RSS creeps 2.0→2.6GB under active use, then borderline MemAvail dips (677-683MB vs the 700MB line) restarted the server → full page reload.
+- Chat "sign-out" was never an auth bug: 30-day HMAC tokens + revert-proof secret were fine; the user was being dumped OUT of the chat view (felt like sign-out).
+- FIXES (commit 341462c, pushed):
+  - page.tsx: ALL sections reopen after a same-tab reload (sessionStorage veil:section, validated against SECTIONS).
+  - page.tsx: browser tabs restore after same-tab reload via NEW sessionStorage "veil:crash-tabs" mirror (persist effect writes it; restore effect reads it first, before the scrubbed localStorage path). sessionStorage dies with the tab → a NEW tab still opens on the fresh start page (old privacy directive preserved for new visits).
+  - page.tsx + settings-section.tsx: tab-switch default flipped to KEEP MY PAGE (only an explicit Settings › Browsing › "Start page" = "0" resets). Settings "Restart behavior" card copy updated ("Same-tab restore").
+  - start-page.tsx + shared.ts: removed the "Search videos for X — FreeTube — the local library" command-bar rows (both url-intent and plain-query branches) and the FreeTube featured quick-link card ("Veil's private YouTube — the program"). Typing "youtube" now offers ONLY web search; "youtube.com" opens through the proxy like any site.
+  - api/ai/route.ts: system prompt no longer advertises the FreeTube/YouTube client.
+  - scripts/dev-watchdog.sh v4.1: PRESSURE_MIN_KB 700000→600000 (atomic mv edit + daemon restart; kit copy synced). Would have spared 3 of today's 6 restarts.
+- QA (agent-browser through preview gateway):
+  - "youtube" in command bar → only "Search Brave" row; zero FreeTube/YouTube matches anywhere in the a11y tree.
+  - Wallpapers section → reload → section restored.
+  - example.com browse mode → reload → tab + page restored with favicon/title.
+  - Chat: logged in as Veil (OWNER) → a REAL watchdog restart fired mid-QA at 21:27 (old line's last gasp) → page reloaded → chat section auto-restored, still logged in, #general messages + moderation panel intact. VLM: "fully rendered chat UI, no broken layout".
+  - bunx eslint on all 5 edited files: clean.
+- Git bundles: fresh full-history bundle upload/veil-snapshots/veil-git-20261013-213535.bundle (270MB) covers HEAD 341462c (list-heads verified); pruned to ×3.
+- Review cron recreated: job 457475 (every 15 min, webDevReview kind) with the full never-restart policy embedded in the prompt.
+
+Stage Summary:
+- "Brings me back to the main screen" is dead: tab-switch keeps your page; same-tab reloads restore section AND browsing tabs AND chat login. Verified against a genuine server restart.
+- YouTube/FreeTube search is gone from the command bar, quick links, and AI pitch (landing features/STEPS untouched per "not features description").
+- Watchdog v4.1 armed; heap gardener v5.1 + 1792MB cap unchanged.
+- Bundles current with HEAD; cron 457475 watching.
+
+Unresolved / risks:
+- Dev-mode heap still creeps to ~1.2GB warm (75% of the internal 1587MB restart line) — after hours of heavy use a Next-internal restart can still fire; the sessionStorage restore now makes those survivable, but if they become frequent the next lever is trimming the giant section bundles (stream-section.tsx is 9k lines) or raising the cap.
+- The chat coin log showed the logged-in "Veil" token with role "member" and a non-operator account id (cmmu20ppm…) — there may be a SECOND account whose username matches case-insensitively ("veil"). Login worked with the operator password but displayed OWNER in the UI — worth a quick check of duplicate usernames next round.
+- Motion blitz extension (wallpapers/arcade/stream/updates) + chat scroll-to-bottom FAB + 44px tab-close hit area still pending from earlier rounds.
