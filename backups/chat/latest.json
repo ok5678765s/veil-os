@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T14:59:22.699Z",
+  "exportedAt": "2026-10-13T18:34:42.088Z",
   "counts": {
-    "accounts": 32,
+    "accounts": 33,
     "messages": 47,
     "dms": 1
   },
@@ -583,6 +583,24 @@
       "legacy": false,
       "createdAt": "2026-10-13T14:55:52.034Z",
       "passwordHash": "$2b$10$0se4HPz5wCszoGTDZr7kmulnPf6N54dyXuPlcPyKNQpIz7ABqVEnq"
+    },
+    {
+      "id": "cmv70smvu0006r7iy8x8uxfnc",
+      "username": "ededede",
+      "displayName": "ededede",
+      "avatarColor": "#9b59b6",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-13T18:34:21.787Z",
+      "passwordHash": "$2b$10$WRbNtxYE0GKwZ/443fn6VeNIhfkXgTWhwz6j8S1NMck7SQS4C.hNe"
     }
   ],
   "messages": [
