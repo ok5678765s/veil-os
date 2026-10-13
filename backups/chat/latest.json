@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T11:14:20.008Z",
+  "exportedAt": "2026-10-13T12:32:05.901Z",
   "counts": {
     "accounts": 30,
-    "messages": 43,
+    "messages": 44,
     "dms": 1
   },
   "accounts": [
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 128,
+      "coins": 129,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1021,6 +1021,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-13T01:40:55.684Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv6nup6o0001r7xv4inlafaq",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "sure",
+      "replyTo": "cmv60af940005q6bn7td36wk7",
+      "replyToContent": "/api/gif-file/LPFNd1AJBoYcVUExmE",
+      "replyToUsername": "emmanDUd###123",
+      "createdAt": "2026-10-13T12:32:03.072Z",
       "editedAt": null
     }
   ],
