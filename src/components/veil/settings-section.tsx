@@ -658,11 +658,14 @@ function AppearanceTab() {
 /* ------------------------------------------------------------------ */
 
 function BrowsingTab() {
-  const [keepSession, setKeepSession] = React.useState(false);
+  const [keepSession, setKeepSession] = React.useState(true);
 
   React.useEffect(() => {
     try {
-      setKeepSession(window.localStorage.getItem("veil:keep-session") === "1");
+      // Default is KEEP — switching away and returning must never dump the
+      // user on the start page (owner request 2026-10-13). Only an explicit
+      // "0" (the "Start page" choice below) opts back into the reset.
+      setKeepSession(window.localStorage.getItem("veil:keep-session") !== "0");
     } catch {
       /* private mode — defaults */
     }
@@ -696,9 +699,8 @@ function BrowsingTab() {
         }
       />
 
-      {/* Restart behavior — a directive, not an option: reloads always
-          land on the start page, and the legacy "veil:tabs:v1" restore
-          key is scrubbed on boot. */}
+      {/* Restart behavior — same-tab reloads put you back where you were
+          (server restarts, F5); a NEW tab still opens on the start page. */}
       <div className="flex flex-col gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/50 p-4 lg:flex-row lg:items-center">
         <div className="flex min-w-0 flex-1 items-start gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80 text-zinc-300">
@@ -707,13 +709,13 @@ function BrowsingTab() {
           <div className="min-w-0">
             <p className="text-[14px] font-medium text-zinc-100">Restart behavior</p>
             <p className="mt-0.5 text-[12px] leading-snug text-zinc-500">
-              Always the start page. Reloading the veil (or reopening it later) never restores the previous
-              browsing session — sessions live only while the veil tab is open.
+              A reload in this tab (server restart or refresh) brings you right back to the page or section you were
+              on — chat stays logged in. Opening the veil in a new tab later still starts fresh on the start page.
             </p>
           </div>
         </div>
         <span className="veil-text-breathe shrink-0 rounded-lg bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300 ring-1 ring-emerald-500/25">
-          Fixed
+          Same-tab restore
         </span>
       </div>
     </div>

@@ -65,7 +65,7 @@ sleep 0.3
 CYCLE=10               # seconds between checks (v4: faster reaction, zero extra restarts)
 RSS_WARN_KB=2000000    # 1.95GiB — log-only: big server, gardener compacts, NO restart
 RSS_LIMIT_KB=2350000   # 2.3GB  — restart CANDIDATE, but only with real box pressure
-PRESSURE_MIN_KB=700000 # 700MB  — MemAvailable below this + RSS over limit = true pressure
+PRESSURE_MIN_KB=600000 # 600MB — MemAvail below this + RSS over limit = true pressure (v4.1, 2026-10-13: was 700MB — borderline 677-683MB dips restarted the server and dumped live user sessions; the gardener already double-gcs below 600)
 MEMAVAIL_MIN_KB=320000 # 320MB — whole-box emergency threshold (last resort)
 COOLDOWN_S=900         # min seconds between FORCED restarts (15 min — a restart storm is worse than transient pressure)
 BOOT_GRACE_S=90        # give a booting server this long before reviving
@@ -151,7 +151,7 @@ server_age() {
 }
 
 # ---- main loop -----------------------------------------------------------
-log "v4 armed: RSS>1950MB → warn-only (gardener compacts) | RSS>2300MB + MemAvail<700MB → planned restart | MemAvail<320MB → emergency | cycle=${CYCLE}s cooldown=${COOLDOWN}s"
+log "v4.1 armed: RSS>1950MB → warn-only (gardener compacts) | RSS>2300MB + MemAvail<600MB → planned restart | MemAvail<320MB → emergency | cycle=${CYCLE}s cooldown=${COOLDOWN}s"
 
 TICKS=0
 while true; do

@@ -431,15 +431,8 @@ export const QUICK_LINKS: QuickLink[] = [
   { name: "BBC News", url: "https://www.bbc.com/news", host: "www.bbc.com", desc: "World headlines" },
   { name: "Lite CNN", url: "https://lite.cnn.com/", host: "lite.cnn.com", desc: "Text-only edition" },
   { name: "Bing", url: "https://www.bing.com/", host: "www.bing.com", desc: "Web search" },
-  {
-    name: "FreeTube",
-    url: "https://freetube.veil.local/",
-    host: "freetube.veil.local",
-    desc: "Veil's private YouTube — the program",
-    featured: true,
-    tag: "Private tube",
-    aliases: "freetube subscriptions trending private tube",
-  },
+  // FreeTube removed from quick links at the owner's request — the YouTube
+  // search it offered only ever hit gated public instances ("no results").
 ];
 
 /* ── Veil-local programs (FreeTube) ───────────────────────────────────

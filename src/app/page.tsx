@@ -140,12 +140,12 @@ export default function Home() {
   const [opened, setOpened] = React.useState<Set<SectionId>>(() => new Set());
   React.useEffect(() => {
     try {
-      // "ai" and "chat" reopen after a reload — a mid-conversation restore
-      // must not kill the AI thread, and a mid-chat login must not dump the
-      // user back on the start page (the chat account itself lives in
-      // localStorage, so reopening lands inside the chat, logged in).
+      // EVERY section reopens after a same-tab reload — a restart must
+      // never dump the user back on the start page mid-game, mid-chat or
+      // mid-stream. (The chat account itself lives in localStorage, so
+      // reopening lands inside the chat, logged in.)
       const saved = sessionStorage.getItem("veil:section");
-      if (saved === "ai" || saved === "chat") {
+      if (saved && (SECTIONS as string[]).includes(saved)) {
         setOpened((prev) => (prev.has(saved) ? prev : new Set([...prev, saved])));
         setSection(saved);
       }
@@ -181,8 +181,7 @@ export default function Home() {
       return;
     }
     try {
-      if (section === "ai" || section === "chat")
-        sessionStorage.setItem("veil:section", section);
+      if (section) sessionStorage.setItem("veil:section", section);
       else sessionStorage.removeItem("veil:section");
     } catch {
       /* private mode — best effort */
@@ -210,11 +209,36 @@ export default function Home() {
     wasHomeRef.current = mode === "home";
   }, [mode]);
 
-  // ----- restore session from localStorage on mount -----
-  // Settings › Browsing: a restart always lands on the start page unless
-  // the user explicitly kept the session AND resetOnRestart is off.
+  // ----- restore session on mount -----
+  // Two layers, deliberately different:
+  //   1. SAME-TAB reload recovery (sessionStorage "veil:crash-tabs") —
+  //      when the dev server restarts or the user hits F5 mid-browse, the
+  //      page reloads and this puts them back on the page they were on.
+  //      sessionStorage dies with the tab, so REOPENING the veil later
+  //      still lands on the start page (the privacy directive holds for
+  //      new visits).
+  //   2. Cross-session restore (localStorage) — stays opt-in via
+  //      Settings › Browsing, exactly as before.
   React.useEffect(() => {
     try {
+      const crashRaw = sessionStorage.getItem("veil:crash-tabs");
+      if (crashRaw) {
+        const parsed = JSON.parse(crashRaw) as { tabs: Tab[]; activeId: string | null };
+        const valid = Array.isArray(parsed.tabs)
+          ? parsed.tabs.filter(
+              (t) => t && typeof t.id === "string" && Array.isArray(t.stack)
+            )
+          : [];
+        if (valid.length) {
+          setTabs(valid.slice(0, 8).map(normTab));
+          const a =
+            parsed.activeId && valid.some((t) => t.id === parsed.activeId)
+              ? parsed.activeId
+              : valid[0].id;
+          setActiveId(a);
+        }
+        return; // same-tab recovery wins — skip the cross-session path
+      }
       const s = loadSettings();
       const keep = (() => {
         try {
@@ -257,8 +281,11 @@ export default function Home() {
     try {
       if (tabs.length) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs, activeId }));
+        // Same-tab reload recovery mirror — see the restore effect above.
+        sessionStorage.setItem("veil:crash-tabs", JSON.stringify({ tabs, activeId }));
       } else {
         localStorage.removeItem(STORAGE_KEY);
+        sessionStorage.removeItem("veil:crash-tabs");
       }
     } catch {
       /* storage may be unavailable */
@@ -696,11 +723,14 @@ export default function Home() {
     };
     const onVis = () => {
       if (document.visibilityState !== "hidden") return;
-      let keep = false;
+      let keep = true;
       try {
-        keep = window.localStorage.getItem("veil:keep-session") === "1";
+        // Default flipped to KEEP (owner request 2026-10-13): switching away
+        // and coming back must never dump the user on the start page. Only
+        // an explicit "0" (Settings › Browsing › "Start page") resets.
+        keep = window.localStorage.getItem("veil:keep-session") !== "0";
       } catch {
-        /* private mode — default reset */
+        /* private mode — default keep */
       }
       if (!keep) {
         if (section) closeSection();

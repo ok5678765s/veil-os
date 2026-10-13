@@ -829,10 +829,10 @@ export function StartPage({
     if (!q) return [];
     const out: Suggestion[] = [];
     // Direct URL/domain intent → single "launch" row.
-    // (v2: the old `!/\//.test(input)` check excluded FULL urls like
-    // "https://xylora.org" — they fell through to the FreeTube video-search
-    // row and launched a search for the URL. Now any scheme-ful or
-    // domain-shaped input gets the Open row.)
+    // (Video search through the command bar was removed at the owner's
+    // request — YouTube queries only ever hit gated public instances and
+    // showed "no results". Plain queries now search the web; URL intents
+    // open the site through the veil like any other.)
     const direct = normalizeInput(input.trim());
     const rawIn = input.trim();
     const urlIntent =
@@ -879,25 +879,9 @@ export function StartPage({
       host: "",
     };
     if (urlIntent) {
-      out.push(
-        {
-          kind: "search",
-          title: `Search videos for “${input.trim().slice(0, 40)}”`,
-          sub: "FreeTube — the local library",
-          url: `https://freetube.veil.local/#/search/${encodeURIComponent(input.trim())}`,
-          host: "freetube.veil.local",
-        },
-        webRow
-      );
+      out.push(webRow);
     } else {
       out.unshift(webRow);
-      out.push({
-        kind: "search",
-        title: `Search videos for “${input.trim().slice(0, 40)}”`,
-        sub: "FreeTube — the local library",
-        url: `https://freetube.veil.local/#/search/${encodeURIComponent(input.trim())}`,
-        host: "freetube.veil.local",
-      });
     }
     return out;
   }, [input, history]);
@@ -917,9 +901,7 @@ export function StartPage({
     const target = normalizeInput(raw);
     if (!target) return;
     // URL intent always wins over suggestion rows: a typed/pasted http(s)
-    // URL or bare domain must never be routed to a search row (observed:
-    // "https://xylora.org" + Launch landed on FreeTube's video search
-    // because the Open row required a slash-less input).
+    // URL or bare domain must never be routed to a search row.
     const isUrlIntent =
       /^https?:\/\//i.test(raw) ||
       (!raw.includes(" ") &&
