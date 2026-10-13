@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T12:39:47.610Z",
+  "exportedAt": "2026-10-13T14:56:18.276Z",
   "counts": {
-    "accounts": 31,
+    "accounts": 32,
     "messages": 46,
     "dms": 1
   },
@@ -565,6 +565,24 @@
       "legacy": false,
       "createdAt": "2026-10-13T12:39:05.627Z",
       "passwordHash": "$2b$10$A/PeIJyXrByZVt3FswWV2uSodz1sXf4yJGCVrlvw3u.5CYB3T8qwy"
+    },
+    {
+      "id": "cmv6sznc20000r7zbbcxqj2ju",
+      "username": "rilyOS",
+      "displayName": "rilyOS",
+      "avatarColor": "#1abc9c",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-13T14:55:52.034Z",
+      "passwordHash": "$2b$10$0se4HPz5wCszoGTDZr7kmulnPf6N54dyXuPlcPyKNQpIz7ABqVEnq"
     }
   ],
   "messages": [
