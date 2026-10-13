@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T01:40:13.842Z",
+  "exportedAt": "2026-10-13T01:41:17.870Z",
   "counts": {
     "accounts": 30,
-    "messages": 42,
+    "messages": 43,
     "dms": 1
   },
   "accounts": [
@@ -540,7 +540,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 101,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1010,6 +1010,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-13T01:32:25.913Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv60lclg0002q6cewbnba460",
+      "channelId": "main",
+      "accountId": "cmv60kaif0000q6ces784ti22",
+      "content": "how do I text my friend here",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-13T01:40:55.684Z",
       "editedAt": null
     }
   ],
