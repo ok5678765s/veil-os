@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T19:38:41.588Z",
+  "exportedAt": "2026-10-13T19:44:46.504Z",
   "counts": {
-    "accounts": 35,
+    "accounts": 36,
     "messages": 48,
     "dms": 1
   },
@@ -637,6 +637,24 @@
       "legacy": false,
       "createdAt": "2026-10-13T19:38:15.267Z",
       "passwordHash": "$2b$10$u3sjyWTBmPdAe7J079f3tOB2NvlY2C4r5GgyIMyvHPkelIaPIquOK"
+    },
+    {
+      "id": "cmv73axjw000dr7rje3br4ed4",
+      "username": "Ali",
+      "displayName": "Ali",
+      "avatarColor": "#2980b9",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-13T19:44:34.652Z",
+      "passwordHash": "$2b$10$HS3gwH/.yGIk5lxIGwPo.O4dS2m0dKSClC6vYwyN8Rr6DVkYxMg/W"
     }
   ],
   "messages": [
