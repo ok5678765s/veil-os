@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T12:32:05.901Z",
+  "exportedAt": "2026-10-13T12:32:39.701Z",
   "counts": {
     "accounts": 30,
-    "messages": 44,
+    "messages": 45,
     "dms": 1
   },
   "accounts": [
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 129,
+      "coins": 130,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1032,6 +1032,17 @@
       "replyToContent": "/api/gif-file/LPFNd1AJBoYcVUExmE",
       "replyToUsername": "emmanDUd###123",
       "createdAt": "2026-10-13T12:32:03.072Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv6nvh650005r7xvcc79ilha",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "click #general and clicker the eplus next to friens",
+      "replyTo": "cmv60lclg0002q6cewbnba460",
+      "replyToContent": "how do I text my friend here",
+      "replyToUsername": "Philla",
+      "createdAt": "2026-10-13T12:32:39.341Z",
       "editedAt": null
     }
   ],
