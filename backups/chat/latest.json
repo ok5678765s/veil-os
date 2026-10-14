@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T12:01:42.024Z",
+  "exportedAt": "2026-10-14T12:02:15.969Z",
   "counts": {
     "accounts": 42,
-    "messages": 52,
+    "messages": 53,
     "dms": 1
   },
   "accounts": [
@@ -756,7 +756,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 101,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1336,6 +1336,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-14T10:41:21.236Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv827vd60035qixuoz6rbkut",
+      "channelId": "main",
+      "accountId": "cmv82712t0033qixuo24kd9a1",
+      "content": "hi are there any other links for proxie",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-14T12:01:58.410Z",
       "editedAt": null
     }
   ],
