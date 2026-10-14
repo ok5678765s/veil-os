@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T10:41:24.358Z",
+  "exportedAt": "2026-10-14T12:01:42.024Z",
   "counts": {
-    "accounts": 41,
+    "accounts": 42,
     "messages": 52,
     "dms": 1
   },
@@ -702,7 +702,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 111,
+      "coins": 121,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -745,6 +745,24 @@
       "legacy": false,
       "createdAt": "2026-10-14T10:20:56.354Z",
       "passwordHash": "$2b$10$J.5YDjvTsg2jYTPnAqQaOuNS2lkbk7e7w.K6lZTVqx.DwFu3fEdKG"
+    },
+    {
+      "id": "cmv82712t0033qixuo24kd9a1",
+      "username": "wasd",
+      "displayName": "wasd",
+      "avatarColor": "#c0392b",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-14T12:01:19.158Z",
+      "passwordHash": "$2b$10$kBanlVVgBxsO/B9HPi.FgejF/UzssOGlHWANPEKRS3lH4kLsXy.Je"
     }
   ],
   "messages": [
