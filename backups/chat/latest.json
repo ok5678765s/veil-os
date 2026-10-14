@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T01:11:52.027Z",
+  "exportedAt": "2026-10-14T01:12:25.388Z",
   "counts": {
     "accounts": 38,
-    "messages": 49,
+    "messages": 51,
     "dms": 1
   },
   "accounts": [
@@ -684,7 +684,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 101,
+      "coins": 103,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1231,6 +1231,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-14T01:11:40.580Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv7f032v0006r7bu6zepp5ef",
+      "channelId": "main",
+      "accountId": "cmv7ez3mo0000r7bu1gcoienq",
+      "content": "try this unblocker doc: https://docs.google.com/document/d/1K6IUKhx52vt-9E_IcGSqU5qahS36dGr84pafBby7y00/edit?tab=t.asko9vtkd55c",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-14T01:12:03.991Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv7f0enk000ar7bumj9q22re",
+      "channelId": "main",
+      "accountId": "cmv7ez3mo0000r7bu1gcoienq",
+      "content": "https://docs.google.com/document/d/1K6IUKhx52vt-9E_IcGSqU5qahS36dGr84pafBby7y00/edit?tab=t.asko9vtkd55c",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-14T01:12:18.993Z",
       "editedAt": null
     }
   ],
