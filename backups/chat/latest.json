@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T01:12:25.388Z",
+  "exportedAt": "2026-10-14T03:07:52.411Z",
   "counts": {
-    "accounts": 38,
+    "accounts": 39,
     "messages": 51,
     "dms": 1
   },
@@ -691,6 +691,24 @@
       "legacy": false,
       "createdAt": "2026-10-14T01:11:18.048Z",
       "passwordHash": "$2b$10$udgabnPFTjW6trYqM9LIE.WpHXsW.qJNppgmpKmIHebpk1a5p4LCW"
+    },
+    {
+      "id": "cmv7j4j6u000dr7bux9lflbkd",
+      "username": "Lone_Wolf",
+      "displayName": "Lone_Wolf",
+      "avatarColor": "#2c3e50",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-14T03:07:29.959Z",
+      "passwordHash": "$2b$10$QAP3ktNuswTtL087d85yV.fXxwklXmWgQl8gQCguiKnX0lJRy6nku"
     }
   ],
   "messages": [
