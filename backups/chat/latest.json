@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-13T19:44:46.504Z",
+  "exportedAt": "2026-10-14T00:36:07.504Z",
   "counts": {
-    "accounts": 36,
+    "accounts": 37,
     "messages": 48,
     "dms": 1
   },
@@ -655,6 +655,24 @@
       "legacy": false,
       "createdAt": "2026-10-13T19:44:34.652Z",
       "passwordHash": "$2b$10$HS3gwH/.yGIk5lxIGwPo.O4dS2m0dKSClC6vYwyN8Rr6DVkYxMg/W"
+    },
+    {
+      "id": "cmv7dpge00008r72agw1f5ot6",
+      "username": "weee",
+      "displayName": "weee",
+      "avatarColor": "#1abc9c",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-14T00:35:48.409Z",
+      "passwordHash": "$2b$10$FXw2z.pRKqKA8qt48QvFh..0P9UN5naeK2/k50d.U1o6qBvASpg4y"
     }
   ],
   "messages": [
