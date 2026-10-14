@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T17:56:27.470Z",
+  "exportedAt": "2026-10-14T18:16:36.232Z",
   "counts": {
     "accounts": 44,
-    "messages": 61,
+    "messages": 62,
     "dms": 1
   },
   "accounts": [
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 143,
+      "coins": 144,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1471,6 +1471,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-14T17:56:24.916Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv8fl3q7000dqi37nsw1ch4a",
+      "channelId": "sharelinks",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "Gnmath: cdn.inksoft.com/images/clipart/svg/2570/designer2103988394847715328under/gnmath68f43.svg cdn.inksoft.com/images/clipart/svg/2570/designer2103988394847715328under/gnmatha6ee0.svg cdn.inksoft.com/images/clipart/svg/2570/designer2103988394847715328under/gnmath45b73.svg cdn.inksoft.com/images/clipart/svg/2570/designer2103988394847715328under/gnmatha367e.svg cdn.inksoft.com/images/clipart/svg/2570/designer2103988394847715328under/gnmath05839.svg cdn.inksoft.com/images/clipart/svg/2570/designer2103988394847715328under/gnmathd779c.svg cdn.inksoft.com/images/clipart/svg/2570/designer2103988394847715328under/gnmatha367e.svg cdn.inksoft.com/images/clipart/svg/2570/designer2103988394847715328under/gnmath05839.svg Duck math: unpkg.com/classroomduck/index.html unpkg.com/classroomduck/index.svg esm.sh/classroomduck/index.html esm.sh/classroomduck/index.svg duck.cadou.ro/",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-14T18:16:10.783Z",
       "editedAt": null
     }
   ],
