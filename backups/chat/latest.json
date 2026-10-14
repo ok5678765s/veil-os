@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T16:48:04.111Z",
+  "exportedAt": "2026-10-14T16:49:38.804Z",
   "counts": {
     "accounts": 44,
-    "messages": 58,
+    "messages": 59,
     "dms": 1
   },
   "accounts": [
@@ -792,7 +792,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 101,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1438,6 +1438,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-14T13:48:33.395Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv8chi8l0002qiruyu3hlxkz",
+      "channelId": "main",
+      "accountId": "cmv8cffdk0000qiruvohllabc",
+      "content": "can  I pls get access to the doc???",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-14T16:49:24.118Z",
       "editedAt": null
     }
   ],
