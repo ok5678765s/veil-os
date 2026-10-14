@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T16:49:38.804Z",
+  "exportedAt": "2026-10-14T17:56:27.470Z",
   "counts": {
     "accounts": 44,
-    "messages": 59,
+    "messages": 61,
     "dms": 1
   },
   "accounts": [
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 141,
+      "coins": 143,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -792,7 +792,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 101,
+      "coins": 111,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1449,6 +1449,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-14T16:49:24.118Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv8evdwe0005qi37ho6ceraj",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "hi",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-14T17:56:10.910Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv8evopg0009qi37za8tjrge",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "go to #sharelinks for links",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-14T17:56:24.916Z",
       "editedAt": null
     }
   ],
