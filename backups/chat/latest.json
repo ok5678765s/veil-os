@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T10:09:11.586Z",
+  "exportedAt": "2026-10-14T10:21:17.067Z",
   "counts": {
-    "accounts": 40,
+    "accounts": 41,
     "messages": 51,
     "dms": 1
   },
@@ -727,6 +727,24 @@
       "legacy": false,
       "createdAt": "2026-10-14T07:25:27.533Z",
       "passwordHash": "$2b$10$sdleFvSREDFjbujxDrx3iuJ9rFDuoOyoy5y.NjNzETN2nTimxpETa"
+    },
+    {
+      "id": "cmv7ylxup0000qixuz76b0a6q",
+      "username": "Nick01as",
+      "displayName": "Nick01as",
+      "avatarColor": "#2c3e50",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-14T10:20:56.354Z",
+      "passwordHash": "$2b$10$J.5YDjvTsg2jYTPnAqQaOuNS2lkbk7e7w.K6lZTVqx.DwFu3fEdKG"
     }
   ],
   "messages": [
