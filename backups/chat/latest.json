@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-14T16:28:55.901Z",
+  "exportedAt": "2026-10-14T16:48:04.111Z",
   "counts": {
-    "accounts": 43,
+    "accounts": 44,
     "messages": 58,
     "dms": 1
   },
@@ -781,6 +781,24 @@
       "legacy": false,
       "createdAt": "2026-10-14T16:28:34.436Z",
       "passwordHash": "$2b$10$fB1tBcqG0FrMu/roc3x0Se5xY.lcwlo8z0EL/Fz4oEw3cZz8zJAi6"
+    },
+    {
+      "id": "cmv8cffdk0000qiruvohllabc",
+      "username": "TR10S",
+      "displayName": "TR10S",
+      "avatarColor": "#c0392b",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-14T16:47:47.096Z",
+      "passwordHash": "$2b$10$pPwZSoIWE0dtVBN8/wsDfub9ZwPT4cFdkt2DWmeCw/tS3qmXw/p0G"
     }
   ],
   "messages": [
