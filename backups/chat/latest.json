@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-15T17:03:09.624Z",
+  "exportedAt": "2026-10-15T18:19:57.579Z",
   "counts": {
     "accounts": 48,
-    "messages": 66,
+    "messages": 68,
     "dms": 1
   },
   "accounts": [
@@ -36,13 +36,13 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 102,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
-      "legacy": true,
+      "legacy": false,
       "createdAt": "2026-09-14T00:00:00.000Z",
-      "passwordHash": "!legacy:c3217a277e3740ad982fb6a4605d43fa"
+      "passwordHash": "$2b$10$zF9AIcjWC9no/Ht9cLY2LumVI/Th5b8MjVe4lxrir7HjElha5SWa."
     },
     {
       "id": "seed-ppja",
@@ -1598,6 +1598,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-15T14:05:15.966Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv9v5kpg0001n20ke5tqrv7m",
+      "channelId": "main",
+      "accountId": "seed-spiffyboss5111",
+      "content": "The owner should add a update request section under the upgrades tab in the homepage",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-15T18:19:46.324Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv9v5sf00005n20k0vixxn5e",
+      "channelId": "main",
+      "accountId": "seed-spiffyboss5111",
+      "content": "And DMs would be nice",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-15T18:19:56.317Z",
       "editedAt": null
     }
   ],
