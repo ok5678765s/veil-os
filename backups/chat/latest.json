@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-15T14:04:24.858Z",
+  "exportedAt": "2026-10-15T14:04:58.534Z",
   "counts": {
     "accounts": 46,
-    "messages": 64,
+    "messages": 65,
     "dms": 1
   },
   "accounts": [
@@ -828,7 +828,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 102,
+      "coins": 103,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1540,6 +1540,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-15T14:04:15.149Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv9m1gca001en2d3nabhdicv",
+      "channelId": "main",
+      "accountId": "cmv9m0bqn0014n2d300crywqb",
+      "content": "and I cant talk to my discord mommy can u like add chatgpt",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-15T14:04:37.498Z",
       "editedAt": null
     }
   ],
