@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-15T14:03:51.367Z",
+  "exportedAt": "2026-10-15T14:04:24.858Z",
   "counts": {
     "accounts": 46,
-    "messages": 62,
+    "messages": 64,
     "dms": 1
   },
   "accounts": [
@@ -828,7 +828,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 102,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1518,6 +1518,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-14T18:16:10.783Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv9m0m350016n2d31fflvryk",
+      "channelId": "main",
+      "accountId": "cmv9m0bqn0014n2d300crywqb",
+      "content": "why is this proxy so  absolutely bunz",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-15T14:03:58.290Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv9m0z3h001an2d3o0mu3ofj",
+      "channelId": "main",
+      "accountId": "cmv9m0bqn0014n2d300crywqb",
+      "content": "like genuine I need my mommy",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-15T14:04:15.149Z",
       "editedAt": null
     }
   ],
