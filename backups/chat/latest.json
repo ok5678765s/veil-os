@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-15T14:04:58.534Z",
+  "exportedAt": "2026-10-15T14:05:32.269Z",
   "counts": {
     "accounts": 46,
-    "messages": 65,
+    "messages": 66,
     "dms": 1
   },
   "accounts": [
@@ -828,7 +828,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 103,
+      "coins": 104,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1551,6 +1551,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-15T14:04:37.498Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv9m2a0t001in2d3813d8v6s",
+      "channelId": "main",
+      "accountId": "cmv9m0bqn0014n2d300crywqb",
+      "content": "I have a science test on Monday and its getting scary and I have to get my NHD done",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-15T14:05:15.966Z",
       "editedAt": null
     }
   ],
