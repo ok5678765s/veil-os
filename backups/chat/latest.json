@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-15T10:54:45.271Z",
+  "exportedAt": "2026-10-15T14:03:51.367Z",
   "counts": {
-    "accounts": 45,
+    "accounts": 46,
     "messages": 62,
     "dms": 1
   },
@@ -817,6 +817,24 @@
       "legacy": false,
       "createdAt": "2026-10-14T18:23:22.736Z",
       "passwordHash": "$2b$10$NlRS3SFiCBJZlIVgFbl5eOyelKChBS71u7syTGmaICwxKIl5skeVW"
+    },
+    {
+      "id": "cmv9m0bqn0014n2d300crywqb",
+      "username": "lololo",
+      "displayName": "lololo",
+      "avatarColor": "#e67e22",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-15T14:03:44.880Z",
+      "passwordHash": "$2b$10$WU.nmuc3WHWYpE2qWDEspOzUasVRd/Zu2Kdupjw4bsaAsd6On9pwa"
     }
   ],
   "messages": [
