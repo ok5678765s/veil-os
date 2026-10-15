@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-15T19:38:16.817Z",
+  "exportedAt": "2026-10-15T19:39:21.416Z",
   "counts": {
     "accounts": 48,
-    "messages": 69,
+    "messages": 70,
     "dms": 1
   },
   "accounts": [
@@ -702,7 +702,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 123,
+      "coins": 134,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1631,6 +1631,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-15T19:38:12.906Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmv9xzfvr0005n20b10nwgcx2",
+      "channelId": "main",
+      "accountId": "cmv7j4j6u000dr7bux9lflbkd",
+      "content": "also add the actual roblox plss",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-15T19:38:58.983Z",
       "editedAt": null
     }
   ],
