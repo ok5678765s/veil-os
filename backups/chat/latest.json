@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-15T14:05:32.269Z",
+  "exportedAt": "2026-10-15T16:09:56.453Z",
   "counts": {
-    "accounts": 46,
+    "accounts": 47,
     "messages": 66,
     "dms": 1
   },
@@ -835,6 +835,24 @@
       "legacy": false,
       "createdAt": "2026-10-15T14:03:44.880Z",
       "passwordHash": "$2b$10$WU.nmuc3WHWYpE2qWDEspOzUasVRd/Zu2Kdupjw4bsaAsd6On9pwa"
+    },
+    {
+      "id": "cmv9qie1u0000n2jb4de56gtw",
+      "username": "claefkl",
+      "displayName": "claefkl",
+      "avatarColor": "#2980b9",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-15T16:09:46.146Z",
+      "passwordHash": "$2b$10$tfnnjUwrP3Nwmayg8RUmaO9IX9P0pcZ7Dw3iGJfAuZGGBGDdMFqIm"
     }
   ],
   "messages": [
