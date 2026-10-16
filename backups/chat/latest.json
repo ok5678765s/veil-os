@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-16T11:03:35.502Z",
+  "exportedAt": "2026-10-16T14:08:11.052Z",
   "counts": {
-    "accounts": 49,
+    "accounts": 50,
     "messages": 73,
     "dms": 1
   },
@@ -702,7 +702,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 134,
+      "coins": 144,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -889,6 +889,24 @@
       "legacy": false,
       "createdAt": "2026-10-16T06:04:34.141Z",
       "passwordHash": "$2b$10$puTOcfKqLTmoP9xuH6g6oO8ip16oNdfZCKkWuU16ptBgbaa9Ve05a"
+    },
+    {
+      "id": "cmvb1l8l00000lti9o7sfmcge",
+      "username": "SharpnessXOXO",
+      "displayName": "SharpnessXOXO",
+      "avatarColor": "#f39c12",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-16T14:07:40.981Z",
+      "passwordHash": "$2b$10$o752DzHy679yaBxq7LSWtujbk7lHlRmMdGHYgC8UqB8IQV4QIbxj."
     }
   ],
   "messages": [
