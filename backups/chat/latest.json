@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-16T15:46:29.600Z",
+  "exportedAt": "2026-10-16T20:09:22.143Z",
   "counts": {
-    "accounts": 52,
+    "accounts": 53,
     "messages": 80,
     "dms": 1
   },
@@ -943,6 +943,24 @@
       "legacy": false,
       "createdAt": "2026-10-16T15:44:29.430Z",
       "passwordHash": "$2b$10$HVov2yD6yr.gc/bAZYyVT.6PyoQ/K8eWhRM0gh4BZQk.7f19jFFxC"
+    },
+    {
+      "id": "cmvbei9wk0000ltd8hx7whvn8",
+      "username": "cb1",
+      "displayName": "cb1",
+      "avatarColor": "#9b59b6",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-16T20:09:17.732Z",
+      "passwordHash": "$2b$10$QgIfzT69Qoqr/EsROGG.huy2833c5dgbU2YevcI4n39Q1dKqvoaBa"
     }
   ],
   "messages": [
