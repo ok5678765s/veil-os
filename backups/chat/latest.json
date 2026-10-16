@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-16T14:37:39.067Z",
+  "exportedAt": "2026-10-16T15:44:55.831Z",
   "counts": {
-    "accounts": 51,
+    "accounts": 52,
     "messages": 79,
     "dms": 1
   },
@@ -925,6 +925,24 @@
       "legacy": false,
       "createdAt": "2026-10-16T14:36:51.232Z",
       "passwordHash": "$2b$10$uIGrN7qH5r3fpvOvXbtZKOsQofzCm/F0n3u3ZkPeww4sVxQScwz7."
+    },
+    {
+      "id": "cmvb51qeu0000ltdbvqhiqk43",
+      "username": "brah",
+      "displayName": "brah",
+      "avatarColor": "#1abc9c",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-16T15:44:29.430Z",
+      "passwordHash": "$2b$10$HVov2yD6yr.gc/bAZYyVT.6PyoQ/K8eWhRM0gh4BZQk.7f19jFFxC"
     }
   ],
   "messages": [
