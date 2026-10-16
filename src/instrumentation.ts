@@ -65,6 +65,14 @@ export async function register(): Promise<void> {
     //   * durable telemetry: one line every 5 min to /home/z/veil-heap.log
     //     (outside .next/, survives boots) — future restart forensics no
     //     longer need the SIGUSR1 inspector dance.
+    // v5.2 (2026-10-17 "app dev died" postmortem): heap crossed the 80%
+    //   line again (1.52GB observed at 22:01) because the quasar caches
+    //   RETAINED 416MB in-heap (HTTP 256MB + JS AST 160MB) on top of the
+    //   warm module graph. Fixes: cache budgets cut to 48MB each via
+    //   QUASAR_HTTP_CACHE_MB / QUASAR_JS_CACHE_MB in package.json (frees
+    //   ~320MB of permanent retention) and the cap raised to 2048MB — the
+    //   80% restart line now sits at ~1.8GB, roughly 700MB above the
+    //   post-fix warm live set.
     // No-op without --expose-gc.
     const maybeGc = (globalThis as { gc?: () => void }).gc;
     if (typeof maybeGc === "function") {

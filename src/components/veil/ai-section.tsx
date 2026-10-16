@@ -33,6 +33,7 @@ import {
   Link2,
   Loader2,
   Monitor,
+  MonitorPlay,
   Music,
   Package,
   Palette,
@@ -93,6 +94,15 @@ interface Msg {
   /** Attached files with durable vault URLs (images included — the
    * bubble renders from these so attachments survive reloads). */
   files?: { name: string; size: number; type: string; url?: string }[];
+  /** AI Image mode — the generated picture (inline data URL, stripped
+   * from the sessionStorage snapshot to stay in quota). */
+  image?: string;
+  /** AI Video mode — the playable URL once the render finishes. */
+  video?: string;
+  /** Which generation is in flight while this bubble streams. */
+  gen?: "image" | "video";
+  /** The prompt that produced a generated image/video (echoed under it). */
+  genPrompt?: string;
 }
 
 const SUGGESTIONS: { icon: LucideIcon; text: string }[] = [
@@ -105,6 +115,14 @@ const SUGGESTIONS: { icon: LucideIcon; text: string }[] = [
  * restarts the dev server often (restores, Fast Refresh on cold route
  * compile), and each reload used to wipe the chat mid-build. */
 const CHAT_STORE_KEY = "veil:ai-chat-v1";
+
+/* Image-mode sizes the backend accepts (mirrors the SDK contract). */
+const IMAGE_SIZES: { id: string; label: string }[] = [
+  { id: "1024x1024", label: "Square" },
+  { id: "1344x768", label: "Landscape" },
+  { id: "768x1344", label: "Portrait" },
+  { id: "1440x720", label: "Wide" },
+];
 
 /* veil-ext icon names (the offline file's icon set) → lucide components.
  * Rendered through the ExtIcon wrapper (static lookup, WxGlyph-style) so
@@ -562,6 +580,46 @@ function Bubble({
   }
 
   if (msg.streaming) {
+    /* Image / Video generation in flight — a dedicated panel with the
+       prompt echo and a live status note (the poller updates msg.note). */
+    if (msg.gen === "image" || msg.gen === "video") {
+      const isImg = msg.gen === "image";
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+          className="flex justify-start"
+        >
+          <div className="veil-slide-up-pop max-w-[85%] rounded-2xl rounded-tl-md border border-zinc-800 bg-zinc-900 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ${
+                  isImg
+                    ? "bg-cyan-500/15 text-cyan-300 ring-cyan-400/30"
+                    : "bg-rose-500/15 text-rose-300 ring-rose-400/30"
+                }`}
+              >
+                {isImg ? <ImageIcon className="h-4 w-4" /> : <MonitorPlay className="h-4 w-4" />}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[13px] font-medium text-zinc-100">
+                  {isImg ? "Painting your image…" : "Rendering your video…"}
+                </p>
+                <p className="text-[11.5px] text-zinc-500">{msg.note ?? "working…"}</p>
+              </div>
+              <Loader2 aria-hidden className="ml-auto h-4 w-4 shrink-0 animate-spin text-zinc-400" />
+            </div>
+            {msg.genPrompt && (
+              <p className="mt-2 line-clamp-2 rounded-lg bg-zinc-950/60 px-2.5 py-1.5 text-[11px] italic text-zinc-500">
+                “{msg.genPrompt}”
+              </p>
+            )}
+          </div>
+        </motion.div>
+      );
+    }
     /* Maker builds never paint the raw HTML into the chat — the code
        starts streaming (open fence / doctype / metadata comment) and the
        bubble switches to a live "building" panel; the code's only home
@@ -653,6 +711,81 @@ function Bubble({
       className="flex justify-start"
     >
       <div className="max-w-[85%] rounded-2xl rounded-tl-md border border-zinc-800 bg-zinc-900 px-4 py-3 text-[13.5px] leading-relaxed">
+        {/* ── AI Image result card ── */}
+        {msg.image ? (
+          <figure className="m-0">
+            <a
+              href={msg.image}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Open the generated image full size"
+              className="block overflow-hidden rounded-xl border border-zinc-700/60"
+            >
+              <img
+                src={msg.image}
+                alt={msg.genPrompt ? `AI-generated image: ${msg.genPrompt}` : "AI-generated image"}
+                className="block max-h-[420px] w-full object-contain"
+              />
+            </a>
+            <figcaption className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="flex items-center gap-1.5 rounded-full bg-cyan-500/10 px-2.5 py-1 text-[11px] font-medium text-cyan-300 ring-1 ring-cyan-500/25">
+                <ImageIcon aria-hidden className="h-3 w-3" />
+                Generated image
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const a = document.createElement("a");
+                  a.href = msg.image ?? "";
+                  a.download = `veil-image-${Date.now()}.png`;
+                  a.click();
+                }}
+                className="veil-press inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-300 transition hover:border-cyan-400/50 hover:text-cyan-200"
+              >
+                <Download aria-hidden className="h-3 w-3" />
+                Save PNG
+              </button>
+              {msg.genPrompt && (
+                <span className="min-w-0 flex-1 truncate text-[11px] italic text-zinc-600">
+                  “{msg.genPrompt}”
+                </span>
+              )}
+            </figcaption>
+          </figure>
+        ) : msg.video ? (
+          /* ── AI Video result card ── */
+          <figure className="m-0">
+            <video
+              src={msg.video}
+              controls
+              playsInline
+              preload="metadata"
+              className="block max-h-[420px] w-full rounded-xl border border-zinc-700/60 bg-black"
+            />
+            <figcaption className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="flex items-center gap-1.5 rounded-full bg-rose-500/10 px-2.5 py-1 text-[11px] font-medium text-rose-300 ring-1 ring-rose-500/25">
+                <MonitorPlay aria-hidden className="h-3 w-3" />
+                Generated video
+              </span>
+              <a
+                href={msg.video}
+                target="_blank"
+                rel="noreferrer"
+                className="veil-press inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-300 transition hover:border-rose-400/50 hover:text-rose-200"
+              >
+                <Download aria-hidden className="h-3 w-3" />
+                Open / save
+              </a>
+              {msg.genPrompt && (
+                <span className="min-w-0 flex-1 truncate text-[11px] italic text-zinc-600">
+                  “{msg.genPrompt}”
+                </span>
+              )}
+            </figcaption>
+          </figure>
+        ) : (
+        <>{" "}</>
+        )}
         {/* Safety net ①: a maker reply that still has an open <!doctype but no
             extension card means the model's build came back incomplete (even
             the server's auto-continue rounds couldn't finish it). Never dump
@@ -758,6 +891,14 @@ export function AiSection({
   const [loading, setLoading] = React.useState(false);
   /** Extension Maker mode — the next message becomes a build request. */
   const [maker, setMaker] = React.useState(false);
+  /** Generation mode — Image / Video (mutually exclusive with maker). */
+  const [genMode, setGenMode] = React.useState<null | "image" | "video">(null);
+  /* image options */
+  const [imgSize, setImgSize] = React.useState("1024x1024");
+  /* video options */
+  const [vidDuration, setVidDuration] = React.useState<5 | 10>(5);
+  const [vidQuality, setVidQuality] = React.useState<"speed" | "quality">("speed");
+  const [vidAudio, setVidAudio] = React.useState(false);
   /* —— attachments —— */
   const [pending, setPending] = React.useState<PendingAtt[]>([]);
   const attachInputRef = React.useRef<HTMLInputElement | null>(null);
@@ -781,6 +922,8 @@ export function AiSection({
           !m.streaming
       );
       if (j.maker === true) setMaker(true);
+      if (j.genMode === "image" || j.genMode === "video") setGenMode(j.genMode);
+      if (j.genMode === "image" || j.genMode === "video") setMaker(false);
       if (!msgs.length) return;
       setMessages(
         j.interrupted === true
@@ -816,13 +959,14 @@ export function AiSection({
           CHAT_STORE_KEY,
           JSON.stringify({
             maker,
+            genMode,
             interrupted: messages.some((m) => m.streaming),
             // Data URLs would blow the 5 MB sessionStorage quota —
           // files[] metadata (with vault urls) survives instead.
           msgs: messages
             .filter((m) => !m.streaming)
             .slice(-40)
-            .map((m) => ({ ...m, images: undefined })),
+            .map((m) => ({ ...m, images: undefined, image: undefined })),
           })
         );
       } catch {
@@ -1117,10 +1261,202 @@ export function AiSection({
     []
   );
 
+  /* ── AI Image generation (Image mode) ───────────────────────────────
+   * POST /api/ai/image registers a server-side task instantly (long
+   * requests get cut by the outer gateway with a 502 — the reason the
+   * chat streams with heartbeats), then /api/ai/image/status is polled
+   * every 2.5s until the finished data URL lands. Abortable through the
+   * same Stop button (liveCtrl). */
+  const generateImage = React.useCallback(
+    async (prompt: string): Promise<void> => {
+      setLoading(true);
+      const bubbleId = uid();
+      const started = Date.now();
+      setMessages((ms) => [
+        ...ms,
+        {
+          id: bubbleId,
+          role: "assistant",
+          content: "",
+          streaming: true,
+          gen: "image",
+          genPrompt: prompt,
+          note: `painting “${prompt.slice(0, 60)}” — usually 5-30 seconds`,
+        },
+      ]);
+      const ctrl = new AbortController();
+      liveCtrl.current = ctrl;
+      const setNote = (note: string) =>
+        setMessages((ms) => ms.map((m) => (m.id === bubbleId ? { ...m, note } : m)));
+      const fail = (reason: string) => {
+        setMessages((ms) => {
+          const without = ms.filter((m) => m.id !== bubbleId);
+          return [
+            ...without,
+            { id: uid(), role: "assistant", content: `Couldn't generate the image — ${reason}.`, error: true },
+          ];
+        });
+      };
+      try {
+        const res = await fetch("/api/ai/image", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          signal: ctrl.signal,
+          body: JSON.stringify({ prompt, size: imgSize }),
+        });
+        const data = (await res.json().catch(() => null)) as { ok?: boolean; taskId?: string; error?: string } | null;
+        if (!res.ok || !data?.ok || typeof data.taskId !== "string") {
+          throw new Error(data?.error || `HTTP ${res.status}`);
+        }
+        const taskId = data.taskId;
+        for (;;) {
+          const sres = await fetch(`/api/ai/image/status?taskId=${encodeURIComponent(taskId)}`, {
+            signal: ctrl.signal,
+            cache: "no-store",
+          });
+          const sdata = (await sres.json().catch(() => null)) as { ok?: boolean; status?: string; image?: string; error?: string } | null;
+          if (!sres.ok || !sdata?.ok) throw new Error(sdata?.error || `status check failed (HTTP ${sres.status})`);
+          if (sdata.status === "fail") throw new Error(sdata.error || "the render failed");
+          if (sdata.status === "done" && typeof sdata.image === "string") {
+            setMessages((ms) =>
+              ms.map((m) =>
+                m.id === bubbleId ? { ...m, content: "", image: sdata.image, streaming: false, note: undefined } : m
+              )
+            );
+            liveCtrl.current = null;
+            setLoading(false);
+            return;
+          }
+          const secs = Math.round((Date.now() - started) / 1000);
+          setNote(`painting… ${secs}s elapsed`);
+          await new Promise<void>((resolve, reject) => {
+            const t = setTimeout(resolve, 2500);
+            ctrl.signal.addEventListener("abort", () => { clearTimeout(t); reject(new DOMException("aborted", "AbortError")); }, { once: true });
+          });
+        }
+      } catch (e) {
+        liveCtrl.current = null;
+        if ((e as { name?: string } | null)?.name === "AbortError") {
+          setMessages((ms) => ms.filter((m) => m.id !== bubbleId));
+          setInput(prompt);
+          setLoading(false);
+          return;
+        }
+        fail(e instanceof Error ? e.message : "something went wrong");
+      }
+      setLoading(false);
+    },
+    [imgSize]
+  );
+
+  /* ── AI Video generation (Video mode) ───────────────────────────────
+   * POST /api/ai/video creates an async task; poll /api/ai/video/status
+   * every 3s until SUCCESS (playable URL) or FAIL. Renders take 1-4
+   * minutes — the bubble keeps a live elapsed timer, and Stop cancels. */
+  const generateVideo = React.useCallback(
+    async (prompt: string): Promise<void> => {
+      setLoading(true);
+      const bubbleId = uid();
+      const started = Date.now();
+      setMessages((ms) => [
+        ...ms,
+        {
+          id: bubbleId,
+          role: "assistant",
+          content: "",
+          streaming: true,
+          gen: "video",
+          genPrompt: prompt,
+          note: "submitting the render…",
+        },
+      ]);
+      const ctrl = new AbortController();
+      liveCtrl.current = ctrl;
+      const setNote = (note: string) =>
+        setMessages((ms) => ms.map((m) => (m.id === bubbleId ? { ...m, note } : m)));
+      const fail = (reason: string) => {
+        setMessages((ms) => {
+          const without = ms.filter((m) => m.id !== bubbleId);
+          return [
+            ...without,
+            { id: uid(), role: "assistant", content: `Couldn't generate the video — ${reason}.`, error: true },
+          ];
+        });
+      };
+      try {
+        const res = await fetch("/api/ai/video", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          signal: ctrl.signal,
+          body: JSON.stringify({
+            prompt,
+            duration: vidDuration,
+            quality: vidQuality,
+            withAudio: vidAudio,
+            ...(vidQuality === "quality" ? { fps: 30, size: "1920x1080" } : {}),
+          }),
+        });
+        const data = (await res.json().catch(() => null)) as { ok?: boolean; taskId?: string; error?: string } | null;
+        if (!res.ok || !data?.ok || typeof data.taskId !== "string") {
+          throw new Error(data?.error || `HTTP ${res.status}`);
+        }
+        const taskId = data.taskId;
+        for (;;) {
+          await new Promise<void>((resolve, reject) => {
+            const t = setTimeout(resolve, 3000);
+            ctrl.signal.addEventListener("abort", () => { clearTimeout(t); reject(new DOMException("aborted", "AbortError")); }, { once: true });
+          });
+          const sres = await fetch(`/api/ai/video/status?taskId=${encodeURIComponent(taskId)}`, {
+            signal: ctrl.signal,
+            cache: "no-store",
+          });
+          const sdata = (await sres.json().catch(() => null)) as { ok?: boolean; status?: string; url?: string; error?: string } | null;
+          if (!sres.ok || !sdata?.ok) throw new Error(sdata?.error || `status check failed (HTTP ${sres.status})`);
+          if (sdata.status === "FAIL") throw new Error("the video service failed the render");
+          if (sdata.status === "SUCCESS" && typeof sdata.url === "string") {
+            setMessages((ms) =>
+              ms.map((m) =>
+                m.id === bubbleId ? { ...m, content: "", video: sdata.url, streaming: false, note: undefined } : m
+              )
+            );
+            liveCtrl.current = null;
+            setLoading(false);
+            return;
+          }
+          const secs = Math.round((Date.now() - started) / 1000);
+          setNote(`rendering… ${secs}s elapsed — videos take 1-4 minutes`);
+        }
+      } catch (e) {
+        liveCtrl.current = null;
+        if ((e as { name?: string } | null)?.name === "AbortError") {
+          setMessages((ms) => ms.filter((m) => m.id !== bubbleId));
+          setInput(prompt);
+          setLoading(false);
+          return;
+        }
+        fail(e instanceof Error ? e.message : "something went wrong");
+      }
+      setLoading(false);
+    },
+    [vidDuration, vidQuality, vidAudio]
+  );
+
   const send = React.useCallback(
     (raw?: string) => {
       const text = (raw ?? input).trim();
       if ((!text && pending.length === 0) || loading) return;
+      // Generation modes take the prompt directly — no chat context, no
+      // attachments. A plain user bubble goes up, the result lands under it.
+      if (genMode === "image" || genMode === "video") {
+        if (!text) return;
+        setMessages((ms) => [...ms, { id: uid(), role: "user", content: text }]);
+        if (raw === undefined) setInput("");
+        setPending([]);
+        setAttachError("");
+        if (genMode === "image") void generateImage(text);
+        else void generateVideo(text);
+        return;
+      }
       // Still-uploading attachments: wait for their vault URLs.
       if (pending.some((a) => a.uploading && !a.error)) {
         setAttachError("Attachments are still uploading — one moment…");
@@ -1144,7 +1480,7 @@ export function AiSection({
       setAttachError("");
       void post([...messages.filter((m) => !m.error && !m.streaming), userMsg], maker);
     },
-    [input, loading, maker, messages, pending, post]
+    [input, loading, maker, messages, pending, post, genMode, generateImage, generateVideo]
   );
 
   const retry = React.useCallback(() => {
@@ -1212,26 +1548,60 @@ export function AiSection({
         <Badge className="shrink-0 rounded-full border-emerald-500/25 bg-emerald-500/10 px-2.5 text-[11px] font-medium text-emerald-300">
           AI assistant
         </Badge>
-        <div className="ml-auto flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              setMaker((m) => !m);
-              setTimeout(() => taRef.current?.focus(), 60);
-            }}
-            aria-pressed={maker}
-            title="Extension Maker — describe an app or game and Veil AI builds it as an installable Veil extension for the offline file"
-            className={cn(
-              "veil-press inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-[12px] font-semibold transition",
-              maker
-                ? "border-violet-400/60 bg-violet-500/20 text-violet-200 shadow-lg shadow-violet-500/15"
-                : "border-zinc-700/80 bg-zinc-900/60 text-zinc-300 hover:border-violet-400/50 hover:text-violet-200"
-            )}
+        <div className="ml-auto flex items-center gap-1.5">
+          {/* Mode switcher — Chat · Image · Video · Extension Maker */}
+          <div
+            role="group"
+            aria-label="Veil AI mode"
+            className="flex items-center gap-0.5 rounded-full border border-zinc-800 bg-zinc-900/60 p-0.5"
           >
-            <Package aria-hidden className="h-3.5 w-3.5" />
-            Extension Maker
-            {maker && <span aria-hidden className="ml-0.5 h-1.5 w-1.5 animate-pulse rounded-full bg-violet-300" />}
-          </button>
+            {([
+              { id: "chat", label: "Chat", icon: Bot, active: !maker && !genMode, on: "border-emerald-400/60 bg-emerald-500/20 text-emerald-200", off: "text-zinc-400 hover:text-zinc-100" },
+              { id: "image", label: "Image", icon: ImageIcon, active: genMode === "image", on: "border-cyan-400/60 bg-cyan-500/20 text-cyan-200", off: "text-zinc-400 hover:text-cyan-200" },
+              { id: "video", label: "Video", icon: MonitorPlay, active: genMode === "video", on: "border-rose-400/60 bg-rose-500/20 text-rose-200", off: "text-zinc-400 hover:text-rose-200" },
+              { id: "ext", label: "Maker", icon: Package, active: maker, on: "border-violet-400/60 bg-violet-500/20 text-violet-200", off: "text-zinc-400 hover:text-violet-200" },
+            ] as const).map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => {
+                  if (m.id === "ext") {
+                    setMaker((prev) => !prev);
+                    setGenMode(null);
+                  } else if (m.id === "chat") {
+                    setMaker(false);
+                    setGenMode(null);
+                  } else {
+                    setMaker(false);
+                    setGenMode((prev) => (prev === m.id ? null : (m.id as "image" | "video")));
+                  }
+                  setTimeout(() => taRef.current?.focus(), 60);
+                }}
+                aria-pressed={m.active}
+                title={
+                  m.id === "chat"
+                    ? "Chat — ask about sites, titles, wallpapers"
+                    : m.id === "image"
+                      ? "AI Image — describe a picture, Veil paints it"
+                      : m.id === "video"
+                        ? "AI Video — describe a scene, Veil renders it (1-4 min)"
+                        : "Extension Maker — describe an app or game and Veil AI builds it as an installable Veil extension"
+                }
+                className={cn(
+                  "veil-press inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[12px] font-semibold transition sm:px-3",
+                  m.active
+                    ? m.on
+                    : cn("border-transparent", m.off)
+                )}
+              >
+                <m.icon aria-hidden className="h-3.5 w-3.5" />
+                <span className={m.active ? "inline" : "hidden sm:inline"}>{m.label}</span>
+                {m.active && m.id !== "chat" && (
+                  <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-current opacity-70" />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -1324,6 +1694,60 @@ export function AiSection({
                 </span>
                 <Sparkles aria-hidden className="ml-auto h-4 w-4 shrink-0 text-violet-300/70 group-hover:text-violet-300" />
               </button>
+
+              {/* Image Studio + Video Studio entry cards */}
+              <div className="veil-slide-up-pop veil-stagger-5 mt-2.5 grid w-full gap-2.5 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMaker(false);
+                    setGenMode("image");
+                    setTimeout(() => taRef.current?.focus(), 60);
+                  }}
+                  aria-pressed={genMode === "image"}
+                  className="veil-hover-lift veil-press group flex items-center gap-3 rounded-2xl border border-cyan-500/30 bg-cyan-500/[0.07] p-3.5 text-left transition hover:-translate-y-0.5 hover:border-cyan-400/60 hover:bg-cyan-500/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+                >
+                  <span
+                    aria-hidden
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/15 ring-1 ring-cyan-400/30"
+                  >
+                    <ImageIcon aria-hidden className="h-4 w-4 text-cyan-300" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[13.5px] font-semibold text-zinc-100 group-hover:text-cyan-100">
+                      Image Studio
+                    </span>
+                    <span className="block truncate text-[12px] text-zinc-400">
+                      Describe a picture — AI paints it in seconds
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMaker(false);
+                    setGenMode("video");
+                    setTimeout(() => taRef.current?.focus(), 60);
+                  }}
+                  aria-pressed={genMode === "video"}
+                  className="veil-hover-lift veil-press group flex items-center gap-3 rounded-2xl border border-rose-500/30 bg-rose-500/[0.07] p-3.5 text-left transition hover:-translate-y-0.5 hover:border-rose-400/60 hover:bg-rose-500/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50"
+                >
+                  <span
+                    aria-hidden
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-rose-500/15 ring-1 ring-rose-400/30"
+                  >
+                    <MonitorPlay aria-hidden className="h-4 w-4 text-rose-300" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[13.5px] font-semibold text-zinc-100 group-hover:text-rose-100">
+                      Video Studio
+                    </span>
+                    <span className="block truncate text-[12px] text-zinc-400">
+                      Describe a scene — AI renders a short clip
+                    </span>
+                  </span>
+                </button>
+              </div>
             </motion.div>
           </div>
         ) : (
@@ -1356,6 +1780,100 @@ export function AiSection({
               className="veil-press shrink-0 rounded-full border border-violet-500/30 px-2 py-0.5 text-[10.5px] font-medium text-violet-200/80 transition hover:border-violet-300/60 hover:text-violet-100"
             >
               off
+            </button>
+          </motion.div>
+        )}
+        {/* AI Image options strip */}
+        {genMode === "image" && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-auto mb-2 flex w-full max-w-2xl flex-wrap items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/[0.07] px-3 py-1.5"
+          >
+            <ImageIcon aria-hidden className="h-3.5 w-3.5 shrink-0 text-cyan-300" />
+            <p className="min-w-0 flex-1 text-[11.5px] leading-snug text-cyan-200/90">
+              Image Studio — describe the picture, it paints in 5-30s.
+            </p>
+            <div className="flex items-center gap-1" role="group" aria-label="Image size">
+              {IMAGE_SIZES.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setImgSize(s.id)}
+                  aria-pressed={imgSize === s.id}
+                  className={cn(
+                    "veil-press rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition",
+                    imgSize === s.id
+                      ? "border-cyan-400/60 bg-cyan-500/20 text-cyan-100"
+                      : "border-cyan-500/25 text-cyan-200/70 hover:border-cyan-400/40 hover:text-cyan-100"
+                  )}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+        {/* AI Video options strip */}
+        {genMode === "video" && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-auto mb-2 flex w-full max-w-2xl flex-wrap items-center gap-1.5 rounded-xl border border-rose-500/30 bg-rose-500/[0.07] px-3 py-1.5"
+          >
+            <MonitorPlay aria-hidden className="h-3.5 w-3.5 shrink-0 text-rose-300" />
+            <p className="min-w-0 flex-1 text-[11.5px] leading-snug text-rose-200/90">
+              Video Studio — describe the scene, it renders in 1-4 minutes.
+            </p>
+            <div className="flex items-center gap-1" role="group" aria-label="Video length">
+              {([5, 10] as const).map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => setVidDuration(d)}
+                  aria-pressed={vidDuration === d}
+                  className={cn(
+                    "veil-press rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition",
+                    vidDuration === d
+                      ? "border-rose-400/60 bg-rose-500/20 text-rose-100"
+                      : "border-rose-500/25 text-rose-200/70 hover:border-rose-400/40 hover:text-rose-100"
+                  )}
+                >
+                  {d}s
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-1" role="group" aria-label="Video quality">
+              {(["speed", "quality"] as const).map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => setVidQuality(q)}
+                  aria-pressed={vidQuality === q}
+                  className={cn(
+                    "veil-press rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition",
+                    vidQuality === q
+                      ? "border-rose-400/60 bg-rose-500/20 text-rose-100"
+                      : "border-rose-500/25 text-rose-200/70 hover:border-rose-400/40 hover:text-rose-100"
+                  )}
+                >
+                  {q === "speed" ? "fast" : "1080p"}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setVidAudio((a) => !a)}
+              aria-pressed={vidAudio}
+              title="Generate AI audio effects with the video"
+              className={cn(
+                "veil-press rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition",
+                vidAudio
+                  ? "border-rose-400/60 bg-rose-500/20 text-rose-100"
+                  : "border-rose-500/25 text-rose-200/70 hover:border-rose-400/40 hover:text-rose-100"
+              )}
+            >
+              sound
             </button>
           </motion.div>
         )}
@@ -1428,17 +1946,19 @@ export function AiSection({
               e.currentTarget.value = "";
             }}
           />
-          <Button
-            type="button"
-            variant="ghost"
-            aria-label="Attach images or files"
-            title="Attach images or files — images are seen by the assistant, text files are read, anything up to 100 MB is stored"
-            onClick={() => attachInputRef.current?.click()}
-            disabled={pending.length >= MAX_ATTACH}
-            className="veil-hover-wobble h-11 w-11 shrink-0 rounded-2xl border border-zinc-800 bg-zinc-900/90 text-zinc-400 shadow-xl shadow-black/30 transition hover:text-zinc-100 disabled:opacity-40"
-          >
-            <Paperclip aria-hidden className="h-4 w-4" />
-          </Button>
+          {genMode === null && (
+            <Button
+              type="button"
+              variant="ghost"
+              aria-label="Attach images or files"
+              title="Attach images or files — images are seen by the assistant, text files are read, anything up to 100 MB is stored"
+              onClick={() => attachInputRef.current?.click()}
+              disabled={pending.length >= MAX_ATTACH}
+              className="veil-hover-wobble h-11 w-11 shrink-0 rounded-2xl border border-zinc-800 bg-zinc-900/90 text-zinc-400 shadow-xl shadow-black/30 transition hover:text-zinc-100 disabled:opacity-40"
+            >
+              <Paperclip aria-hidden className="h-4 w-4" />
+            </Button>
+          )}
           <Textarea
             ref={taRef}
             value={input}
@@ -1452,44 +1972,62 @@ export function AiSection({
             placeholder={
               maker
                 ? "Describe the extension to build — “a neon snake game with a high score”…"
-                : "Ask about sites, titles, wallpapers…"
+                : genMode === "image"
+                  ? "Describe the image — “a lighthouse in a storm, oil painting style”…"
+                  : genMode === "video"
+                    ? "Describe the scene — “a paper boat sailing down a rainy street, cinematic”…"
+                    : "Ask about sites, titles, wallpapers…"
             }
             aria-label="Message the Veil AI"
             rows={1}
             spellCheck={false}
             className={cn(
               "veil-focus-bloom veil-scroll-slim min-h-11 max-h-44 flex-1 resize-none rounded-2xl border-zinc-800 bg-zinc-900/90 px-4 py-2.5 text-[14px] text-zinc-100 shadow-xl shadow-black/30 placeholder:text-zinc-500 focus-visible:border-emerald-500/60 focus-visible:ring-emerald-500/25",
-              maker && "border-violet-500/40 focus-visible:border-violet-400/70 focus-visible:ring-violet-500/25"
+              maker && "border-violet-500/40 focus-visible:border-violet-400/70 focus-visible:ring-violet-500/25",
+              genMode === "image" && "border-cyan-500/40 focus-visible:border-cyan-400/70 focus-visible:ring-cyan-500/25",
+              genMode === "video" && "border-rose-500/40 focus-visible:border-rose-400/70 focus-visible:ring-rose-500/25"
             )}
           />
-          </div>
           <Button
             type={loading ? "button" : "submit"}
             aria-label={loading ? "Stop generating" : "Send message"}
             disabled={!loading && !input.trim() && pending.length === 0}
             onClick={loading ? stop : undefined}
-            title={loading ? "Stop — the request is taking too long" : undefined}
+            title={loading ? "Stop — cancels the request and keeps your text" : undefined}
             className={cn(
               "veil-hover-glow veil-press h-11 w-11 shrink-0 rounded-2xl shadow-lg transition disabled:opacity-40",
               loading
                 ? "bg-zinc-700 text-zinc-100 shadow-zinc-900/40 hover:bg-zinc-600 active:scale-95"
                 : maker
                   ? "bg-violet-500 text-white shadow-violet-500/25 hover:bg-violet-400"
-                  : "bg-emerald-500 text-emerald-950 shadow-emerald-500/25 hover:bg-emerald-400"
+                  : genMode === "image"
+                    ? "bg-cyan-500 text-cyan-950 shadow-cyan-500/25 hover:bg-cyan-400"
+                    : genMode === "video"
+                      ? "bg-rose-500 text-rose-950 shadow-rose-500/25 hover:bg-rose-400"
+                      : "bg-emerald-500 text-emerald-950 shadow-emerald-500/25 hover:bg-emerald-400"
             )}
           >
             {loading ? (
               <Square aria-hidden className="h-4 w-4 fill-current" />
+            ) : genMode === "image" ? (
+              <ImageIcon aria-hidden className="h-4 w-4" />
+            ) : genMode === "video" ? (
+              <MonitorPlay aria-hidden className="h-4 w-4" />
             ) : (
               <Send aria-hidden className="h-4 w-4" />
             )}
           </Button>
+          </div>
         </form>
         <p className="mx-auto mt-2 max-w-2xl text-center text-[11px] text-zinc-600">
           {maker ? (
             <>
               Powered by GLM · Extension Maker builds single-file apps — zero requests, offline forever
             </>
+          ) : genMode === "image" ? (
+            <>Powered by GLM · AI Image — enter paints, Shift+Enter adds a line</>
+          ) : genMode === "video" ? (
+            <>Powered by GLM · AI Video — renders take 1-4 minutes, keep this tab open</>
           ) : (
             <>Powered by GLM · Enter sends · Shift+Enter adds a line</>
           )}

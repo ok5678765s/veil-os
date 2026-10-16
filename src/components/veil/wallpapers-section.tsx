@@ -2838,7 +2838,7 @@ export function WallpapersSection({ onBack }: { onBack: () => void }) {
               </Button>
             </div>
             <p className="text-[11px] leading-snug text-zinc-500">
-              Kept for this tab only — same password as Updates › Owner Mode.
+              Kept for this tab only — same password as Owner Mode.
             </p>
           </div>
         </DialogContent>

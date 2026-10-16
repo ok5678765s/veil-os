@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "private": true,
   "scripts": {
-    "dev": "mkdir -p .next/dev/cache/webpack/client-development-fallback .next/dev/cache/webpack/server-development .next/dev/cache/webpack/server-development-fallback; NODE_OPTIONS='--max-old-space-size=1792 --max-http-header-size=131072 --expose-gc' next dev --webpack -p 3000 2>&1 | tee dev.log",
+    "dev": "mkdir -p .next/dev/cache/webpack/client-development-fallback .next/dev/cache/webpack/server-development .next/dev/cache/webpack/server-development-fallback; QUASAR_HTTP_CACHE_MB=48 QUASAR_JS_CACHE_MB=48 NODE_OPTIONS='--max-old-space-size=2048 --max-http-header-size=131072 --expose-gc' next dev --webpack -p 3000 2>&1 | tee dev.log",
     "build": "next build --webpack && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
     "start": "NODE_ENV=production bun .next/standalone/server.js 2>&1 | tee server.log",
     "lint": "eslint .",

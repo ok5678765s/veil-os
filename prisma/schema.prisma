@@ -329,3 +329,17 @@ model Note {
 
   @@index([viewer, updatedAt])
 }
+
+/// HTML Coder documents (replaced the Notes app at the owner's request).
+/// Same viewer-scoped privacy model as Note: docs never leak across browsers.
+model CoderDoc {
+  id        String   @id @default(cuid())
+  viewer    String   @default("default")
+  title     String   @default("")
+  html      String   @default("")
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([viewer, updatedAt])
+}

@@ -597,7 +597,7 @@ function StashTab() {
 }
 
 /* ------------------------------------------------------------------ */
-/* The Apps tab — site apps built by Veil AI (Updates) and the owner   */
+/* The Apps tab — site apps built by Veil AI and the owner             */
 /* ------------------------------------------------------------------ */
 
 /** A trimmed SiteApp card (the /api/apps list never ships the HTML). */
@@ -1180,7 +1180,7 @@ function AppsTab({ onLaunchApp }: { onLaunchApp: (app: SiteAppCard) => Promise<v
           <p className="mt-3 text-[13px] text-[#526a60]">No apps installed yet.</p>
           <p className="mt-1 text-[12px] text-[#526a60]/70">
             Hit <span className="text-[#5fae87]">create app</span> above to paste your own — or
-            open <span className="text-[#5fae87]">Updates → Veil AI</span> and ask for one.
+            open <span className="text-[#5fae87]">Veil AI</span> and ask for one.
           </p>
         </div>
       ) : (
@@ -1881,8 +1881,8 @@ export function ArcadeSection({
               </>
             ) : tab === "apps" ? (
               <>
-                site apps · built by <span className="font-semibold text-[#5fae87]">veil ai</span> in
-                updates · run sandboxed in-frame
+                site apps · built by <span className="font-semibold text-[#5fae87]">veil ai</span> ·
+                run sandboxed in-frame
               </>
             ) : (
               "the collection — 2,000+ single-file titles, plays in-frame"

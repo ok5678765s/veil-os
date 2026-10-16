@@ -109,12 +109,16 @@ export function SectionShell({
   icon,
   onBack,
   children,
+  wide,
 }: {
   title: string;
   subtitle: string;
   icon: React.ReactNode;
   onBack: () => void;
   children: React.ReactNode;
+  /** true → the content column opens up to 1600px (the HTML Coder's
+   *  side-by-side workshop needs the room; default stays max-w-4xl). */
+  wide?: boolean;
 }) {
   return (
     /* Root is intentionally transparent: the page-level overlay container
@@ -153,7 +157,14 @@ export function SectionShell({
       </header>
 
       <div className="veil-scroll-slim relative z-10 min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">{children}</div>
+        {wide ? (
+          /* Wide sections (HTML Coder) manage their own inner overflow —
+             give them a definite full-height flex chain instead of the
+             document-flow column. */
+          <div className="mx-auto h-full w-full max-w-[1600px]">{children}</div>
+        ) : (
+          <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">{children}</div>
+        )}
       </div>
     </div>
   );

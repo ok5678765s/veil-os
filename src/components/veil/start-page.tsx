@@ -29,6 +29,7 @@ import {
   Download,
   Eye,
   EyeOff,
+  Code2,
   Globe,
   GripVertical,
   History as HistoryIcon,
@@ -42,7 +43,6 @@ import {
   MonitorPlay,
   Moon,
   Music,
-  NotebookPen,
   Package,
   RotateCcw,
   Search,
@@ -87,7 +87,7 @@ export type SectionId =
   | "music"
   | "links"
   | "history"
-  | "notes"
+  | "coder"
   | "settings";
 
 interface StartPageProps {
@@ -966,7 +966,7 @@ export function StartPage({
     { id: "music", label: "Music", icon: Music },
     { id: "links", label: "Links", icon: Globe },
     { id: "history", label: "History", icon: HistoryIcon },
-    { id: "notes", label: "Notes", icon: NotebookPen },
+    { id: "coder", label: "Coder", icon: Code2 },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -983,7 +983,7 @@ export function StartPage({
     music: "text-purple-400", // purple (user-specified)
     links: "text-green-400", // mint green
     history: "text-sky-300", // light blue
-    notes: "text-emerald-300", // emerald — quick thoughts
+    coder: "text-emerald-300", // emerald — build pages live
     settings: "text-zinc-400", // gray (user-specified)
   };
 

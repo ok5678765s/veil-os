@@ -64,7 +64,7 @@ sleep 0.3
 
 CYCLE=10               # seconds between checks (v4: faster reaction, zero extra restarts)
 RSS_WARN_KB=2000000    # 1.95GiB — log-only: big server, gardener compacts, NO restart
-RSS_LIMIT_KB=2350000   # 2.3GB  — restart CANDIDATE, but only with real box pressure
+RSS_LIMIT_KB=2750000   # 2.7GB  — restart CANDIDATE, but only with real box pressure (v5, 2026-10-17: heap cap raised 1792→2048MB + quasar caches cut 256/160→48MB — the 80% restart line moved to ~1.8GB heap, so the corroborated line follows it up; MemAvail corroboration still gates every restart)
 PRESSURE_MIN_KB=600000 # 600MB — MemAvail below this + RSS over limit = true pressure (v4.1, 2026-10-13: was 700MB — borderline 677-683MB dips restarted the server and dumped live user sessions; the gardener already double-gcs below 600)
 MEMAVAIL_MIN_KB=320000 # 320MB — whole-box emergency threshold (last resort)
 COOLDOWN_S=900         # min seconds between FORCED restarts (15 min — a restart storm is worse than transient pressure)

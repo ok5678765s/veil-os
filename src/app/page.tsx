@@ -26,7 +26,7 @@ import { ChatSection } from "@/components/veil/chat-section";
 import { MusicSection } from "@/components/veil/music-section";
 import { WallpapersSection } from "@/components/veil/wallpapers-section";
 import { SettingsSection } from "@/components/veil/settings-section";
-import { NotesSection } from "@/components/veil/notes-section";
+import { CoderSection } from "@/components/veil/coder-section";
 import { LinksSection, HistorySection } from "@/components/veil/start-sections";
 import { VeilMusicPlayer } from "@/components/veil/veil-player";
 import { PresenceHeartbeat } from "@/components/veil/presence-heartbeat";
@@ -39,7 +39,7 @@ import {
   viewerHeaders,
   type HistoryResponse,
 } from "@/lib/veil/shared";
-import { loadSettings } from "@/lib/veil/settings";
+
 import { purgeFatCookiesOnBoot } from "@/lib/veil/cookie-hygiene";
 import { useFancyMotion } from "@/lib/veil/motion";
 
@@ -94,7 +94,7 @@ function activeTarget(tab: Tab | null): string {
   return tab.stack[tab.idx] ?? "";
 }
 
-const SECTIONS: SectionId[] = ["ai", "arcade", "stream", "chat", "wallpapers", "music", "links", "history", "notes", "settings"];
+const SECTIONS: SectionId[] = ["ai", "arcade", "stream", "chat", "wallpapers", "music", "links", "history", "coder", "settings"];
 
 export default function Home() {
   const [tabs, setTabs] = React.useState<Tab[]>([]);
@@ -140,11 +140,17 @@ export default function Home() {
   const [opened, setOpened] = React.useState<Set<SectionId>>(() => new Set());
   React.useEffect(() => {
     try {
-      // EVERY section reopens after a same-tab reload — a restart must
-      // never dump the user back on the start page mid-game, mid-chat or
-      // mid-stream. (The chat account itself lives in localStorage, so
-      // reopening lands inside the chat, logged in.)
-      const saved = sessionStorage.getItem("veil:section");
+      // EVERY section reopens after ANY reload — a restart must never
+      // dump the user back on the start page mid-game, mid-chat or
+      // mid-stream. The hint lives in BOTH sessionStorage (same-tab
+      // reloads) and localStorage (new tabs / reopened previews — the
+      // "still resets to the home page" fix: sessionStorage alone dies
+      // with the tab, so a dev-server restart that took the preview down
+      // landed the user home on the next open). (The chat account lives
+      // in localStorage, so reopening lands inside the chat, logged in.)
+      const saved =
+        sessionStorage.getItem("veil:section") ??
+        localStorage.getItem("veil:section");
       if (saved && (SECTIONS as string[]).includes(saved)) {
         setOpened((prev) => (prev.has(saved) ? prev : new Set([...prev, saved])));
         setSection(saved);
@@ -170,8 +176,13 @@ export default function Home() {
       return;
     }
     try {
-      if (section) sessionStorage.setItem("veil:section", section);
-      else sessionStorage.removeItem("veil:section");
+      if (section) {
+        sessionStorage.setItem("veil:section", section);
+        localStorage.setItem("veil:section", section);
+      } else {
+        sessionStorage.removeItem("veil:section");
+        localStorage.removeItem("veil:section");
+      }
     } catch {
       /* private mode — best effort */
     }
@@ -228,15 +239,18 @@ export default function Home() {
         }
         return; // same-tab recovery wins — skip the cross-session path
       }
-      const s = loadSettings();
+      // Default flipped (owner request 2026-10-17): tabs ALWAYS come back
+      // unless the user explicitly opted into the reset (Settings ›
+      // Browsing › "Start page" writes veil:keep-session=0). Being dumped
+      // on the start page after a restart was the standing complaint.
       const keep = (() => {
         try {
-          return window.localStorage.getItem("veil:keep-session") === "1";
+          return window.localStorage.getItem("veil:keep-session") !== "0";
         } catch {
-          return false;
+          return true;
         }
       })();
-      if (s.resetOnRestart !== false || !keep) {
+      if (!keep) {
         localStorage.removeItem(STORAGE_KEY);
       } else {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -739,6 +753,7 @@ export default function Home() {
           try {
             sessionStorage.removeItem("veil:section");
             sessionStorage.removeItem("veil:ai-chat-v1");
+            localStorage.removeItem("veil:section");
           } catch {
             /* best effort */
           }
@@ -801,8 +816,8 @@ export default function Home() {
             onHistoryChanged={() => void refreshHistory()}
           />
         );
-      case "notes":
-        return <NotesSection onBack={closeSection} />;
+      case "coder":
+        return <CoderSection onBack={closeSection} />;
       case "settings":
         return <SettingsSection onBack={closeSection} />;
     }
