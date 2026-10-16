@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-15T19:39:21.416Z",
+  "exportedAt": "2026-10-16T06:04:45.514Z",
   "counts": {
-    "accounts": 48,
+    "accounts": 49,
     "messages": 70,
     "dms": 1
   },
@@ -871,6 +871,24 @@
       "legacy": false,
       "createdAt": "2026-10-15T17:02:41.372Z",
       "passwordHash": "$2b$10$YVfSi.rbvI6Six0jL8kIB.Hc6njOQolc0otg4UrPpYzqI2Nd0OlIO"
+    },
+    {
+      "id": "cmvakby700000n2ocds74rzdx",
+      "username": "iloveJesus",
+      "displayName": "iloveJesus",
+      "avatarColor": "#f39c12",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "legacy": false,
+      "createdAt": "2026-10-16T06:04:34.141Z",
+      "passwordHash": "$2b$10$puTOcfKqLTmoP9xuH6g6oO8ip16oNdfZCKkWuU16ptBgbaa9Ve05a"
     }
   ],
   "messages": [
