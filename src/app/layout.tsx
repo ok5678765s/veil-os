@@ -214,10 +214,13 @@ if(OA){var A=function(src){return new OA(typeof src==="string"?route(src,"GET"):
         {/* Hydration watchdog — a dev-server restart (or a stuck chunk
             load) can leave the SSR shell painted but React never attached:
             the page LOOKS fine yet every click is dead until a manual
-            reload. This inline script waits 15s for the app to raise its
+            reload. This inline script waits 45s for the app to raise its
             hydrated flag (set in page.tsx's first effect); if it never
             comes, it reloads ONCE per session — the fresh load lands on
-            the healthy server. */}
+            the healthy server. (Was 15s — this page is heavy, and slow
+            first loads on phones crossed 15s and reloaded mid-use, which
+            read as "the site constantly reloads itself". 45s only ever
+            catches genuinely dead shells.) */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{
@@ -227,7 +230,7 @@ var k="veil:hydra-retry";
 if(sessionStorage.getItem(k))return;
 sessionStorage.setItem(k,"1");
 location.reload();
-},15000);
+},45000);
 }catch(e){}})();`,
           }}
         />

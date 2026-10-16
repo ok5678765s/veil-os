@@ -312,3 +312,20 @@ model OwnerSecret {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+// ---- Notes (viewer-scoped scratchpad — replaced the Updates app) ----
+// Quick thoughts saved straight from the dock. Scoped to the pseudonymous
+// viewer id (same as history/FreeTube), so notes never leak across
+// browsers. Autosaved from the Notes overlay with debounce.
+
+model Note {
+  id        String   @id @default(cuid())
+  viewer    String   @default("default")
+  title     String   @default("")
+  body      String   @default("")
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([viewer, updatedAt])
+}

@@ -241,8 +241,8 @@ export function NewTab({
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Search the web or type a URL…"
-              aria-label="URL or search query"
+              placeholder="Search the web…"
+              aria-label="Search or enter a web address"
               spellCheck={false}
               autoCapitalize="none"
               autoComplete="off"

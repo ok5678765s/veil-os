@@ -25,6 +25,7 @@ interface Shortcut {
 
 const LANDING: Shortcut[] = [
   { keys: ["/"], label: "Focus the search bar" },
+  { keys: ["Esc"], label: "Close the open app overlay" },
   { keys: ["?"], label: "Open this shortcuts dialog" },
 ];
 
@@ -37,7 +38,7 @@ const BROWSING: Shortcut[] = [
   { keys: ["Ctrl", "W"], label: "Close the active tab" },
   { keys: ["Ctrl", "Tab"], label: "Next tab" },
   { keys: ["Ctrl", "Shift", "Tab"], label: "Previous tab" },
-  { keys: ["Esc"], label: "Exit to the start page" },
+  { keys: ["Esc"], label: "Reveal the control bar (stays on the page)" },
   { keys: ["?"], label: "Open this shortcuts dialog" },
 ];
 

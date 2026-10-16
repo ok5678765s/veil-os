@@ -244,7 +244,15 @@ export function BrowserView({
     };
     const onVeilMouse = (e: MessageEvent) => {
       const d = e.data as { __veil?: 1; type?: string; d?: { y?: number } } | undefined;
-      if (d && d.__veil === 1 && d.type === "mouse" && typeof d.d?.y === "number" && d.d.y <= 120) {
+      if (!d || d.__veil !== 1) return;
+      if (d.type === "mouse" && typeof d.d?.y === "number" && d.d.y <= 120) {
+        revealBar();
+      }
+      // Escape pressed inside the veiled page surfaces the control bar —
+      // runtime.ts's original intent. The page keeps the keystroke for its
+      // own menus/dialogs; the shell NEVER treats a relayed Esc as a
+      // "go home" (that was the reset-to-start-page bug).
+      if (d.type === "esc") {
         revealBar();
       }
     };

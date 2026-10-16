@@ -26,7 +26,7 @@ import { ChatSection } from "@/components/veil/chat-section";
 import { MusicSection } from "@/components/veil/music-section";
 import { WallpapersSection } from "@/components/veil/wallpapers-section";
 import { SettingsSection } from "@/components/veil/settings-section";
-import { UpdatesSection } from "@/components/veil/updates-section";
+import { NotesSection } from "@/components/veil/notes-section";
 import { LinksSection, HistorySection } from "@/components/veil/start-sections";
 import { VeilMusicPlayer } from "@/components/veil/veil-player";
 import { PresenceHeartbeat } from "@/components/veil/presence-heartbeat";
@@ -94,7 +94,7 @@ function activeTarget(tab: Tab | null): string {
   return tab.stack[tab.idx] ?? "";
 }
 
-const SECTIONS: SectionId[] = ["ai", "arcade", "stream", "chat", "wallpapers", "music", "links", "history", "updates", "settings"];
+const SECTIONS: SectionId[] = ["ai", "arcade", "stream", "chat", "wallpapers", "music", "links", "history", "notes", "settings"];
 
 export default function Home() {
   const [tabs, setTabs] = React.useState<Tab[]>([]);
@@ -158,17 +158,6 @@ export default function Home() {
     setSection(id);
   }, []);
   const closeSection = React.useCallback(() => setSection(null), []);
-
-  // Cross-section jump: the Updates app (Veil AI) fires this when the owner
-  // clicks "open it in the Arcade" on a freshly installed app — the arcade
-  // overlay opens (mounting it if needed) and its own listener swaps to the
-  // Apps tab. The pending-tab flag in sessionStorage covers the case where
-  // the arcade mounts only AFTER this event fired.
-  React.useEffect(() => {
-    const onOpenArcadeApps = () => openSection("arcade");
-    window.addEventListener("veil:open-arcade-apps", onOpenArcadeApps);
-    return () => window.removeEventListener("veil:open-arcade-apps", onOpenArcadeApps);
-  }, [openSection]);
 
   // Keep the reopen hint in sync — removed the moment the section closes.
   // The first run is skipped: on a reload-restore the mount pass still
@@ -579,16 +568,15 @@ export default function Home() {
       // their messages must never drive the browser tab state.
       if (isArcadeSource(e.source)) return;
 
-      if (d.type === "home-request" || d.type === "esc") {
-        // "esc" — Escape pressed inside the veiled page (capture-phase
-        // relay from the injected control script; the iframe owns focus so
-        // the parent's own listener never sees it). The engine filters
-        // fullscreen/dialog Escapes, but a race can still land one here
-        // while an iframe-fullscreen exit is in flight — if the document
-        // is fullscreen at all, stand down. (This was the "Veil randomly
-        // dumped me on the start page" report: exiting a fullscreen video
-        // must never kill the whole session.)
-        if (d.type === "esc" && document.fullscreenElement) return;
+      if (d.type === "home-request") {
+        // The veiled page's shell button (or an explicit home ask). NOTE:
+        // the old "esc" relay used to live here — one Escape pressed
+        // inside a veiled page (closing a YouTube menu, a search dropdown,
+        // any custom modal) nuked EVERY tab and dumped the user on the
+        // start page. That was the "it constantly reloads / brings me
+        // back to the main screen" bug. Escape inside a page now belongs
+        // 100% to the page — browser.tsx only uses the relay to surface
+        // the control bar (runtime.ts's original intent).
         home();
         return;
       }
@@ -667,7 +655,8 @@ export default function Home() {
 
   // ----- global keyboard -----
   // Home: "/" focuses the command bar (handled inside StartPage), "?" opens
-  // the shortcuts overlay. Esc: close a section, else leave browse mode.
+  // the shortcuts overlay. Esc: close a section overlay ONLY — never the
+  // browse session (stray Escapes inside pages must stay harmless).
   // Browse: browser.tsx owns F / Alt+arrows / Ctrl+L / Ctrl+T / Ctrl+Tab.
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -694,10 +683,11 @@ export default function Home() {
           closeSection();
           return;
         }
-        if (mode === "browse" && !typing) {
-          e.preventDefault();
-          home();
-        }
+        // Browse mode: Escape is DELIBERATELY a no-op now. Pages use Esc
+        // for their own menus/dialogs constantly (YouTube dropdowns, custom
+        // modals) — a stray Esc wiping every open tab was the "kicked back
+        // to the main screen" bug. The chrome's Home button remains the
+        // explicit exit.
         return;
       }
       if (mode !== "home" || section) return;
@@ -811,8 +801,8 @@ export default function Home() {
             onHistoryChanged={() => void refreshHistory()}
           />
         );
-      case "updates":
-        return <UpdatesSection onBack={closeSection} />;
+      case "notes":
+        return <NotesSection onBack={closeSection} />;
       case "settings":
         return <SettingsSection onBack={closeSection} />;
     }

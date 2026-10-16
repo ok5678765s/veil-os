@@ -38,11 +38,11 @@ import {
   Lock,
   Loader2,
   MapPin,
-  Megaphone,
   MessageCircle,
   MonitorPlay,
   Moon,
   Music,
+  NotebookPen,
   Package,
   RotateCcw,
   Search,
@@ -87,7 +87,7 @@ export type SectionId =
   | "music"
   | "links"
   | "history"
-  | "updates"
+  | "notes"
   | "settings";
 
 interface StartPageProps {
@@ -966,7 +966,7 @@ export function StartPage({
     { id: "music", label: "Music", icon: Music },
     { id: "links", label: "Links", icon: Globe },
     { id: "history", label: "History", icon: HistoryIcon },
-    { id: "updates", label: "Updates", icon: Megaphone },
+    { id: "notes", label: "Notes", icon: NotebookPen },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -983,7 +983,7 @@ export function StartPage({
     music: "text-purple-400", // purple (user-specified)
     links: "text-green-400", // mint green
     history: "text-sky-300", // light blue
-    updates: "text-emerald-300", // emerald — site news
+    notes: "text-emerald-300", // emerald — quick thoughts
     settings: "text-zinc-400", // gray (user-specified)
   };
 
@@ -1208,8 +1208,8 @@ export function StartPage({
             spellCheck={false}
             autoCapitalize="none"
             autoComplete="off"
-            aria-label="URL or search query"
-            placeholder="Type a URL, search the web, or find a title…"
+            aria-label="Search or enter a web address"
+            placeholder="Search the web…"
             className="peer h-[52px] w-full rounded-2xl border border-white/10 bg-black/45 py-4 pl-11 pr-12 text-[15px] text-zinc-100 shadow-[0_24px_48px_rgba(0,0,0,0.5)] backdrop-blur-md outline-none transition placeholder:text-zinc-600 focus:border-emerald-500/50 focus:shadow-[0_24px_48px_rgba(0,0,0,0.5),0_0_0_3px_rgba(16,185,129,0.15)]"
           />
           {!input && (

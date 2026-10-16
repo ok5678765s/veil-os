@@ -1935,7 +1935,7 @@ function CommentsPanel({ videoId, sheet = false }: { videoId: string; /** sheet 
         <span className="min-w-0 flex-1">
           <span className="block text-[13.5px] font-semibold text-zinc-100">Comments</span>
           <span className="block text-[11.5px] text-zinc-500">
-            {count > 0 ? `${fmtCount(count)} on YouTube — read only` : "read-only, straight through the veil"}
+            {count > 0 ? `${fmtCount(count)} on YouTube — read only` : "read-only"}
           </span>
         </span>
         {loading && <Loader2 aria-hidden className="size-4 shrink-0 animate-spin text-zinc-500" />}
@@ -9003,7 +9003,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                   setQuery(e.target.value);
                   setSearchGate(null);
                 }}
-                placeholder="Search YouTube — results play straight through the veil…"
+                placeholder="Search YouTube…"
                 aria-label="Search YouTube"
                 spellCheck={false}
                 autoCapitalize="none"
