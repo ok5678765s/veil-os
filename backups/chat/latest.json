@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-16T20:09:22.143Z",
+  "exportedAt": "2026-10-16T23:20:49.903Z",
   "counts": {
     "accounts": 53,
-    "messages": 80,
+    "messages": 81,
     "dms": 1
   },
   "accounts": [
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 144,
+      "coins": 145,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1842,6 +1842,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T15:46:22.098Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvblck260001ltsbay1u3jy3",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "yall they are group chats and dms and updates just click the #general",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-16T23:20:48.270Z",
       "editedAt": null
     }
   ],
