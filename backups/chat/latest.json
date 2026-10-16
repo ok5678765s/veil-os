@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-16T23:21:58.376Z",
+  "exportedAt": "2026-10-16T23:26:03.687Z",
   "counts": {
     "accounts": 53,
-    "messages": 83,
+    "messages": 84,
     "dms": 1
   },
   "accounts": [
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 147,
+      "coins": 148,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1875,6 +1875,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T23:21:28.570Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvblipev000dltsbqmo1m1f1",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "also i will add a bvutton for friends groups and dm to make it easier",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-16T23:25:35.143Z",
       "editedAt": null
     }
   ],
