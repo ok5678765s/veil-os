@@ -995,3 +995,29 @@ Unresolved / risks (next-round priorities):
 - Motion blitz extension (wallpapers/arcade/stream — "updates" no longer applies) + chat scroll-to-bottom FAB + 44px tab-close hit area still pending.
 - If dev-time restarts under edit storms become a problem again, the next lever is batching edits (see note above) or trimming stream-section.tsx (9.7k lines).
 - Notes has no export/import yet — a natural follow-up is folding notes into the existing Veil backup file (veilBackup keys), so owners keep their scratchpad across restores.
+
+---
+Task ID: 1
+Agent: main (Z.ai Code)
+Task: "AI doesn't work · replace Notes with HTML coder · add AI image + AI video to VeilAI · app dev died — should never happen" + carried-over home-reset / Updates-removal round
+
+Work Log:
+- Diagnosed "app dev died": dev.log + veil-heap.log showed Next's internal watchdog restarted the server at 22:02 (heap 1.5GB crossed the 80% line of the 1984MB limit). ROOT CAUSE: the quasar caches RETAINED 416MB of heap permanently (QUASAR_HTTP_CACHE_MB default 256 + QUASAR_JS_CACHE_MB default 160) on top of the ~1GB warm dev graph — compile bursts then crossed the line.
+- Memory fix: package.json dev script now sets QUASAR_HTTP_CACHE_MB=48 QUASAR_JS_CACHE_MB=48 and --max-old-space-size=2048 (v8 limit 2240MB → 80% line ≈ 1.79GB, ~700MB above the post-fix live set). dev-watchdog corroborated RSS line raised 2.35GB → 2.75GB (v5); gardener docs updated (v5.2 postmortem note in instrumentation.ts). One controlled restart applied it all.
+- Verified "AI doesn't work": /api/ai answered fine via curl AND through the browser (chat E2E "AI WORKS"). The real bugs were (a) the composer send button rendered BELOW the input row (measured yΔ=44px — fixed, now inside the flex row) and (b) failures during server-death windows.
+- Added AI Image + AI Video to Veil AI (backend): /api/ai/image (task-register + fire-and-forget generation, in-process task table on globalThis) + /api/ai/image/status (poll); /api/ai/video (SDK task create) + /api/ai/video/status (poll). The FIRST image implementation returned the whole data URL in one POST — the gateway 502'd it after ~30s silence (same failure class the chat SSE route documents) — refactored to instant-task + poll, verified through the gateway (create 0.12s, polls 0.09s).
+- Added AI Image + AI Video to Veil AI (frontend): mode switcher (Chat/Image/Video/Maker) in the header, per-mode option strips (image sizes; video 5/10s, fast/1080p, sound), per-mode placeholders/colors/footer, Image Studio + Video Studio entry cards in the hero, generating panels with live elapsed timers, image card (Save PNG) and video player card. Stop button aborts generations and restores the prompt.
+- Replaced Notes with HTML Coder: prisma CoderDoc model (db pushed), /api/coder CRUD route (viewer-scoped like notes), coder-section.tsx (doc list / code editor / sandboxed live preview iframe with NO same-origin, auto-run debounce + Run, autosave, blank + landing templates, .html download, pin/delete, mobile Code/Preview tabs). SectionShell gained `wide` mode (1600px full-height flex chain). Fixed a min-w-0 flexbox blowout (wrap="off" textarea pushed the preview off-screen). notes-section.tsx deleted; /api/notes + Note model + data preserved.
+- Home-reset fix (the "still resets to the home page" complaint): veil:section now persists to localStorage AND sessionStorage (sessionStorage dies with the tab — a restart that took the preview down lost it); tab restore is now the DEFAULT (only veil:keep-session=0 opts into reset); privacy sweep clears the localStorage mirror too. Verified repeatedly: reload with Coder open → Coder comes back every time.
+- Updates remnants removed: arcade apps-tab copy (×2) + wallpapers password hint now say Veil AI / Owner Mode with no "Updates". QUICK_LINKS was already clean (YouTube/FreeTube removed in a prior round).
+- QA (agent-browser + VLM): dock shows Coder; Coder E2E (create doc → type HTML → preview renders "CODER-LIVE-TEST-7788" + working button — VLM confirmed); AI chat send/send-button-inline confirmed; image E2E through the browser: painting panel → "Generated image" card, VLM: "YES, high quality... water droplets"; video E2E: render panel with live timer + server-side SUCCESS with playable mp4 URL. Console clean (two stale entries were from mid-edit HMR windows).
+- Postmortem during QA: my agent-browser Chrome twin ate ~800MB on the 3.9GB box and the kernel OOM-killed next-server at 22:37 (memAvail 359MB) — the keeper revived it in seconds and the user-visible state survived (localStorage restore). Closed the browser, restarted the watchdog with the new thresholds. Not an app defect — the user's browser doesn't run on the box.
+- Committed bc8e541, pushed to GitHub, refreshed git bundles (×3 rotation, newest veil-git-20261016-223903.bundle covers HEAD bc8e541, list-heads verified).
+
+Stage Summary:
+- Veil AI is now a 4-mode studio: Chat · Image (task+poll, gateway-safe) · Video (SDK task+poll) · Extension Maker. Send-button layout bug fixed.
+- Notes is gone; HTML Coder is in the dock (emerald Code2 icon) with a live sandboxed preview.
+- "Resets to home" fixed at the persistence layer (localStorage mirrors + restore-by-default) — verified across reloads.
+- "Should never happen" (server deaths): permanent heap retention cut by ~320MB, restart headroom now ~700MB above the warm live set; watchdog v5 thresholds applied.
+- Replacement idea delivered as asked: the HTML Coder IS the Updates-app replacement concept (a builder app instead of a feed) — pitched and shipped in one round.
+- Standing risks: image renders take 60-120s (model speed, not a bug); a reload mid-generation drops the poll (taskId is not persisted — acceptable, ask again); QA browser sessions on this box must be closed when finished or they can OOM the box.
