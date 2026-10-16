@@ -955,3 +955,43 @@ Unresolved / risks:
 - Dev-mode heap still creeps to ~1.2GB warm (75% of the internal 1587MB restart line) — after hours of heavy use a Next-internal restart can still fire; the sessionStorage restore now makes those survivable, but if they become frequent the next lever is trimming the giant section bundles (stream-section.tsx is 9k lines) or raising the cap.
 - The chat coin log showed the logged-in "Veil" token with role "member" and a non-operator account id (cmmu20ppm…) — there may be a SECOND account whose username matches case-insensitively ("veil"). Login worked with the operator password but displayed OWNER in the UI — worth a quick check of duplicate usernames next round.
 - Motion blitz extension (wallpapers/arcade/stream/updates) + chat scroll-to-bottom FAB + 44px tab-close hit area still pending from earlier rounds.
+
+---
+Task ID: 1 (this round, single-agent)
+Agent: main agent (Z.ai Code)
+Task: "still reset to the home page" — massive bugfix + remove the Updates app + propose/implement a replacement
+
+Work Log:
+- Root-caused the reset-to-home bug: THREE Escape paths called home() (which wipes every open tab):
+  1. page.tsx onMessage: relayed iframe "esc" → home() — fired whenever a veiled page used Esc on its OWN custom UI (YouTube menus/dropdowns/modals the engine's fullscreen/<dialog> filters don't catch). This was the user-time killer.
+  2. page.tsx global keydown: parent-window Esc in browse mode → home().
+  3. (search-request → home() kept — that's the bot-wall button, intentional.)
+- FIXES (commit cd410fb, pushed to origin/main):
+  - page.tsx: relayed "esc" is now IGNORED by the shell; browser.tsx uses it only to reveal the control bar (runtime.ts's stated intent, finally true).
+  - page.tsx: parent Esc in browse mode = deliberate no-op; Esc still closes section overlays (non-destructive — sections stay mounted). Chrome's "Exit veil" button is the explicit exit (verified working).
+  - keyboard-help.tsx: Esc docs updated ("Reveal the control bar (stays on the page)" in browse, "Close the open app overlay" on start).
+  - layout.tsx: hydration watchdog 15s → 45s — heavy first loads on slow devices crossed 15s and self-reloaded mid-use (the literal "constant reload" component).
+- Updates app REMOVED (owner request): updates-section.tsx (1,333 lines), /api/updates route, dock entry, page.tsx wiring, veil:open-arcade-apps listener. Dead landing.tsx (742 lines, zero importers) also deleted. SiteUpdate/DevRequest prisma models + DB rows kept (harmless, no schema change).
+- REPLACEMENT = NOTES (viewer-scoped scratchpad, emerald dock slot where Updates was):
+  - prisma Note model (viewer/title/body/pinned/timestamps, db:push'd) + /api/notes CRUD (GET/POST/PATCH/DELETE, viewer-scoped, 200-note cap).
+  - notes-section.tsx: searchable list (pinned first, recently-edited), editor with 900ms debounced autosave + save-state pill + word count, pin toggle, two-tap delete, empty states, mobile-stacked layout, framer-motion list animations.
+- Copy cleanup (prior request, conservative): "Type a URL, search the web, or find a title…" → "Search the web…" (start page); "Search the web or type a URL…" → "Search the web…" (new tab); "Search YouTube — results play straight through the veil…" → "Search YouTube…" (stream, desktop+mobile); comments subtitle "read-only, straight through the veil" → "read-only". ALL feature descriptions elsewhere untouched per "not features description".
+- (False alarm resolved: prisma schema "corrupted" @@index lines were terminal escape-sequence mangling in grep output — od -c proved the file is clean.)
+- Server restarts seen during this round (21:40 watchdog planned restart under REAL box pressure RSS 2.6GB+MemAvail 582MB, 21:44 worker relaunch) were self-inflicted EDIT-STORM compile pressure, not user-time restarts. Normal-use heap sits 850-1100MB, far below the 1434MB internal line. NOTE FOR REVIEW AGENTS: batch your file edits into as few writes as possible — every edit batch recompiles and stacks heap.
+- QA (agent-browser via preview gateway + VLM):
+  - Dock shows Notes, no Updates. Notes: create → type → autosave PATCH 200 → reload → SECTION AUTO-REOPENED + note persisted. VLM: sidebar/editor/save-pill/word-count all present, "no layout problems".
+  - Browse mode (Wikipedia veiled): 3x parent Esc + 1 in-frame Esc → session INTACT (iframe alive). Exit-veil home button works.
+  - Placeholder verified live; zero console/page errors; mobile 390px + desktop layouts VLM-verified clean.
+- bunx eslint on all 8 touched files: clean. Bundles: fresh full-history veil-git-20261016-2150.bundle covers HEAD cd410fb (list-heads verified), rotation pruned to ×3.
+
+Stage Summary:
+- The "kicked back to the main screen" bug is dead at the root: Esc can no longer destroy a browse session — verified live with repeated Escapes in both focus contexts.
+- Updates app gone; Notes app live in its place (owner-scoped data survives reloads, autosaves).
+- Copy de-veiled on search surfaces only; feature descriptions intact.
+- Commit cd410fb pushed; bundles current.
+
+Unresolved / risks (next-round priorities):
+- The duplicate "veil" chat account question from the prior round is still open (login showed OWNER but member-role account id cmmu20ppm…).
+- Motion blitz extension (wallpapers/arcade/stream — "updates" no longer applies) + chat scroll-to-bottom FAB + 44px tab-close hit area still pending.
+- If dev-time restarts under edit storms become a problem again, the next lever is batching edits (see note above) or trimming stream-section.tsx (9.7k lines).
+- Notes has no export/import yet — a natural follow-up is folding notes into the existing Veil backup file (veilBackup keys), so owners keep their scratchpad across restores.
