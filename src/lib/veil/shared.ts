@@ -13,8 +13,10 @@ const VIEWER_RE = /^[A-Za-z0-9_-]{6,64}$/;
  * Stable per-browser viewer id. Priority:
  *   1. url ?vv= param   (shareable/offline links)
  *   2. localStorage     (stamped by /api/viewer on first load)
+ *   3. veil_viewer cookie (server-stamped — a cleared localStorage must
+ *      not orphan the viewer's server-side session/history mirror)
  * The server also recognizes these and falls back to an IP+UA hash, so the
- * id converges even if localStorage was cleared.
+ * id converges even if both stores are gone.
  */
 export function getViewerId(): string {
   if (typeof window === "undefined") return "server";
@@ -26,6 +28,17 @@ export function getViewerId(): string {
     }
     const stored = localStorage.getItem(VIEWER_KEY);
     if (stored && VIEWER_RE.test(stored)) return stored;
+    // localStorage was cleared (or this is a storage-partitioned frame):
+    // adopt the id the server stamped as a cookie so the session mirror,
+    // history and notes survive the wipe instead of resetting to a fresh
+    // anonymous viewer (the "cleared storage → home screen" hole).
+    if (typeof document !== "undefined" && document.cookie) {
+      const m = /(?:^|;\s*)veil_viewer=([A-Za-z0-9_-]{6,64})/.exec(document.cookie);
+      if (m) {
+        localStorage.setItem(VIEWER_KEY, m[1]);
+        return m[1];
+      }
+    }
     const fresh = "v-" + uid().replace(/-/g, "").slice(0, 12);
     localStorage.setItem(VIEWER_KEY, fresh);
     return fresh;

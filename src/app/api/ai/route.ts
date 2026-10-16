@@ -60,72 +60,13 @@ const bodySchema = z.object({
     )
     .min(1)
     .max(40),
-  /** "ext" → Extension Maker mode: the assistant builds a single
-   *  self-contained HTML app and the server extracts it as a structured
-   *  { name, desc, icon, html } extension payload the caller can install. */
-  make: z.literal("ext").optional(),
   /** stream: true → Server-Sent Events instead of one JSON blob. Long
-   *  builds (Extension Maker) can take 30-90s; a silent connection gets
-   *  cut by outer proxies which answer with an HTML error page the
-   *  client then fails to parse ("Unexpected token '<'"). The stream
-   *  sends deltas as they arrive plus a 4s heartbeat so the pipe never
-   *  idles. */
+   *  replies can take a while; a silent connection gets cut by outer
+   *  proxies which answer with an HTML error page the client then fails
+   *  to parse ("Unexpected token '<'"). The stream sends deltas as they
+   *  arrive plus a 4s heartbeat so the pipe never idles. */
   stream: z.boolean().optional(),
 });
-
-/* ── Extension Maker ───────────────────────────────────────────────────
- * Veil's offline file grows through VEIL-EXT packages: one HTML file
- * carrying a manifest + base64 app assets. The Extension Maker asks the
- * model for ONE self-contained app page; the frontend wraps it into a
- * package client-side and installs it through the same channel as the
- * hand-built packs. */
-const EXT_SYSTEM_PROMPT = [
-  "You are Veil AI in Extension Maker mode. The user describes an app or game; you build it as ONE complete, self-contained HTML page that becomes a Veil extension.",
-  "",
-  "Output format (follow EXACTLY):",
-  "1. One short intro sentence (max 2 lines, no heading, no bullet list).",
-  "2. Then ONE fenced code block tagged html containing the ENTIRE app — nothing after the closing fence.",  
-  "3. The first line inside the block, right after <!doctype html>, must be a metadata comment:",
-  "   <!-- veil-ext {\"name\":\"Short Name\",\"desc\":\"One-line description\",\"icon\":\"icon\"} -->",
-  "   icon must be ONE of: bot, joypad, image, globe, dices, search, spark, calc, trophy, zap, timer, brush, pen, filetext, monitor, key, palette, worm, bomb, music, heart, desktop, play, archive, package.",
-  "",
-  "Hard rules for the app page:",
-  "- Zero external requests: no CDN, no fetch, no import, no web fonts, no images from the web. Inline <style> and <script> only.",
-  "- Dark theme (zinc/neutral palette, a single emerald or violet accent), fully responsive, works on touch AND keyboard.",
-  "- <!doctype html> + <html lang=\"en\"> + <meta charset=\"utf-8\"> + <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> + <title> + <meta name=\"description\">.",
-  "- localStorage (guarded with try/catch) for scores/settings; safe if storage is unavailable.",
-  "- No alert()/confirm()/prompt(); use inline UI. No external libraries.",
-  "- Aim for a genuinely fun/usable, polished app: real game loop, real state, restart, score/progress, win/lose states where sensible. Roughly 150-600 lines.",
-  "- The page runs inside a sandboxed iframe (srcdoc): never rely on window.top, never navigate away.",
-  "",
-  "If the request is unclear, pick a reasonable interpretation and build it — never answer with questions instead of the code block.",
-].join("\n");
-
-/** A reply that started writing an app page but never finished it —
- *  the model hit its output cap mid-code (finish_reason: length).
- *  Returns true when the doc/fence is still open, so the server can
- *  issue a continuation round instead of handing the client a broken
- *  build (the old failure mode: "stuck at N KB" or a raw code dump). */
-function looksTruncated(t: string): boolean {
-  const s = t.trim();
-  if (!s) return false;
-  if (/<\/html>/i.test(s)) return false;
-  if (/<!doctype html/i.test(s)) return true;
-  const first = s.indexOf("```");
-  return first !== -1 && s.indexOf("```", first + 3) === -1;
-}
-
-/** Join an original reply with its continuation, dropping the overlap the
- *  model usually repeats (it re-sends the last line or two before going
- *  on). Char-by-char up to 400 chars — cheap and precise enough. */
-function mergeContinuation(a: string, b: string): string {
-  const bb = b.replace(/^\s+/, "");
-  const max = Math.min(400, a.length, bb.length);
-  for (let n = max; n >= 40; n--) {
-    if (a.slice(-n) === bb.slice(0, n)) return a + bb.slice(n);
-  }
-  return a + bb;
-}
 
 /* Watchdogs. Without them a stalled upstream hangs the SSE pipe forever:
  * the heartbeat keeps the CLIENT connection "alive", so nobody ever
@@ -143,7 +84,6 @@ const UPSTREAM_SILENCE_MS = 150_000;
 const CREATE_TIMEOUT_MS = 75_000;
 const TOTAL_CAP_MS = 6 * 60_000;
 const HARD_DEADLINE_MS = TOTAL_CAP_MS + 60_000;
-const CONTINUATION_ROUNDS = 2;
 
 /* (The create() watchdog used to live here — it moved into
  * lib/veil/llm-client.ts so EVERY attempt of a retried call gets its
@@ -238,92 +178,6 @@ function emitDelta(
   }
 }
 
-/** The instruction that makes the model resume a truncated build without
- *  restarting the whole page (repetition is trimmed by mergeContinuation). */
-const CONTINUE_PROMPT = [
-  "Your previous message was cut off before the page was finished.",
-  "Continue the HTML app from EXACTLY the point where you stopped.",
-  "Output ONLY the continuation — never repeat the intro, never restart the page, no commentary.",
-  "Finish the remaining markup/script and close the document with </html>.",
-].join(" ");
-
-/** The reply that answers a build request with prose only (a known model
- *  quirk: intro, no code). One nudge makes it actually build; without this
- *  the user had to notice and re-ask manually. */
-const NUDGE_PROMPT = [
-  "You answered without building anything.",
-  "Build it now, following the output format exactly:",
-  "one short intro sentence, then ONE fenced ```html code block containing the ENTIRE self-contained app page, nothing after the closing fence.",
-].join(" ");
-
-/** Second-stage nudge — the model answered the FIRST nudge with yet
- *  another description (observed live: two intros merged, no code, no
- *  card). This one forbids everything that is not the code block. */
-const NUDGE_HARD_PROMPT = [
-  "That reply STILL contained no code block — you described the app again.",
-  "Reply now with EXACTLY two things and nothing else: one short intro line, then ONE fenced ```html code block containing the complete self-contained app page.",
-  "No more description, no summary, no apologies. The code block or nothing.",
-].join(" ");
-
-/** Pull the app out of an Extension Maker reply.
- * Handles the documented fenced-block shape AND the fence-less raw page
- * some model turns produce (anchored on the veil-ext comment or the
- * doctype) — a missing ``` must never cost the install card.
- * Returns { ext: {name, desc, icon, html} } or null. */
-function parseExtReply(reply: string): { name: string; desc: string; icon: string; html: string } | null {
-  const src = String(reply || "");
-  const fence = /```(?:html)?\s*\n([\s\S]*?)```/.exec(src);
-  let html = fence ? fence[1].trim() : "";
-
-  if (html.length < 400) {
-    /* fence-less: anchor on the metadata comment, else the LAST doctype
-       (an intro sentence may precede either) and cut to </html> */
-    let start = -1;
-    const metaAll = /<!--\s*veil-ext\s*\{[\s\S]*?\}\s*-->/.exec(src);
-    if (metaAll) start = metaAll.index;
-    if (start === -1) start = src.toLowerCase().lastIndexOf("<!doctype html");
-    if (start !== -1) {
-      const end = src.toLowerCase().lastIndexOf("</html>");
-      if (end !== -1 && end > start) {
-        let cut = src.slice(start, end + 7).trim();
-        const docIn = cut.toLowerCase().indexOf("<!doctype html");
-        if (docIn > 0) cut = cut.slice(docIn).trim();
-        if (cut.length >= 400) html = cut;
-      }
-    }
-  }
-  if (html.length < 400) return null;
-
-  let name = "";
-  let desc = "";
-  let icon = "spark";
-  const meta = /<!--\s*veil-ext\s*(\{[\s\S]*?\})\s*-->/.exec(html) || /<!--\s*veil-ext\s*(\{[\s\S]*?\})\s*-->/.exec(src);
-  if (meta) {
-    try {
-      const j = JSON.parse(meta[1]) as { name?: string; desc?: string; icon?: string };
-      if (typeof j.name === "string") name = j.name.trim().slice(0, 40);
-      if (typeof j.desc === "string") desc = j.desc.trim().slice(0, 140);
-      if (typeof j.icon === "string" && /^[a-z0-9]+$/i.test(j.icon)) icon = j.icon.toLowerCase();
-    } catch {
-      /* fall through to <title> */
-    }
-  }
-  const title = /<title>([^<]{1,80})<\/title>/i.exec(html);
-  if (!name && title) name = title[1].trim().slice(0, 40);
-  if (!name) name = "AI Extension";
-  if (!desc) {
-    const md = /<meta\s+name=["']description["']\s+content=["']([^"']{1,200})["']/i.exec(html);
-    desc = md ? md[1].trim().slice(0, 140) : "Made by Veil AI";
-  }
-
-  // The metadata comment is packaging metadata, not page content — strip it
-  // from the app HTML so it never shows up in the running app's DOM.
-  html = html.replace(/<!--\s*veil-ext\s*\{[\s\S]*?\}\s*-->/, "").trim();
-
-  return { name, desc, icon, html };
-}
-
-
 /* ── attachments ───────────────────────────────────────────────────────
  * Map the request history to LLM messages. The LAST user message may
  * carry inline images (multimodal content parts — the model actually
@@ -406,7 +260,6 @@ export async function POST(req: Request): Promise<Response> {
 
   // Keep the tail of the conversation for context.
   const history = parsed.data.messages.slice(-20);
-  const maker = parsed.data.make === "ext";
   const wantStream = parsed.data.stream === true;
   // Images on the last user message → the multimodal (vision) endpoint.
   const hasImages = (() => {
@@ -432,9 +285,8 @@ export async function POST(req: Request): Promise<Response> {
       const enc = new TextEncoder();
       const stream = await create<AsyncIterable<unknown>>(
         {
-          messages: toLlmMessages(history, maker ? EXT_SYSTEM_PROMPT : SYSTEM_PROMPT),
+          messages: toLlmMessages(history, SYSTEM_PROMPT),
           stream: true,
-          ...(maker ? { max_tokens: 16384 } : {}),
         },
         { createTimeoutMs: CREATE_TIMEOUT_MS }
       );
@@ -469,7 +321,7 @@ export async function POST(req: Request): Promise<Response> {
            * code path was left to send an error. */
           const hardTimer = setTimeout(() => {
             if (closed) return;
-            send({ error: "the build ran past the total time limit — ask again to rebuild it" });
+            send({ error: "the reply ran past the total time limit — ask again" });
             closed = true;
             clearInterval(heart);
             try {
@@ -479,116 +331,14 @@ export async function POST(req: Request): Promise<Response> {
             }
           }, HARD_DEADLINE_MS);
 
-          const started = Date.now();
           let full = "";
-          /* finish_reason from the stream's final chunk — "length" means
-           * the output cap truncated the build even if the text otherwise
-           * looks complete enough to fool the heuristics. */
-          let finishReason: string | null = null;
           try {
-            full = await consumeStream(
-              stream,
-              (d) => send({ delta: d }),
-              (r) => {
-                finishReason = r;
-              }
-            );
-
-            /* Auto-repair a maker reply, server-side and transparent:
-             *   ① nudge — the model answered with prose only (no code at all)
-             *   ② continue — the code started but was cut off mid-page
-             * Both reuse the client's live streaming bubble; the {done}
-             * frame carries whichever full text ends up holding the app. */
-            if (maker) {
-              if (
-                !looksTruncated(full) &&
-                !parseExtReply(full) &&
-                Date.now() - started < TOTAL_CAP_MS
-              ) {
-                /* Intro-only reply: up to two nudges, the second much
-                 * blunter — the model sometimes answers the first nudge
-                 * with ANOTHER description instead of the code. */
-                for (
-                  let round = 0;
-                  round < 2 && Date.now() - started < TOTAL_CAP_MS;
-                  round++
-                ) {
-                  send({ continuing: 1 });
-                  const nudge = await llmCreate<AsyncIterable<unknown>>(
-                    {
-                      messages: [
-                        { role: "system", content: EXT_SYSTEM_PROMPT },
-                        ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-                        { role: "assistant", content: full.slice(0, 4000) },
-                        { role: "user", content: round === 0 ? NUDGE_PROMPT : NUDGE_HARD_PROMPT },
-                      ],
-                      stream: true,
-                      max_tokens: 16384,
-                    },
-                    { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS }
-                  );
-                  const more = await consumeStream(
-                    nudge,
-                    (d) => send({ delta: d }),
-                    (r) => {
-                      finishReason = r;
-                    }
-                  );
-                  if (more.trim()) {
-                    /* If the nudged reply contains the app, it IS the reply
-                     * (a merge would show two intros); else keep whatever
-                     * came. */
-                    if (parseExtReply(more)) {
-                      full = more;
-                      break;
-                    }
-                    full = mergeContinuation(full, more);
-                  }
-                  if (parseExtReply(full)) break;
-                }
-              }
-
-              for (
-                let round = 0;
-                round < CONTINUATION_ROUNDS &&
-                (looksTruncated(full) || (finishReason === "length" && !parseExtReply(full))) &&
-                Date.now() - started < TOTAL_CAP_MS;
-                round++
-              ) {
-                send({ continuing: 1 });
-                const cont = await llmCreate<AsyncIterable<unknown>>(
-                  {
-                    messages: [
-                      { role: "system", content: EXT_SYSTEM_PROMPT },
-                      ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-                      { role: "assistant", content: full.slice(-16000) },
-                      { role: "user", content: CONTINUE_PROMPT },
-                    ],
-                    stream: true,
-                    max_tokens: 16384,
-                  },
-                  { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS }
-                );
-                const more = await consumeStream(
-                  cont,
-                  (d) => send({ delta: d }),
-                  (r) => {
-                    finishReason = r;
-                  }
-                );
-                if (!more.trim()) break;
-                full = mergeContinuation(full, more);
-              }
-            }
+            full = await consumeStream(stream, (d) => send({ delta: d }));
 
             if (!full.trim()) {
               send({ error: "the assistant returned nothing" });
             } else {
-              send({
-                done: 1,
-                reply: full,
-                ...(maker ? { ext: parseExtReply(full) } : {}),
-              });
+              send({ done: 1, reply: full });
             }
           } catch (e) {
             const message = e instanceof Error ? e.message.slice(0, 200) : "unknown error";
@@ -623,8 +373,7 @@ export async function POST(req: Request): Promise<Response> {
       choices?: { message?: { content?: string }; delta?: { content?: string } }[];
       usage?: unknown;
     }>({
-      messages: toLlmMessages(history, maker ? EXT_SYSTEM_PROMPT : SYSTEM_PROMPT),
-      ...(maker ? { max_tokens: 16384 } : {}),
+      messages: toLlmMessages(history, SYSTEM_PROMPT),
     })) as { choices?: { message?: { content?: string }; delta?: { content?: string } }[]; usage?: unknown };
 
     let content =
@@ -636,47 +385,9 @@ export async function POST(req: Request): Promise<Response> {
       return cors(NextResponse.json({ error: "the assistant returned nothing" }, { status: 502 }));
     }
 
-    // Truncated builds get the same auto-repair treatment as streaming.
-    if (maker) {
-      // ① intro-only nudge
-      if (!looksTruncated(content) && !parseExtReply(content)) {
-        const nudge = (await llmCreate<{
-          choices?: { message?: { content?: string } }[];
-        }>({
-          messages: [
-            { role: "system", content: EXT_SYSTEM_PROMPT },
-            ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-            { role: "assistant", content: content.slice(0, 4000) },
-            { role: "user", content: NUDGE_PROMPT },
-          ],
-          max_tokens: 16384,
-        }, { attempts: 2 })) as { choices?: { message?: { content?: string } }[] };
-        const more = nudge.choices?.[0]?.message?.content ?? "";
-        if (more.trim()) content = parseExtReply(more) ? more : mergeContinuation(content, more);
-      }
-      // ② truncated-code continuation
-      for (let round = 0; round < CONTINUATION_ROUNDS && looksTruncated(content); round++) {
-        const cont = (await llmCreate<{
-          choices?: { message?: { content?: string } }[];
-        }>({
-          messages: [
-            { role: "system", content: EXT_SYSTEM_PROMPT },
-            ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-            { role: "assistant", content: content.slice(-16000) },
-            { role: "user", content: CONTINUE_PROMPT },
-          ],
-          max_tokens: 16384,
-        }, { attempts: 2 })) as { choices?: { message?: { content?: string } }[] };
-        const more = cont.choices?.[0]?.message?.content ?? "";
-        if (!more.trim()) break;
-        content = mergeContinuation(content, more);
-      }
-    }
-
     return cors(
       NextResponse.json({
         reply: content,
-        ...(maker ? { ext: parseExtReply(content) } : {}),
         usage: completion.usage ?? null,
       })
     );

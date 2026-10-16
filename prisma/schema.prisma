@@ -343,3 +343,22 @@ model CoderDoc {
 
   @@index([viewer, updatedAt])
 }
+
+// ---- Veil session sync (the "different place" permanent fix) ----
+// The open section + browser tabs live ONLY in localStorage/sessionStorage
+// on the client — a different browser, device or a cleared storage always
+// landed on the home screen. This row mirrors the live session server-side,
+// scoped to the same pseudonymous viewer id as history/notes, so any
+// browser that carries the viewer identity (cookie, ?vv= link or the
+// Settings › Browsing Veil Key) reopens exactly where the user left off.
+// A missing row simply means "home screen" — no migration of old state.
+// keep=false mirrors the Settings › Browsing privacy opt-out: those
+// viewers get no server-side mirror at all (the row is deleted).
+
+model VeilSession {
+  viewer    String   @id
+  section   String?
+  tabs      String   @default("")
+  keep      Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}

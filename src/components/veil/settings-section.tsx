@@ -30,6 +30,7 @@ import {
   CalendarDays,
   Check,
   Cookie,
+  Copy,
   Database,
   Download,
   EyeOff,
@@ -654,6 +655,207 @@ function AppearanceTab() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Session sync card — the "different place" fix's cross-device side  */
+/* ------------------------------------------------------------------ */
+
+function SessionSyncCard() {
+  const [veilKey, setVeilKey] = React.useState("");
+  const [copied, setCopied] = React.useState<"" | "key" | "link">("");
+  const [pullValue, setPullValue] = React.useState("");
+  const [pulling, setPulling] = React.useState(false);
+  const [pullErr, setPullErr] = React.useState("");
+
+  React.useEffect(() => {
+    let dead = false;
+    fetch("/api/veil-session", { cache: "no-store", headers: viewerHeaders() })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { viewer?: string } | null) => {
+        if (!dead && typeof d?.viewer === "string") setVeilKey(d.viewer);
+      })
+      .catch(() => {
+        /* card still renders — just without the key */
+      });
+    return () => {
+      dead = true;
+    };
+  }, []);
+
+  const copy = async (what: "key" | "link") => {
+    const text =
+      what === "key"
+        ? veilKey
+        : `${typeof window !== "undefined" ? window.location.origin : ""}/?vv=${encodeURIComponent(veilKey)}`;
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(what);
+      window.setTimeout(() => setCopied(""), 1600);
+    } catch {
+      /* clipboard blocked — the key is selectable text as a fallback */
+    }
+  };
+
+  const pull = async () => {
+    const key = pullValue.trim();
+    if (!key || pulling) return;
+    setPulling(true);
+    setPullErr("");
+    try {
+      const res = await fetch(`/api/veil-session?key=${encodeURIComponent(key)}`, {
+        cache: "no-store",
+        headers: viewerHeaders(),
+      });
+      const data = (await res.json().catch(() => null)) as {
+        ok?: boolean;
+        error?: string;
+        state?: { section?: string | null; tabs?: unknown; keep?: boolean } | null;
+      } | null;
+      if (!res.ok || !data?.ok) throw new Error(data?.error || "key not found");
+      // Guard flag: the boot's pagehide session-flush must NOT fire during
+      // this navigation — it would re-mirror the OLD page's state (this
+      // overlay open, old tabs) over the session we're about to adopt.
+      // Cleared by the boot on the other side.
+      try {
+        sessionStorage.setItem("veil:pulling", "1");
+      } catch {
+        /* private mode — best effort */
+      }
+      // Adopt the other place's viewer identity — history, notes and the
+      // session mirror all follow — then stage the session locally so the
+      // boot restore picks it up, and navigate into it.
+      try {
+        window.localStorage.setItem("veil.viewer", key);
+        if (data.state?.tabs) {
+          window.localStorage.setItem("veil:tabs:v1", JSON.stringify(data.state.tabs));
+        } else {
+          window.localStorage.removeItem("veil:tabs:v1");
+        }
+        if (typeof data.state?.section === "string") {
+          window.localStorage.setItem("veil:section", data.state.section);
+        } else {
+          window.localStorage.removeItem("veil:section");
+        }
+        if (data.state?.keep === false) {
+          window.localStorage.setItem("veil:keep-session", "0");
+        }
+      } catch {
+        /* private mode — the ?vv= identity adoption below still works */
+      }
+      window.location.replace(`/?vv=${encodeURIComponent(key)}`);
+    } catch (e) {
+      setPullErr(e instanceof Error ? e.message : "couldn't reach the session store");
+      setPulling(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.04] p-4">
+      <div className="flex items-start gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/25">
+          <Globe aria-hidden className="size-4" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] font-medium text-zinc-100">Carry your veil between places</p>
+          <p className="mt-0.5 text-[12px] leading-snug text-zinc-500">
+            Your open apps and tabs are mirrored on the server for this browser — open Veil
+            anywhere with the same key and you land right back where you left off, never the home
+            screen. On a new device: paste the key (or open the link) below once.
+          </p>
+        </div>
+        <span className="veil-text-breathe shrink-0 rounded-lg bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300 ring-1 ring-emerald-500/25">
+          Always on
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2">
+          <span className="shrink-0 text-[10.5px] font-semibold uppercase tracking-wider text-emerald-400/80">
+            Veil Key
+          </span>
+          <span
+            className="min-w-0 flex-1 truncate font-mono text-[12.5px] text-zinc-200 select-all"
+            title={veilKey || "resolving…"}
+          >
+            {veilKey || "…"}
+          </span>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => void copy("key")}
+            disabled={!veilKey}
+            className="h-9 gap-1.5 rounded-xl border-zinc-700 bg-zinc-900/60 px-3 text-[12px] text-zinc-300 hover:border-emerald-500/40 hover:text-emerald-200"
+          >
+            {copied === "key" ? (
+              <Check aria-hidden className="size-3.5 text-emerald-400" />
+            ) : (
+              <Copy aria-hidden className="size-3.5" />
+            )}
+            {copied === "key" ? "Copied" : "Copy key"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => void copy("link")}
+            disabled={!veilKey}
+            className="h-9 gap-1.5 rounded-xl border-zinc-700 bg-zinc-900/60 px-3 text-[12px] text-zinc-300 hover:border-emerald-500/40 hover:text-emerald-200"
+          >
+            {copied === "link" ? (
+              <Check aria-hidden className="size-3.5 text-emerald-400" />
+            ) : (
+              <Copy aria-hidden className="size-3.5" />
+            )}
+            {copied === "link" ? "Copied" : "Copy link"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-2.5 sm:flex-row sm:items-center">
+        <Input
+          value={pullValue}
+          onChange={(e) => {
+            setPullValue(e.target.value);
+            setPullErr("");
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              void pull();
+            }
+          }}
+          placeholder="Paste a Veil Key from another device…"
+          aria-label="Pull a session from another device with its Veil Key"
+          spellCheck={false}
+          className="h-9 flex-1 rounded-lg border-zinc-800 bg-zinc-950/70 font-mono text-[12.5px] text-zinc-200 placeholder:font-sans placeholder:text-zinc-600 focus-visible:ring-emerald-500/30"
+        />
+        <Button
+          type="button"
+          size="sm"
+          onClick={() => void pull()}
+          disabled={!pullValue.trim() || pulling}
+          className="h-9 shrink-0 gap-1.5 rounded-lg bg-emerald-500 px-3.5 text-[12px] font-semibold text-emerald-950 hover:bg-emerald-400"
+        >
+          {pulling ? (
+            <Loader2 aria-hidden className="size-3.5 animate-spin" />
+          ) : (
+            <RotateCw aria-hidden className="size-3.5" />
+          )}
+          {pulling ? "Pulling…" : "Pull session"}
+        </Button>
+      </div>
+      {pullErr && (
+        <p className="text-[11.5px] text-amber-400" role="alert">
+          {pullErr}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Browsing tab                                                         */
 /* ------------------------------------------------------------------ */
 
@@ -718,6 +920,9 @@ function BrowsingTab() {
           Same-tab restore
         </span>
       </div>
+
+      {/* Cross-place session sync — server mirror + Veil Key */}
+      <SessionSyncCard />
     </div>
   );
 }

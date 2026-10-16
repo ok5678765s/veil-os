@@ -117,6 +117,10 @@ export default function Home() {
     (window as unknown as { __veilHydrated?: boolean }).__veilHydrated = true;
     try {
       sessionStorage.removeItem("veil:hydra-retry");
+      // A just-finished session pull (Settings › Browsing) left this flag
+      // so the old page's pagehide flush wouldn't stomp the staged
+      // session — the navigation has landed, clear it.
+      sessionStorage.removeItem("veil:pulling");
     } catch {
       /* private mode */
     }
@@ -278,6 +282,92 @@ export default function Home() {
     }
   }, []);
 
+  // ----- cross-place session restore (server mirror) -----
+  // localStorage is PER-BROWSER: opening Veil somewhere else — a different
+  // device, a different browser, cleared storage — always used to land on
+  // the home screen. The server mirrors the live session scoped to the
+  // pseudonymous viewer id (same one as history), so when the local stores
+  // had NOTHING we adopt the server's copy: the exact section + tabs come
+  // back. Local state always wins when present (fresher for this browser).
+  const serverSync = React.useRef({ ready: false, ok: false });
+  const [serverReady, setServerReady] = React.useState(false);
+  React.useEffect(() => {
+    let cancelled = false;
+    // Did the local stores hold anything? (The restore effect above ran
+    // first — same commit — so reading the keys here is safe.)
+    const hadLocal = (() => {
+      try {
+        return Boolean(
+          sessionStorage.getItem("veil:crash-tabs") ||
+            localStorage.getItem(STORAGE_KEY) ||
+            sessionStorage.getItem("veil:section") ||
+            localStorage.getItem("veil:section")
+        );
+      } catch {
+        return false;
+      }
+    })();
+    void (async () => {
+      try {
+        const res = await fetch("/api/veil-session", { cache: "no-store", headers: viewerHeaders() });
+        if (!res.ok) throw new Error("http");
+        const data = (await res.json()) as {
+          state?: {
+            section?: string | null;
+            tabs?: { tabs: Tab[]; activeId?: string | null } | null;
+            keep?: boolean;
+          } | null;
+        } | null;
+        if (cancelled) return;
+        serverSync.current.ok = true;
+        const st = data?.state;
+        if (!hadLocal && st && st.keep !== false) {
+          let restoredAny = false;
+          if (Array.isArray(st.tabs?.tabs)) {
+            const valid = st.tabs.tabs.filter(
+              (t) => t && typeof t.id === "string" && Array.isArray(t.stack) && t.stack.length > 0
+            );
+            if (valid.length) {
+              setTabs(valid.slice(0, 8).map(normTab));
+              const a =
+                st.tabs.activeId && valid.some((t) => t.id === st.tabs.activeId)
+                  ? st.tabs.activeId
+                  : valid[0].id;
+              setActiveId(a);
+              restoredAny = true;
+              try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs: valid.slice(0, 8), activeId: a }));
+              } catch {
+                /* best effort */
+              }
+            }
+          }
+          if (typeof st.section === "string" && (SECTIONS as string[]).includes(st.section)) {
+            setOpened((prev) => (prev.has(st.section!) ? prev : new Set([...prev, st.section!])));
+            setSection(st.section);
+            restoredAny = true;
+          }
+          if (restoredAny) {
+            try {
+              if (typeof st.section === "string") localStorage.setItem("veil:section", st.section);
+            } catch {
+              /* best effort */
+            }
+          }
+        }
+      } catch {
+        /* offline / degraded — local behavior unchanged */
+      } finally {
+        serverSync.current.ready = true;
+        if (!cancelled) setServerReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      serverSync.current.ready = true;
+    };
+  }, []);
+
   // ----- persist session -----
   React.useEffect(() => {
     if (!hydrated) return;
@@ -294,6 +384,72 @@ export default function Home() {
       /* storage may be unavailable */
     }
   }, [tabs, activeId, hydrated]);
+
+  // ----- session mirror push (debounced + pagehide flush) -----
+  // Every change to the open section / tabs re-mirrors the session on the
+  // server (1.2s debounce). The Settings › Browsing "Start page" privacy
+  // choice (veil:keep-session=0) sends keep:false → the server drops the
+  // mirror entirely. A failed boot GET never blind-wipes an existing row:
+  // empty state is only pushed once the sync is known-good.
+  const keepSessionLive = React.useCallback(() => {
+    try {
+      return window.localStorage.getItem("veil:keep-session") !== "0";
+    } catch {
+      return true;
+    }
+  }, []);
+  const buildSessionPayload = React.useCallback(() => {
+    return JSON.stringify({
+      section,
+      tabs: tabs.length ? { tabs, activeId } : null,
+      keep: keepSessionLive(),
+    });
+  }, [section, tabs, activeId, keepSessionLive]);
+  React.useEffect(() => {
+    if (!serverReady || !hydrated) return;
+    if (!serverSync.current.ok && tabs.length === 0 && !section) return; // don't wipe blind
+    const t = setTimeout(() => {
+      fetch("/api/veil-session", {
+        method: "POST",
+        headers: { "content-type": "application/json", ...viewerHeaders() },
+        body: buildSessionPayload(),
+      }).catch(() => {
+        /* best effort — the next change retries */
+      });
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [tabs, activeId, section, hydrated, serverReady, buildSessionPayload]);
+  // pagehide flush — keepalive survives the unload, so closing the tab
+  // mid-debounce still lands the last state on the server.
+  const sessionFlushRef = React.useRef<() => void>(() => {});
+  React.useEffect(() => {
+    sessionFlushRef.current = () => {
+      if (!serverReady || !hydrated) return;
+      // A session pull is navigating away right now — its staged state is
+      // the truth; flushing the old page's state would overwrite it.
+      try {
+        if (sessionStorage.getItem("veil:pulling") === "1") return;
+      } catch {
+        /* best effort */
+      }
+      if (!serverSync.current.ok && tabs.length === 0 && !section) return;
+      try {
+        void fetch("/api/veil-session", {
+          method: "POST",
+          keepalive: true,
+          headers: { "content-type": "application/json", ...viewerHeaders() },
+          body: buildSessionPayload(),
+        });
+      } catch {
+        /* best effort */
+      }
+    };
+  }, [tabs, activeId, section, hydrated, serverReady, buildSessionPayload]);
+  React.useEffect(() => {
+    const onHide = () => sessionFlushRef.current();
+    window.addEventListener("pagehide", onHide);
+    return () => window.removeEventListener("pagehide", onHide);
+  }, []);
 
   // ----- history persistence (viewer-scoped via headers/cookie) -----
   const refreshHistory = React.useCallback(async () => {

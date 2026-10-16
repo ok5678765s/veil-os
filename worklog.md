@@ -1021,3 +1021,36 @@ Stage Summary:
 - "Should never happen" (server deaths): permanent heap retention cut by ~320MB, restart headroom now ~700MB above the warm live set; watchdog v5 thresholds applied.
 - Replacement idea delivered as asked: the HTML Coder IS the Updates-app replacement concept (a builder app instead of a feed) — pitched and shipped in one round.
 - Standing risks: image renders take 60-120s (model speed, not a bug); a reload mid-generation drops the poll (taskId is not persisted — acceptable, ask again); QA browser sessions on this box must be closed when finished or they can OOM the box.
+
+---
+Task ID: 2
+Agent: main (Z.ai Code)
+Task: "when somebody opens veil on a different place it resets to home screen — permanent fix" + "remove extension maker"
+
+Work Log:
+- Root-caused the cross-place reset: the session (open section + tabs) lived ONLY in localStorage/sessionStorage — per-browser stores. A different device/browser/cleared storage = empty stores = home screen, no matter what the same-browser fixes did.
+- Built the server-side session mirror (the permanent fix):
+  - Prisma VeilSession model (viewer-scoped, like history/notes) — db pushed.
+  - /api/veil-session route: GET (viewer-resolved + cookie stamp; ?key=<viewer> pulls another place's session), POST (hard-sanitized upsert: section whitelisted, ≤8 tabs × ≤24 http(s)/freetube urls ≤2KB, titles ≤200, container/egress/ua/pinned/muted normalized, reloadKey forced 0), DELETE. keep:false (Settings › Browsing "Start page" privacy opt-out) DELETES the row — no mirror for opt-out viewers. 180-day prune on 5% of writes. Fixed a missing NextResponse import caught by live testing (500 on ?key=).
+  - page.tsx boot: after the local restore, if the local stores had NOTHING → GET the mirror → restore tabs + section (server state staged back into localStorage so every other restore path sees it). Local state always wins when present.
+  - Push: 1.2s debounced POST on every section/tabs change + a keepalive pagehide flush (closing the tab mid-debounce still lands). A failed boot GET never blind-wipes an existing row (empty state only pushes once the sync is known-good).
+  - getViewerId() now adopts the server-stamped veil_viewer cookie BEFORE minting a fresh id — a cleared localStorage no longer orphans the viewer's server-side session/history (the "cleared storage → fresh anonymous → home screen" hole).
+  - Settings › Browsing gained the "Carry your veil between places" card: Veil Key display + Copy key / Copy link (origin/?vv=<key>) + "Paste a Veil Key from another device" pull input. Pulling adopts the viewer identity (history/notes/session all follow), stages the session, and navigates via ?vv=.
+  - Pull-stomp fix found during QA: the old page's pagehide flush could re-mirror ITS state over the just-staged pulled session. Fixed with a sessionStorage veil:pulling guard flag (set by the pull, checked by the flush, cleared by the boot) + location.replace instead of href+reload.
+- Removed the Extension Maker (owner request):
+  - ai-section.tsx: Maker mode button, entry card, status strip, ExtCard/ExtCodeDialog/ExtIcon/EXT_ICONS, maker state + snapshot/restore wiring, maker branches in Bubble (live-build panel, safety nets ① ②, ExtCard render), post()/send()/retry() makeExt plumbing, violet placeholder/border/send-button/footer variants, 19 now-unused lucide imports — all gone. Mode switcher is Chat · Image · Video.
+  - api/ai/route.ts: make:"ext" schema field, EXT_SYSTEM_PROMPT, looksTruncated/mergeContinuation, CONTINUE/NUDGE/NUDGE_HARD prompts, parseExtReply, the streaming nudge/continuation repair loops and the JSON-path equivalents removed. ext-maker.ts lib KEPT (ai-operator + offline packaging still import it).
+- QA (agent-browser + VLM, via the preview domain):
+  - Fresh boot renders home; Veil AI opens; mode switcher = Chat/Image/Video; VLM confirmed no Maker UI anywhere.
+  - Cross-place simulation: wiped localStorage+sessionStorage → reload → the AI section restored from the SERVER (staged back into localStorage). VLM-verified screenshot.
+  - Pull flow: pulled v-testsync123's key from Settings → browser adopted the identity and restored its Wikipedia browsing tab (iframe rendered the real page — VLM confirmed "correctly rendered").
+  - Cookie adoption: cleared storage → hard reload → viewer re-adopted from the cookie → server session restored (Wikipedia tab back).
+  - AI chat E2E after the post() refactor: "Reply with exactly: session sync test OK" → exact reply. API paths tested via curl: save/restore/pull/bogus-key(404)/malformed-key(400)/privacy-clear.
+  - Escape still closes sections; close-tab still returns home.
+- bunx eslint clean on page.tsx, ai-section.tsx, settings-section.tsx, shared.ts, api/ai/route.ts, api/veil-session/route.ts.
+
+Stage Summary:
+- The home-screen reset is fixed at the IDENTITY layer, not just the storage layer: the session follows the viewer across devices (Veil Key / ?vv= link), across storage wipes (cookie adoption), and across restarts (server mirror). Never the home screen again unless it's a genuinely first visit.
+- Extension Maker fully removed from Veil AI (UI + API mode); the ext-maker lib remains only for the operator chat + offline file packaging.
+- Known benign quirk: restoring a session that had BOTH a section and tabs lands in browse mode with the section alive behind it (matching the pre-existing local-restore semantics); exiting browse re-reveals the section — consistent with "where you left off".
+- Follow-ups if wanted: chat-account token could ride the mirror too (auto log-in on a pulled place — deliberately NOT done: auth token sensitivity); image/video generation taskIds are still per-visit (a reload mid-render drops the poll).
