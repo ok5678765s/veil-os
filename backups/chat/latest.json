@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-16T15:44:55.831Z",
+  "exportedAt": "2026-10-16T15:46:29.600Z",
   "counts": {
     "accounts": 52,
-    "messages": 79,
+    "messages": 80,
     "dms": 1
   },
   "accounts": [
@@ -936,7 +936,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 101,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1813,6 +1813,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T14:37:30.735Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvb545ci0002ltdb72yndu1x",
+      "channelId": "main",
+      "accountId": "cmvb51qeu0000ltdbvqhiqk43",
+      "content": "y'all's who got more proxies",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-16T15:46:22.098Z",
       "editedAt": null
     }
   ],
