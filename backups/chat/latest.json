@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T01:20:16.073Z",
+  "exportedAt": "2026-10-17T01:36:31.266Z",
   "counts": {
-    "accounts": 54,
-    "messages": 81,
+    "accounts": 53,
+    "messages": 93,
     "dms": 3
   },
   "accounts": [
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 145,
+      "coins": 162,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -961,24 +961,6 @@
       "legacy": false,
       "createdAt": "2026-10-16T20:09:17.732Z",
       "passwordHash": "$2b$10$QgIfzT69Qoqr/EsROGG.huy2833c5dgbU2YevcI4n39Q1dKqvoaBa"
-    },
-    {
-      "id": "cmvbp8tie0008lt7t7rbgn2xo",
-      "username": "gametest_qa",
-      "displayName": "Game QA",
-      "avatarColor": "#f39c12",
-      "avatarImage": null,
-      "bio": "",
-      "role": "member",
-      "muted": false,
-      "banned": false,
-      "coins": 100,
-      "tag": null,
-      "tagColor": null,
-      "pfpAccessory": null,
-      "legacy": false,
-      "createdAt": "2026-10-17T01:09:52.359Z",
-      "passwordHash": "$2b$10$JGETk5PR7f.I.fVdJoAFa.J208IpJacNgT8KItDVavJxUWMyrTecm"
     }
   ],
   "messages": [
@@ -1872,6 +1854,138 @@
       "replyToUsername": null,
       "createdAt": "2026-10-16T23:25:35.143Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvbq6wiu0001ltxqgbyswn9d",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:22.566Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6ws00005ltxq4t0zk7sc",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:22.896Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6x560009ltxqsv3n3gem",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:23.371Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6xja000dltxq31ad012r",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:23.879Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6xtw000hltxqvcdfj4y7",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:24.260Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6y8m000lltxqqgcib1ot",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:24.790Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6y8o000nltxqgq493hbf",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:24.793Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6yna000tltxq1901qtvh",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:25.319Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6ytt000xltxqkfh6dqxd",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:25.553Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6zd40011ltxqehy5yimi",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:26.248Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq6zsd0015ltxqdza2hjxf",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:26.797Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq703z0019ltxqyo11ae9b",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:36:27.216Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -1893,7 +2007,7 @@
       "id": "cmvbpm2mi0001ltao18wr2j8d",
       "name": null,
       "isGroup": false,
-      "ownerId": "cmuu20ppm0005jkxecvmo7qpu",
+      "ownerId": null,
       "createdAt": "2026-10-17T01:20:10.694Z"
     }
   ],
@@ -1913,27 +2027,8 @@
     {
       "dmId": "cmvbn5oa80005ltg2y1fpoa8u",
       "accountId": "cmv7j4j6u000dr7bux9lflbkd"
-    },
-    {
-      "dmId": "cmvbpm2mi0001ltao18wr2j8d",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu"
-    },
-    {
-      "dmId": "cmvbpm2mi0001ltao18wr2j8d",
-      "accountId": "cmvbp8tie0008lt7t7rbgn2xo"
     }
   ],
-  "friends": [
-    {
-      "accountId": "cmvbp8tie0008lt7t7rbgn2xo",
-      "friendId": "cmuu20ppm0005jkxecvmo7qpu",
-      "createdAt": "2026-10-17T01:09:52.561Z"
-    },
-    {
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "friendId": "cmvbp8tie0008lt7t7rbgn2xo",
-      "createdAt": "2026-10-17T01:09:52.563Z"
-    }
-  ],
+  "friends": [],
   "reactions": []
 }
