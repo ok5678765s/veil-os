@@ -3,11 +3,12 @@
 /**
  * Veil — offline download button (RE-ENABLED).
  *
- * Serves download/veil-offline.html — the single-file "living room" build
- * (chat + players + friends/DMs/groups + streak) that runs from file://
- * and talks back to its birth origin. The download is password-gated by
- * /api/offline (?verify=1&pw=… checks first, then the attachment URL),
- * and the origin is stamped into the file in-flight by the API route.
+ * Serves download/veil-offline.html — the single-file build of the whole
+ * site (AI, Stream, Chat with friends/DMs/groups/games, Music, Wallpapers,
+ * Links, History, Coder, Settings) that runs from file:// and talks back
+ * to its birth origin. The download is password-gated by /api/offline
+ * (?verify=1&pw=… checks first, then the attachment URL), and the origin
+ * is stamped into the file in-flight by the API route.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -120,9 +121,9 @@ export function OfflineDownload({
                 Offline veil — one HTML file
               </p>
               <p className="mt-0.5 text-[10.5px] leading-snug text-white/45">
-                The living room as a single file: chat, players with live
-                online dots, friends, DMs, groups and your daily streak —
-                straight from your device.
+                The whole site as a single file: AI, Stream with
+                recommendations, Chat with friends, DMs and games, Music,
+                Wallpapers and more — straight from your device.
               </p>
             </div>
             <button

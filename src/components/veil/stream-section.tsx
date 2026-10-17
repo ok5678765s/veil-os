@@ -2445,15 +2445,93 @@ function VideoCard({
             {ageLabel(card.published)}
           </p>
           {card.why && (
-            <p
-              className="mt-1.5 inline-flex max-w-full items-center gap-1 truncate rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10.5px] font-medium text-emerald-300/80 ring-1 ring-emerald-500/20"
-              title={card.why}
-            >
-              <Sparkles aria-hidden className="size-3 shrink-0" />
-              <span className="truncate">{card.why}</span>
+            <p className="mt-1 truncate text-[11.5px] text-zinc-500" title={card.why}>
+              {card.why}
             </p>
           )}
         </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Related card — the compact "Up next" row (the watch page's rail)    */
+/* ------------------------------------------------------------------ */
+
+/** YouTube's related row: small thumb left, two-line title, channel and
+ * views stacked right. One click plays; the channel line opens the
+ * channel without starting the video. */
+function RelatedCard({
+  card,
+  index,
+  onWatch,
+  onChannel,
+}: {
+  card: YtCard;
+  index: number;
+  onWatch: (id: string, card: YtCard) => void;
+  onChannel?: (id: string, name: string) => void;
+}) {
+  const reduceMotion = useReducedMotion();
+  /* NOTE: role=button div, same reason as VideoCard — the channel line
+   * inside is a real <button> and button-in-button is invalid HTML. */
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onWatch(card.id, card);
+    }
+  };
+  return (
+    <motion.div
+      role="button"
+      tabIndex={0}
+      initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, delay: Math.min(index * 0.03, 0.3) }}
+      onClick={() => onWatch(card.id, card)}
+      onKeyDown={onKeyDown}
+      aria-label={`Watch ${card.title} by ${card.author}`}
+      className="group flex cursor-pointer gap-2.5 rounded-xl p-1 text-left outline-none transition hover:bg-zinc-800/40 focus-visible:ring-2 focus-visible:ring-rose-500/40"
+    >
+      <div className="veil-hover-lift relative aspect-video w-[160px] shrink-0 overflow-hidden rounded-lg bg-zinc-800/80 ring-1 ring-zinc-800/60 transition group-hover:ring-zinc-700/80">
+        <Thumb src={card.thumb} alt={card.title} />
+        {card.live ? (
+          <span className="absolute bottom-1.5 right-1.5 flex items-center gap-1 rounded bg-rose-600/95 px-1 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+            <Radio aria-hidden className="size-2.5" /> live
+          </span>
+        ) : card.durationSec > 0 ? (
+          <span className="absolute bottom-1.5 right-1.5 rounded bg-black/85 px-1 py-0.5 text-[10.5px] font-semibold tabular-nums text-zinc-100">
+            {fmtTime(card.durationSec)}
+          </span>
+        ) : null}
+      </div>
+      <div className="min-w-0 flex-1 py-0.5 pr-1">
+        <h4 className="line-clamp-2 text-[13px] font-medium leading-snug text-zinc-100">{card.title}</h4>
+        {card.authorId && onChannel ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onChannel(card.authorId, card.author);
+            }}
+            aria-label={`Open channel: ${card.author}`}
+            className="mt-1 flex max-w-full items-center gap-1 rounded text-[11.5px] text-zinc-400 transition hover:text-zinc-100"
+          >
+            <span className="truncate">{card.author}</span>
+            {card.verified && <BadgeCheck aria-label="verified channel" className="size-3 shrink-0 text-zinc-500" />}
+          </button>
+        ) : (
+          <p className="mt-1 flex items-center gap-1 text-[11.5px] text-zinc-400">
+            <span className="truncate">{card.author}</span>
+            {card.verified && <BadgeCheck aria-label="verified channel" className="size-3 shrink-0 text-zinc-500" />}
+          </p>
+        )}
+        <p className="mt-0.5 truncate text-[11px] tabular-nums text-zinc-500">
+          {card.views > 0 && <>{fmtCount(card.views)} views</>}
+          {card.views > 0 && card.published && <span className="mx-1">·</span>}
+          {ageLabel(card.published)}
+        </p>
       </div>
     </motion.div>
   );
@@ -2974,7 +3052,6 @@ function attachAdaptiveCombo(
 function StreamPlayer({
   initialCard,
   video,
-  more,
   onWatch,
   onChannel,
   onEnded,
@@ -2983,9 +3060,6 @@ function StreamPlayer({
 }: {
   initialCard: YtCard | null;
   video: YtVideo | null;
-  /** contextual cards — fill the "Up next" rail when the video answer
-   * carries no recommendations (gate-window bodies). */
-  more: YtCard[];
   onWatch: (id: string, card: YtCard | null) => void;
   onChannel: (id: string, name: string) => void;
   /** marathon: a playlist is playing — advance on ended (loop off). */
@@ -3872,23 +3946,6 @@ function StreamPlayer({
 
       {/* ── comments (read-only YouTube threads) ── */}
       {meta.id && <CommentsPanel videoId={meta.id} />}
-
-      {/* ── related ── */}
-      {(() => {
-        /* gate-window bodies can arrive with no recommendations — the
-         * browsing context fills the rail so "Up next" never vanishes */
-        const related = video && video.related.length > 0 ? video.related : more;
-        return related.length > 0 ? (
-          <section aria-label="Related videos" className="mt-8">
-            <h3 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-zinc-500">Up next</h3>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {related.slice(0, 12).map((c, i) => (
-                <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={onWatch} onChannel={onChannel} />
-              ))}
-            </div>
-          </section>
-        ) : null;
-      })()}
     </div>
   );
 }
@@ -8456,7 +8513,6 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
   }, [feed, subsWire, foryouSignals, rankSeed]);
 
   const foryouCards = foryouRank?.cards ?? null;
-  const foryouProfile = foryouRank?.profile ?? null;
 
   /* ---- For You filter chips (YouTube-home style) — client-side slices
    * of the personalized feed: everything, just your subs' uploads, the
@@ -8957,6 +9013,18 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
   const useRelay = relayEngaged || relayNeeded;
   const relayHealed = relayEngaged && !relayNeeded; // native body landed mid-relay
 
+  /* ---- "Up next" — the watch page's related rail. YouTube keeps it
+   * BESIDE the player (a sticky right column on wide screens, a grid
+   * under the video everywhere else). The relay + gate surfaces keep
+   * their own inline rails, so this feeds the native watch only. */
+  const upNext = React.useMemo(() => {
+    if (!watchId || useRelay) return [];
+    if (video && "related" in video && video.related.length > 0) return video.related.slice(0, 12);
+    const fallback = shownCards.filter((c) => c.id !== watchId).slice(0, 12);
+    if (fallback.length > 0) return fallback;
+    return videoMeta && videoMeta.related.length > 0 ? videoMeta.related.slice(0, 12) : [];
+  }, [watchId, useRelay, video, videoMeta, shownCards]);
+
   /* latch: the moment a watch needs the relay it stays on it — a later
    * background heal flips relayHealed (the "Play natively" offer) instead
    * of yanking the user out of a playing video. */
@@ -9096,8 +9164,10 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
       <div className="veil-scroll-slim min-h-0 flex-1 overflow-y-auto px-4 pb-16 pt-6 sm:px-6">
         {watchId ? (
           /* ── watch view (takes precedence — a video opened from a channel
-           * plays over it, and "back" returns to the channel) ── */
-          <div className="mx-auto w-full max-w-6xl">
+           * plays over it, and "back" returns to the channel). YouTube's
+           * layout: the player column owns the page and "Up next" rides a
+           * sticky rail beside it on wide screens ── */
+          <div className="mx-auto w-full max-w-6xl xl:max-w-[1440px]">
             {/* marathon strip — a playlist is playing */}
             {marathon && (() => {
               const pl = readPlaylists().find((p) => p.id === marathon.plId);
@@ -9125,11 +9195,13 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                 </div>
               );
             })()}
-            <motion.div
-              initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25 }}
-            >
+            <div className="flex items-start gap-6">
+              <motion.div
+                className="min-w-0 flex-1"
+                initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25 }}
+              >
               {videoLoading && !video ? (
                 <div>
                   <div className="aspect-video w-full animate-pulse rounded-2xl bg-zinc-800/60" />
@@ -9169,7 +9241,6 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                 <StreamPlayer
                   initialCard={watchCard}
                   video={video}
-                  more={shownCards.filter((c) => c.id !== watchId).slice(0, 12)}
                   onWatch={watch}
                   onChannel={openChannel}
                   onEnded={advanceMarathon}
@@ -9181,7 +9252,44 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                   pick a video
                 </div>
               )}
-            </motion.div>
+                {/* Up next — under the player on narrow screens; the sticky
+                    rail beside it takes over at xl */}
+                {upNext.length > 0 && (
+                  <section aria-label="Up next" className="mt-8 xl:hidden">
+                    <h3 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-zinc-500">Up next</h3>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                      {upNext.map((c, i) => (
+                        <RelatedCard
+                          key={`${c.id}-${i}`}
+                          card={c}
+                          index={i}
+                          onWatch={(id, card) => watch(id, card)}
+                          onChannel={openChannel}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </motion.div>
+              {upNext.length > 0 && (
+                <aside aria-label="Up next" className="hidden w-[402px] shrink-0 xl:block">
+                  <div className="veil-scroll-slim sticky top-1 max-h-[calc(100vh-5rem)] overflow-y-auto pb-8 pr-1">
+                    <h3 className="mb-3 pt-1 text-[13px] font-semibold uppercase tracking-wider text-zinc-500">Up next</h3>
+                    <div className="flex flex-col gap-1.5">
+                      {upNext.map((c, i) => (
+                        <RelatedCard
+                          key={`rail-${c.id}-${i}`}
+                          card={c}
+                          index={i}
+                          onWatch={(id, card) => watch(id, card)}
+                          onChannel={openChannel}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </aside>
+              )}
+            </div>
           </div>
         ) : channelView ? (
           /* ── channel view ── */
@@ -9349,66 +9457,6 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                         onReload={() => loadFeed(true)}
                         reloading={feedLoading}
                       />
-                      {/* personalization strip — the ranker's user profile in
-                          plain sight (YouTube-style "why am I seeing this?"
-                          transparency, device-side only). */}
-                      {foryouProfile && (foryouProfile.watches > 0 || foryouProfile.topChannels.length > 0) && (
-                        <div className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1.5 rounded-xl border border-zinc-800/70 bg-zinc-900/40 px-3.5 py-2.5 text-[11.5px] text-zinc-400">
-                          <span className="flex items-center gap-1.5 font-medium text-zinc-200">
-                            <Sparkles aria-hidden className="size-3.5 text-rose-400" />
-                            Ranked for you
-                          </span>
-                          <span aria-hidden className="text-zinc-600">·</span>
-                          <span className="tabular-nums">{foryouProfile.watches} watches learned</span>
-                          {foryouProfile.topChannels.length > 0 && (
-                            <>
-                              <span aria-hidden className="text-zinc-600">·</span>
-                              <span className="text-zinc-500">channels:</span>
-                              {foryouProfile.topChannels.slice(0, 3).map((c) => (
-                                <span key={c.id} className="max-w-[160px] truncate rounded-full bg-zinc-800/70 px-2 py-0.5 text-zinc-300">
-                                  {c.name}
-                                  <span className="ml-1 tabular-nums text-zinc-500">{c.weight}</span>
-                                </span>
-                              ))}
-                            </>
-                          )}
-                          {foryouProfile.topTopics.length > 0 && (
-                            <>
-                              <span aria-hidden className="text-zinc-600">·</span>
-                              <span className="text-zinc-500">topics:</span>
-                              {foryouProfile.topTopics.slice(0, 4).map((t) => (
-                                <span key={t.token} className="rounded-full bg-rose-500/10 px-2 py-0.5 text-rose-200/80 ring-1 ring-rose-500/20">
-                                  {t.token}
-                                </span>
-                              ))}
-                            </>
-                          )}
-                          {/* negative-feedback transparency — the count of
-                              hidden videos + blocked channels, so the user
-                              SEES that "Not interested" actually did
-                              something (and knows feedback is remembered) */}
-                          {(() => {
-                            const ni = niSnapshot();
-                            const nV = Object.keys(ni.videos).length;
-                            const nC = Object.keys(ni.channels).length;
-                            if (nV === 0 && nC === 0) return null;
-                            return (
-                              <>
-                                <span aria-hidden className="text-zinc-600">·</span>
-                                <span
-                                  className="flex items-center gap-1.5 rounded-full bg-zinc-800/70 px-2 py-0.5 text-zinc-300"
-                                  title="Your 'Not interested' feedback is active and feeding the ranker"
-                                >
-                                  <ThumbsDown aria-hidden className="size-3 text-zinc-500" />
-                                  <span className="tabular-nums">
-                                    {nV + nC} hidden{nC > 0 ? ` (${nC} channel${nC === 1 ? "" : "s"})` : ""}
-                                  </span>
-                                </span>
-                              </>
-                            );
-                          })()}
-                        </div>
-                      )}
                       {/* filter chips — the YouTube-home row of feed slices.
                           Sticky at the top of the scroll area on desktop. */}
                       {fyChipsVisible && (
