@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T01:37:05.443Z",
+  "exportedAt": "2026-10-17T01:38:40.455Z",
   "counts": {
     "accounts": 53,
-    "messages": 81,
+    "messages": 82,
     "dms": 3
   },
   "accounts": [
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 162,
+      "coins": 88,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1853,6 +1853,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T23:25:35.143Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbq9nqs001rltxqw18ce9vh",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "added gambling",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T01:38:31.156Z",
       "editedAt": null
     }
   ],
