@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T02:17:12.463Z",
+  "exportedAt": "2026-10-17T02:21:51.657Z",
   "counts": {
     "accounts": 54,
-    "messages": 82,
+    "messages": 83,
     "dms": 3
   },
   "accounts": [
@@ -1131,11 +1131,11 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 2500,
+      "coins": 1001,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
-      "pfpOverlay": null,
+      "pfpOverlay": "hearts",
       "dailyRewardStreak": 0,
       "lastRewardClaim": null,
       "legacy": false,
@@ -2044,6 +2044,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T01:38:31.156Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrt69m0001lts51sb3rrf5",
+      "channelId": "main",
+      "accountId": "cmvbrn2jw0000ltl8rapu9nj0",
+      "content": "heart halo on — shop testheart halo on — shop test",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:21:41.242Z",
       "editedAt": null
     }
   ],
