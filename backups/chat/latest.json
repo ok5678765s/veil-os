@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T02:14:34.531Z",
+  "exportedAt": "2026-10-17T02:15:07.820Z",
   "counts": {
-    "accounts": 54,
+    "accounts": 53,
     "messages": 82,
     "dms": 3
   },
@@ -1120,27 +1120,6 @@
       "legacy": false,
       "createdAt": "2026-10-16T20:09:17.732Z",
       "passwordHash": "$2b$10$QgIfzT69Qoqr/EsROGG.huy2833c5dgbU2YevcI4n39Q1dKqvoaBa"
-    },
-    {
-      "id": "cmvbrjpry0024ltmznu91bh63",
-      "username": "shopqa_1792203259",
-      "displayName": "Shop QA",
-      "avatarColor": "#f97316",
-      "avatarImage": null,
-      "bio": "",
-      "role": "member",
-      "muted": false,
-      "banned": false,
-      "coins": 2000,
-      "tag": null,
-      "tagColor": null,
-      "pfpAccessory": null,
-      "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
-      "legacy": false,
-      "createdAt": "2026-10-17T02:14:19.966Z",
-      "passwordHash": "$2b$10$M3LJdUmrLWJ68DjSiR/Q.OfmC1uDjKTI1TKr/43DHQn95dkTrI2fy"
     }
   ],
   "messages": [
