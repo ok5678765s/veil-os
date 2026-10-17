@@ -235,175 +235,52 @@ const CHANNELS = [
 ] as const
 
 /* ── Avatar decorations (PFP accessories) ──────────────────────────────
- * Owner refresh 2026-10-17: the old emoji accessories and the ring
- * "overlays" are RETIRED. The new catalog is built from the owner's
- * uploaded assets (public/deco-*.png — white-unmixed transparent PNGs:
- * the puppy filter and the cat ears) plus vector recreations of the
- * avatar-decoration reference sheet (magnific.com vectors + the screen
- * recording in upload/). The combined "controllers + cat ears" cell is
- * split into its four individual pieces, as requested.
+ * Owner refresh v3 (2026-10-17): every decoration is the REAL art from
+ * the owner's picker-grid screen recording (upload/Screen Recording
+ * 2026-10-16 230602.mp4), re-extracted with CORRECT cell geometry
+ * (the true ~84px content bands between the flat gutters — the previous
+ * uniform 100px grid shifted every decoration ~5% right/down) and now
+ * ANIMATED: each cell's live animation loop is exported as an animated
+ * WebP (public/deco-*.webp), so hats glow, swords charge, wolves howl.
+ * The two direct uploads (puppy filter jpg, cat ears avif) stay static.
  *
- * Each decoration = a list of parts drawn over the avatar box:
- *  - img parts: PNGs positioned by % of the avatar box
- *  - svg parts: one 100×100 viewBox mapped onto a frame inset -30% /
- *    sized 160% around the avatar, so drawings can overflow the head.
- *    Inside that space the face circle is ≈ (50,50) r31 — the top of
- *    the head sits around y≈20-26.
- * `behind` parts paint under the avatar image. Animations reuse the
- * veil-ov-* keyframes (all disabled under prefers-reduced-motion). */
+ * Positioning rules:
+ *  - FULL-CELL items (rings, hats, masks, halos): the whole 300×300
+ *    canvas maps onto a 130% frame centered on the avatar (top/left
+ *    -15%) — the picker composed its art around a centered avatar, so
+ *    the mapping is centered by construction.
+ *  - The 4-in-1 cell (row 3, col 3) is sold BOTH ways: as the combined
+ *    "VR Halo" (the whole ring with ear bumps + controllers) and as its
+ *    four individual pieces (earL/earR/contrL/contrR), each keeping its
+ *    true in-cell position mapped through the same 130% frame — wearing
+ *    all four reproduces the original composition exactly.
+ *  - COMPANIONS (wolf/bunny/sprout/blackcat) wear the full cell too —
+ *    the designer placed them beside the avatar circle — except the
+ *    black cat, whose trimmed sprite is pinned to its in-cell spot. */
 
-type DecoPart =
-  | {
-      t: "img"
-      src: string
-      top?: string
-      left?: string
-      right?: string
-      bottom?: string
-      w: string
-      rot?: number
-      behind?: boolean
-    }
-  | {
-      t: "svg"
-      node: ReactNode
-      behind?: boolean
-    }
+type DecoPart = {
+  t: "img"
+  src: string
+  top?: string
+  left?: string
+  right?: string
+  bottom?: string
+  w: string
+  behind?: boolean
+}
 
 type Decoration = { parts: DecoPart[] }
 
-/* Shared svg frame: viewBox 0 0 100 100 stretched 160% around the
- * avatar (inset -30% on every side). */
-const DECO_SVG_FRAME = { inset: "-30%", size: "160%" } as const
-
-/* Shared gradients/masks (identical in every instance — duplicate ids
- * across instances resolve to the same first def, so they are safe). */
-const DECO_DEFS = (
-  <defs>
-    <linearGradient id="deco-gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#fde68a" />
-      <stop offset="45%" stopColor="#f59e0b" />
-      <stop offset="100%" stopColor="#b45309" />
-    </linearGradient>
-    <mask id="deco-moon-cut">
-      <rect x="-10" y="-10" width="120" height="120" fill="white" />
-      <circle cx="61" cy="7" r="12.5" fill="black" />
-    </mask>
-  </defs>
-)
-
-/* One glowing orange cat ear (the left half of the split reference
- * cell). The right ear is the same art mirrored. */
-const GLOW_CAT_EAR = (
-  <g className="veil-ov-pulse" style={{ filter: "drop-shadow(0 0 3.5px #f97316)" }}>
-    <path
-      d="M13 35 Q10 12 12 4 Q12.5 0.5 16 3 L40 19 Q44 22 40 25 L22 39 Q15 42 13 35 Z"
-      fill="#f97316"
-    />
-    <path d="M19 30 L20 12 L34 23 Z" fill="#ffedd5" />
-  </g>
-)
-
-/* Joy-Cons from the split reference cell — peach left stick+dpad,
- * lavender right stick+buttons. */
-const JOYCON_L = (
-  <g transform="rotate(-8 20 50)" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.45))" }}>
-    <rect x="9" y="28" width="21" height="46" rx="10" fill="#fdba74" stroke="#c2410c" strokeWidth="1.2" />
-    <circle cx="19.5" cy="39" r="4.4" fill="#f59e0b" stroke="#c2410c" strokeWidth="0.8" />
-    <path d="M19.5 51.5 v11 M14 57 h11" stroke="#c2410c" strokeWidth="2.6" strokeLinecap="round" />
-    <circle cx="19.5" cy="57" r="2" fill="#f59e0b" />
-    <rect x="13" y="67" width="13" height="3" rx="1.5" fill="#c2410c" opacity="0.55" />
-  </g>
-)
-const JOYCON_R = (
-  <g transform="rotate(8 80 50)" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.45))" }}>
-    <rect x="70" y="28" width="21" height="46" rx="10" fill="#c4b5fd" stroke="#6d28d9" strokeWidth="1.2" />
-    <circle cx="80.5" cy="39" r="4.4" fill="#a78bfa" stroke="#6d28d9" strokeWidth="0.8" />
-    <g fill="#6d28d9">
-      <circle cx="80.5" cy="52" r="2" />
-      <circle cx="80.5" cy="62" r="2" />
-      <circle cx="75.5" cy="57" r="2" />
-      <circle cx="85.5" cy="57" r="2" />
-    </g>
-    <rect x="74" y="67" width="13" height="3" rx="1.5" fill="#6d28d9" opacity="0.55" />
-  </g>
-)
-
-/* One katana (blade + guard + wrapped handle) — two are crossed behind
- * the avatar for the "katanas" decoration. */
-const KATANA = (
-  <g>
-    <path d="M50 1 L53.5 10 L53.5 58 L46.5 58 L46.5 10 Z" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="0.9" />
-    <path d="M52.8 8 L52.8 56" stroke="#f8fafc" strokeWidth="1" />
-    <rect x="42" y="58" width="16" height="3.4" rx="1.4" fill="#b45309" />
-    <rect x="47" y="61.4" width="6" height="13" rx="2.4" fill="#7c2d12" />
-    <path d="M47 63.5 h6 M47 66.5 h6 M47 69.5 h6" stroke="#b45309" strokeWidth="0.9" />
-    <circle cx="50" cy="75.5" r="2" fill="#b45309" />
-  </g>
-)
-
-/* A little four-leaf clover used by the clover crown arc. */
-function DecoClover({ x, y, s, delay }: { x: number; y: number; s: number; delay: number }) {
-  return (
-    <g
-      transform={`translate(${x} ${y}) scale(${s})`}
-      className="veil-ov-bob"
-      style={{ animationDelay: `${delay}s` }}
-    >
-      <circle cx="-2.7" cy="-2.7" r="3" fill="#16a34a" />
-      <circle cx="2.7" cy="-2.7" r="3" fill="#22c55e" />
-      <circle cx="-2.7" cy="2.7" r="3" fill="#22c55e" />
-      <circle cx="2.7" cy="2.7" r="3" fill="#16a34a" />
-      <path d="M0 4 Q1 7 0 9.5" stroke="#15803d" strokeWidth="1.2" fill="none" />
-    </g>
-  )
-}
-
-/* One laurel branch (leaves along an arc hugging the avatar's side). */
-function DecoLaurelBranch({ mirror }: { mirror?: boolean }) {
-  const leaves = [118, 136, 154, 172, 190].map((deg, i) => {
-    const rad = (deg * Math.PI) / 180
-    return {
-      x: 50 + 33.5 * Math.cos(rad),
-      y: 50 - 33.5 * Math.sin(rad),
-      rot: 90 - deg,
-      i,
-    }
-  })
-  return (
-    <g transform={mirror ? "translate(100 0) scale(-1 1)" : undefined}>
-      <path d="M19 80 Q9 50 27 22" stroke="#15803d" strokeWidth="1.6" fill="none" />
-      {leaves.map((l) => (
-        <ellipse
-          key={l.i}
-          cx={l.x}
-          cy={l.y}
-          rx="2.3"
-          ry="4.8"
-          fill={l.i % 2 ? "#16a34a" : "#22c55e"}
-          transform={`rotate(${l.rot} ${l.x} ${l.y})`}
-        />
-      ))}
-      <circle cx="20" cy="73" r="2" fill="#ef4444" />
-      <circle cx="13.5" cy="52" r="2" fill="#ef4444" />
-    </g>
-  )
-}
-
-/* A tiny pink heart used by the sprout decoration. */
-function DecoHeart({ x, y, delay }: { x: number; y: number; delay: number }) {
-  return (
-    <g transform={`translate(${x} ${y})`} className="veil-ov-bob" style={{ animationDelay: `${delay}s` }}>
-      <path
-        d="M0 3.4 C0 3.4 -4.4 0.6 -4.4 -2.2 C-4.4 -4.2 -2.8 -4.9 -1.4 -4.3 C-0.5 -3.9 0 -3.2 0 -3.2 C0 -3.2 0.5 -3.9 1.4 -4.3 C2.8 -4.9 4.4 -4.2 4.4 -2.2 C4.4 0.6 0 3.4 0 3.4 Z"
-        fill="#f472b6"
-      />
-    </g>
-  )
+/** A decoration extracted from a full video cell — canvas maps onto a
+ *  130% frame centered on the avatar. */
+function fullCell(src: string): Decoration {
+  return {
+    parts: [{ t: "img", src, top: "-15%", left: "-15%", w: "130%" }],
+  }
 }
 
 const DECORATIONS: Record<string, Decoration> = {
-  /* ── Uploaded assets (exact, as requested) ─────────────────────── */
+  /* ── Directly uploaded by the owner (static art) ────────────────── */
   puppy: {
     parts: [
       { t: "img", src: "/deco-dog-ears.png", top: "-25%", left: "-10%", w: "120%" },
@@ -414,370 +291,74 @@ const DECORATIONS: Record<string, Decoration> = {
     parts: [{ t: "img", src: "/deco-cat-ears.png", top: "-62%", left: "-3%", w: "106%" }],
   },
 
-  /* ── The split reference cell: cat ears + joy-cons, one by one ── */
-  earL: { parts: [{ t: "svg", node: GLOW_CAT_EAR }] },
+  /* ── The 4-in-1 cell, as its four individual pieces (each on its
+   *    own side of the head — in-cell positions through the 130%
+   *    frame) plus the combined VR Halo ──────────────────────────── */
+  earL: {
+    parts: [{ t: "img", src: "/deco-earL.webp", top: "-15%", left: "-8.5%", w: "58.5%" }],
+  },
   earR: {
-    parts: [
-      { t: "svg", node: <g transform="translate(100 0) scale(-1 1)">{GLOW_CAT_EAR}</g> },
-    ],
+    parts: [{ t: "img", src: "/deco-earR.webp", top: "-15%", left: "50%", w: "58.9%" }],
   },
-  joyconL: { parts: [{ t: "svg", node: JOYCON_L }] },
-  joyconR: { parts: [{ t: "svg", node: JOYCON_R }] },
+  contrL: {
+    parts: [{ t: "img", src: "/deco-contrL.webp", top: "39.6%", left: "-15%", w: "65%" }],
+  },
+  contrR: {
+    parts: [{ t: "img", src: "/deco-contrR.webp", top: "39.6%", left: "50%", w: "65%" }],
+  },
+  vrhalo: fullCell("/deco-vrhalo.webp"),
 
-  /* ── Vector recreations from the reference sheet ───────────────── */
-  afro: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g style={{ filter: "drop-shadow(0 1.5px 2px rgba(0,0,0,0.35))" }}>
-            <path d="M17 33 A33 33 0 0 1 83 33 Z" fill="#ef4444" />
-            <path d="M22 33 A28 28 0 0 1 78 33 Z" fill="#f97316" />
-            <path d="M27 33 A23 23 0 0 1 73 33 Z" fill="#facc15" />
-            <path d="M32 33 A18 18 0 0 1 68 33 Z" fill="#4ade80" />
-            <path d="M37 33 A13 13 0 0 1 63 33 Z" fill="#22d3ee" />
-            <path d="M42 33 A8 8 0 0 1 58 33 Z" fill="#a78bfa" />
-            <circle cx="25" cy="14" r="2" fill="#fff" opacity="0.85" className="veil-ov-twinkle" />
-            <circle cx="63" cy="8" r="1.6" fill="#fff" opacity="0.7" className="veil-ov-twinkle" style={{ animationDelay: "0.7s" }} />
-          </g>
-        ),
-      },
-    ],
-  },
-  sprout: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g>
-            <path d="M50 27 Q48 16 50 8" stroke="#15803d" strokeWidth="2.6" fill="none" strokeLinecap="round" />
-            <path d="M50 16 Q40 6 32 10 Q36 20 50 16 Z" fill="#22c55e" />
-            <path d="M50 13 Q60 3 68 7 Q64 17 50 13 Z" fill="#16a34a" />
-            <DecoHeart x={29} y={2} delay={0} />
-            <DecoHeart x={70} y={1} delay={1.1} />
-          </g>
-        ),
-      },
-    ],
-  },
-  clover: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g>
-            <DecoClover x={19} y={37} s={1} delay={0} />
-            <DecoClover x={31} y={23} s={1.05} delay={0.35} />
-            <DecoClover x={50} y={18} s={1.15} delay={0.7} />
-            <DecoClover x={69} y={23} s={1.05} delay={1.05} />
-            <DecoClover x={81} y={37} s={1} delay={1.4} />
-          </g>
-        ),
-      },
-    ],
-  },
-  headset: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g>
-            <path
-              d="M21 44 Q50 13 79 44"
-              stroke="#22d3ee"
-              strokeWidth="4.5"
-              fill="none"
-              strokeLinecap="round"
-              className="veil-ov-pulse"
-              style={{ filter: "drop-shadow(0 0 3px #22d3ee)" }}
-            />
-            <rect x="12" y="40" width="12" height="19" rx="5" fill="#155e75" stroke="#22d3ee" strokeWidth="1.6" />
-            <rect x="76" y="40" width="12" height="19" rx="5" fill="#155e75" stroke="#22d3ee" strokeWidth="1.6" />
-            <circle cx="18" cy="49.5" r="2.6" fill="#67e8f9" className="veil-ov-twinkle" />
-            <circle cx="82" cy="49.5" r="2.6" fill="#67e8f9" className="veil-ov-twinkle" style={{ animationDelay: "0.5s" }} />
-          </g>
-        ),
-      },
-    ],
-  },
-  gcrown: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g style={{ filter: "drop-shadow(0 1.5px 2.5px rgba(0,0,0,0.4))" }}>
-            <path
-              d="M27 32 L23 9 Q22.6 6.5 25 8 L36 18 L48 4 Q50 1.6 52 4 L64 18 L75 8 Q77.4 6.5 77 9 L73 32 Z"
-              fill="url(#deco-gold)"
-              stroke="#b45309"
-              strokeWidth="1.4"
-            />
-            <rect x="26" y="31" width="48" height="7" rx="3" fill="#d4a017" stroke="#b45309" strokeWidth="1" />
-            <circle cx="34" cy="34.5" r="2.2" fill="#ef4444" />
-            <circle cx="50" cy="34.5" r="2.2" fill="#10b981" />
-            <circle cx="66" cy="34.5" r="2.2" fill="#a855f7" />
-            <circle cx="50" cy="12" r="1.8" fill="#fff7ed" className="veil-ov-twinkle" />
-          </g>
-        ),
-      },
-    ],
-  },
-  wolfhelm: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g>
-            <path d="M23 42 Q50 16 77 42 L72 47 Q50 26 28 47 Z" fill="#6b7280" />
-            <path d="M27 40 L19 7 Q18.6 4.4 21.2 5.8 L40 24 Z" fill="#9ca3af" stroke="#6b7280" strokeWidth="0.8" />
-            <path d="M27 40 L23.5 15 L36 25 Z" fill="#e5e7eb" />
-            <g transform="translate(100 0) scale(-1 1)">
-              <path d="M27 40 L19 7 Q18.6 4.4 21.2 5.8 L40 24 Z" fill="#9ca3af" stroke="#6b7280" strokeWidth="0.8" />
-              <path d="M27 40 L23.5 15 L36 25 Z" fill="#e5e7eb" />
-            </g>
-            <g className="veil-ov-flicker" style={{ filter: "drop-shadow(0 0 2.5px #38bdf8)" }}>
-              <polygon points="7,25 10.5,30 8.5,30 12,38 5,31.5 7.5,31.5 3.5,37" fill="#38bdf8" />
-            </g>
-            <g className="veil-ov-flicker" style={{ filter: "drop-shadow(0 0 2.5px #38bdf8)", animationDelay: "0.45s" }}>
-              <polygon points="93,25 96.5,30 94.5,30 98,38 91,31.5 93.5,31.5 89.5,37" fill="#38bdf8" />
-            </g>
-          </g>
-        ),
-      },
-    ],
-  },
-  katanas: {
-    parts: [
-      {
-        t: "svg",
-        behind: true,
-        node: (
-          <g>
-            <g transform="rotate(38 50 50)">{KATANA}</g>
-            <g transform="rotate(-38 50 50)">{KATANA}</g>
-          </g>
-        ),
-      },
-    ],
-  },
-  batmoon: {
-    parts: [
-      {
-        t: "svg",
-        behind: true,
-        node: (
-          <g style={{ filter: "drop-shadow(0 0 4px #fde047)" }}>
-            <circle cx="50" cy="15" r="15" fill="#facc15" mask="url(#deco-moon-cut)" />
-          </g>
-        ),
-      },
-      {
-        t: "svg",
-        node: (
-          <g className="veil-ov-bob">
-            <path
-              d="M50 12 Q37 4 28 10 Q33 12 31 16 Q40 13.5 47 16.5 Q48.5 17 50 16.5 Q51.5 17 53 16.5 Q60 13.5 69 16 Q67 12 72 10 Q63 4 50 12 Z"
-              fill="#18181b"
-            />
-            <ellipse cx="50" cy="12.5" rx="4" ry="5" fill="#27272a" />
-            <circle cx="48" cy="11.5" r="0.9" fill="#f97316" />
-            <circle cx="52" cy="11.5" r="0.9" fill="#f97316" />
-          </g>
-        ),
-      },
-    ],
-  },
-  portal: {
-    parts: [
-      {
-        t: "svg",
-        behind: true,
-        node: (
-          <g style={{ filter: "drop-shadow(0 0 4px #38bdf8)" }}>
-            <circle
-              cx="50"
-              cy="50"
-              r="42"
-              fill="none"
-              stroke="#0ea5e9"
-              strokeWidth="5"
-              strokeDasharray="26 10"
-              className="veil-ov-spin veil-ov-origin"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="34"
-              fill="none"
-              stroke="#38bdf8"
-              strokeWidth="2.4"
-              strokeDasharray="14 8"
-              className="veil-ov-spin-rev veil-ov-origin"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="46"
-              fill="none"
-              stroke="#7dd3fc"
-              strokeWidth="1.2"
-              opacity="0.55"
-              strokeDasharray="3 6"
-              className="veil-ov-spin-slow veil-ov-origin"
-            />
-          </g>
-        ),
-      },
-    ],
-  },
-  wreath: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g>
-            <DecoLaurelBranch />
-            <DecoLaurelBranch mirror />
-          </g>
-        ),
-      },
-    ],
-  },
-  potion: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g className="veil-ov-pulse" style={{ filter: "drop-shadow(0 0 3px #38bdf8)" }}>
-            <rect x="70" y="55" width="9" height="7" rx="1.5" fill="#92400e" />
-            <rect x="72.5" y="60" width="4" height="5" fill="#bae6fd" opacity="0.8" />
-            <circle cx="74.5" cy="74" r="12.5" fill="#e0f2fe" opacity="0.35" stroke="#7dd3fc" strokeWidth="1.6" />
-            <path d="M62.2 76 A12.5 12.5 0 0 0 86.8 76 Z" fill="#38bdf8" opacity="0.92" />
-            <g fill="#e0f2fe">
-              <circle cx="70" cy="72" r="1.6" className="veil-ov-bob" />
-              <circle cx="78" cy="69" r="1.2" className="veil-ov-bob" style={{ animationDelay: "0.6s" }} />
-              <circle cx="75" cy="79" r="1" className="veil-ov-bob" style={{ animationDelay: "1.1s" }} />
-            </g>
-          </g>
-        ),
-      },
-    ],
-  },
-  y2025: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g>
-            <text
-              x="50"
-              y="93"
-              textAnchor="middle"
-              fontSize="16.5"
-              fontWeight="900"
-              fill="url(#deco-gold)"
-              stroke="#b45309"
-              strokeWidth="0.45"
-              style={{ fontFamily: "inherit", letterSpacing: "0.5px" }}
-            >
-              2025
-            </text>
-            <g className="veil-ov-twinkle" fill="#fde68a">
-              <path d="M26 83 l1.2 2.6 2.6 1.2 -2.6 1.2 -1.2 2.6 -1.2 -2.6 -2.6 -1.2 2.6 -1.2 Z" />
-              <path d="M74 81 l1 2.2 2.2 1 -2.2 1 -1 2.2 -1 -2.2 -2.2 -1 2.2 -1 Z" />
-            </g>
-          </g>
-        ),
-      },
-    ],
-  },
-  santa: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g style={{ filter: "drop-shadow(0 1.5px 2px rgba(0,0,0,0.35))" }}>
-            <path d="M27 33 Q38 12 72 5 Q68 16 65 25 Q46 34 27 33 Z" fill="#dc2626" />
-            <path d="M23 34 Q46 23 69 26 L67.5 33.5 Q45 31 25.5 42 Z" fill="#f8fafc" />
-            <g className="veil-ov-bob">
-              <circle cx="72.5" cy="6.5" r="4.6" fill="#f8fafc" />
-              <circle cx="75.5" cy="14.5" r="2.8" fill="#f59e0b" stroke="#b45309" strokeWidth="0.7" />
-              <circle cx="75.5" cy="17.8" r="1" fill="#78350f" />
-            </g>
-          </g>
-        ),
-      },
-    ],
-  },
-  headdress: {
-    parts: [
-      {
-        t: "svg",
-        node: (
-          <g style={{ filter: "drop-shadow(0 1px 2.5px rgba(0,0,0,0.4))" }}>
-            <path d="M30 30 Q12 24 3 6 Q17 12 26 20 Z" fill="#f59e0b" opacity="0.95" />
-            <path d="M33 26 Q18 20 10 6 Q22 10 29 16 Z" fill="#fbbf24" opacity="0.8" />
-            <g transform="translate(100 0) scale(-1 1)">
-              <path d="M30 30 Q12 24 3 6 Q17 12 26 20 Z" fill="#f59e0b" opacity="0.95" />
-              <path d="M33 26 Q18 20 10 6 Q22 10 29 16 Z" fill="#fbbf24" opacity="0.8" />
-            </g>
-            <path
-              d="M36 30 L33 12 Q32.6 9.8 34.6 11 L43 19 L50 7 Q52 5 54 7 L61 19 L69.5 11 Q71.5 9.8 71 12 L68 30 Z"
-              fill="url(#deco-gold)"
-              stroke="#7e22ce"
-              strokeWidth="1.3"
-            />
-            <rect x="35" y="29" width="34" height="6.5" rx="3" fill="#a855f7" stroke="#7e22ce" strokeWidth="1" />
-            <circle cx="43" cy="32.2" r="1.9" fill="#fde047" />
-            <circle cx="52" cy="32.2" r="1.9" fill="#f472b6" />
-            <circle cx="61" cy="32.2" r="1.9" fill="#fde047" />
-          </g>
-        ),
-      },
-    ],
+  /* ── Full-cell designs from the video (animated WebPs) ─────────── */
+  arch: fullCell("/deco-arch.webp"), // rainbow arch with bowtie
+  clover: fullCell("/deco-clover.webp"), // four-leaf clover crown
+  visor: fullCell("/deco-visor.webp"), // blue neon visor
+  dragon: fullCell("/deco-dragon.webp"), // golden dragon crown
+  owl: fullCell("/deco-owl.webp"), // owl mask, gold wings
+  seal: fullCell("/deco-seal.png"), // city seal badge (static art)
+  fur: fullCell("/deco-fur.webp"), // white fur halo
+  cyber: fullCell("/deco-cyber.webp"), // silver/blue cyber-ear mask
+  fight: fullCell("/deco-fight.webp"), // "03 FIGHT" logo with rainbow arcs
+  stars: fullCell("/deco-stars.webp"), // purple starfield halo
+  sword: fullCell("/deco-sword.webp"), // crossed swords that charge up
+  batring: fullCell("/deco-batring.webp"), // gold arc halo with bat emblem
+  orb: fullCell("/deco-orb.webp"), // blue energy orb
+  wreath: fullCell("/deco-wreath.webp"), // laurel wreath ring
+  potion: fullCell("/deco-potion.webp"), // glass jar with blue liquid
+  y2025: fullCell("/deco-y2025.webp"), // gold "2025" with fireworks
+  santa: fullCell("/deco-santa.webp"), // santa hat
+  snowglobe: fullCell("/deco-snowglobe.webp"), // snow globe
+  lightning: fullCell("/deco-lightning.webp"), // lightning bolt flashes
+  owlord: fullCell("/deco-owlord.webp"), // purple owl mask, glowing eyes
+
+  /* ── Companions — worn as the full cell (designer placement),
+   *    black cat pinned to its in-cell spot ─────────────────────── */
+  wolf: fullCell("/deco-wolf.webp"),
+  bunny: fullCell("/deco-bunny.webp"),
+  sprout: fullCell("/deco-sprout.webp"),
+  blackcat: {
+    parts: [{ t: "img", src: "/deco-blackcat.webp", top: "37%", left: "37%", w: "72.4%" }],
   },
 }
 
 /** Renders one decoration part over/under the avatar box. */
 function DecoPartView({ part }: { part: DecoPart }) {
-  if (part.t === "img") {
-    return (
-      <img
-        src={part.src}
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute select-none"
-        style={{
-          top: part.top,
-          left: part.left,
-          right: part.right,
-          bottom: part.bottom,
-          width: part.w,
-          zIndex: part.behind ? 0 : 2,
-          transform: part.rot ? `rotate(${part.rot}deg)` : undefined,
-        }}
-      />
-    )
-  }
   return (
-    <svg
+    <img
+      src={part.src}
+      alt=""
       aria-hidden
-      viewBox="0 0 100 100"
-      className="pointer-events-none absolute"
+      className="pointer-events-none absolute select-none"
       style={{
-        inset: DECO_SVG_FRAME.inset,
-        width: DECO_SVG_FRAME.size,
-        height: DECO_SVG_FRAME.size,
+        top: part.top,
+        left: part.left,
+        right: part.right,
+        bottom: part.bottom,
+        width: part.w,
         zIndex: part.behind ? 0 : 2,
-        overflow: "visible",
       }}
-    >
-      {DECO_DEFS}
-      {part.node}
-    </svg>
+    />
   )
 }
-
 const EMOJI_SET = [
   "😀", "😂", "🥰", "😎", "🤔", "😴", "🤯", "🥳",
   "😭", "😡", "👍", "👎", "🙏", "👏", "🙌", "💪",
