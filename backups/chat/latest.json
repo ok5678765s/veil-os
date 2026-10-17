@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T16:19:23.768Z",
+  "exportedAt": "2026-10-17T17:50:59.473Z",
   "counts": {
-    "accounts": 53,
+    "accounts": 54,
     "messages": 85,
     "dms": 3
   },
@@ -126,7 +126,7 @@
       "coins": 50003,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": "arch",
+      "pfpAccessory": "santa",
       "pfpOverlay": null,
       "dailyRewardStreak": 3,
       "lastRewardClaim": "2026-10-17T04:23:42.483Z",
@@ -1120,6 +1120,27 @@
       "legacy": false,
       "createdAt": "2026-10-16T20:09:17.732Z",
       "passwordHash": "$2b$10$QgIfzT69Qoqr/EsROGG.huy2833c5dgbU2YevcI4n39Q1dKqvoaBa"
+    },
+    {
+      "id": "cmvcozqak0000ltfxbdjl7mmv",
+      "username": "PokeBlader",
+      "displayName": "PokeBlader",
+      "avatarColor": "#2c3e50",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-17T17:50:34.460Z",
+      "passwordHash": "$2b$10$l9Wh.PVpn1T/aXdttcMJIOmEWQGM4jOMzRWCc3CJFozQ9hmpQgWdW"
     }
   ],
   "messages": [
@@ -2040,23 +2061,23 @@
       "id": "cmvclp5m30005ltr2npunh9cg",
       "channelId": "main",
       "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "player custoizattions",
+      "content": "pfp custoizattions",
       "replyTo": null,
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T16:18:22.252Z",
-      "editedAt": null
+      "editedAt": "2026-10-17T16:46:59.111Z"
     },
     {
       "id": "cmvclpyhm0009ltr27sn1msvs",
       "channelId": "main",
       "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "if anybody has a suggestion pos in #suggestions",
+      "content": "if anybody has a suggestion post in #suggestions",
       "replyTo": null,
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T16:18:59.674Z",
-      "editedAt": null
+      "editedAt": "2026-10-17T16:47:27.114Z"
     }
   ],
   "dms": [
