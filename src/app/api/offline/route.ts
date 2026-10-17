@@ -167,10 +167,12 @@ function attachmentHeaders(name: string, size: number) {
 function streamFile(p: string, name: string, size: number, origin?: string) {
   /* origin-stamping: the shell's VEIL_ORIGIN literal lives in the first
      ~4MB (engine + shell, well before the giant asset blocks) — patch
-     the head in memory, stream the rest straight from disk. */
+     the head in memory, stream the rest straight from disk. The head
+     window is capped at the file size so SMALL builds (the lightweight
+     living-room file is ~45KB) get stamped too. */
   const LITERAL = "__VEIL_ORIGIN__";
-  const HEAD = 6 * 1024 * 1024;
-  if (origin && size > HEAD) {
+  const HEAD = Math.min(6 * 1024 * 1024, size);
+  if (origin && size > 1024) {
     try {
       const fd = openSync(p, "r");
       let patched: string | null = null;
@@ -217,10 +219,13 @@ function streamFile(p: string, name: string, size: number, origin?: string) {
 }
 
 /* the public origin this download was born from (the preview host the
-   user is actually on — proto from the gateway, host from the request) */
+   user is actually on). The Host header is the client-facing one — the
+   gateway chain preserves it, while x-forwarded-host can carry an
+   INTERNAL hop's hostname (e.g. the fcapp.run host), which would stamp
+   a dead origin into the downloaded file. */
 function requestOrigin(req: Request): string {
   try {
-    const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+    const host = req.headers.get("host") || req.headers.get("x-forwarded-host");
     if (host) {
       const proto =
         req.headers.get("x-forwarded-proto") ||
@@ -235,6 +240,17 @@ function requestOrigin(req: Request): string {
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
+
+  /* Explicit origin from the downloader's own address bar — the ONLY
+     reliable source through the proxy chain (every hop rewrites Host /
+     x-forwarded-host to internal hostnames, so the server-side guess
+     stamps dead origins). Validated hard: https (or localhost http). */
+  function downloadOrigin(): string {
+    const explicit = url.searchParams.get("origin") || "";
+    if (/^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(explicit)) return explicit;
+    if (/^http:\/\/(localhost|127\.\d+\.\d+\.\d+)(:\d+)?$/i.test(explicit)) return explicit;
+    return requestOrigin(req);
+  }
 
   /* status probe — the home-screen button polls this while the
      offline build is still packing */
@@ -339,8 +355,8 @@ export async function GET(req: Request) {
     );
   }
 
-  /* stream it — never buffer a ~235MB file into memory. The base gets
+  /* stream it — never buffer a big file into memory. The base gets
      its birth origin stamped in-flight so the offline copy can still
-     reach this site's AI / live catalogs / extension downloads. */
-  return streamFile(FILE, "veil-offline.html", st.size, requestOrigin(req));
+     reach this site's chat / roster / presence / extension downloads. */
+  return streamFile(FILE, "veil-offline.html", st.size, downloadOrigin());
 }

@@ -11,6 +11,32 @@ const DAILY_PER_STREAK = 2
 const DAILY_MAX = 70
 const DAY_MS = 24 * 60 * 60 * 1000
 
+/* ── Streak math — CALENDAR days, not a rolling 24h window. ──
+ *
+ * The old rolling-window logic ("eligible 24h after the last claim",
+ * "streak continues if claimed within 24–48h") felt broken to players:
+ * claim at 11pm Monday, come back 9pm Tuesday → "not eligible yet",
+ * button dead, streak frozen. Players expect "one claim per day" — so
+ * the day boundary is the CLAIMER'S LOCAL MIDNIGHT (the client sends
+ * its timezone offset, getTimezoneOffset() in minutes). A claim on any
+ * later local day is eligible; exactly one day later continues the
+ * streak; a bigger gap resets it. */
+function clampTzMin(raw: unknown): number {
+  const n = Math.floor(Number(raw))
+  if (!Number.isFinite(n)) return 0
+  return Math.max(-840, Math.min(840, n))
+}
+/** Local-day index of a UTC timestamp for a timezone (offset minutes,
+ * west-positive — the JS getTimezoneOffset() convention). */
+function dayIndex(ts: number, tzMin: number): number {
+  return Math.floor((ts - tzMin * 60_000) / DAY_MS)
+}
+/** UTC timestamp of local midnight that STARTS the day AFTER the given
+ * ts's local day — i.e. the earliest moment the next claim unlocks. */
+function nextLocalMidnight(ts: number, tzMin: number): number {
+  return (dayIndex(ts, tzMin) + 1) * DAY_MS + tzMin * 60_000
+}
+
 export async function GET(req: NextRequest) {
   try {
     const token = req.nextUrl.searchParams.get("token") || ""
@@ -72,6 +98,7 @@ export async function POST(req: NextRequest) {
       amount?: number
       reason?: string
       limit?: number
+      tz?: number
     }
 
     const token = body.token
@@ -225,12 +252,14 @@ export async function POST(req: NextRequest) {
       }
 
       case "daily_reward_status": {
+        const tzMin = clampTzMin(body.tz)
         const now = Date.now()
-        const last = account.lastRewardClaim?.getTime() ?? 0
-        const eligible = !account.lastRewardClaim || now - last >= DAY_MS
-        const nextClaimAt = account.lastRewardClaim
-          ? new Date(last + DAY_MS)
-          : null
+        const last = account.lastRewardClaim?.getTime() ?? null
+        const todayIdx = dayIndex(now, tzMin)
+        const eligible = last == null || dayIndex(last, tzMin) < todayIdx
+        const nextClaimAt = eligible
+          ? null
+          : new Date(nextLocalMidnight(now, tzMin))
         return NextResponse.json({
           ok: true,
           eligible,
@@ -241,23 +270,24 @@ export async function POST(req: NextRequest) {
       }
 
       case "daily_reward": {
+        const tzMin = clampTzMin(body.tz)
         const now = Date.now()
-        const last = account.lastRewardClaim?.getTime() ?? 0
-        if (account.lastRewardClaim && now - last < DAY_MS) {
+        const last = account.lastRewardClaim?.getTime() ?? null
+        const todayIdx = dayIndex(now, tzMin)
+        if (last != null && dayIndex(last, tzMin) >= todayIdx) {
           return NextResponse.json(
             {
               ok: false,
-              error: "Daily reward already claimed. Come back later.",
-              nextClaimAt: new Date(last + DAY_MS),
+              error: "Daily reward already claimed today — come back tomorrow.",
+              nextClaimAt: new Date(nextLocalMidnight(now, tzMin)),
             },
             { status: 429 },
           )
         }
-        // Streak: if last claim was within 24-48h, continue streak; else reset.
+        // Streak: claimed exactly yesterday (the local day before today)
+        // continues it; any bigger gap resets to 1.
         const continuesStreak =
-          account.lastRewardClaim &&
-          now - last >= DAY_MS &&
-          now - last < 2 * DAY_MS
+          last != null && dayIndex(last, tzMin) === todayIdx - 1
         const newStreak = continuesStreak ? account.dailyRewardStreak + 1 : 1
         const reward = Math.min(
           DAILY_MAX,

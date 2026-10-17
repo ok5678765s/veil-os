@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#0b0b16" />
+<title>Veil — the living room (offline copy)</title>
+<style>
+  :root{
+    --bg:#0b0b16; --bg2:#101022; --bg3:#15152b;
+    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+    --text:#f2f2f7; --muted:#9a9aad; --faint:#5d5d70;
+    --acc:#fb923c; --acc2:#fdba74; --acc-dim:rgba(251,146,60,.14);
+    --em:#34d399; --em-dim:rgba(52,211,153,.12);
+    --rose:#fb7185; --cyan:#22d3ee;
+    --r:12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  /* the hidden attribute must ALWAYS win over display rules below */
+  [hidden]{display:none!important}
+  body{
+    background:var(--bg); color:var(--text);
+    font:14px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    overflow:hidden;
+  }
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  input{font:inherit;color:inherit}
+  ::selection{background:rgba(251,146,60,.35)}
+  *::-webkit-scrollbar{width:8px;height:8px}
+  *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px}
+  *::-webkit-scrollbar-track{background:transparent}
+
+  /* ── screens (gate / auth) ─────────────────────────────────── */
+  .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;
+    background:
+      radial-gradient(900px 600px at 20% 0%, rgba(251,146,60,.07), transparent 60%),
+      radial-gradient(900px 700px at 90% 100%, rgba(52,211,153,.06), transparent 60%),
+      var(--bg);
+  }
+  .card{width:100%;max-width:400px;background:rgba(21,21,43,.7);border:1px solid var(--line2);
+    border-radius:18px;padding:28px;backdrop-filter:blur(14px);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .logo .mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--acc),#f97316);color:#0b0b16;font-weight:800;font-size:17px;
+    box-shadow:0 6px 20px rgba(249,115,22,.35)}
+  .logo h1{font-size:19px;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:12.5px;margin-bottom:18px}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;
+    color:var(--faint);margin-bottom:5px}
+  .field input{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:10px;
+    padding:10px 12px;outline:none;transition:border .15s}
+  .field input:focus{border-color:rgba(251,146,60,.55)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;width:100%;
+    background:linear-gradient(135deg,var(--acc),#f97316);color:#0b0b16;font-weight:700;
+    border-radius:10px;padding:10px 14px;transition:transform .12s,box-shadow .12s}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(249,115,22,.35)}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn.ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line2)}
+  .btn.sm{width:auto;padding:6px 12px;font-size:12px}
+  .row{display:flex;gap:8px;align-items:center}
+  .switch{color:var(--acc);font-size:12.5px;margin-top:14px;text-align:center;cursor:pointer}
+  .err{color:var(--rose);font-size:12.5px;margin-top:10px;min-height:16px}
+  .ok-note{color:var(--em);font-size:12.5px;margin-top:10px}
+
+  /* ── app frame ─────────────────────────────────────────────── */
+  #app{position:fixed;inset:0;display:flex;flex-direction:column}
+  header.top{display:flex;align-items:center;gap:10px;padding:10px 14px;
+    background:rgba(16,16,34,.85);border-bottom:1px solid var(--line);backdrop-filter:blur(12px);z-index:5}
+  header.top .brand{display:flex;align-items:center;gap:9px;min-width:0}
+  header.top .brand .mark{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--acc),#f97316);color:#0b0b16;font-weight:800;font-size:13px}
+  #chanTitle{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
+  #livePill{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);
+    background:rgba(255,255,255,.05);border-radius:999px;padding:3px 9px;white-space:nowrap}
+  #livePill .dot{width:7px;height:7px;border-radius:50%;background:var(--faint);transition:background .3s}
+  #livePill.on .dot{background:var(--em);box-shadow:0 0 8px rgba(52,211,153,.8);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .spacer{flex:1}
+  #dailyBtn{position:relative;display:inline-flex;align-items:center;gap:6px;font-size:12px;
+    border-radius:9px;padding:5px 10px;background:rgba(255,255,255,.05);color:var(--muted);transition:.15s}
+  #dailyBtn.eligible{background:var(--em-dim);color:var(--em);animation:breathe 2.4s infinite}
+  @keyframes breathe{0%,100%{box-shadow:0 0 0 rgba(52,211,153,0)}50%{box-shadow:0 0 16px rgba(52,211,153,.35)}}
+  #dailyBtn:disabled{cursor:default}
+  #dailyBadge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;border-radius:999px;
+    background:var(--acc);color:#0b0b16;font-size:9px;font-weight:800;display:none;align-items:center;
+    justify-content:center;padding:0 4px}
+  #coinsPill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--acc2);
+    background:var(--acc-dim);border-radius:9px;padding:5px 10px;white-space:nowrap}
+  #backBtn{display:none;align-items:center;gap:5px;font-size:12.5px;color:var(--muted);
+    border:1px solid var(--line2);border-radius:9px;padding:5px 10px}
+  #backBtn:hover{color:var(--text)}
+  #panelToggle{display:none;border:1px solid var(--line2);border-radius:9px;padding:6px;
+    color:var(--muted)}
+
+  #frame{flex:1;display:flex;min-height:0}
+  #room{flex:1;display:flex;flex-direction:column;min-width:0}
+  #msgs{flex:1;overflow-y:auto;padding:14px 16px 8px;scroll-behavior:smooth}
+  .daydiv{display:flex;align-items:center;gap:10px;margin:16px 0 8px;color:var(--faint);
+    font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+  .daydiv::before,.daydiv::after{content:"";flex:1;height:1px;background:var(--line)}
+  .msg{display:flex;gap:11px;padding:3px 4px;border-radius:10px}
+  .msg:hover{background:rgba(255,255,255,.025)}
+  .msg.first{margin-top:10px}
+  .msg .av{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
+    color:#fff;font-size:13px;font-weight:700;overflow:hidden;position:relative;background:#27272a}
+  .msg .av img{width:100%;height:100%;object-fit:cover}
+  .msg .body{min-width:0;flex:1}
+  .msg .head{display:flex;align-items:baseline;gap:8px}
+  .msg .name{font-weight:700;font-size:13.5px}
+  .msg .time{font-size:10px;color:var(--faint)}
+  .msg .pill{font-size:8.5px;font-weight:800;color:#fff;border-radius:4px;padding:1px 5px;letter-spacing:.5px}
+  .msg .text{white-space:pre-wrap;word-wrap:break-word;color:#dcdcE6;font-size:13.5px;line-height:1.5}
+  .msg .text a{color:var(--acc2)}
+  .msg.mine .name{color:var(--acc2)!important}
+
+  #composerWrap{padding:10px 14px 14px}
+  #composer{display:flex;align-items:center;gap:8px;background:rgba(21,21,43,.8);
+    border:1px solid var(--line2);border-radius:14px;padding:8px 8px 8px 14px;transition:border .15s}
+  #composer:focus-within{border-color:rgba(251,146,60,.5)}
+  #composer input{flex:1;background:none;border:0;outline:none;font-size:13.5px;min-width:0}
+  #sendBtn{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;
+    background:var(--acc);color:#0b0b16;transition:transform .12s,opacity .15s}
+  #sendBtn:disabled{opacity:.35;cursor:default}
+  #sendBtn:not(:disabled):hover{transform:scale(1.08)}
+  #typing{min-height:18px;font-size:11px;color:var(--muted);padding:0 18px}
+
+  /* ── side panel ────────────────────────────────────────────── */
+  #side{width:250px;flex-shrink:0;border-left:1px solid var(--line);background:var(--bg2);
+    display:flex;flex-direction:column;min-height:0}
+  #tabs{display:flex;border-bottom:1px solid var(--line)}
+  .tab{flex:1;padding:10px 2px;font-size:11px;font-weight:700;color:var(--muted);text-align:center;
+    border-bottom:2px solid transparent;transition:.15s;position:relative}
+  .tab:hover{color:var(--text)}
+  .tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+  .tab .bdg{position:absolute;top:4px;right:8%;min-width:14px;height:14px;border-radius:999px;
+    background:var(--rose);color:#fff;font-size:8.5px;font-weight:800;display:none;
+    align-items:center;justify-content:center;padding:0 3px}
+  .pane{flex:1;overflow-y:auto;padding:10px;display:none}
+  .pane.on{display:block}
+  .sec{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--faint);
+    margin:10px 2px 5px}
+  .sec:first-child{margin-top:0}
+  .prow{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border-radius:9px;
+    padding:5px 7px;transition:background .12s}
+  .prow:hover{background:rgba(255,255,255,.05)}
+  .prow .av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
+    color:#fff;font-size:11px;font-weight:700;overflow:hidden;position:relative;background:#27272a}
+  .prow .av img{width:100%;height:100%;object-fit:cover}
+  .prow .dot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;
+    border:2px solid var(--bg2);background:rgba(255,255,255,.25)}
+  .prow.online .dot{background:var(--em);box-shadow:0 0 7px rgba(52,211,153,.7)}
+  .prow .nm{min-width:0;flex:1}
+  .prow .nm b{display:block;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .prow .nm span{display:block;font-size:9.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .prow .cnt{font-size:9.5px;color:var(--faint);background:rgba(255,255,255,.07);border-radius:999px;
+    padding:1px 7px;flex-shrink:0}
+  .empty{color:var(--faint);font-size:12px;padding:14px 8px;text-align:center}
+  .mini-form{display:flex;gap:6px;margin-bottom:8px}
+  .mini-form input{flex:1;min-width:0;background:rgba(0,0,0,.35);border:1px solid var(--line);
+    border-radius:8px;padding:6px 9px;font-size:12px;outline:none}
+  .mini-form input:focus{border-color:rgba(251,146,60,.5)}
+  .mini-form .go{flex-shrink:0;border-radius:8px;background:var(--acc);color:#0b0b16;font-size:11.5px;
+    font-weight:700;padding:0 11px}
+  .mini-form .go.cyan{background:var(--cyan)}
+  .hint{font-size:10px;color:var(--faint);margin:2px 2px 8px;line-height:1.45}
+  .req{display:flex;align-items:center;gap:8px;border:1px solid rgba(52,211,153,.25);
+    background:var(--em-dim);border-radius:9px;padding:6px 8px;margin-bottom:5px}
+  .req .av{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
+    color:#fff;font-size:10px;font-weight:700}
+  .req .who{min-width:0;flex:1;font-size:11.5px}
+  .req .who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .req .who span{display:block;font-size:9.5px;color:var(--em);opacity:.75}
+  .req button{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;
+    font-size:12px;font-weight:800}
+  .req .yes{background:var(--em);color:#06281c}
+  .req .no{background:rgba(255,255,255,.1);color:var(--muted)}
+  .req .no:hover{background:rgba(251,113,133,.25);color:var(--rose)}
+  .outg{display:flex;align-items:center;gap:8px;border-radius:8px;padding:4px 8px;font-size:11.5px;color:var(--muted)}
+  .outg:hover{background:rgba(255,255,255,.05)}
+  .outg .av{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
+    color:#fff;font-size:9px;font-weight:700}
+  .outg span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .outg button{color:var(--faint);font-size:13px}
+  .outg button:hover{color:var(--rose)}
+  .dmrow.on{background:rgba(251,146,60,.12)}
+  .friendrow .dm{opacity:0;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;
+    background:rgba(255,255,255,.08);color:var(--muted);font-size:11px;transition:.12s;flex-shrink:0}
+  .friendrow:hover .dm{opacity:1}
+  .friendrow .dm:hover{background:var(--acc-dim);color:var(--acc2)}
+  .gform{border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.25);padding:10px;margin-bottom:8px}
+  .gform .mini-form{margin-bottom:6px}
+  .checks{max-height:110px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;margin-bottom:6px}
+  .checks label{display:flex;align-items:center;gap:7px;padding:4px 8px;font-size:11.5px;cursor:pointer}
+  .checks label:hover{background:rgba(255,255,255,.05)}
+  .checks input{accent-color:var(--cyan)}
+  .checks .cav{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;color:#fff;
+    font-size:8px;font-weight:800;flex-shrink:0}
+  #toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,80px);z-index:50;
+    background:#15152b;border:1px solid var(--line2);border-radius:12px;padding:9px 16px;font-size:12.5px;
+    box-shadow:0 14px 40px rgba(0,0,0,.5);transition:transform .25s;max-width:86vw}
+  #toast.show{transform:translate(-50%,0)}
+  #toast.err{border-color:rgba(251,113,133,.5);color:var(--rose)}
+
+  @media (max-width:760px){
+    #side{position:fixed;top:53px;right:0;bottom:0;width:min(78vw,290px);transform:translateX(105%);
+      transition:transform .22s;z-index:8;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+    #side.open{transform:translateX(0)}
+    #panelToggle{display:grid;place-items:center}
+    #chanTitle{max-width:26vw}
+    #livePill{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ origin gate — only for unstamped copies ══ -->
+<div class="screen" id="gate" hidden>
+  <div class="card">
+    <div class="logo"><div class="mark">V</div><h1>Veil</h1></div>
+    <p class="sub">This copy wasn't born from a download, so it doesn't know which veil to talk to. Paste the address of the veil site you use:</p>
+    <div class="field">
+      <label>Veil site address</label>
+      <input id="gateOrigin" placeholder="https://preview-chat-….space-z.ai" spellcheck="false" />
+    </div>
+    <button class="btn" id="gateSave">Connect</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+</div>
+
+<!-- ══ auth ══ -->
+<div class="screen" id="auth" hidden>
+  <div class="card">
+    <div class="logo"><div class="mark">V</div><h1>Veil <span style="font-weight:400;color:var(--muted);font-size:13px">· the living room</span></h1></div>
+    <p class="sub" id="authSub">Same accounts, same coins, same friends — straight through the veil.</p>
+    <div class="field">
+      <label>Username</label>
+      <input id="authUser" placeholder="your @username" autocomplete="username" spellcheck="false" />
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input id="authPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <div class="field" id="displayNameField" hidden>
+      <label>Display name <span style="text-transform:none;font-weight:400">(optional)</span></label>
+      <input id="authName" placeholder="how you show up" spellcheck="false" />
+    </div>
+    <button class="btn" id="authGo">Sign in</button>
+    <div class="switch" id="authSwitch">New here? <b>Create an account</b></div>
+    <div class="err" id="authErr"></div>
+  </div>
+</div>
+
+<!-- ══ app ══ -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="brand"><div class="mark">V</div></div>
+    <button id="backBtn">‹ #general</button>
+    <span id="chanTitle">#general</span>
+    <span id="livePill"><span class="dot"></span><span id="liveTxt">connecting…</span></span>
+    <span class="spacer"></span>
+    <span id="coinsPill">🪙 <span id="coinsTxt">0</span></span>
+    <button id="dailyBtn" title="Daily reward"><span id="dailyFace">🎁</span><span id="dailyTxt">Daily</span><span id="dailyBadge">0</span></button>
+    <button id="panelToggle" title="Players, friends, DMs, groups">☰</button>
+    <button id="logoutBtn" class="btn ghost sm" style="width:auto">Sign out</button>
+  </header>
+  <div id="frame">
+    <section id="room">
+      <div id="msgs"></div>
+      <div id="typing"></div>
+      <div id="composerWrap">
+        <form id="composer">
+          <input id="input" placeholder="Message #general — say hi" maxlength="2000" autocomplete="off" />
+          <button id="sendBtn" type="submit" disabled>➤</button>
+        </form>
+      </div>
+    </section>
+    <aside id="side">
+      <nav id="tabs">
+        <button class="tab on" data-tab="players">Players</button>
+        <button class="tab" data-tab="friends">Friends<span class="bdg" id="friendBdg">0</span></button>
+        <button class="tab" data-tab="dms">DMs</button>
+        <button class="tab" data-tab="groups">Groups</button>
+      </nav>
+      <div class="pane on" id="pane-players">
+        <div class="sec" id="onlineHd">Online — 0</div>
+        <div id="onlineList"></div>
+        <div class="sec" id="offlineHd">Offline — 0</div>
+        <div id="offlineList"></div>
+      </div>
+      <div class="pane" id="pane-friends">
+        <div class="mini-form">
+          <input id="friendInput" placeholder="@username" spellcheck="false" />
+          <button class="go" id="friendAdd">Add</button>
+        </div>
+        <p class="hint">They get a notification — you become friends when they accept.</p>
+        <div class="sec" id="reqHd" hidden>Requests</div>
+        <div id="reqList"></div>
+        <div class="sec" id="outHd" hidden>Waiting on them</div>
+        <div id="outList"></div>
+        <div class="sec" id="friendHd">Your friends</div>
+        <div id="friendList"></div>
+      </div>
+      <div class="pane" id="pane-dms">
+        <div class="mini-form">
+          <input id="dmInput" placeholder="@username" spellcheck="false" />
+          <button class="go" id="dmOpen">Open</button>
+        </div>
+        <p class="hint">Direct messages — just the two of you.</p>
+        <div id="dmList"></div>
+      </div>
+      <div class="pane" id="pane-groups">
+        <div class="gform">
+          <div class="mini-form">
+            <input id="groupName" placeholder="Group name (e.g. Squad)" maxlength="64" />
+          </div>
+          <div class="checks" id="groupChecks" hidden></div>
+          <div class="mini-form">
+            <input id="groupUsers" placeholder="@user, @user…" spellcheck="false" />
+            <button class="go cyan" id="groupCreate">Create</button>
+          </div>
+          <p class="hint">Tick friends and/or type @usernames — everyone gets in at once.</p>
+        </div>
+        <div id="groupList"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+(function () {
+  /* ══ origin — stamped at download; unstamped copies self-configure ══ */
+  var STAMPED = "__VEIL_ORIGIN__";
+  var LS_ORIGIN = "veil:origin";
+  var LS_SESSION = "veil:offline-account";
+  var ORIGIN = "";
+  var $ = function (id) { return document.getElementById(id); };
+
+  function resolveOrigin() {
+    if (STAMPED && STAMPED.indexOf("__") !== 0) return STAMPED.replace(/\/+$/, "");
+    try {
+      var saved = localStorage.getItem(LS_ORIGIN);
+      if (saved) return saved.replace(/\/+$/, "");
+    } catch (e) {}
+    return "";
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  /* fetch with one quiet retry — the origin lazy-compiles cold routes and
+     the gateway 502s for ~5s while it boots. */
+  function api(path, opts, retried) {
+    opts = opts || {};
+    return fetch(ORIGIN + path, opts).then(function (r) {
+      if ((r.status === 502 || r.status === 503 || r.status === 504) && !retrried) {
+        return new Promise(function (res) { setTimeout(res, 900); })
+          .then(function () { return api(path, opts, true); });
+      }
+      return r.json().catch(function () { return {}; });
+    }).then(function (d) {
+      if (d && d.ok === false) throw new Error(d.error || "request failed");
+      return d;
+    }).catch(function (e) {
+      if (!retrried && e instanceof TypeError) {
+        return new Promise(function (res) { setTimeout(res, 900); })
+          .then(function () { return api(path, opts, true); });
+      }
+      throw e;
+    });
+  }
+  function post(path, body) {
+    return api(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+  }
+
+  var toastT = null;
+  function toast(msg, isErr) {
+    var n = $("toast");
+    n.textContent = msg;
+    n.className = isErr ? "err show" : "show";
+    if (toastT) clearTimeout(toastT);
+    toastT = setTimeout(function () { n.className = isErr ? "err" : ""; }, 3200);
+  }
+
+  /* ══ state ══ */
+  var S = {
+    account: null, token: "",
+    channel: "main",            /* "main" | dm id */
+    msgs: [], seen: {},
+    members: [], onlineIds: {},
+    friends: [], reqIn: [], reqOut: [],
+    dms: [],
+    daily: null,
+    timers: []
+  };
+
+  function isOwner(a) { return !!a && String(a.username || "").toLowerCase() === "veil"; }
+  function isMod(a) { return !!a && (isOwner(a) || a.role === "moderator" || a.role === "admin"); }
+  function roleColor(a) { return isOwner(a) ? "#f59e0b" : isMod(a) ? "#34d399" : "#e4e4e7"; }
+  function dName(a) { return (a && a.displayName && String(a.displayName).trim()) || (a && a.username) || "someone"; }
+  function dmLabel(d) {
+    if (d.name) return d.name;
+    var others = (d.members || []).filter(function (m) { return !S.account || m.id !== S.account.id; });
+    return others.map(dName).join(", ") || (d.isGroup ? "Group" : "DM");
+  }
+
+  /* ══ boot: gate → auth → app ══ */
+  function boot() {
+    ORIGIN = resolveOrigin();
+    if (!ORIGIN) { $("gate").hidden = false; return; }
+    var sess = null;
+    try { sess = JSON.parse(localStorage.getItem(LS_SESSION) || "null"); } catch (e) {}
+    if (sess && sess.token && sess.account) {
+      S.token = sess.token; S.account = sess.account;
+      enterApp();
+      /* validate in the background — a dead token falls back to auth */
+      api("/api/chat-members?token=" + encodeURIComponent(S.token)).catch(function () {
+        /* only force re-auth on hard 401-style failures (api throws) */
+      });
+    } else {
+      showAuth(false);
+    }
+  }
+
+  $("gateSave").addEventListener("click", function () {
+    var v = $("gateOrigin").value.trim().replace(/\/+$/, "");
+    if (!/^https?:\/\/.+\..+/.test(v)) { $("gateErr").textContent = "That doesn't look like an address — include https://"; return; }
+    try { localStorage.setItem(LS_ORIGIN, v); } catch (e) {}
+    $("gate").hidden = true;
+    boot();
+  });
+  $("gateOrigin").addEventListener("keydown", function (e) { if (e.key === "Enter") $("gateSave").click(); });
+
+  var registering = false;
+  function showAuth(reg) {
+    registering = !!reg;
+    $("auth").hidden = false;
+    $("app").hidden = true;
+    $("authGo").textContent = reg ? "Create account" : "Sign in";
+    $("authSwitch").innerHTML = reg ? "Already have one? <b>Sign in</b>" : "New here? <b>Create an account</b>";
+    $("displayNameField").hidden = !reg;
+    $("authErr").textContent = "";
+    setTimeout(function () { $("authUser").focus(); }, 60);
+  }
+  $("authSwitch").addEventListener("click", function () { showAuth(!registering); });
+  $("authGo").addEventListener("click", doAuth);
+  $("authPass").addEventListener("keydown", function (e) { if (e.key === "Enter") doAuth(); });
+  $("authUser").addEventListener("keydown", function (e) { if (e.key === "Enter") $("authPass").focus(); });
+
+  function doAuth() {
+    var u = $("authUser").value.trim();
+    var p = $("authPass").value;
+    var n = $("authName").value.trim();
+    if (!u || !p) { $("authErr").textContent = "Username and password, please."; return; }
+    $("authGo").disabled = true;
+    var body = { username: u, password: p };
+    if (registering && n) body.displayName = n;
+    post(registering ? "/api/chat-auth/register" : "/api/chat-auth/login", body)
+      .then(function (d) {
+        if (!d.token || !d.account) throw new Error("Server didn't return a session.");
+        S.token = d.token; S.account = d.account;
+        try { localStorage.setItem(LS_SESSION, JSON.stringify({ token: S.token, account: S.account })); } catch (e) {}
+        $("auth").hidden = true;
+        enterApp();
+      })
+      .catch(function (e) { $("authErr").textContent = e.message || "That didn't work — try again."; })
+      .finally(function () { $("authGo").disabled = false; });
+  }
+
+  $("logoutBtn").addEventListener("click", function () {
+    try { localStorage.removeItem(LS_SESSION); } catch (e) {}
+    location.reload();
+  });
+
+  /* ══ the app ══ */
+  function enterApp() {
+    $("app").hidden = false;
+    $("coinsTxt").textContent = (S.account.coins || 0).toLocaleString();
+    startLoops();
+  }
+
+  function startLoops() {
+    S.timers.forEach(clearInterval); S.timers = [];
+    var loop = function (fn, ms) { fn(); S.timers.push(setInterval(fn, ms)); };
+    loop(loadMessages, 4000);       /* the room — near-live */
+    loop(loadMembers, 30000);       /* roster */
+    loop(loadPresence, 20000);      /* online dots — the panel that must UPDATE */
+    loop(loadFriends, 30000);       /* friends + requests */
+    loop(loadDms, 30000);           /* dm + group lists */
+    loop(refreshDaily, 30000);      /* streak button */
+  }
+
+  /* ── messages ── */
+  function loadMessages() {
+    var ch = S.channel;
+    var url = "/api/chat-data?channel=" + encodeURIComponent(ch) +
+      (ch === "main" ? "" : "&token=" + encodeURIComponent(S.token));
+    api(url).then(function (d) {
+      var fresh = d.messages || [];
+      var added = false;
+      fresh.forEach(function (m) {
+        if (!m || !m.id || S.seen[m.id]) return;
+        S.seen[m.id] = 1; S.msgs.push(m); added = true;
+      });
+      if (added) {
+        S.msgs.sort(function (a, b) { return new Date(a.createdAt) - new Date(b.createdAt); });
+        renderMsgs();
+      }
+      setLive(true);
+    }).catch(function () { setLive(false); });
+  }
+
+  function fmtTime(iso) {
+    try {
+      var d = new Date(iso);
+      return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    } catch (e) { return ""; }
+  }
+  function fmtDay(iso) {
+    try {
+      var d = new Date(iso);
+      var today = new Date(); today.setHours(0,0,0,0);
+      var that = new Date(d); that.setHours(0,0,0,0);
+      var diff = Math.round((today - that) / 86400000);
+      if (diff === 0) return "Today";
+      if (diff === 1) return "Yesterday";
+      return d.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" });
+    } catch (e) { return ""; }
+  }
+  function linkify(safe) {
+    return safe.replace(/(https?:\/\/[^\s<]+)/g, function (u) {
+      return '<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + u + "</a>";
+    });
+  }
+
+  function renderMsgs() {
+    var box = $("msgs");
+    var atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+    var html = "";
+    var prev = null;
+    S.msgs.forEach(function (m) {
+      var a = m.account || {};
+      var day = fmtDay(m.createdAt);
+      var prevDay = prev ? fmtDay(prev.createdAt) : null;
+      if (day !== prevDay) html += '<div class="daydiv">' + esc(day) + "</div>";
+      var grouped = prev && prevDay === day && prev.account &&
+        prev.account.id === a.id &&
+        (new Date(m.createdAt) - new Date(prev.createdAt)) < 5 * 60 * 1000;
+      var mine = S.account && a.id === S.account.id;
+      var pill = isOwner(a) ? '<span class="pill" style="background:#f59e0b">OWNER</span>' :
+        isMod(a) ? '<span class="pill" style="background:#34d399">MOD</span>' : "";
+      var avInner = a.avatarImage
+        ? '<img src="' + esc(a.avatarImage) + '" alt="" />'
+        : esc((dName(a) || "?")[0].toUpperCase());
+      html +=
+        '<div class="msg' + (grouped ? "" : " first") + (mine ? " mine" : "") + '">' +
+          '<div class="av" style="background:' + esc(a.avatarColor || "#27272a") + '">' + avInner + "</div>" +
+          '<div class="body">' +
+            (grouped ? "" :
+              '<div class="head">' +
+                '<span class="name" style="color:' + roleColor(a) + '">' + esc(dName(a)) + "</span>" + pill +
+                '<span class="time">' + esc(fmtTime(m.createdAt)) + "</span>" +
+              "</div>") +
+            '<div class="text">' + linkify(esc(m.content)) + "</div>" +
+          "</div>" +
+        "</div>";
+      prev = m;
+    });
+    if (!S.msgs.length) html = '<div class="empty">Nobody has said anything yet — be the first.</div>';
+    box.innerHTML = html;
+    if (atBottom) box.scrollTop = box.scrollHeight;
+  }
+
+  /* ── send ── */
+  var input = $("input");
+  function updateSend() { $("sendBtn").disabled = !input.value.trim(); }
+  input.addEventListener("input", updateSend);
+  $("composer").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = input.value.trim();
+    if (!text) return;
+    input.value = ""; updateSend();
+    post("/api/chat-data", { token: S.token, channelId: S.channel, content: text })
+      .then(function (d) {
+        if (d.message && !S.seen[d.message.id]) {
+          S.seen[d.message.id] = 1; S.msgs.push(d.message);
+          S.msgs.sort(function (a, b) { return new Date(a.createdAt) - new Date(b.createdAt); });
+          renderMsgs();
+          $("msgs").scrollTop = $("msgs").scrollHeight;
+        }
+      })
+      .catch(function (err) {
+        input.value = text; updateSend();
+        toast(err.message || "Send failed — try again.", true);
+      });
+  });
+
+  /* ── presence + roster (the player tab that UPDATES) ── */
+  function setLive(on) {
+    $("livePill").className = on ? "on" : "";
+    $("liveTxt").textContent = on ? "live · polling" : "reconnecting…";
+  }
+  function loadPresence() {
+    /* main-channel presence from the chat service — same source the
+       website's dots use, polled so it ALWAYS updates. */
+    api("/presence?XTransformPort=3006&channel=main").then(function (d) {
+      var map = {};
+      (d.users || []).forEach(function (u) { if (u && u.accountId) map[u.accountId] = 1; });
+      S.onlineIds = map;
+      renderPlayers();
+    }).catch(function () { /* next tick retries */ });
+  }
+  function loadMembers() {
+    api("/api/chat-members?token=" + encodeURIComponent(S.token)).then(function (d) {
+      S.members = (d.members || []).filter(function (m) { return !m.banned && !m.ipBanned; });
+      renderPlayers();
+    }).catch(function () { /* roster is dressing */ });
+  }
+  function renderPlayers() {
+    var rank = function (m) { return isOwner(m) ? 0 : isMod(m) ? 1 : 2; };
+    var byRank = function (a, b) { return rank(a) - rank(b) || dName(a).localeCompare(dName(b)); };
+    var on = S.members.filter(function (m) { return S.onlineIds[m.id]; }).sort(byRank);
+    var off = S.members.filter(function (m) { return !S.onlineIds[m.id]; }).sort(byRank);
+    $("onlineHd").textContent = "Online — " + on.length;
+    $("offlineHd").textContent = "Offline — " + off.length;
+    var row = function (m, online) {
+      var pill = isOwner(m) ? '<span class="pill" style="background:#f59e0b;font-size:8.5px;border-radius:4px;padding:1px 5px">OWNER</span>' :
+        isMod(m) ? '<span class="pill" style="background:#34d399;font-size:8.5px;border-radius:4px;padding:1px 5px">MOD</span>' : "";
+      var av = m.avatarImage
+        ? '<img src="' + esc(m.avatarImage) + '" alt="" />'
+        : esc((dName(m) || "?")[0].toUpperCase());
+      return '<div class="prow' + (online ? " online" : "") + (S.account && m.id === S.account.id ? " mine" : "") + '">' +
+        '<div class="av" style="background:' + esc(m.avatarColor || "#27272a") + '">' + av + '<span class="dot"></span></div>' +
+        '<div class="nm"><b style="color:' + roleColor(m) + '">' + esc(dName(m)) + "</b>" +
+        "<span>@" + esc(m.username || "") + "</span></div>" + pill + "</div>";
+    };
+    $("onlineList").innerHTML = on.length ? on.map(function (m) { return row(m, true); }).join("") :
+      '<div class="empty">No one online right now.</div>';
+    /* everyone offline shows — the panel scrolls */
+    $("offlineList").innerHTML = off.length ? off.map(function (m) { return row(m, false); }).join("") : "";
+  }
+
+  /* ── friends ── */
+  function loadFriends() {
+    api("/api/chat-friends?token=" + encodeURIComponent(S.token)).then(function (d) {
+      S.friends = d.friends || [];
+      S.reqIn = d.incoming || [];
+      S.reqOut = d.outgoing || [];
+      renderFriends();
+      renderGroupChecks();
+    }).catch(function () { /* next tick retries */ });
+  }
+  function renderFriends() {
+    var bdg = $("friendBdg");
+    bdg.style.display = S.reqIn.length ? "flex" : "none";
+    bdg.textContent = S.reqIn.length;
+    $("reqHd").hidden = S.reqIn.length === 0;
+    $("reqList").innerHTML = S.reqIn.map(function (r) {
+      var u = r.user || {};
+      return '<div class="req">' +
+        '<div class="av" style="background:' + esc(u.avatarColor || "#f97316") + '">' + esc((u.username || "?")[0].toUpperCase()) + "</div>" +
+        '<div class="who"><b>' + esc(dName(u)) + "</b><span>wants to be your friend</span></div>" +
+        '<button class="yes" data-accept="' + esc(r.id) + '" title="Accept">✓</button>' +
+        '<button class="no" data-decline="' + esc(r.id) + '" title="Decline">✕</button>' +
+        "</div>";
+    }).join("");
+    $("outHd").hidden = S.reqOut.length === 0;
+    $("outList").innerHTML = S.reqOut.map(function (r) {
+      var u = r.user || {};
+      return '<div class="outg">' +
+        '<div class="av" style="background:' + esc(u.avatarColor || "#71717a") + '">' + esc((u.username || "?")[0].toUpperCase()) + "</div>" +
+        "<span>@" + esc(u.username || "") + "</span>" +
+        '<button data-cancel="' + esc(r.id) + '" title="Cancel request">✕</button>' +
+        "</div>";
+    }).join("");
+    var sorted = S.friends.slice().sort(function (a, b) {
+      var ra = S.onlineIds[a.id] ? 0 : 1, rb = S.onlineIds[b.id] ? 0 : 1;
+      return ra - rb || dName(a).localeCompare(dName(b));
+    });
+    $("friendHd").textContent = sorted.length ? "Your friends — " + sorted.length : "Your friends";
+    $("friendList").innerHTML = sorted.length ? sorted.map(function (f) {
+      var av = f.avatarImage
+        ? '<img src="' + esc(f.avatarImage) + '" alt="" />'
+        : esc((dName(f) || "?")[0].toUpperCase());
+      return '<div class="prow friendrow' + (S.onlineIds[f.id] ? " online" : "") + '">' +
+        '<div class="av" style="background:' + esc(f.avatarColor || "#27272a") + '">' + av + '<span class="dot"></span></div>' +
+        '<div class="nm"><b style="color:' + roleColor(f) + '">' + esc(dName(f)) + "</b><span>@" + esc(f.username) + "</span></div>" +
+        '<button class="dm" data-dmuser="' + esc(f.username) + '" title="DM @' + esc(f.username) + '">✉</button>' +
+        "</div>";
+    }).join("") : '<div class="empty">No friends yet — add someone above.</div>';
+  }
+  $("friendAdd").addEventListener("click", addFriend);
+  $("friendInput").addEventListener("keydown", function (e) { if (e.key === "Enter") addFriend(); });
+  function addFriend() {
+    var t = $("friendInput").value.trim().replace(/^@/, "");
+    if (!t) return;
+    post("/api/chat-friends", { token: S.token, action: "request", targetUsername: t })
+      .then(function (d) {
+        $("friendInput").value = "";
+        var n = (d.friend && d.friend.username) || t;
+        toast(d.accepted ? "You're now friends with @" + n + "!" :
+          d.already === "friends" ? "You and @" + n + " are already friends." :
+          d.already === "pending" ? "Request already sent — waiting on @" + n + "." :
+          "Request sent to @" + n + " — they'll appear once they accept.");
+        loadFriends();
+      })
+      .catch(function (e) { toast(e.message || "Couldn't send that.", true); });
+  }
+  $("reqList").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.accept) respondFriend(b.dataset.accept, "accept");
+    if (b.dataset.decline) respondFriend(b.dataset.decline, "decline");
+  });
+  $("outList").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (!b.dataset.cancel) return;
+    post("/api/chat-friends", { token: S.token, action: "cancel", requestId: b.dataset.cancel })
+      .then(function () { toast("Request cancelled."); loadFriends(); })
+      .catch(function () { toast("Couldn't cancel just now.", true); });
+  });
+  function respondFriend(id, action) {
+    post("/api/chat-friends", { token: S.token, action: action, requestId: id })
+      .then(function (d) {
+        toast(action === "accept" ? "You're now friends with @" + ((d.friend && d.friend.username) || "them") + "!" : "Request declined.");
+        loadFriends();
+      })
+      .catch(function () { toast("Couldn't do that just now.", true); });
+  }
+  $("friendList").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-dmuser]"); if (!b) return;
+    openDm(b.dataset.dmuser);
+  });
+
+  /* ── dms + groups ── */
+  function loadDms() {
+    api("/api/chat-dm?token=" + encodeURIComponent(S.token)).then(function (d) {
+      S.dms = d.dms || [];
+      renderDms();
+      renderGroups();
+      renderGroupChecks();
+    }).catch(function () { /* next tick retries */ });
+  }
+  function renderDms() {
+    var solo = S.dms.filter(function (d) { return !d.isGroup; });
+    $("dmList").innerHTML = solo.length ? solo.map(function (d) {
+      var other = (d.members || []).filter(function (m) { return !S.account || m.id !== S.account.id; })[0];
+      var av = other && other.avatarImage
+        ? '<img src="' + esc(other.avatarImage) + '" alt="" />'
+        : esc(((other && dName(other)) || "?")[0].toUpperCase());
+      return '<button class="prow dmrow' + (S.channel === d.id ? " on" : "") + '" data-open="' + esc(d.id) + '">' +
+        '<div class="av" style="background:' + esc((other && other.avatarColor) || "#27272a") + '">' + av + "</div>" +
+        '<div class="nm"><b>' + esc(dmLabel(d)) + "</b><span>@" + esc((other && other.username) || "?") + "</span></div>" +
+        "</button>";
+    }).join("") : '<div class="empty">No direct messages yet — start one above.</div>';
+  }
+  function renderGroups() {
+    var groups = S.dms.filter(function (d) { return d.isGroup; });
+    $("groupList").innerHTML = groups.length ? groups.map(function (d) {
+      return '<button class="prow dmrow' + (S.channel === d.id ? " on" : "") + '" data-open="' + esc(d.id) + '">' +
+        '<div class="av" style="background:rgba(34,211,238,.15);color:#22d3ee;font-size:13px">👥</div>' +
+        '<div class="nm"><b>' + esc(d.name || "Group") + "</b><span>" +
+          esc((d.members || []).map(dName).join(", ")) + "</span></div>" +
+        '<span class="cnt">' + (d.members || []).length + "</span>" +
+        "</button>";
+    }).join("") : '<div class="empty">No groups yet — make one above.</div>';
+  }
+  function renderGroupChecks() {
+    var box = $("groupChecks");
+    if (!S.friends.length) { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    box.innerHTML = S.friends.map(function (f) {
+      return '<label><input type="checkbox" data-friend="' + esc(f.username) + '" />' +
+        '<span class="cav" style="background:' + esc(f.avatarColor || "#71717a") + '">' + esc((f.username || "?")[0].toUpperCase()) + "</span>" +
+        "<span>" + esc(dName(f)) + "</span></label>";
+    }).join("");
+  }
+  $("dmOpen").addEventListener("click", function () { openDm($("dmInput").value); });
+  $("dmInput").addEventListener("keydown", function (e) { if (e.key === "Enter") openDm($("dmInput").value); });
+  function openDm(raw) {
+    var who = String(raw || "").trim().replace(/^@/, "");
+    if (!who) return;
+    var existing = S.dms.find(function (d) {
+      return !d.isGroup && (d.members || []).some(function (m) {
+        return (!S.account || m.id !== S.account.id) && String(m.username || "").toLowerCase() === who.toLowerCase();
+      });
+    });
+    if (existing) { switchChannel(existing.id); $("dmInput").value = ""; return; }
+    post("/api/chat-dm", { token: S.token, targetUsername: who })
+      .then(function (d) {
+        if (d.dm && !S.dms.some(function (x) { return x.id === d.dm.id; })) S.dms.unshift(d.dm);
+        $("dmInput").value = "";
+        switchChannel(d.dm.id);
+        toast("DM opened with @" + who + ".");
+      })
+      .catch(function (e) { toast(e.message || "Failed to open the DM.", true); });
+  }
+  $("groupCreate").addEventListener("click", function () {
+    var name = $("groupName").value.trim();
+    var picked = Array.prototype.slice.call(document.querySelectorAll("#groupChecks input:checked"))
+      .map(function (i) { return i.dataset.friend; });
+    var typed = $("groupUsers").value.split(/[\s,]+/).map(function (s) { return s.trim().replace(/^@/, ""); }).filter(Boolean);
+    var targets = Array.from(new Set(picked.concat(typed)));
+    if (!targets.length) { toast("Pick at least one person — friends or @usernames.", true); return; }
+    var body = { token: S.token, targetUsernames: targets, makeGroup: true };
+    if (name) body.name = name;
+    post("/api/chat-dm", body).then(function (d) {
+      var ix = S.dms.findIndex(function (x) { return x.id === d.dm.id; });
+      if (ix >= 0) S.dms[ix] = d.dm; else S.dms.unshift(d.dm);
+      $("groupName").value = ""; $("groupUsers").value = "";
+      document.querySelectorAll("#groupChecks input:checked").forEach(function (i) { i.checked = false; });
+      switchChannel(d.dm.id);
+      toast("Group created — you + " + targets.length + " member" + (targets.length === 1 ? "" : "s") + ".");
+    }).catch(function (e) { toast(e.message || "Failed to create the group.", true); });
+  });
+  $("dmList").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-open]"); if (b) switchChannel(b.dataset.open);
+  });
+  $("groupList").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-open]"); if (b) switchChannel(b.dataset.open);
+  });
+
+  function switchChannel(id) {
+    if (S.channel === id) return;
+    S.channel = id;
+    S.msgs = []; S.seen = {};
+    $("msgs").innerHTML = "";
+    var isMain = id === "main";
+    $("backBtn").style.display = isMain ? "none" : "inline-flex";
+    var dm = S.dms.find(function (d) { return d.id === id; });
+    var title = isMain ? "#general" : (dm ? (dm.isGroup ? "👥 " : "✉ ") + dmLabel(dm) : "DM");
+    $("chanTitle").textContent = title;
+    document.title = title + " · Veil";
+    $("input").placeholder = "Message " + (isMain ? "#general" : dmLabel(dm || { members: [], name: "" })) + " — say hi";
+    renderDms(); renderGroups();
+    loadMessages();
+    if (window.innerWidth <= 760) $("side").classList.remove("open");
+  }
+  $("backBtn").addEventListener("click", function () { switchChannel("main"); });
+
+  /* ── tabs ── */
+  document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () {
+      document.querySelectorAll(".tab").forEach(function (x) { x.classList.remove("on"); });
+      document.querySelectorAll(".pane").forEach(function (x) { x.classList.remove("on"); });
+      t.classList.add("on");
+      $("pane-" + t.dataset.tab).classList.add("on");
+    });
+  });
+  $("panelToggle").addEventListener("click", function () { $("side").classList.toggle("open"); });
+
+  /* ── daily streak ── */
+  var TZ = 0;
+  try { TZ = new Date().getTimezoneOffset(); } catch (e) {}
+  function refreshDaily() {
+    post("/api/chat-coins", { token: S.token, action: "daily_reward_status", tz: TZ })
+      .then(function (d) {
+        S.daily = d;
+        var btn = $("dailyBtn");
+        btn.className = d.eligible ? "eligible" : "";
+        btn.disabled = !d.eligible;
+        $("dailyTxt").textContent = d.eligible ? "Daily" : (d.streak || 0) + "🔥";
+        var bd = $("dailyBadge");
+        bd.style.display = (d.streak || 0) > 0 ? "flex" : "none";
+        bd.textContent = d.streak || 0;
+        btn.title = d.eligible
+          ? "Claim today's reward — keeps your " + (d.streak || 0) + "-day streak going"
+          : d.nextClaimAt
+            ? "Claimed today — streak " + (d.streak || 0) + "🔥. Next claim " + new Date(d.nextClaimAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+            : "Daily reward";
+      })
+      .catch(function () { /* next tick retries */ });
+  }
+  $("dailyBtn").addEventListener("click", function () {
+    if (!S.daily || !S.daily.eligible) return;
+    post("/api/chat-coins", { token: S.token, action: "daily_reward", tz: TZ })
+      .then(function (d) {
+        if (d.account) {
+          S.account = d.account;
+          try { localStorage.setItem(LS_SESSION, JSON.stringify({ token: S.token, account: S.account })); } catch (e) {}
+          $("coinsTxt").textContent = (d.account.coins || 0).toLocaleString();
+        }
+        toast("Daily reward: +🪙 " + d.reward + " — day " + d.streak + " streak 🔥");
+        refreshDaily();
+      })
+      .catch(function (e) { toast(e.message || "Daily claim failed.", true); });
+  });
+
+  /* ── go ── */
+  boot();
+})();
+</script>
+</body>
+</html>

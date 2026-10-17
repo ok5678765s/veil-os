@@ -71,6 +71,10 @@ export async function POST(req: NextRequest) {
       targetUsername?: string
       targetUsernames?: string[]
       name?: string
+      /** Explicit group intent — the Groups panel / offline build create
+       * named groups even with a single friend ("Squad" with one person
+       * is a group, NOT a silent reuse of the 1:1 DM). */
+      makeGroup?: boolean
     }
 
     const token = body.token
@@ -112,7 +116,9 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const isGroup = targetUsernames.length > 1
+    /* A group when 2+ targets, OR when the caller explicitly asks for
+     * one — the reuse path below must never swallow a deliberate group. */
+    const isGroup = targetUsernames.length > 1 || body.makeGroup === true
     const allMemberIds = [account.id, ...targetAccounts.map((a) => a.id)]
 
     // For 1:1 DMs: try to find an existing non-group DM with exactly these 2 members.

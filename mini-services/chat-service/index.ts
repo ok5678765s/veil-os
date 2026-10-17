@@ -706,6 +706,64 @@ kickServer.listen(KICK_PORT, "127.0.0.1", () => {
   console.log(`[veil-chat] kick endpoint on 127.0.0.1:${KICK_PORT}`)
 })
 
+/* ── PUBLIC PRESENCE POLL (port 3006) ─────────────────────────────────
+ *
+ * GET /presence                 → { ok, now, channels: { [id]: users[] } }
+ * GET /presence?channel=main    → { ok, channel, users: [...] }
+ *
+ * Why: the website's player tab used to learn online/offline status
+ * ONLY from live socket "presence" events — a dropped/blipped socket
+ * froze the dots forever ("player tab no update", friends chatting but
+ * showing offline). This endpoint lets every client (website chat, the
+ * offline single-file build, static mirrors) poll the authoritative
+ * presence map on an interval and self-heal. Reachable through the
+ * gateway as /presence?XTransformPort=3006 — CORS-open because the
+ * offline build calls it from file:// (Origin: null). The data is the
+ * same the socket broadcasts to entire rooms — public by design. */
+const PRESENCE_PORT = 3006
+const presenceServer = createServer((req, res) => {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Cache-Control": "no-store",
+  }
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, corsHeaders)
+    res.end()
+    return
+  }
+  if (req.method !== "GET" || !req.url?.startsWith("/presence")) {
+    res.writeHead(404, corsHeaders)
+    res.end(JSON.stringify({ ok: false, error: "not found" }))
+    return
+  }
+  let channel: string | null = null
+  try {
+    const u = new URL(req.url, "http://localhost")
+    const c = u.searchParams.get("channel")
+    if (c && /^[a-z0-9_:.-]{1,120}$/i.test(c)) channel = c.toLowerCase()
+  } catch {
+    /* no channel filter */
+  }
+  const now = Date.now()
+  if (channel) {
+    const users = publicPresence(channel)
+    res.writeHead(200, { "Content-Type": "application/json", ...corsHeaders })
+    res.end(JSON.stringify({ ok: true, now, channel, users }))
+    return
+  }
+  const channels: Record<string, ReturnType<typeof publicPresence>> = {}
+  for (const id of channelPresence.keys()) {
+    channels[id] = publicPresence(id)
+  }
+  res.writeHead(200, { "Content-Type": "application/json", ...corsHeaders })
+  res.end(JSON.stringify({ ok: true, now, channels }))
+})
+presenceServer.listen(PRESENCE_PORT, () => {
+  console.log(`[veil-chat] presence poll on port ${PRESENCE_PORT}`)
+})
+
 httpServer.listen(PORT, () => {
   console.log(`[veil-chat] WebSocket server running on port ${PORT}`)
 })
@@ -713,13 +771,17 @@ httpServer.listen(PORT, () => {
 process.on("SIGTERM", () => {
   console.log("[veil-chat] SIGTERM, shutting down...")
   io.close(() => {
-    httpServer.close(() => process.exit(0))
+    httpServer.close(() => {
+      presenceServer.close(() => process.exit(0))
+    })
   })
 })
 
 process.on("SIGINT", () => {
   console.log("[veil-chat] SIGINT, shutting down...")
   io.close(() => {
-    httpServer.close(() => process.exit(0))
+    httpServer.close(() => {
+      presenceServer.close(() => process.exit(0))
+    })
   })
 })

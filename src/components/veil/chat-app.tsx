@@ -24,6 +24,7 @@ import {
   useState,
   type ChangeEvent,
   type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
 } from "react"
 import { io, type Socket } from "socket.io-client"
 import { AnimatePresence, motion } from "framer-motion"
@@ -86,6 +87,7 @@ import {
   Pencil,
   SmilePlus,
   Heart,
+  UsersRound,
 } from "lucide-react"
 
 import { BackdropVideo } from "@/components/veil/backdrop-video"
@@ -3351,7 +3353,9 @@ function PlayerList({
             Offline — {buckets.offline.length}
           </h4>
           <div className="space-y-0.5">
-            {buckets.offline.slice(0, 30).map((m, i) => renderRow(m, false, i))}
+            {/* Everyone shows — the panel scrolls. The old 30-row cap hid
+                real players ("Lone_Wolf isn't there"). */}
+            {buckets.offline.map((m, i) => renderRow(m, false, i))}
           </div>
         </section>
       </div>
@@ -4263,6 +4267,9 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
 
   // UI panels
   const [showMembers, setShowMembers] = useState(true)
+  /* Which social side panel is open (its OWN header button, next to the
+   * players toggle — owner ask). null → the player list shows instead. */
+  const [socialPanel, setSocialPanel] = useState<null | "friends" | "dms" | "groups">(null)
   const [showMusic, setShowMusic] = useState(false)
   const [channelSwitcher, setChannelSwitcher] = useState(false)
   const [showGif, setShowGif] = useState(false)
@@ -5033,6 +5040,41 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
 
   }, [account?.id, token])
 
+  /* Presence self-heal poll — the socket's "presence" events are the
+   * fast path, but a blipped/dropped socket froze the online dots
+   * FOREVER ("player tab no update": friends chatting while showing
+   * offline). Poll the chat service's presence endpoint (gateway port
+   * 3006) for the CURRENT channel every 25s; the server truth replaces
+   * the local set, so any missed event corrects itself within half a
+   * minute — and the offline single-file build reads the same endpoint. */
+  useEffect(() => {
+    if (!account || !token) return
+    let stopped = false
+    const poll = async () => {
+      const cid = channelIdRef.current
+      if (!cid) return
+      try {
+        const res = await fetch(
+          `/presence?XTransformPort=3006&channel=${encodeURIComponent(cid)}`,
+          { cache: "no-store" },
+        )
+        if (!res.ok) return
+        const data = (await res.json()) as { ok: boolean; users?: PresenceUser[] }
+        if (stopped || !data.ok || !Array.isArray(data.users)) return
+        if (channelIdRef.current !== cid) return // stale tick — channel moved
+        setPresence(data.users)
+      } catch {
+        /* gateway blip — next tick retries */
+      }
+    }
+    void poll()
+    const t = setInterval(() => void poll(), 25000)
+    return () => {
+      stopped = true
+      clearInterval(t)
+    }
+  }, [account, token])
+
   // Garbage-collect typing indicators every 4s.
   useEffect(() => {
     const t = setInterval(() => {
@@ -5725,6 +5767,39 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
     }
   }
 
+  // Open a DM with someone (friends panel / profiles) — reuses the
+  // existing conversation when there is one instead of minting a new id.
+  const openDmWith = async (username: string) => {
+    const who = username.trim().replace(/^@/, "")
+    if (!who || !account) return
+    const existing = dms.find(
+      (d) =>
+        !d.isGroup &&
+        d.members.some(
+          (m) => m.id !== account.id && m.username.toLowerCase() === who.toLowerCase(),
+        ),
+    )
+    if (existing) {
+      setChannelId(existing.id)
+      return
+    }
+    setDmTarget(who)
+    try {
+      const data = await apiFetch<{ dm: DM }>("/api/chat-dm", {
+        method: "POST",
+        body: JSON.stringify({ token, targetUsername: who }),
+      })
+      setDms((prev) => {
+        if (prev.some((d) => d.id === data.dm.id)) return prev
+        return [data.dm, ...prev]
+      })
+      setChannelId(data.dm.id)
+      toast(`DM opened with @${who}.`, "ok")
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Failed to open the DM.", "err")
+    }
+  }
+
   // -------------------------------------------------------------------------
   // Group chats — create / invite / rename / leave.
   // -------------------------------------------------------------------------
@@ -5749,6 +5824,7 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
           token,
           targetUsernames: targets,
           name: name || undefined,
+          makeGroup: true,
         }),
       })
       setDms((prev) => {
@@ -6093,6 +6169,18 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
   const totalUnread = useMemo(
     () => Object.values(unread).reduce((sum, n) => sum + (n || 0), 0),
     [unread],
+  )
+
+  /* Unread across DMs only — the DMs header button's badge. */
+  const dmUnread = useMemo(
+    () => dms.reduce((sum, d) => sum + (unread[d.id] || 0), 0),
+    [dms, unread],
+  )
+
+  /* Online account ids — shared by the friends panel's live dots. */
+  const onlineIdSet = useMemo(
+    () => new Set(presence.map((p) => p.accountId)),
+    [presence],
   )
 
   /* The right-side player list is scoped to the conversation: public
@@ -6696,18 +6784,99 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
               <Search className="h-4 w-4" />
             </motion.button>
 
-            {/* Member list toggle */}
+            {/* Member list toggle (the Players tab) */}
             <motion.button
-              onClick={() => setShowMembers((s) => !s)}
+              onClick={() => {
+                /* From a social panel, Players takes the slot (never
+                 * closes it — that felt like the button ate the panel). */
+                const wasSocial = socialPanel !== null
+                setSocialPanel(null)
+                setShowMembers((s) => (wasSocial ? true : !s))
+              }}
               whileHover={{ scale: 1.16, y: -1 }}
               whileTap={{ scale: 0.86 }}
               transition={CHAT_POP}
               className={`rounded-md p-1.5 hover:bg-white/10 ${
-                showMembers ? "bg-white/10 text-orange-300" : "text-white/60"
+                showMembers && !socialPanel ? "bg-white/10 text-orange-300" : "text-white/60"
               }`}
               title="Toggle player list"
             >
               <Users className="h-4 w-4" />
+            </motion.button>
+
+            {/* Friends — its own button next to the players tab (owner
+                ask). Badge = pending incoming requests. */}
+            <motion.button
+              onClick={() =>
+                setSocialPanel((cur) => (cur === "friends" ? null : "friends"))
+              }
+              whileHover={{ scale: 1.16, y: -1 }}
+              whileTap={{ scale: 0.86 }}
+              transition={CHAT_POP}
+              className={`relative rounded-md p-1.5 hover:bg-white/10 ${
+                socialPanel === "friends" ? "bg-white/10 text-rose-300" : "text-white/60"
+              }`}
+              title="Friends"
+            >
+              <Heart className="h-4 w-4" />
+              {friendRequestsIn.length > 0 && (
+                <motion.span
+                  key={friendRequestsIn.length}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={CHAT_POP}
+                  className="veil-badge-pop absolute -right-0.5 -top-0.5 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-rose-500 text-[8px] font-bold text-white"
+                >
+                  {friendRequestsIn.length}
+                </motion.span>
+              )}
+            </motion.button>
+
+            {/* DMs — its own button next to the players tab. Badge =
+                unread DMs. */}
+            <motion.button
+              onClick={() => setSocialPanel((cur) => (cur === "dms" ? null : "dms"))}
+              whileHover={{ scale: 1.16, y: -1 }}
+              whileTap={{ scale: 0.86 }}
+              transition={CHAT_POP}
+              className={`relative rounded-md p-1.5 hover:bg-white/10 ${
+                socialPanel === "dms" ? "bg-white/10 text-orange-300" : "text-white/60"
+              }`}
+              title="Direct messages"
+            >
+              <MessageCircle className="h-4 w-4" />
+              {dmUnread > 0 && (
+                <motion.span
+                  key={dmUnread}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={CHAT_POP}
+                  className="veil-badge-pop absolute -right-0.5 -top-0.5 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-orange-400 text-[8px] font-bold text-black"
+                >
+                  {dmUnread > 99 ? "99+" : dmUnread}
+                </motion.span>
+              )}
+            </motion.button>
+
+            {/* Groups — its own button next to the players tab. */}
+            <motion.button
+              onClick={() =>
+                setSocialPanel((cur) => (cur === "groups" ? null : "groups"))
+              }
+              whileHover={{ scale: 1.16, y: -1 }}
+              whileTap={{ scale: 0.86 }}
+              transition={CHAT_POP}
+              className={`relative rounded-md p-1.5 hover:bg-white/10 ${
+                socialPanel === "groups" ? "bg-white/10 text-cyan-300" : "text-white/60"
+              }`}
+              title="Group chats"
+            >
+              <UsersRound className="h-4 w-4" />
+              {dms.filter((d) => d.isGroup).length > 0 && socialPanel !== "groups" && (
+                <span className="absolute -right-0.5 -top-0.5 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-cyan-500/80 text-[8px] font-bold text-black">
+                  {dms.filter((d) => d.isGroup).length}
+                </span>
+              )}
             </motion.button>
 
             {/* Chat backup (mods/owner) — jsDelivr safety net */}
@@ -7162,9 +7331,57 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
             </AnimatePresence>
           </div>
 
-          {/* Member list — scoped to the conversation for DMs/groups */}
+          {/* Member list + social panels — the player list is scoped to
+              the conversation for DMs/groups; Friends / DMs / Groups each
+              get their OWN panel in the same slot (owner ask). */}
           <AnimatePresence>
-            {showMembers && (
+            {socialPanel === "friends" ? (
+              <FriendsPanel
+                friends={friends}
+                requestsIn={friendRequestsIn}
+                requestsOut={friendRequestsOut}
+                onlineIds={onlineIdSet}
+                busy={friendBusy}
+                target={friendTarget}
+                onTarget={setFriendTarget}
+                onAdd={() => void addFriend()}
+                onRespond={(id, action) => void respondFriend(id, action)}
+                onCancel={(id) => void cancelFriendRequest(id)}
+                onOpenProfile={openProfile}
+                onDm={(username) => void openDmWith(username)}
+                onClose={() => setSocialPanel(null)}
+              />
+            ) : socialPanel === "dms" ? (
+              <DmsPanel
+                account={account}
+                dms={dms}
+                unread={unread}
+                activeId={channelId}
+                target={dmTarget}
+                onTarget={setDmTarget}
+                onCreate={() => void createDm()}
+                onOpen={(id) => setChannelId(id)}
+                onClose={() => setSocialPanel(null)}
+              />
+            ) : socialPanel === "groups" ? (
+              <GroupsPanel
+                dms={dms}
+                activeId={channelId}
+                friends={friends}
+                name={groupName}
+                picked={groupPicked}
+                users={groupUserInput}
+                creating={creatingGroup}
+                onName={setGroupName}
+                onPicked={(u, on) =>
+                  setGroupPicked((prev) => ({ ...prev, [u]: on }))
+                }
+                onUsers={setGroupUserInput}
+                onCreate={() => void createGroup()}
+                onOpen={(id) => setChannelId(id)}
+                onClose={() => setSocialPanel(null)}
+              />
+            ) : showMembers ? (
               <PlayerList
                 account={account}
                 members={isDm && dmMeta ? dmMeta.members : playersMembers}
@@ -7172,7 +7389,7 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
                 onOpenProfile={openProfile}
                 onClose={() => setShowMembers(false)}
               />
-            )}
+            ) : null}
           </AnimatePresence>
         </div>
 
@@ -7328,7 +7545,513 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
 }
 
 // ---------------------------------------------------------------------------
-// Daily reward button (with streak + 24h lockout)
+// Friends / DMs / Groups side panels — their OWN header buttons, right
+// next to the players toggle (owner ask). Same slide-in slot + styling
+// family as the player list.
+// ---------------------------------------------------------------------------
+
+/** Label for a DM/group row — group name, or the other members' names. */
+function dmLabel(d: DM, meId: string): string {
+  return (
+    d.name ||
+    d.members.filter((m) => m.id !== meId).map(displayName).join(", ") ||
+    (d.isGroup ? "Group" : "DM")
+  )
+}
+
+function SocialPanelShell({
+  icon,
+  title,
+  count,
+  onClose,
+  children,
+}: {
+  icon: ReactNode
+  title: string
+  count?: number
+  onClose: () => void
+  children: ReactNode
+}) {
+  return (
+    <motion.aside
+      initial={{ x: 40, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: 40, opacity: 0 }}
+      className="flex w-60 flex-col border-l border-white/10 bg-[#101022] text-white"
+    >
+      <div className="flex items-center justify-between border-b border-white/10 px-3 py-2.5">
+        <span className="flex min-w-0 items-center gap-1.5 text-sm font-semibold">
+          {icon}
+          <span className="truncate">{title}</span>
+          {typeof count === "number" && (
+            <span className="rounded-full bg-white/10 px-1.5 text-[10px] font-semibold tabular-nums text-white/60">
+              {count}
+            </span>
+          )}
+        </span>
+        <button
+          onClick={onClose}
+          className="veil-hover-wobble shrink-0 rounded p-1 text-white/50 hover:bg-white/10 hover:text-white"
+          title="Close panel"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div
+        className="veil-scroll-slim flex-1 space-y-3 overflow-y-auto p-2"
+        style={{ scrollbarWidth: "thin" }}
+      >
+        {children}
+      </div>
+    </motion.aside>
+  )
+}
+
+function FriendsPanel({
+  friends,
+  requestsIn,
+  requestsOut,
+  onlineIds,
+  busy,
+  target,
+  onTarget,
+  onAdd,
+  onRespond,
+  onCancel,
+  onOpenProfile,
+  onDm,
+  onClose,
+}: {
+  friends: ChatAccount[]
+  requestsIn: FriendRequestRow[]
+  requestsOut: FriendRequestRow[]
+  onlineIds: Set<string>
+  busy: boolean
+  target: string
+  onTarget: (v: string) => void
+  onAdd: () => void
+  onRespond: (requestId: string, action: "accept" | "decline") => void
+  onCancel: (requestId: string) => void
+  onOpenProfile: (accountId: string) => void
+  onDm: (username: string) => void
+  onClose: () => void
+}) {
+  /* Online friends float to the top, alphabetical within each bucket. */
+  const sorted = useMemo(() => {
+    const rank = (f: ChatAccount) => (onlineIds.has(f.id) ? 0 : 1)
+    return [...friends].sort(
+      (a, b) => rank(a) - rank(b) || displayName(a).localeCompare(displayName(b)),
+    )
+  }, [friends, onlineIds])
+  return (
+    <SocialPanelShell
+      icon={<Heart className="h-3.5 w-3.5 shrink-0 text-rose-400" />}
+      title="Friends"
+      count={friends.length}
+      onClose={onClose}
+    >
+      {/* Add a friend */}
+      <div className="flex items-center gap-1">
+        <input
+          value={target}
+          onChange={(e) => onTarget(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && onAdd()}
+          placeholder="@username"
+          autoCapitalize="none"
+          className="veil-focus-bloom min-w-0 flex-1 rounded-md border border-white/10 bg-black/40 px-2 py-1 text-xs text-white outline-none"
+        />
+        <button
+          onClick={onAdd}
+          disabled={busy}
+          className="veil-press veil-hover-glow flex shrink-0 items-center gap-1 rounded-md bg-orange-400 px-2 py-1 text-xs font-semibold text-black disabled:opacity-50"
+          title="Send a friend request"
+        >
+          {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <UserPlus className="h-3 w-3" />}
+          Add
+        </button>
+      </div>
+      <p className="px-1 text-[9.5px] leading-tight text-white/35">
+        They get a notification — you become friends when they accept.
+      </p>
+
+      {/* Incoming requests */}
+      {requestsIn.length > 0 && (
+        <section>
+          <h4 className="veil-text-shine mb-1 px-1 text-[10px] font-semibold uppercase tracking-wide text-white/40">
+            Requests — {requestsIn.length}
+          </h4>
+          <div className="space-y-1">
+            {requestsIn.map((r, ri) => (
+              <div
+                key={r.id}
+                className={`veil-slide-right-pop veil-stagger-${(ri % 8) + 1} flex items-center gap-2 rounded-md border border-emerald-400/20 bg-emerald-400/5 px-2 py-1.5`}
+              >
+                <button
+                  onClick={() => onOpenProfile(r.user.id)}
+                  className="grid h-6 w-6 shrink-0 place-items-center rounded-full text-[10px] font-bold text-white"
+                  style={{ backgroundColor: r.user.avatarColor || "#f97316" }}
+                  title={`View @${r.user.username}`}
+                >
+                  {r.user.username?.[0]?.toUpperCase()}
+                </button>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-xs text-white/85">
+                    {displayName(r.user)}
+                  </span>
+                  <span className="block text-[9.5px] text-emerald-300/70">
+                    wants to be your friend
+                  </span>
+                </span>
+                <button
+                  onClick={() => onRespond(r.id, "accept")}
+                  className="veil-hover-bounce veil-press grid h-6 w-6 shrink-0 place-items-center rounded-md bg-emerald-500/90 text-black hover:bg-emerald-400"
+                  title={`Accept @${r.user.username}`}
+                >
+                  <Check className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => onRespond(r.id, "decline")}
+                  className="veil-hover-bounce veil-press grid h-6 w-6 shrink-0 place-items-center rounded-md bg-white/10 text-white/60 hover:bg-red-500/30 hover:text-red-300"
+                  title={`Decline @${r.user.username}`}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Outgoing requests */}
+      {requestsOut.length > 0 && (
+        <section>
+          <h4 className="veil-text-shine mb-1 px-1 text-[10px] font-semibold uppercase tracking-wide text-white/40">
+            Waiting on them
+          </h4>
+          <div className="space-y-0.5">
+            {requestsOut.map((r) => (
+              <div key={r.id} className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-white/5">
+                <span
+                  className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[9px] font-bold text-white/70"
+                  style={{ backgroundColor: r.user.avatarColor || "#71717a" }}
+                >
+                  {r.user.username?.[0]?.toUpperCase()}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-xs text-white/60">
+                  @{r.user.username}
+                </span>
+                <button
+                  onClick={() => onCancel(r.id)}
+                  className="rounded p-0.5 text-white/30 hover:text-red-300"
+                  title="Cancel request"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* The friend list */}
+      <section>
+        <h4 className="veil-text-shine mb-1 px-1 text-[10px] font-semibold uppercase tracking-wide text-white/40">
+          {sorted.length === 0 ? "No friends yet" : "Your friends"}
+        </h4>
+        {sorted.length === 0 ? (
+          <p className="px-1 py-2 text-[11px] text-white/30">
+            Add someone with the box above — friends show live online dots.
+          </p>
+        ) : (
+          <div className="space-y-0.5">
+            {sorted.map((f, i) => (
+              <motion.div
+                key={f.id}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: Math.min(i * 0.03, 0.3), duration: 0.2, ease: "easeOut" }}
+                className="group flex items-center gap-2 rounded-md px-1.5 py-1 hover:bg-white/5"
+              >
+                <button
+                  onClick={() => onOpenProfile(f.id)}
+                  className="relative shrink-0"
+                  title={`${displayName(f)} — view profile`}
+                >
+                  <AvatarWithAccessory account={f} size={26} />
+                  <span
+                    className={`absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-black/60 ${
+                      onlineIds.has(f.id) ? "veil-online-pulse bg-emerald-400" : "bg-white/30"
+                    }`}
+                  />
+                </button>
+                <button
+                  onClick={() => onOpenProfile(f.id)}
+                  className="min-w-0 flex-1 text-left"
+                >
+                  <span
+                    className="block truncate text-sm font-medium"
+                    style={{ color: roleColor(f) }}
+                  >
+                    {displayName(f)}
+                  </span>
+                  <span className="block truncate text-[10px] text-white/40">@{f.username}</span>
+                </button>
+                <button
+                  onClick={() => onDm(f.username)}
+                  className="veil-hover-bounce rounded bg-white/10 p-1 text-white/60 opacity-0 transition hover:bg-orange-400/30 hover:text-orange-200 focus-visible:opacity-100 group-hover:opacity-100"
+                  title={`DM @${f.username}`}
+                >
+                  <MessageCircle className="h-3 w-3" />
+                </button>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
+    </SocialPanelShell>
+  )
+}
+
+function DmsPanel({
+  account,
+  dms,
+  unread,
+  activeId,
+  target,
+  onTarget,
+  onCreate,
+  onOpen,
+  onClose,
+}: {
+  account: ChatAccount
+  dms: DM[]
+  unread: Record<string, number>
+  activeId: string
+  target: string
+  onTarget: (v: string) => void
+  onCreate: () => void
+  onOpen: (id: string) => void
+  onClose: () => void
+}) {
+  const solo = dms.filter((d) => !d.isGroup)
+  return (
+    <SocialPanelShell
+      icon={<MessageCircle className="h-3.5 w-3.5 shrink-0 text-orange-400" />}
+      title="DMs"
+      count={solo.length}
+      onClose={onClose}
+    >
+      {/* Start a new DM */}
+      <div className="flex items-center gap-1">
+        <input
+          value={target}
+          onChange={(e) => onTarget(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && onCreate()}
+          placeholder="@username"
+          autoCapitalize="none"
+          className="veil-focus-bloom min-w-0 flex-1 rounded-md border border-white/10 bg-black/40 px-2 py-1 text-xs text-white outline-none"
+        />
+        <button
+          onClick={onCreate}
+          className="veil-press veil-hover-glow shrink-0 rounded-md bg-orange-400 px-2 py-1 text-xs font-semibold text-black"
+          title="Open the DM"
+        >
+          Open
+        </button>
+      </div>
+      {solo.length === 0 ? (
+        <p className="px-1 py-2 text-[11px] text-white/30">
+          No direct messages yet — start one with the box above.
+        </p>
+      ) : (
+        <div className="space-y-0.5">
+          {solo.map((d, di) => {
+            const label = dmLabel(d, account.id)
+            const other = d.members.find((m) => m.id !== account.id)
+            return (
+              <motion.button
+                key={d.id}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: Math.min(di * 0.03, 0.3), duration: 0.2, ease: "easeOut" }}
+                whileHover={{ x: 2 }}
+                onClick={() => onOpen(d.id)}
+                className={`flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left ${
+                  activeId === d.id ? "veil-pulse-glow bg-white/10" : "veil-hover-glow hover:bg-white/5"
+                }`}
+              >
+                <span className="relative shrink-0">
+                  {other ? (
+                    <AvatarWithAccessory account={other} size={26} />
+                  ) : (
+                    <span className="grid h-[26px] w-[26px] place-items-center rounded-full bg-white/10 text-[10px] font-bold text-white/60">
+                      ?
+                    </span>
+                  )}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span
+                    className="block truncate text-sm font-medium"
+                    style={{ color: other ? roleColor(other) : undefined }}
+                  >
+                    {label}
+                  </span>
+                  <span className="block truncate text-[10px] text-white/40">
+                    @{other?.username || "?"}
+                  </span>
+                </span>
+                {unread[d.id] > 0 && (
+                  <span
+                    key={unread[d.id]}
+                    className="veil-badge-pop veil-bounce-soft grid h-4 min-w-4 shrink-0 place-items-center rounded-full bg-orange-400 px-1 text-[9px] font-bold text-black"
+                  >
+                    {unread[d.id] > 99 ? "99+" : unread[d.id]}
+                  </span>
+                )}
+              </motion.button>
+            )
+          })}
+        </div>
+      )}
+    </SocialPanelShell>
+  )
+}
+
+function GroupsPanel({
+  dms,
+  activeId,
+  friends,
+  name,
+  picked,
+  users,
+  creating,
+  onName,
+  onPicked,
+  onUsers,
+  onCreate,
+  onOpen,
+  onClose,
+}: {
+  dms: DM[]
+  activeId: string
+  friends: ChatAccount[]
+  name: string
+  picked: Record<string, boolean>
+  users: string
+  creating: boolean
+  onName: (v: string) => void
+  onPicked: (username: string, on: boolean) => void
+  onUsers: (v: string) => void
+  onCreate: () => void
+  onOpen: (id: string) => void
+  onClose: () => void
+}) {
+  const groups = dms.filter((d) => d.isGroup)
+  return (
+    <SocialPanelShell
+      icon={<UsersRound className="h-3.5 w-3.5 shrink-0 text-cyan-300" />}
+      title="Groups"
+      count={groups.length}
+      onClose={onClose}
+    >
+      {/* Create a group */}
+      <div className="space-y-1.5 rounded-lg border border-white/10 bg-black/30 p-2">
+        <input
+          value={name}
+          onChange={(e) => onName(e.target.value)}
+          placeholder="Group name (e.g. Squad)"
+          maxLength={64}
+          className="veil-focus-bloom w-full rounded-md border border-white/10 bg-black/40 px-2 py-1 text-xs text-white outline-none focus:border-cyan-400/50"
+        />
+        {friends.length > 0 && (
+          <div className="veil-scroll-slim max-h-28 overflow-y-auto rounded-md border border-white/10">
+            {friends.map((f) => (
+              <label
+                key={f.id}
+                className="flex cursor-pointer items-center gap-2 px-2 py-1 text-[11px] text-white/75 hover:bg-white/5"
+              >
+                <input
+                  type="checkbox"
+                  checked={!!picked[f.username]}
+                  onChange={(e) => onPicked(f.username, e.target.checked)}
+                  className="accent-cyan-400"
+                />
+                <span
+                  className="grid h-4 w-4 shrink-0 place-items-center rounded-full text-[8px] font-bold text-white"
+                  style={{ backgroundColor: f.avatarColor }}
+                >
+                  {f.username[0]?.toUpperCase()}
+                </span>
+                <span className="flex-1 truncate">{displayName(f)}</span>
+              </label>
+            ))}
+          </div>
+        )}
+        <div className="flex items-center gap-1">
+          <input
+            value={users}
+            onChange={(e) => onUsers(e.target.value)}
+            placeholder="@username, @username…"
+            autoCapitalize="none"
+            className="min-w-0 flex-1 rounded-md border border-white/10 bg-black/40 px-2 py-1 text-xs text-white outline-none"
+          />
+          <button
+            onClick={onCreate}
+            disabled={creating}
+            className="veil-press flex shrink-0 items-center gap-1 rounded-md bg-cyan-500 px-2 py-1 text-xs font-semibold text-black disabled:opacity-50"
+            title="Create the group"
+          >
+            {creating ? <Loader2 className="h-3 w-3 animate-spin" /> : <UsersRound className="h-3 w-3" />}
+            Create
+          </button>
+        </div>
+        <p className="text-[9.5px] leading-tight text-white/35">
+          Tick friends and/or type @usernames — everyone gets in at once and
+          can invite more later.
+        </p>
+      </div>
+
+      {/* Group list */}
+      {groups.length === 0 ? (
+        <p className="px-1 py-2 text-[11px] text-white/30">
+          No groups yet — make one with the box above.
+        </p>
+      ) : (
+        <div className="space-y-0.5">
+          {groups.map((d, di) => (
+            <motion.button
+              key={d.id}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: Math.min(di * 0.03, 0.3), duration: 0.2, ease: "easeOut" }}
+              whileHover={{ x: 2 }}
+              onClick={() => onOpen(d.id)}
+              className={`flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left ${
+                activeId === d.id ? "veil-pulse-glow bg-white/10" : "veil-hover-glow hover:bg-white/5"
+              }`}
+            >
+              <span className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-md bg-cyan-400/15 text-cyan-300">
+                <UsersRound className="h-3.5 w-3.5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-medium">{d.name || "Group"}</span>
+                <span className="block truncate text-[10px] text-white/40">
+                  {d.members.map((m) => displayName(m)).join(", ")}
+                </span>
+              </span>
+              <span className="shrink-0 rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold tabular-nums text-white/50">
+                {d.members.length}
+              </span>
+            </motion.button>
+          ))}
+        </div>
+      )}
+    </SocialPanelShell>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Daily reward button (with streak + one claim per calendar day)
 // ---------------------------------------------------------------------------
 
 function DailyRewardButton({
@@ -7347,6 +8070,17 @@ function DailyRewardButton({
   } | null>(null)
   const [claiming, setClaiming] = useState(false)
 
+  /* The claimer's timezone (minutes west of UTC, the JS convention) —
+   * the server slices days at the player's LOCAL midnight, so "one claim
+   * per day" means what players expect. */
+  const tz = useMemo(() => {
+    try {
+      return new Date().getTimezoneOffset()
+    } catch {
+      return 0
+    }
+  }, [])
+
   const refresh = useCallback(async () => {
     try {
       const data = await apiFetch<{
@@ -7355,17 +8089,17 @@ function DailyRewardButton({
         nextClaimAt: string | null
       }>("/api/chat-coins", {
         method: "POST",
-        body: JSON.stringify({ token, action: "daily_reward_status" }),
+        body: JSON.stringify({ token, action: "daily_reward_status", tz }),
       })
       setStatus(data)
     } catch {
       /* ignore */
     }
-  }, [token])
+  }, [token, tz])
 
   useEffect(() => {
     void refresh()
-    const t = setInterval(refresh, 60000)
+    const t = setInterval(refresh, 30000)
     return () => clearInterval(t)
   }, [refresh])
 
@@ -7378,10 +8112,10 @@ function DailyRewardButton({
         account: ChatAccount
       }>("/api/chat-coins", {
         method: "POST",
-        body: JSON.stringify({ token, action: "daily_reward" }),
+        body: JSON.stringify({ token, action: "daily_reward", tz }),
       })
       onAccount(data.account)
-      toast(`Daily reward: +🪙 ${data.reward} (streak ${data.streak})`, "ok")
+      toast(`Daily reward: +🪙 ${data.reward} — day ${data.streak} streak 🔥`, "ok")
       void refresh()
     } catch (e) {
       toast(e instanceof Error ? e.message : "Daily claim failed.", "err")
@@ -7390,6 +8124,7 @@ function DailyRewardButton({
     }
   }
 
+  const streak = status?.streak || 0
   return (
     <button
       onClick={() => void claim()}
@@ -7401,19 +8136,19 @@ function DailyRewardButton({
       }`}
       title={
         status?.eligible
-          ? `Claim daily reward (streak ${status.streak || 0})`
+          ? `Claim today's reward — keeps your ${streak}-day streak going`
           : status?.nextClaimAt
-            ? `Next reward at ${new Date(status.nextClaimAt).toLocaleTimeString()}`
+            ? `Claimed today — streak ${streak}🔥. Next claim ${new Date(status.nextClaimAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`
             : "Loading…"
       }
     >
       <Gift className="h-3.5 w-3.5" />
       <span className="hidden sm:inline">
-        {status?.eligible ? "Daily" : `${status?.streak || 0}🔥`}
+        {status?.eligible ? "Daily" : `${streak}🔥`}
       </span>
-      {status && status.streak > 0 && status.eligible && (
+      {streak > 0 && (
         <span className="veil-pop-in absolute -right-0.5 -top-0.5 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-orange-400 text-[8px] font-bold text-black">
-          {status.streak}
+          {streak}
         </span>
       )}
     </button>
