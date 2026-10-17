@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T02:23:27.372Z",
+  "exportedAt": "2026-10-17T15:28:26.967Z",
   "counts": {
     "accounts": 53,
-    "messages": 82,
+    "messages": 83,
     "dms": 3
   },
   "accounts": [
@@ -123,13 +123,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 17,
+      "coins": 23232,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": null,
+      "pfpAccessory": "puppy",
       "pfpOverlay": null,
-      "dailyRewardStreak": 2,
-      "lastRewardClaim": "2026-10-17T00:10:16.464Z",
+      "dailyRewardStreak": 3,
+      "lastRewardClaim": "2026-10-17T04:23:42.483Z",
       "legacy": false,
       "createdAt": "2026-10-04T16:47:38.027Z",
       "passwordHash": "$2b$10$wgZdfrvRghwA3SNf/R1ZwOe0EBEZiT/fJ9AA2lKmaOIX51V9DKNMC"
@@ -2023,6 +2023,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T01:38:31.156Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvcjwp1z0003lt0gox5qkob7",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T15:28:14.808Z",
       "editedAt": null
     }
   ],
