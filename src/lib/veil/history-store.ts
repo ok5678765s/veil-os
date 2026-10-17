@@ -148,6 +148,118 @@ function loadAll(): Promise<VeilHistoryRow[]> {
   });
 }
 
+/* ── two-stage priming ──────────────────────────────────────────────
+ *
+ * The FULL river read (loadAll) is the only path that knows the whole
+ * store — but on a Takeout-scale history (a million rows, hundreds of
+ * MB) it takes minutes, and Chromium can silently never resolve the
+ * giant getAll pages at all. The UI must not wait for it: For You's
+ * seen-list caps at 20k ids, the ranker's signal window at 5k rows, the
+ * History tab pages 24 — so STAGE 1 walks the "at" INDEX backwards for
+ * the newest NEWEST_N rows (a B-tree seek plus N cursor hops — instant
+ * at any store size) and lands the mirror in well under a second.
+ * STAGE 2 then reads the whole river in the background and swaps the
+ * complete set in; even if it never lands, the app keeps working on
+ * the newest slice. Every step is deadline-guarded — a wedged
+ * IndexedDB (corrupted store, frozen private mode) resolves with what
+ * it has instead of hanging the feed forever. */
+const NEWEST_N = 25_000;
+const OPEN_MS = 2_500;
+const STAGE1_MS = 4_000;
+
+/** Resolve with `fallback` once `ms` passes — never leave a caller
+ *  waiting on a promise that may not settle. */
+function withDeadline<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(fallback), ms);
+    p.then(
+      (v) => {
+        clearTimeout(timer);
+        resolve(v);
+      },
+      () => {
+        clearTimeout(timer);
+        resolve(fallback);
+      },
+    );
+  });
+}
+
+/** The newest `n` rows, newest-first — reverse cursor over the "at"
+ *  index, deadline-guarded. A missing index throws synchronously and
+ *  resolves empty; the caller falls back to the full read. */
+function loadNewest(n: number, deadlineMs: number): Promise<VeilHistoryRow[]> {
+  return new Promise((resolve) => {
+    if (!db) {
+      resolve([]);
+      return;
+    }
+    const out: VeilHistoryRow[] = [];
+    let settled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      if (timer !== null) clearTimeout(timer);
+      resolve(out);
+    };
+    timer = setTimeout(finish, deadlineMs);
+    try {
+      const t = db.transaction(STORE, "readonly");
+      t.onabort = () => finish();
+      const req = t.objectStore(STORE).index("at").openCursor(null, "prev");
+      req.onsuccess = () => {
+        if (settled) return; /* deadline won — let the txn commit */
+        const cur = req.result;
+        if (!cur || out.length >= n) {
+          finish();
+          return;
+        }
+        const r = normalizeRow(cur.value);
+        if (r) out.push(r);
+        cur.continue();
+      };
+      req.onerror = () => finish();
+    } catch {
+      finish();
+    }
+  });
+}
+
+/** Live mutations recorded while stage 2 was still reading, replayed
+ *  on top of the full set: id → row (a touch) | null (a delete). */
+let priming = false;
+let primePatches: Map<string, VeilHistoryRow | null> | null = null;
+let primeCleared = false;
+let settledPromise: Promise<void> | null = null;
+
+function notePatch(id: string, row: VeilHistoryRow | null): void {
+  if (priming && primePatches && id) primePatches.set(id, row);
+}
+
+/** Stage 2 — the full river, then swap it in. Merge rules: the full
+ *  read is the base; the live mirror overlays it (newest `at` per id —
+ *  covers watches and bulk imports that landed mid-prime); a clear
+ *  drops the base entirely; patch nulls delete, patch rows re-apply. */
+async function finishPrime(): Promise<void> {
+  await migrateLegacy();
+  const full = await loadAll();
+  const byId = new Map<string, VeilHistoryRow>();
+  if (!primeCleared) for (const r of full) byId.set(r.card.id, r);
+  for (const r of mirror ?? []) {
+    const prev = byId.get(r.card.id);
+    if (!prev || r.at >= prev.at) byId.set(r.card.id, r);
+  }
+  if (primePatches) {
+    for (const [id, row] of primePatches) {
+      if (row === null) byId.delete(id);
+      else byId.set(id, row);
+    }
+  }
+  mirror = [...byId.values()].sort((a, b) => b.at - a.at).slice(0, HISTORY_CAP);
+  announce();
+}
+
 function countAll(): Promise<number> {
   return new Promise((resolve) => {
     const t = db!.transaction(STORE, "readonly");
@@ -252,39 +364,87 @@ async function migrateLegacy(): Promise<void> {
   }
 }
 
-/** Prime the mirror. Idempotent; auto-kicked on client module load so
- * the first historySnapshot() usually already has data. */
+/** Prime the mirror — TWO STAGES (see the block comment above
+ *  loadNewest). Stage 1 lands the newest slice and resolves; stage 2
+ *  reads the full river detached and swaps it in. Idempotent;
+ *  auto-kicked on client module load so the first historySnapshot()
+ *  usually already has data. */
 export function historyReady(): Promise<VeilHistoryRow[]> {
   if (readyPromise) return readyPromise;
   readyPromise = (async () => {
     if (typeof window === "undefined") {
       mirror = [];
+      settledPromise = Promise.resolve();
       return [];
     }
     if (typeof indexedDB !== "undefined") {
       try {
-        db = await openDb();
+        db = await withDeadline(openDb(), OPEN_MS, null);
       } catch {
         db = null;
       }
     }
     mode = db ? "idb" : "ls";
     if (mode === "idb") {
-      let rows: VeilHistoryRow[] = [];
+      /* STAGE 1 — the newest slice, deadline-guarded */
+      let newest: VeilHistoryRow[] = [];
       try {
-        await migrateLegacy();
-        rows = await loadAll();
+        newest = await loadNewest(NEWEST_N, STAGE1_MS);
       } catch {
-        rows = [];
+        newest = [];
       }
-      mirror = rows.slice(0, HISTORY_CAP);
+      /* un-migrated legacy rows ride along (merged by newest `at`; the
+       * write-side migration still belongs to stage 2) */
+      const legacy = readLegacyLs();
+      if (legacy.length > 0) {
+        const byId = new Map<string, VeilHistoryRow>();
+        for (const r of [...newest, ...legacy]) {
+          const prev = byId.get(r.card.id);
+          if (!prev || r.at > prev.at) byId.set(r.card.id, r);
+        }
+        newest = [...byId.values()].sort((a, b) => b.at - a.at);
+      }
+      mirror = newest.slice(0, NEWEST_N);
+      announce(); /* the feed unblocks on the newest slice alone */
+      /* STAGE 2 — only when there is more river than the slice (or a
+       * legacy payload still waiting on its write-side migration) */
+      let total = -1;
+      try {
+        total = await withDeadline(countAll(), 2_000, -1);
+      } catch {
+        total = -1;
+      }
+      if (total > mirror.length || legacy.length > 0) {
+        priming = true;
+        primePatches = new Map();
+        primeCleared = false;
+        settledPromise = (async () => {
+          try {
+            await finishPrime();
+          } catch {
+            /* the full river read failed — the newest slice keeps serving */
+          } finally {
+            priming = false;
+          }
+        })();
+      } else {
+        settledPromise = Promise.resolve();
+      }
     } else {
       mirror = readLegacyLs().slice(0, HISTORY_CAP);
+      settledPromise = Promise.resolve();
     }
-    announce(); /* listeners re-read the (now primed) mirror */
     return mirror;
   })();
   return readyPromise;
+}
+
+/** Resolves once the mirror holds the FULL store — stage 2 done, or
+ *  never needed. Backups await this so they carry everything even when
+ *  the prime is still reading the deep river. */
+export function historySettled(): Promise<void> {
+  if (settledPromise) return settledPromise;
+  return historyReady().then(() => settledPromise ?? Promise.resolve());
 }
 
 /* ── sync reads (mirror) ──────────────────────────────────────────── */
@@ -361,6 +521,7 @@ export function historyTouch(card: VeilHistoryCard, at = Date.now()): void {
       ? [row, ...mirror.slice(0, idx), ...mirror.slice(idx + 1)]
       : [row, ...mirror];
   if (mirror.length > HISTORY_CAP) mirror.length = HISTORY_CAP;
+  notePatch(card.id, row);
   if (mode === "idb" && db) {
     void enqueue(async () => {
       const { store, done } = tx("readwrite");
@@ -383,6 +544,7 @@ export function historyDelete(id: string): void {
   const idx = mirror.findIndex((h) => h.card.id === id);
   if (idx < 0) return;
   mirror = mirror.filter((h) => h.card.id !== id); /* new array — React sees the change */
+  notePatch(id, null);
   if (mode === "idb" && db) {
     void enqueue(async () => {
       const { store, done } = tx("readwrite");
@@ -403,6 +565,11 @@ export function historyClear(): void {
     return;
   }
   mirror = [];
+  if (priming) {
+    /* a clear mid-prime drops the incoming full set too */
+    primeCleared = true;
+    primePatches = new Map();
+  }
   if (mode === "idb" && db) {
     void clearStore().catch(() => undefined);
   } else {
@@ -504,6 +671,12 @@ export async function historyReplaceAll(rows: VeilHistoryRow[]): Promise<number>
   }
   clean.sort((a, b) => b.at - a.at);
   mirror = clean.slice(0, HISTORY_CAP);
+  if (priming) {
+    /* replaceAll rebuilds everything — treat like a clear so the
+     * incoming full set can't resurrect the rows it just dropped */
+    primeCleared = true;
+    primePatches = new Map();
+  }
   if (mode === "idb" && db) {
     await clearStore();
     const landed = await putChunked(mirror);

@@ -1,5 +1,79 @@
 # Veil OS — Worklog / Handover
 
+## Project status (2026-10-18 ~04:20 UTC) — "FOR YOU LOADS FOREVER" — ROOT CAUSE (For You gate hard-blocked on the FULL IndexedDB history prime) + TWO-STAGE PRIME FIX
+
+**Owner report: "for you loads forever".** Root-caused from dev.log
+forensics + code trace, fixed, and verified live in agent-browser with a
+simulated 250,000-row Takeout-scale store (seeded, tested, cleaned up).
+
+### 1. The evidence
+- The For You grid's `feedLoading` starts `true` and only turns false
+  inside `loadFeed()`. The first deal is GATED on the per-device watch
+  history mirror: `if (histLoaded) loadFeed()` where
+  `histLoaded = histEntries !== null`, and `histEntries` only lands when
+  `historyReady()` (IndexedDB prime) settles.
+- dev.log forensics: the owner's live session traffic showed
+  `GET /api/yt/feed?kind=shorts` (ungated — loads fine) but **ZERO**
+  `POST /api/yt/feed` (the For You round-1) — the request never left
+  the browser. `historyReady()` never settled on their machine.
+- Why: the owner imported a ~million-row Takeout history (the
+  million-row class this very store was built for). `loadAll()` must
+  page the ENTIRE store (10 × 100k-row `getAll` clones over hundreds of
+  MB) before the mirror lands — minutes at that scale, and Chromium can
+  silently never resolve oversized getAll pages (documented in the
+  file's own comments). Until it lands, For You spins forever; the
+  error paths only cover REJECTION, never a HANG.
+
+### 2. The fix — two-stage priming (`src/lib/veil/history-store.ts`)
+- **STAGE 1 (fast, what the UI actually needs):** `loadNewest()` walks
+  the `"at"` INDEX backwards via `openCursor(null, "prev")` for the
+  newest 25,000 rows — a B-tree seek plus cursor hops, instant at any
+  store size. For You's seen-list caps at 20k ids, the ranker's signal
+  window at 5k rows, the History tab pages 24 — the newest slice
+  covers all of them. Un-migrated legacy localStorage rows merge into
+  stage 1 too (write-side migration stays in stage 2).
+- **STAGE 2 (background):** only when `countAll()` says there's more
+  river than the slice (or a legacy payload awaits migration), the full
+  `loadAll()` + `migrateLegacy()` run DETACHED and swap the complete
+  mirror in (`announce()` → every listener re-reads). If stage 2 never
+  lands, the app keeps working on the newest slice.
+- **Deadline-guarded everywhere:** `withDeadline()` wraps openDb
+  (2.5s), the stage-1 walk (4s), countAll (2s) — a wedged IndexedDB
+  (corrupt store, frozen private mode) resolves with what it has
+  instead of hanging the app forever.
+- **Mid-prime mutation safety:** touches/deletes record into
+  `primePatches` (id → row|null), clears/replaceAll set `primeCleared`;
+  stage-2 completion merges full-read ∪ live-mirror (newest `at` wins)
+  then replays patches — nothing watched/deleted during the priming
+  window is lost or resurrected.
+- **`historySettled()` (new export):** resolves when the mirror holds
+  the FULL store. Both backup export paths (Stream data popover +
+  Settings › Data) now await it instead of `historyReady()` so backups
+  keep carrying the complete history.
+- **Dead-man switch (`stream-section.tsx`):** if the mirror somehow
+  never lands, the feed deals unpersonalized at 8s instead of spinning
+  (a late announce still refreshes entries afterwards).
+
+### 3. Verification (agent-browser, live)
+- Fresh profile: For You loads (54–63 videos), chips + rails render.
+- **250k-row simulation:** seeded 250,000 realistic rows into the
+  veil-stream store (18.5s), reloaded the app → Stream → For You dealt
+  within the normal boot window (POST /api/yt/feed 200s; last 197ms),
+  the Watch-again rail led with the newest seeded rows, and the
+  History tab climbed to the true **"250000 watched"** once stage 2
+  landed. Zero console/page errors. Store intact after (250k rows),
+  then benchmark DB deleted and QA browser closed (box is
+  memory-tight).
+- Lint clean (`bunx eslint`) on all three touched files:
+  history-store.ts, stream-section.tsx, settings-section.tsx.
+
+### 4. Known pre-existing (NOT from this change)
+- Many thumbnails render grey: `proxy.piped.private.coffee` is 502ing
+  upstream (equal behavior before/after; ytimg-routed thumbs load —
+  14/68 loaded OK in QA with the proxy dark). Documented earlier.
+- The offline single-file build keeps its history in localStorage and
+  is unaffected by this bug/fix.
+
 ## Project status (2026-10-17 ~17:40 UTC) — "RESTARTS TO HOME SCREEN EVERY MINUTE" — TRUE ROOT CAUSE (Quasar AST cache flush inside the dev-watched tree) + LIVE FIX
 
 **Owner report: "it still restarts to home screen like every minute, other

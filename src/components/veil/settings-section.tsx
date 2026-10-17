@@ -83,7 +83,7 @@ import {
   veilBackupStats,
   type VeilBackupStats,
 } from "@/lib/veil/backup";
-import { historyReady } from "@/lib/veil/history-store";
+import { historyReady, historySettled } from "@/lib/veil/history-store";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
@@ -1773,9 +1773,9 @@ function DataTab() {
   const doExport = async () => {
     setBusy("export");
     try {
-      /* prime the IndexedDB history mirror first — the backup must
-       * carry the FULL watch history, not whatever loaded so far */
-      await historyReady();
+      /* the IndexedDB mirror primes in two stages — the backup must
+       * wait for the FULL river, not just the newest slice */
+      await historySettled();
       const backup = exportVeilBackup();
       const keys = Object.keys(backup.keys);
       if (keys.length === 0) {

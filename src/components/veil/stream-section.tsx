@@ -104,6 +104,7 @@ import {
   historyMergeBackup,
   historyReady,
   historySerialize,
+  historySettled,
   historySnapshot,
   historyTouch,
 } from "@/lib/veil/history-store";
@@ -7808,9 +7809,9 @@ function StreamDataMenu() {
 
   const doExport = async () => {
     try {
-      /* prime the IndexedDB mirror so the backup carries the FULL
-       * history, not whatever loaded so far */
-      await historyReady();
+      /* the IndexedDB mirror primes in two stages — the backup must
+       * wait for the FULL river, not just the newest slice */
+      await historySettled();
       const backup = exportVeilBackup();
       const keys = Object.keys(backup.keys);
       if (keys.length === 0) {
@@ -8258,6 +8259,15 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
      * what this device watched so `seen` actually excludes it */
     if (histLoaded) loadFeed();
   }, [histLoaded, loadFeed]);
+  React.useEffect(() => {
+    /* dead-man switch — the mirror prime is deadline-guarded in the
+     * store, but if it somehow never lands (wedged IndexedDB, frozen
+     * tab), deal the feed unpersonalized at 8s instead of spinning
+     * forever. A late announce still refreshes the entries after. */
+    if (histLoaded) return;
+    const t = window.setTimeout(() => setHistEntries([]), 8_000);
+    return () => window.clearTimeout(t);
+  }, [histLoaded]);
 
   /** Infinite For You — one deeper round of the channel river: the
    *  next few uploads of every alive channel (subscribed/liked/watched
