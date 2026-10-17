@@ -1411,3 +1411,49 @@ Unresolved / risks:
 - The proxy ticker fires only in browse mode with a stored chat token (not logged in = no earning) — matches the ask ("using the proxy").
 - Overlay SVG ids (ov-aurora-grad) repeat per instance — browsers resolve to the first def; harmless today, worth namespacing if a second gradient ever lands.
 - Follow-ups from earlier rounds still open: chat scroll-to-bottom FAB, 44px tab-close hit area, motion blitz pass.
+
+---
+Task ID: 3
+Agent: main (Z.ai Code)
+Task: Owner: "give me back my 50k" (chat shop) + "bought section where you can equip and unequip in shop" + uploaded quasar-proxy.zip ("new quasar browser engine, the one in settings")
+
+Work Log:
+- Owner refund: Veil's balance was 23,232 after the accessory buying spree (ledger showed 8 purchases totalling 26,800 off the 50,000 grant — Puppy 4500, Santa 4000, VR Halo 4600, Cat Ears 3500, Rainbow Arch 3800, Black Cat 3000, Controller·Left 2200, Cat Ear·Left 1200). Granted +26,768 (reason `owner_refund:rebuy_loss_20261017`) → exactly 50,000. All purchases kept, puppy left worn.
+- Root cause of the "lost console": the shop had a single equip slot — buying/equipping item B silently replaced item A with NO owned-items UI, so the Controller looked gone and the owner paid again. (Purchases were always permanent in the ledger; the UI just never showed them.)
+- API /api/chat-shop:
+  - GET now accepts ?token= → response additionally carries `owned: [itemIds]` (deduped from all `shop_purchase:<id>` transactions, filtered against the live catalog).
+  - NEW POST action "equip" {itemId} — free re-wear validated server-side against the purchase ledger; unowned id → 400 "You don't own that item yet — buy it first."
+  - Fixed pre-existing tsc errors on the unequip path (update-data typed `string | null`).
+- ShopPanel (chat-app.tsx) — used by BOTH the Games›Shop tab and the standalone Shop modal:
+  - NEW first section "🎒 My Items" with a count chip: every owned tag/accessory as a row (live AvatarWithAccessory / TagBadge preview), "Wear" button, "Worn ✓ + take off" when worn, worn row highlighted emerald; empty state explains the locker. max-h-72 + veil-scroll-slim.
+  - Catalog cards: owned items show an "owned" hint next to the price and the button becomes "Wear · free" (outline orange) instead of Buy; buy() adds the id to the local owned set instantly.
+  - equip() client fn (action:"equip"); toast "Wearing X."
+- Offline HTML (download/veil-offline.html): loadShop now sends ?token=, renders the same 🎒 My Items locker (lockerRow) with Wear/Worn✓/take off; catalog rows show owned label + "Wear · free"; new CSS (.ownlab, .srow.owned, .shopsec.locker, .wornrow, .buy.wear). node --check clean.
+- Quasar engine port 2.1.0 → 2.4.1 from upload/quasar-proxy.zip (owner-provided newer engine source; Veil's files were otherwise byte-identical so the port was a surgical 7-file copy + fixups):
+  - cookies.ts: Domain= cookie jars — Set-Cookie with Domain (e.g. .ROBLOSECURITY Domain=.roblox.com) stored in a domain jar shared across subdomains; Cookie header merges parent-domain jars first (origin wins collisions). Fixes cross-subdomain logins.
+  - rewriter.ts: NEW neutralizeInlineScript() — top/parent.location → self.location, frame-comparison expressions → literal true/false; the buffered-restore path pipes every inline <script> through it. (TS quirk fixed: ids typed string[] for indexOf.)
+  - html-stream.ts: inline <script> bodies buffered (≤64 KB cap, fail-open flush) through the neutralizer in the streaming pipeline too.
+  - fetcher.ts: "x-csrf-token" added to exposed response headers (Roblox APIs sign retries with it).
+  - auth.ts: session token also accepted via x-quasar-token header or ?qk= (portable attach).
+  - site-fixes.ts: rbx.com added to the roblox match list + updated note.
+  - version.ts: 2.4.1 + release notes.
+  - browser.tsx veil-frame: NEW sandbox token (allow-forms/modals/pointer-lock/popups/presentation/same-origin/scripts/downloads/allow-top-navigation-by-user-activation) on the proxied lane — silent top.location hijacks can no longer escape; FreeTube (isFt) lane stays unsandboxed for its SPA router. 
+  - settings-section.tsx: engine hint updated to "Quasar 2.4.1" describing the Roblox round.
+- QA (curl + agent-browser + dev.log):
+  - curl: GET ?token → owned:[8 ids]; equip owned acc-contr-l → pfp contrL, coins 50,000 unchanged; equip unowned acc-dragon → 400; unequip → null; re-equip puppy → puppy. dev.log mirrors (200/400/200/200).
+  - agent-browser (injected Veil session): Chat shows 🪙 50,000; Games › 🛍 Shop tab renders 🎒 MY ITEMS 8 with Puppy "Worn ✓ + take off" and 7 Wear rows; clicked Wear on Controller · Left → "Worn ✓" (puppy → Wear), balance still 50,000, 5 controller imgs live in the DOM; re-wore Puppy Filter → back to Worn ✓. 
+  - Engine: example.com + news.ycombinator.com both render through the ported engine (HN: title + 30 story rows; inline scripts pass the new neutralizer), sandbox attr confirmed with allow-top-navigation-by-user-activation, same-origin hook layer intact, zero console/page errors.
+  - ECONNRESET/aborted lines in dev.log = abrupt agent-browser teardown mid-stream (pre-existing characteristic, all requests 200 beforehand, server self-healed — verified alive after).
+  - bunx eslint clean on every touched file; tsc clean for all ported engine files (remaining repo-wide tsc noise pre-exists).
+- Committed 2d083bd + fresh git bundle (veil-20261017-1549.bundle). Temp scripts removed.
+
+Stage Summary:
+- Owner is whole: 50,000 coins, all 8 accessories still owned, puppy worn.
+- The shop now has the asked-for bought section: 🎒 My Items locker with equip/unequip, free switching, owned markers in the catalog — in-app AND offline.
+- The browser engine in Settings is now Quasar 2.4.1 (owner's upload): framebuster neutralization, Domain= cookie jars, x-csrf-token passthrough, top-nav-gated iframe sandbox — verified browsing live.
+
+Unresolved / risks:
+- ECONNRESET uncaughtException noise when a proxied client vanishes mid-stream — cosmetic today (dev server survives), but a fetcher-level 'aborted' catch would harden it; candidate next round.
+- Equip action does not clear the opposite-slot... N/A (single slot per type is by design).
+- Backlog from earlier rounds: chat scroll-to-bottom FAB, 44px tab-close hit area, motion blitz pass, comeback bonus for 0-coin players.
+- The offline HTML locker previews accessories as a plain colored dot (no deco WebP offline) — cosmetic only.
