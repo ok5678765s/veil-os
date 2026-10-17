@@ -1,11 +1,11 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T00:13:52.947Z",
+  "exportedAt": "2026-10-17T00:14:27.579Z",
   "counts": {
     "accounts": 53,
     "messages": 83,
-    "dms": 3
+    "dms": 4
   },
   "accounts": [
     {
@@ -1899,6 +1899,13 @@
       "isGroup": true,
       "ownerId": "cmuu20ppm0005jkxecvmo7qpu",
       "createdAt": "2026-10-17T00:13:25.254Z"
+    },
+    {
+      "id": "cmvbn90mk0001lt9let8miu1a",
+      "name": "Squad",
+      "isGroup": true,
+      "ownerId": "cmuu20ppm0005jkxecvmo7qpu",
+      "createdAt": "2026-10-17T00:14:02.348Z"
     }
   ],
   "dmMembers": [
@@ -1924,6 +1931,14 @@
     },
     {
       "dmId": "cmvbn8805000eltg21g8v5akl",
+      "accountId": "cmv7j4j6u000dr7bux9lflbkd"
+    },
+    {
+      "dmId": "cmvbn90mk0001lt9let8miu1a",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu"
+    },
+    {
+      "dmId": "cmvbn90mk0001lt9let8miu1a",
       "accountId": "cmv7j4j6u000dr7bux9lflbkd"
     }
   ],
