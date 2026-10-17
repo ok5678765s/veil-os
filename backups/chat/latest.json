@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T00:27:40.295Z",
+  "exportedAt": "2026-10-17T00:28:14.545Z",
   "counts": {
     "accounts": 53,
-    "messages": 82,
+    "messages": 81,
     "dms": 2
   },
   "accounts": [
@@ -1853,17 +1853,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T23:25:35.143Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbn5vtn000altg2n3yrc772",
-      "channelId": "cmvbn5oa80005ltg2y1fpoa8u",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "hey — DMs work now! (veil test)",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T00:11:36.155Z",
       "editedAt": null
     }
   ],
