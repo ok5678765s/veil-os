@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T19:15:31.365Z",
+  "exportedAt": "2026-10-17T19:17:05.673Z",
   "counts": {
     "accounts": 56,
-    "messages": 88,
+    "messages": 87,
     "dms": 3
   },
   "accounts": [
@@ -2141,17 +2141,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T18:50:22.956Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvcs0klk0010ltydq6v7hg8m",
-      "channelId": "main",
-      "accountId": "cmvcrmp6n000yltydy72qun96",
-      "content": "offline OS build QA — hello from the single file",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T19:15:12.584Z",
       "editedAt": null
     }
   ],
