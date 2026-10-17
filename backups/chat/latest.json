@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T01:36:31.266Z",
+  "exportedAt": "2026-10-17T01:37:05.443Z",
   "counts": {
     "accounts": 53,
-    "messages": 93,
+    "messages": 81,
     "dms": 3
   },
   "accounts": [
@@ -1853,138 +1853,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T23:25:35.143Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6wiu0001ltxqgbyswn9d",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:22.566Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6ws00005ltxq4t0zk7sc",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:22.896Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6x560009ltxqsv3n3gem",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:23.371Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6xja000dltxq31ad012r",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:23.879Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6xtw000hltxqvcdfj4y7",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:24.260Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6y8m000lltxqqgcib1ot",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:24.790Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6y8o000nltxqgq493hbf",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:24.793Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6yna000tltxq1901qtvh",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:25.319Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6ytt000xltxqkfh6dqxd",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:25.553Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6zd40011ltxqehy5yimi",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:26.248Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq6zsd0015ltxqdza2hjxf",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:26.797Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbq703z0019ltxqyo11ae9b",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T01:36:27.216Z",
       "editedAt": null
     }
   ],
