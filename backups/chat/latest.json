@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T18:50:43.766Z",
+  "exportedAt": "2026-10-17T19:04:54.221Z",
   "counts": {
-    "accounts": 55,
+    "accounts": 56,
     "messages": 87,
     "dms": 3
   },
@@ -123,7 +123,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 56458,
+      "coins": 56173,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "puppy",
@@ -1162,6 +1162,27 @@
       "legacy": false,
       "createdAt": "2026-10-17T18:20:41.823Z",
       "passwordHash": "$2b$10$/t9FkRUIs/f4qpqgchhLDe2Xv0SJExYIcbOHIm47pemmHu2SpARw2"
+    },
+    {
+      "id": "cmvcrmp6n000yltydy72qun96",
+      "username": "osqa_build",
+      "displayName": "OS QA",
+      "avatarColor": "#e67e22",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-17T19:04:25.344Z",
+      "passwordHash": "$2b$10$o/vfKjtF.KTvX0uFGTcFGu5QSUpovCkV5NwfNpWzPeHHBAfOUwQf2"
     }
   ],
   "messages": [
