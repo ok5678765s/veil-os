@@ -1,5 +1,90 @@
 # Veil OS — Worklog / Handover
 
+## Project status (2026-10-17 ~08:45 UTC) — ANIMATED DECORATIONS + CENTERING FIX + BUY-REPLACEMENT VERIFIED
+
+**Owner asks shipped and browser-verified.** (a) "make sure animated" —
+every video-sourced PFP decoration is now a REAL ANIMATION: each picker
+cell's live loop was exported as an animated WebP (glows pulse, swords
+charge up, the wolf howls, lightning flashes); (b) "not centered" —
+two centering bugs fixed: the previous extraction used a uniform 100px
+grid instead of the true ~84px content bands (every fullCell decoration
+sat ~5% right/down on the avatar), and the four split pieces
+(earL/earR/contrL/contrR) all rendered stacked in the CENTER — they now
+sit on their own sides (verified mirrored in the live shop); (c) "when
+I buy one and a different one the other one gets removed" — the
+single-slot replacement was re-verified END-TO-END live: buy VR Halo →
+buy Black Cat (halo unequips, badge moves, avatar shows only the cat) →
+free re-equip of the halo. DB trail: shop_purchase:acc-vrhalo 4600 →
+acc-blackcat 3000 → final pfpAccessory=vrhalo, no double-equip.
+
+- Live preview: `https://preview-chat-5c473725-60a1-401a-a523-f3055da577e8.space-z.ai/`
+
+## What was done this round
+
+### 1. Root-cause: the extraction grid was wrong
+- Gutter analysis of the flat (26,31,37) background found the TRUE cell
+  bands (rows 10-93/112-197/211-294/315-395/412-493, cols
+  14-99/114-197/214-297/313-397/414-495; ~84px cells). The previous
+  round's uniform 100.4px grid shifted every crop, so the fullCell 130%
+  frame mapping rendered decorations ~5% right/down. Also confirmed the
+  picker cells contain NO avatar (empty center) — only bg keying is
+  needed, no avatar removal.
+
+### 2. Animated re-extraction (tmp-decofix/extract.py — moved to scripts/deco/)
+- 40 frames @14fps extracted from the 2.87s recording. Per cell: loop
+  window detection (endpoint matching, fill-guarded so flash/ramp
+  effects like lightning aren't caught dark-to-dark), 14 frames
+  exported as animated WebP (300×300, keyed with the soft 25/55
+  color-distance ramp, q88). Static cells (city seal) stay PNG.
+- Fill-aware loop fix was critical: lightning first exported as a 2KB
+  empty file (dark phase matched dark phase); after the guard it is a
+  67KB flash loop. Sword captures its full 9%→37% glow-up ramp.
+
+### 3. Catalog: 29 → 31 accessories
+- NEW "VR Halo" (acc-vrhalo, 4600): the 4-in-1 cell sold WHOLE (VLM
+  judged the split pieces read as broken fragments alone, but the
+  combined ring is coherent) — while the four individual pieces REMAIN
+  for sale (owner's original ask), each pinned to its true in-cell
+  position: earL top -15%/left -8.5%/w 58.5%, earR top -15%/left 50%,
+  contrL top 39.6%/left -15%, contrR top 39.6%/left 50%.
+- NEW "Black Cat" (acc-blackcat, 3000): the previously-unused shadow-cat
+  cell (r2c0), trimmed sprite pinned at top/left 37%, w 72.4%.
+- Companions (wolf/bunny/sprout) now wear the FULL cell
+  (designer-faithful placement); blackcat is the pinned trim.
+
+### 4. Assets (public/)
+- 26 animated WebPs + deco-seal.png (static) + the 3 upload PNGs
+  (dog-ears, dog-nose, cat-ears). 30 superseded static PNGs deleted
+  (backup: tmp-decofix/backup/). Total animated payload ≈ 3.2MB.
+- Registry: chat-app.tsx DECORATIONS v3 (lint clean); shop route
+  catalog v3 with 31 accessories (lint clean).
+
+### 5. QA (agent-browser + VLM, live) — ALL PASSED
+- Shop: 31 accessory cards, previews ANIMATE (1.04% pixel diff between
+  1.2s-apart screenshots), zero console errors.
+- Centering: VR Halo ring centered on the head; Cat Ear Left/Right
+  previews correctly MIRRORED (opposite sides); Black Cat at lower
+  right; Wolf at the avatar base (VLM-verified each).
+- Buy-replacement E2E: VR Halo bought (−4600, Equipped badge, avatar
+  wears it) → Black Cat bought (−3000, badge MOVED, halo unequipped,
+  avatar shows only the cat) → VR Halo re-equipped FREE (0 coins,
+  badge back). Final DB: pfpAccessory=vrhalo, 24,431 coins.
+- Chat rows render the worn halo cleanly.
+
+## Known blockers / risks
+1. VLM flip-flops on synthetic montages (dim animation phases read as
+   "ghost rectangles") — trust the live-app QA, not montage verdicts.
+2. The vrhalo ring nearly touches its cell edges in the source video —
+   slight top clipping is source-limited.
+3. Old emoji-accessory ownership rows remain inert (carried over).
+4. Full `bun run lint` still OOMs — lint targeted files only.
+
+## Priority recommendations for the next phase
+1. Motion polish where the source was static (seal/blackcat breathe?).
+2. Profile modal "worn decoration" summary + owned-items strip in shop.
+3. Offline single-file HTML version (carried-over ask).
+4. Scroll-to-bottom FAB with unread count (carried over).
+
 ## Project status (2026-10-17 ~04:15 UTC) — SHOP REFRESH: REAL AVATAR DECORATIONS + VEIL 50K + BUG SWEEP
 
 **All three owner asks shipped and browser-verified.** (a) The PFP
