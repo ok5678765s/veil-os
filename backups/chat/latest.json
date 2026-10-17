@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T18:20:58.750Z",
+  "exportedAt": "2026-10-17T18:21:32.167Z",
   "counts": {
     "accounts": 55,
-    "messages": 87,
+    "messages": 86,
     "dms": 3
   },
   "accounts": [
@@ -2109,17 +2109,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T17:54:32.608Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvcq2p3d002sltjgidosu5zt",
-      "channelId": "main",
-      "accountId": "cmvcq2gv4002qltjg2s7aggqc",
-      "content": "wsp nigga",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T18:20:52.489Z",
       "editedAt": null
     }
   ],
