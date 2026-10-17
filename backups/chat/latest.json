@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T01:38:40.455Z",
+  "exportedAt": "2026-10-17T02:10:53.163Z",
   "counts": {
     "accounts": 53,
-    "messages": 82,
+    "messages": 99,
     "dms": 3
   },
   "accounts": [
@@ -22,6 +22,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": true,
       "createdAt": "2026-09-14T00:00:00.000Z",
       "passwordHash": "!legacy:498a4e490d5b4276be39f7bc02cfe2f2"
@@ -40,6 +43,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-09-14T00:00:00.000Z",
       "passwordHash": "$2b$10$zF9AIcjWC9no/Ht9cLY2LumVI/Th5b8MjVe4lxrir7HjElha5SWa."
@@ -58,6 +64,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-09-14T00:00:00.000Z",
       "passwordHash": "$2b$10$h8U2Ci6NuL4hpSf89YKN5.abafE5FxN9FHXevZg42t7.4YpKicVDm"
@@ -76,6 +85,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": true,
       "createdAt": "2026-10-03T21:49:21.956Z",
       "passwordHash": "!legacy:c6a67ef229f3404892b5be1f238d1347"
@@ -94,6 +106,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": true,
       "createdAt": "2026-10-04T15:26:36.237Z",
       "passwordHash": "!legacy:c083ee3ed8da49c38ba55202c8d4cec6"
@@ -108,10 +123,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 88,
+      "coins": 17,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 2,
+      "lastRewardClaim": "2026-10-17T00:10:16.464Z",
       "legacy": false,
       "createdAt": "2026-10-04T16:47:38.027Z",
       "passwordHash": "$2b$10$wgZdfrvRghwA3SNf/R1ZwOe0EBEZiT/fJ9AA2lKmaOIX51V9DKNMC"
@@ -130,6 +148,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-06T11:32:25.917Z",
       "passwordHash": "$2b$10$UKucHkKNBXAQGs5m1cQK1.U018tltAm49vzuX4xP3WOGN2yuXCQha"
@@ -148,6 +169,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-06T14:41:29.394Z",
       "passwordHash": "$2b$10$yPAht4VNvs5Fa/IHsuoGiuCHPUGdNxZVqSmGzBccGxgUot14G/TB6"
@@ -166,6 +190,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-07T07:23:55.626Z",
       "passwordHash": "$2b$10$7SeSo.QXHtgfp8r.5acjK.9FJXkjpyAMbNeNnQBA/840D5WQL4SxK"
@@ -184,6 +211,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-08T13:18:46.894Z",
       "passwordHash": "$2b$10$Sp1uzIx7rpaA5FOjB/nRpukDiGLs0FvS1jwaRvT1LHIoXnNsRg6rW"
@@ -202,6 +232,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-08T13:26:38.225Z",
       "passwordHash": "$2b$10$T5Eb3nUacEsmpbRnHN.W7utiEVDcGgOg5CL6BDe671xTSZkQfhK4q"
@@ -220,6 +253,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-08T15:59:46.877Z",
       "passwordHash": "$2b$10$YhAm9ajwupgMACfrR3Q9q.sc.V3qZ7WQyxS1330g1ZCe7YDOcvw/i"
@@ -238,6 +274,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-08T17:04:36.365Z",
       "passwordHash": "$2b$10$8AmpfK6unuzZyqUezpxOxe.aTBf6buh/Z5njuHWQCUMbtRnlPDpp6"
@@ -256,6 +295,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-08T18:45:23.202Z",
       "passwordHash": "$2b$10$k2Mg5JHrjkxMgA/zvW91/udPu9TIl4WpayiTesle20AHzrdC.pzBO"
@@ -274,6 +316,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-08T19:29:37.293Z",
       "passwordHash": "$2b$10$D7eCKpypal84K6pj5.7TO.FPVGl0Z7gt4G1Mq3wBzWjdrGcgCJsS2"
@@ -292,6 +337,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-08T22:16:54.169Z",
       "passwordHash": "$2b$10$yki5cpQA.kdTAAqvCXaAUueIosuji/RQTOV9mc72ZDlwC1w9kCWdO"
@@ -310,6 +358,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-09T13:00:01.291Z",
       "passwordHash": "$2b$10$sdUBwc1MRZwrafwRrrXhpeV57sbfFP5RuwqFOSryqsmui22zqEyGK"
@@ -328,6 +379,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-09T15:19:48.667Z",
       "passwordHash": "$2b$10$d2mKeI9xKa.RYCX7zQQskOGeCcVq8Bn9iWOMsEoYcLNDjsFhEKe2i"
@@ -346,6 +400,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-09T15:22:54.645Z",
       "passwordHash": "$2b$10$HTVkBWAnOOgzVA5M5nloC.9qGJHpNSynjVFstRGsSwXXeU5eWQwjO"
@@ -364,6 +421,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-09T15:36:18.105Z",
       "passwordHash": "$2b$10$DBUB/RYpERKFzap8TZg.4u4yaUFdzCWbXnKLdSGOBUTi.KOW1304K"
@@ -382,6 +442,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-09T16:20:59.962Z",
       "passwordHash": "$2b$10$ZPBV5ZI02TPnpwYAtZnXIeLVGJSFyToz6Z/KoSnjJSLAabm0u9lpy"
@@ -400,6 +463,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-09T18:44:47.717Z",
       "passwordHash": "$2b$10$P3vVEu0ePcU/JppdqlOedO3H8IJzSTIJ142DLZUZmfSJdjcQzxl2i"
@@ -418,6 +484,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-09T22:02:15.715Z",
       "passwordHash": "$2b$10$avXwdgTPoSVPMdeJng0gj./w49tTYB35MYtDtzUlsAKUxpAn80NcK"
@@ -436,6 +505,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-09T23:26:10.349Z",
       "passwordHash": "$2b$10$y9SMEaHkW7AbUptkrZdK9eQcW2YF/Q26TxM4SIgSNvOm9vfmRk2ky"
@@ -454,6 +526,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-11T03:21:42.443Z",
       "passwordHash": "$2b$10$WnvFAPfRAWEWVtCM952gIu3KygYmhqzulNoBYHIt8RZHHXo96wtbS"
@@ -472,6 +547,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-11T05:43:38.286Z",
       "passwordHash": "$2b$10$b3ydRe97Ii/ctyqHglxL5Ozlw0vhy8PZMo3w.oIMRSW6oW8B9/UG."
@@ -490,6 +568,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-11T21:14:59.683Z",
       "passwordHash": "$2b$10$FlFBXrVSvlQds7iT94NAwufkBIhgV7GVcU1DXxOONlfcU7xnH3al2"
@@ -508,6 +589,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-12T05:27:22.777Z",
       "passwordHash": "$2b$10$al8rzzXzn.0LHp7J3pLzIeBMlET5n7kTtq2FZ4I9Ghy7y81QVpPiG"
@@ -526,6 +610,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-12T23:14:39.155Z",
       "passwordHash": "$2b$10$g.1q4K/KK6aqw0YH9h8O4OAJNuhmLp4cN1dxU56AXcXuh4UTMIVCW"
@@ -544,6 +631,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-13T01:40:06.327Z",
       "passwordHash": "$2b$10$3L4KMYJGevpaZ.bq7p6FL.bTtj3slY9Qi6wZS9izjVxdUWjN9XKXO"
@@ -562,6 +652,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-13T12:39:05.627Z",
       "passwordHash": "$2b$10$A/PeIJyXrByZVt3FswWV2uSodz1sXf4yJGCVrlvw3u.5CYB3T8qwy"
@@ -580,6 +673,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-13T14:55:52.034Z",
       "passwordHash": "$2b$10$0se4HPz5wCszoGTDZr7kmulnPf6N54dyXuPlcPyKNQpIz7ABqVEnq"
@@ -598,6 +694,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-13T18:34:21.787Z",
       "passwordHash": "$2b$10$WRbNtxYE0GKwZ/443fn6VeNIhfkXgTWhwz6j8S1NMck7SQS4C.hNe"
@@ -616,6 +715,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-13T18:49:13.247Z",
       "passwordHash": "$2b$10$03NzKk2vk14oD8izS8hYWOpbV7fT88VRiCqr3iJfRgw08uliewVDy"
@@ -634,6 +736,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-13T19:38:15.267Z",
       "passwordHash": "$2b$10$u3sjyWTBmPdAe7J079f3tOB2NvlY2C4r5GgyIMyvHPkelIaPIquOK"
@@ -652,6 +757,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-13T19:44:34.652Z",
       "passwordHash": "$2b$10$HS3gwH/.yGIk5lxIGwPo.O4dS2m0dKSClC6vYwyN8Rr6DVkYxMg/W"
@@ -670,6 +778,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-14T00:35:48.409Z",
       "passwordHash": "$2b$10$FXw2z.pRKqKA8qt48QvFh..0P9UN5naeK2/k50d.U1o6qBvASpg4y"
@@ -688,6 +799,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-14T01:11:18.048Z",
       "passwordHash": "$2b$10$udgabnPFTjW6trYqM9LIE.WpHXsW.qJNppgmpKmIHebpk1a5p4LCW"
@@ -706,6 +820,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-16T12:36:19.883Z",
       "legacy": false,
       "createdAt": "2026-10-14T03:07:29.959Z",
       "passwordHash": "$2b$10$QAP3ktNuswTtL087d85yV.fXxwklXmWgQl8gQCguiKnX0lJRy6nku"
@@ -724,6 +841,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-14T07:25:27.533Z",
       "passwordHash": "$2b$10$sdleFvSREDFjbujxDrx3iuJ9rFDuoOyoy5y.NjNzETN2nTimxpETa"
@@ -742,6 +862,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-14T10:20:56.354Z",
       "passwordHash": "$2b$10$J.5YDjvTsg2jYTPnAqQaOuNS2lkbk7e7w.K6lZTVqx.DwFu3fEdKG"
@@ -760,6 +883,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-14T12:01:19.158Z",
       "passwordHash": "$2b$10$kBanlVVgBxsO/B9HPi.FgejF/UzssOGlHWANPEKRS3lH4kLsXy.Je"
@@ -778,6 +904,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-14T16:28:34.436Z",
       "passwordHash": "$2b$10$fB1tBcqG0FrMu/roc3x0Se5xY.lcwlo8z0EL/Fz4oEw3cZz8zJAi6"
@@ -796,6 +925,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-14T16:47:47.096Z",
       "passwordHash": "$2b$10$pPwZSoIWE0dtVBN8/wsDfub9ZwPT4cFdkt2DWmeCw/tS3qmXw/p0G"
@@ -814,6 +946,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-14T18:23:22.736Z",
       "passwordHash": "$2b$10$NlRS3SFiCBJZlIVgFbl5eOyelKChBS71u7syTGmaICwxKIl5skeVW"
@@ -832,6 +967,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-15T14:03:44.880Z",
       "passwordHash": "$2b$10$WU.nmuc3WHWYpE2qWDEspOzUasVRd/Zu2Kdupjw4bsaAsd6On9pwa"
@@ -850,6 +988,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-15T16:09:46.146Z",
       "passwordHash": "$2b$10$tfnnjUwrP3Nwmayg8RUmaO9IX9P0pcZ7Dw3iGJfAuZGGBGDdMFqIm"
@@ -868,6 +1009,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-15T17:02:41.372Z",
       "passwordHash": "$2b$10$YVfSi.rbvI6Six0jL8kIB.Hc6njOQolc0otg4UrPpYzqI2Nd0OlIO"
@@ -886,6 +1030,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-16T06:04:34.141Z",
       "passwordHash": "$2b$10$puTOcfKqLTmoP9xuH6g6oO8ip16oNdfZCKkWuU16ptBgbaa9Ve05a"
@@ -904,6 +1051,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-16T14:10:29.740Z",
       "legacy": false,
       "createdAt": "2026-10-16T14:07:40.981Z",
       "passwordHash": "$2b$10$o752DzHy679yaBxq7LSWtujbk7lHlRmMdGHYgC8UqB8IQV4QIbxj."
@@ -922,6 +1072,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-16T14:36:51.232Z",
       "passwordHash": "$2b$10$uIGrN7qH5r3fpvOvXbtZKOsQofzCm/F0n3u3ZkPeww4sVxQScwz7."
@@ -940,6 +1093,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-16T15:44:29.430Z",
       "passwordHash": "$2b$10$HVov2yD6yr.gc/bAZYyVT.6PyoQ/K8eWhRM0gh4BZQk.7f19jFFxC"
@@ -958,6 +1114,9 @@
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
       "legacy": false,
       "createdAt": "2026-10-16T20:09:17.732Z",
       "passwordHash": "$2b$10$QgIfzT69Qoqr/EsROGG.huy2833c5dgbU2YevcI4n39Q1dKqvoaBa"
@@ -1864,6 +2023,193 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T01:38:31.156Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf0pm0009ltmzopphoeqc",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:40.858Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf0pw000dltmz0n5npoev",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:40.869Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf14r000hltmzfffajlt4",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:41.404Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf1c9000lltmzlybrhjgi",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:41.673Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf1ds000pltmzjeizumf6",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:41.728Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf1rk000tltmzfp8sdc5r",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:42.225Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf28f000xltmzy0r7ge6r",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:42.831Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf2q60011ltmzpwlo82di",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:43.470Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf2r60015ltmzlq0jd6kw",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:43.507Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf34k0019ltmznbvg6g5j",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:43.988Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf3eu001dltmzqpd913u5",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:44.359Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf3kj001hltmzizw2zwr6",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:44.563Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf3sg001lltmzlbrrrgfa",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:44.848Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf41k001pltmziw95arcm",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:45.176Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf4e6001tltmz4emot4nc",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:45.631Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf5ha001xltmznd12x8c5",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:47.039Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvbrf9wp0021ltmzm8tqpmel",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T02:10:52.778Z",
       "editedAt": null
     }
   ],
