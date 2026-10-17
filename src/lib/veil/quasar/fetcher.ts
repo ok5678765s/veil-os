@@ -24,6 +24,7 @@ import { injectPoTokenIfNeeded } from "./potoken";
 import { QUASAR_VERSION } from "./version";
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { runtimeCacheDir } from "../runtime-cache-dir";
 // Raw, UNPATCHED undici fetch. The proxy engine must never go through
 // Next.js's globalThis.fetch wrapper: its dev instrumentation (data-cache
 // wrapping / response cloning) corrupts large streamed upstream bodies and
@@ -370,8 +371,18 @@ function jsCacheSet(key: string, entry: JsCacheEntry): void {
 
 /* v2.1.0 — AST cache disk persistence. In-memory alone meant every server
    restart re-ran acorn on every chunk of every site. Write-behind (90s when
-   dirty) with an atomic tmp+rename; load bounded by the same byte budget. */
-const AST_CACHE_DIR = process.env.QUASAR_CACHE_DIR || join(process.cwd(), ".quasar-cache");
+   dirty) with an atomic tmp+rename; load bounded by the same byte budget.
+ *
+ * 2026-10-17 "restarts to home screen every minute" ROOT CAUSE: the cache
+ * used to live at <project>/.quasar-cache — INSIDE the tree Next's dev
+ * watcher observes. The 90s write-behind flush therefore invalidated the
+ * module graph of every route that imports this file (all /p/ proxy routes
+ * + every API route touching the engine), Next recompiled them, and Fast
+ * Refresh force-reloaded EVERY connected browser — any one viewer browsing
+ * kicked all viewers back to the start screen roughly once a minute. The
+ * cache MUST live OUTSIDE the watched project tree (see
+ * lib/veil/runtime-cache-dir.ts for the full story). */
+const AST_CACHE_DIR = runtimeCacheDir("quasar-cache", process.env.QUASAR_CACHE_DIR);
 const AST_CACHE_FILE = join(AST_CACHE_DIR, "ast-cache.json");
 let astCacheDirty = false;
 let astCacheTimer: ReturnType<typeof setInterval> | null = null;

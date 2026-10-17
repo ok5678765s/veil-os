@@ -30,7 +30,15 @@ import fsp from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 
-const CACHE_DIR = path.join(process.cwd(), ".mbgs-cache");
+import { runtimeCacheDir } from "./runtime-cache-dir";
+
+/* 2026-10-17 "restarts to home screen every minute": this cache used to
+ * live at <project>/.mbgs-cache — INSIDE the tree `next dev` watches.
+ * Every wallpaper/live-media fetch that landed a file there recompiled
+ * every route importing this module and force-reloaded all viewers via
+ * Fast Refresh. It now lives outside the watched tree (see
+ * lib/veil/runtime-cache-dir.ts). */
+const CACHE_DIR = runtimeCacheDir("mbgs-cache", process.env.MBGS_CACHE_DIR);
 /** Hard cap for the whole cache directory (LRU-evicted by mtime). */
 const MAX_CACHE_BYTES = 400 * 1024 * 1024;
 /** Single files larger than this are served but never committed to cache. */

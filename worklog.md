@@ -1,5 +1,89 @@
 # Veil OS — Worklog / Handover
 
+## Project status (2026-10-17 ~17:40 UTC) — "RESTARTS TO HOME SCREEN EVERY MINUTE" — TRUE ROOT CAUSE (Quasar AST cache flush inside the dev-watched tree) + LIVE FIX
+
+**Owner report: "it still restarts to home screen like every minute, other
+people are complaining about it too, everything else works."** Root-caused
+LIVE (canary + console forensics with agent-browser), fixed, and verified
+end-to-end across multiple 90-second flush windows with an active proxied
+browsing session.
+
+- Live preview: `https://preview-chat-5c473725-60a1-401a-a523-f3055da577e8.space-z.ai/`
+
+### 1. What it was NOT (all previous theories re-tested and cleared)
+- NOT the dev server restarting: `next-server` had been up since 15:46
+  (watchdog v4 "NO restart" policy holding), only ONE "Ready in" in dev.log.
+- NOT the client session restore: sections/tabs restore worked (verified
+  canary survived 3+ min in a chat section).
+- NOT the hydration watchdog (45s one-shot per session, hydrates fine).
+- NOT `home-request` postMessage (only fired by manual error-page buttons).
+
+### 2. Forensics — how it was caught
+- agent-browser session planted a `data-canary` attribute on `<html>`;
+  canary wiped = full page reload. Clicking around + browsing through the
+  proxy reproduced reloads; console showed `[Fast Refresh] rebuilding`
+  storms (3→14 events in minutes).
+- A 150s recursive fs-watch over the non-ignored tree caught NOTHING —
+  proving the trigger wasn't a watched source file, while DB writes
+  (db/custom.db mtime churns every ~10-15s) were already correctly ignored.
+- dev.log correlated the reload moments with `○ Compiling /[...slug]` +
+  API routes recompiling (compile: 974ms/830ms) right after
+  `[quasar] AST cache restored from disk`.
+
+### 3. THE BUG — `.quasar-cache/` flush ≠ watcher-ignored
+`src/lib/veil/quasar/fetcher.ts` persists its AST cache with a 90-second
+write-behind timer to `<project>/.quasar-cache/ast-cache.json` (confirmed:
+file mtime updated every ~90s while anyone browsed). That directory was
+**missing from the webpack `watchOptions.ignored` regex** in next.config.ts
+(it covered `.git/.next/backups/db/...` but no dot-cache dirs). Every flush:
+file change → module-graph invalidation for EVERY route importing the
+engine (all /p/ proxy routes + many APIs) → Next recompiles → Fast Refresh
+**force-reloads every connected browser** → home screen. One viewer
+browsing = ALL viewers kicked, roughly once a minute. "Everything else
+works" ✓ (data untouched), "other people complaining" ✓ (shared server).
+Sibling offenders found in the same class: `.mbgs-cache/` (wallpaper/media
+cache, written on media fetches) and `dev-watchdog.log` (its filename does
+NOT match the old `dev\.log$` pattern — 5-min cadence reload trigger).
+
+### 4. THE FIX (3 layers, all live)
+1. **NEW `src/lib/veil/runtime-cache-dir.ts`** — shared resolver
+   `runtimeCacheDir(name, envOverride)`: env override →
+   `$HOME/.veil-cache/<name>` (outside the watched tree; rejected if it
+   would land inside cwd) → cwd fallback for containers.
+2. **Relocated the runtime writers** (hot-applies via route recompile):
+   - fetcher.ts AST cache → `~/.veil-cache/quasar-cache/`
+   - mbgs-media.ts media cache → `~/.veil-cache/mbgs-cache/`
+   Both warm caches were migrated (48 AST entries / ~70MB media) so nothing
+   re-downloads. Old in-tree dirs deleted.
+3. **next.config.ts watcher regex made future-proof** (applies on the
+   auto-restart Next 16 performs when the config changes — observed live,
+   PIDs 6158→30635→31677):
+   `/(^|[\\/])(node_modules|backups|upload|download|db|mini-services|scripts|tmp|tool-results|tests|site|site-fixes\.d)([\\/]|$)|(^|[\\/])\.[^\\/]+([\\/]|$)|\.log$/`
+   — i.e. ALL hidden dirs (any future dot-cache), ALL `*.log` files
+   (dev-watchdog.log included), plus `site/` (jsDelivr front stubs +
+   `site/data/chat-live.json` written by the backup bridge) and
+   `site-fixes.d/`.
+
+### 5. Verification (agent-browser, live)
+- 4-minute soak with a proxied Wikipedia tab open: the 90s AST flush FIRED
+  (cache mtime ticked at the new location) with **ZERO page reloads**
+  (canary attribute + iframe survived the whole window).
+- Additional 2-minute soak in the Chat section: no reload, section intact.
+- Old `.quasar-cache/`/`.mbgs-cache/` never recreated in-tree.
+- Lint clean (`bunx eslint` on all four touched files); no runtime errors
+  in dev.log during the soak; owner's browsing traffic flowed normally.
+- Veil's balance re-checked after the fix round: **50,003 coins** (50,000
+  refund + passive ticks), all 8 owned accessories + puppy worn intact.
+
+### 6. Standing notes
+- next.config.ts edits make Next 16 dev AUTO-RESTART (its own watcher) —
+  this is NOT the forbidden manual restart; expect exactly one reload wave
+  per config edit.
+- The cron webDevReview jobs are currently all "Disabled due to exec
+  limits exceeded" on the platform side — nothing cron-driven is running.
+- The freetube-watchdog/keeper/backup-loop daemons log OUTSIDE the tree or
+  to ignored paths now; keep it that way for any new daemon.
+
 ## Project status (2026-10-17 ~15:30 UTC) — THE REAL CENTERING BUG (Tailwind max-width clamp) + RANDOM-RESTART ROOT CAUSE (box memory)
 
 **Owner report: "ITEMS STILL AREN'T CENTERED SEE"** (with a 62×85 crop of

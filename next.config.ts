@@ -97,10 +97,20 @@ const nextConfig: NextConfig = {
       // dev.log) AND the QA/screenshot dirs (tmp/, tool-results/) —
       // browser-tooling PNG drops there were firing Fast Refresh reloads
       // that closed the user's open sections mid-session (2026-10-02).
+      //
+      // 2026-10-17 "restarts to home screen every minute" postmortem: the
+      // quasar engine's AST cache flushed to <root>/.quasar-cache/ every
+      // 90s while anyone browsed — NOT in this list, so every flush
+      // recompiled every route and Fast-Refresh-reloaded ALL viewers.
+      // Fixes: (a) the cache now lives OUTSIDE the tree (fetcher.ts),
+      // (b) the ignore list below now also covers .quasar-cache/,
+      // .quasar-key, and EVERY *.log (dev-watchdog.log never matched the
+      // old dev\.log$ pattern — its 5-minute writes were a quieter
+      // reload trigger of the same class).
       config.watchOptions = {
         ...config.watchOptions,
         ignored:
-          /(^|[\\/])(node_modules|\.git|\.next|backups|upload|download|db|mini-services|scripts|tmp|tool-results|tests)([\\/]|$)|dev\.log$/,
+          /(^|[\\/])(node_modules|backups|upload|download|db|mini-services|scripts|tmp|tool-results|tests|site|site-fixes\.d)([\\/]|$)|(^|[\\/])\.[^\\/]+([\\/]|$)|\.log$/,
       };
       // NOTE: do NOT set config.devtool here — Next 16 detects it, reverts
       // to 'false' and warns on every boot ("improper-devtool"). Its own
