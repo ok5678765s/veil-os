@@ -1095,3 +1095,46 @@ Unresolved / risks:
 - Veil's balance hit 0 from live gambling before the top-up; if the owner wants a faucet, the shop already sells nothing for 0-coins players — a "comeback bonus" could be a nice follow-up.
 - The duplicate-username question from earlier rounds ("Veil" vs a possible "veil") — only ONE row exists now (checked in the DB this round); considered closed.
 - Motion blitz + chat scroll-to-bottom FAB + 44px tab-close hit area still pending from earlier rounds.
+
+---
+Task ID: 2
+Agent: main (Z.ai Code)
+Task: "gain points by using the proxy 3-5 coins per 1-5 minutes · add a Shop to gambling/games (pfp overlays from vector-decor reference + tags like the owner's OWNER tag) · use these for avatar decorations · IT KEEPS RESTARTING TO HOME SCREEN — look all over for the problem" (+ streak fix carried from the prior report)
+
+Work Log:
+- "Keeps restarting to home screen" — root cause found by auditing EVERY home-path in page.tsx/rewrite.ts/settings: the visibilitychange privacy sweep honors veil:keep-session=0. The default flipped to KEEP on 2026-10-13, but browsers that chose "Start page" BEFORE the flip kept a bare "0" forever → every tab/app switch swept tabs+section → home screen. Server mirrors all had keep:true (checked 15 rows), so it was purely the stale LOCAL value.
+  - Fix (src/lib/veil/shared.ts readKeepSession/writeKeepSession + page.tsx ×3 read sites + settings-section.tsx): a "0" is only honored when the NEW veil:keep-sweep-v2 marker exists; the marker is stamped ONLY by an explicit Settings › Browsing choice (or a cross-place pull adopting that choice). A bare legacy "0" without the marker is auto-removed (healed) on load.
+  - Browser-verified BOTH directions: planted stale 0 → reload → healed (removed); planted 0+marker → hidden sweep still resets (the privacy choice keeps working).
+- Streak "doesn't work" — root cause: the chat backup/restore cycle (chat-backup.ts) DROPPED dailyRewardStreak + lastRewardClaim, so every platform rollback/boot re-seed wiped streaks to 0. The live route math was already correct (calendar-day logic, clamped tz).
+  - Fix: backup format v1.2 carries pfpOverlay + dailyRewardStreak + lastRewardClaim; restore sets them on CREATED rows AND refreshes economy/cosmetic fields on MAPPED rows (rollback case: the committed backup is NEWER than the reverted db — coins/streaks/purchases no longer snap back). Old backups missing the fields restore cleanly (typeof guards).
+  - Round-trip verified: streak 7 + lastClaim → backup → wiped server-side → restore → streak 7 + lastClaim back.
+- Proxy earning (3-5 coins per 1-5 minutes while browsing):
+  - Prisma: ChatAccount.proxyNextAwardAt (db pushed). coins.ts: "proxy_earn" reason.
+  - /api/chat-coins action "proxy_tick": SERVER owns the schedule — first tick schedules a random 60-300s window; due tick awards 3-5 random coins + re-rolls the window; a window due >10min stale (user left — ticks only arrive while a proxied tab is open) re-warms instead of paying out. No back-pay.
+  - page.tsx: while mode=browse, a 30s ticker (only when the chat token exists in localStorage) posts proxy_tick; an award updates the stored chat account, dispatches veil:chat-account-updated (mounted ChatApp adopts it live), and pops a floating "+🪙 N · browsing" chip (framer-motion, bottom-right).
+  - curl-verified: schedule → not-due (nextInMs) → forced-due awards 3 (balance 2000→2003).
+- Shop with avatar overlays + tags (Games › Shop):
+  - Prisma: ChatAccount.pfpOverlay. toPublicAccount + chat-data (both selects) + chat-friends (FRIEND_SELECT/projection) + chat-live carry it; chat-members gets it via toPublicAccount.
+  - /api/chat-shop: 10 NEW overlay items (hearts/stars/flames/neon/sakura/thunder/ice/aurora/gold/void, 1500-6000 coins) with desc lines; purchase path handles the overlay slot; buying an ALREADY-OWNED item (any shop_purchase:<id> transaction) re-equips FREE (purchases permanent); NEW action "unequip" {slot: tag|accessory|overlay} with server validation.
+  - chat-app.tsx: OVERLAYS registry + OverlaySvg/AvatarOverlay — pure-SVG vector rings (viewBox 100×100, inset -22%) with per-item animations (spin/spin-rev/pulse/twinkle/flicker/bob) via new veil-ov-* keyframes in globals.css (always-on — a purchased decoration is identity — with a prefers-reduced-motion catch-all; transform-box:fill-box baked in so rings orbit their own centers). CSS-transform vs SVG-attribute conflict avoided with wrapper <g>s (attribute translate outside, CSS animation inside).
+  - AvatarWithAccessory renders the ring (message rows, players/friends/DM lists, profile, composer preview). ChatAccount/ChatMessageAccount types + all 8 construction sites carry pfpOverlay.
+  - ShopModal refactored into ShopPanel (shared body) — used by the standalone Shop modal AND the new "🛍 Shop" tab in the Games modal (owner ask: "add to gambling or games a new one called shop"). Sections: Avatar Overlays (live SVG preview per item) → Name Tags → PFP Accessories, each with a "take off" unequip link; footer explains earning.
+- Offline HTML (download/veil-offline.html):
+  - New 🛍 Shop gtab + #g-shop pane: GET catalog, three sections, ring previews (ovRing port of the React SVG), Buy (POST) + take off (unequip), live balance, roster refresh after equip.
+  - ovRing() renders the same 10 rings; wired into messages, players, friends, DM rows. .av overflow:hidden removed (would clip rings; imgs self-round now), position:relative added where missing. Compact ov* keyframes + shop CSS. node --check clean.
+- QA (curl + agent-browser + VLM via preview domain):
+  - Shop API: catalog 24 items; buy ov-hearts 2500→1000; re-buy owned = free re-equip (balance unchanged); ov-stars insufficient → 400 with message; unequip clears; bogus slot → 400. Stale "0" heal + explicit "0" sweep both verified in-browser.
+  - UI: Games modal shows 🪙 Coin Flip | ♠ Blackjack | 🛍 Shop; Shop tab renders 24 items + 10 ring previews; bought Heart Halo through the UI → balance 1,000, Worn badge + take-off link; hearts ring renders around the account's avatar in the Players list AND on its message (VLM: "correctly positioned in a circle around the avatar... no visible rendering glitches"); real-keystroke message send E2E.
+  - Offline HTML (file://): seeded origin+session → Shop tab: 24 rows, Worn badge, 12 animated ring previews, balance live (VLM: "functional in-app shop interface with the requested elements... High" quality).
+  - QA account (uiqa_1792203412) + message + transactions fully deleted from the DB; browser test state cleared. dev.log: zero errors. bunx eslint clean on all 12 touched files. Committed (49a0dee) + fresh git bundle (retention ×3).
+
+Stage Summary:
+- Home-screen resets: fixed at the value layer — stale pre-flip "0" heals away; only a deliberate post-v2 "Start page" choice ever resets.
+- Streaks now survive rollbacks (backup v1.2 + mapped-row refresh) — the actual "streak doesn't work" bug.
+- Browsing pays: 3-5 coins per 1-5 min on the proxy, server-authoritative, with a floating reward chip.
+- The shop (Games › Shop + standalone + offline) sells 10 animated vector avatar-overlay rings + 6 tags + 8 accessories, with permanent ownership, free re-equip, and unequip — online AND offline.
+
+Unresolved / risks:
+- The proxy ticker fires only in browse mode with a stored chat token (not logged in = no earning) — matches the ask ("using the proxy").
+- Overlay SVG ids (ov-aurora-grad) repeat per instance — browsers resolve to the first def; harmless today, worth namespacing if a second gradient ever lands.
+- Follow-ups from earlier rounds still open: chat scroll-to-bottom FAB, 44px tab-close hit area, motion blitz pass.
