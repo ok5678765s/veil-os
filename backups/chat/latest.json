@@ -1,11 +1,11 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T00:08:09.156Z",
+  "exportedAt": "2026-10-17T00:11:46.880Z",
   "counts": {
     "accounts": 53,
-    "messages": 82,
-    "dms": 1
+    "messages": 83,
+    "dms": 2
   },
   "accounts": [
     {
@@ -108,7 +108,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 158,
+      "coins": 171,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1865,6 +1865,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-16T23:25:35.143Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvbn5vtn000altg2n3yrc772",
+      "channelId": "cmvbn5oa80005ltg2y1fpoa8u",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "hey — DMs work now! (veil test)",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T00:11:36.155Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -1874,6 +1885,13 @@
       "isGroup": false,
       "ownerId": "cmv3edru50005skxv248pfu57",
       "createdAt": "2026-10-11T05:45:12.060Z"
+    },
+    {
+      "id": "cmvbn5oa80005ltg2y1fpoa8u",
+      "name": null,
+      "isGroup": false,
+      "ownerId": "cmuu20ppm0005jkxecvmo7qpu",
+      "createdAt": "2026-10-17T00:11:26.385Z"
     }
   ],
   "dmMembers": [
@@ -1884,6 +1902,14 @@
     {
       "dmId": "cmv3efs6z0007skxvepbcjobg",
       "accountId": "cmv39b8yz0000skxvqvf3dfai"
+    },
+    {
+      "dmId": "cmvbn5oa80005ltg2y1fpoa8u",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu"
+    },
+    {
+      "dmId": "cmvbn5oa80005ltg2y1fpoa8u",
+      "accountId": "cmv7j4j6u000dr7bux9lflbkd"
     }
   ],
   "friends": [],
