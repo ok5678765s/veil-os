@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T02:11:26.982Z",
+  "exportedAt": "2026-10-17T02:12:00.445Z",
   "counts": {
     "accounts": 53,
-    "messages": 88,
+    "messages": 82,
     "dms": 3
   },
   "accounts": [
@@ -2023,72 +2023,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T01:38:31.156Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbrf0pm0009ltmzopphoeqc",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T02:10:40.858Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbrf0pw000dltmz0n5npoev",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T02:10:40.869Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbrf1c9000lltmzlybrhjgi",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T02:10:41.673Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbrf1ds000pltmzjeizumf6",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T02:10:41.728Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbrf1rk000tltmzfp8sdc5r",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T02:10:42.225Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvbrf3eu001dltmzqpd913u5",
-      "channelId": "main",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-17T02:10:44.359Z",
       "editedAt": null
     }
   ],
