@@ -22,6 +22,8 @@ export async function OPTIONS(): Promise<Response> {
  *     joined display names until someone renames it);
  *   - targets must exist, not be banned, and not already be members
  *     (silently skipped otherwise);
+ *   - targets must be mutual FRIENDS of the inviter (owner ask — the
+ *     same friends-only rule as creating conversations);
  *   - the invited users' clients get a live `dm_added` toast via the
  *     relay's private user rooms; the group's existing members get
  *     `dm_updated` so member lists refresh without a reload.
@@ -102,6 +104,41 @@ async function handlePost(req: NextRequest): Promise<Response> {
           error: "Those people are already in the group (or don't exist).",
         },
         { status: 400 },
+      )
+    }
+
+    /* Friends-only gate (owner ask) — same rule as creating a
+     * conversation: you can only pull mutual friends into a group. */
+    const [myRows, theirRows] = await Promise.all([
+      db.chatFriend.findMany({
+        where: {
+          accountId: account.id,
+          friendId: { in: targets.map((t) => t.id) },
+        },
+      }),
+      db.chatFriend.findMany({
+        where: {
+          friendId: account.id,
+          accountId: { in: targets.map((t) => t.id) },
+        },
+      }),
+    ])
+    const mutualIds = new Set(
+      myRows
+        .filter((r) => theirRows.some((b) => b.accountId === r.friendId))
+        .map((r) => r.friendId),
+    )
+    const notFriends = targets.filter((t) => !mutualIds.has(t.id))
+    if (notFriends.length > 0) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            notFriends.length === 1
+              ? `@${notFriends[0].username} isn't your friend yet — send them a friend request first.`
+              : `Not friends yet: @${notFriends.map((t) => t.username).join(", @")} — friend requests come first.`,
+        },
+        { status: 403 },
       )
     }
 

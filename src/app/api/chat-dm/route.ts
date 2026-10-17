@@ -10,6 +10,34 @@ export async function OPTIONS(): Promise<Response> {
   return corsOptions()
 }
 
+/** Mutual-friend check — DMs are a friends-only space (owner ask):
+ * every person pulled into a NEW conversation must already be a mutual
+ * friend of the creator. Returns the usernames that are NOT friends. */
+async function nonFriendUsernames(
+  myId: string,
+  targets: { id: string; username: string }[],
+): Promise<string[]> {
+  if (targets.length === 0) return []
+  const rows = await db.chatFriend.findMany({
+    where: {
+      accountId: myId,
+      friendId: { in: targets.map((t) => t.id) },
+    },
+  })
+  const theyAlsoAddedMe = await db.chatFriend.findMany({
+    where: {
+      friendId: myId,
+      accountId: { in: targets.map((t) => t.id) },
+    },
+  })
+  const mutual = new Set(
+    rows
+      .filter((r) => theyAlsoAddedMe.some((b) => b.accountId === r.friendId))
+      .map((r) => r.friendId),
+  )
+  return targets.filter((t) => !mutual.has(t.id)).map((t) => t.username)
+}
+
 // GET /api/chat-dm?token=...        — list DMs the current account is a member of.
 // Each DM is returned with its member accounts (projected through toPublicAccount).
 export async function GET(req: NextRequest) {
@@ -45,6 +73,7 @@ export async function GET(req: NextRequest) {
         id: m.dm.id,
         name: m.dm.name,
         isGroup: m.dm.isGroup,
+        ownerId: m.dm.ownerId,
         createdAt: m.dm.createdAt,
         members: m.dm.members
           .filter((mem) => mem.account && !mem.account.banned)
@@ -156,6 +185,7 @@ export async function POST(req: NextRequest) {
             id: refreshed!.id,
             name: refreshed!.name,
             isGroup: refreshed!.isGroup,
+            ownerId: refreshed!.ownerId,
             createdAt: refreshed!.createdAt,
             members: refreshed!.members.map((mem) =>
               toPublicAccount(mem.account),
@@ -166,6 +196,27 @@ export async function POST(req: NextRequest) {
       }
       // Suppress unused-var warning for `existing` (kept for clarity).
       void existing
+    }
+
+    /* Friends-only gate (owner ask): DMs and groups are for people you
+     * actually know. This sits AFTER the reuse check, so re-opening an
+     * existing conversation always works (even if you two unfriended
+     * since) — only MINTING a new conversation needs friendship. */
+    const notFriends = await nonFriendUsernames(
+      account.id,
+      targetAccounts.map((a) => ({ id: a.id, username: a.username })),
+    )
+    if (notFriends.length > 0) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            notFriends.length === 1
+              ? `@${notFriends[0]} isn't your friend yet — send them a friend request first.`
+              : `Not friends yet: @${notFriends.join(", @")} — friend requests come first.`,
+        },
+        { status: 403 },
+      )
     }
 
     // Create a new DM with all members.
@@ -205,6 +256,7 @@ export async function POST(req: NextRequest) {
         id: created.id,
         name: created.name,
         isGroup: created.isGroup,
+        ownerId: created.ownerId,
         createdAt: created.createdAt,
         members: created.members.map((mem) => toPublicAccount(mem.account)),
       },

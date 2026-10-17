@@ -88,6 +88,7 @@ import {
   SmilePlus,
   Heart,
   UsersRound,
+  Dices,
 } from "lucide-react"
 
 import { BackdropVideo } from "@/components/veil/backdrop-video"
@@ -172,6 +173,9 @@ type DM = {
   id: string
   name: string | null
   isGroup: boolean
+  /* Who created the room — drives “delete it” (owner) vs “remove it
+   * from your sight” (everyone else) in the Groups panel. */
+  ownerId?: string | null
   createdAt: string
   members: ChatAccount[]
 }
@@ -4271,6 +4275,8 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
    * players toggle — owner ask). null → the player list shows instead. */
   const [socialPanel, setSocialPanel] = useState<null | "friends" | "dms" | "groups">(null)
   const [showMusic, setShowMusic] = useState(false)
+  /* Games modal — Coin Flip + Blackjack betting real Veil Coins. */
+  const [showGames, setShowGames] = useState(false)
   const [channelSwitcher, setChannelSwitcher] = useState(false)
   const [showGif, setShowGif] = useState(false)
   const [showEmoji, setShowEmoji] = useState(false)
@@ -5904,27 +5910,56 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
     }
   }
 
-  const leaveGroup = async () => {
-    const dm = dms.find((d) => d.id === channelId)
-    if (!dm) return
+  // Drop a conversation from local state + unwatch its live room.
+  const dropConversation = (dmId: string) => {
+    watchedRoomsRef.current.delete(dmId)
+    socketRef.current?.emit("unwatch", { channelId: dmId })
+    setDms((prev) => prev.filter((d) => d.id !== dmId))
+    if (channelIdRef.current === dmId) setChannelId("main")
+  }
+
+  // Close a DM / leave a group — YOUR sight only; the room lives on for
+  // everyone else (owner ask: “remove it from your sight if you didn't
+  // make it — same for DMs”).
+  const closeDmById = async (dmId: string, isGroup: boolean) => {
     try {
       await apiFetch("/api/chat-dm/leave", {
         method: "POST",
-        body: JSON.stringify({ token, dmId: dm.id }),
+        body: JSON.stringify({ token, dmId }),
       })
-      // Drop the local watch too, so badges stop for this room.
-      watchedRoomsRef.current.delete(dm.id)
-      socketRef.current?.emit("unwatch", { channelId: dm.id })
-      setDms((prev) => prev.filter((d) => d.id !== dm.id))
-      setChannelId("main")
+      dropConversation(dmId)
       setShowLeaveConfirm(false)
       toast(
-        dm.isGroup ? "You left the group." : "DM closed.",
+        isGroup ? "Group left — it's off your sight." : "DM closed.",
         "ok",
       )
+      return true
     } catch (e) {
-      toast(e instanceof Error ? e.message : "Failed to leave.", "err")
+      toast(e instanceof Error ? e.message : "Failed — try again.", "err")
+      return false
     }
+  }
+
+  // Delete a group you MADE — gone for every member, messages included.
+  const deleteGroupById = async (dmId: string) => {
+    try {
+      await apiFetch("/api/chat-dm/delete", {
+        method: "POST",
+        body: JSON.stringify({ token, dmId }),
+      })
+      dropConversation(dmId)
+      toast("Group deleted — gone for everyone.", "ok")
+      return true
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Delete failed.", "err")
+      return false
+    }
+  }
+
+  const leaveGroup = async () => {
+    const dm = dms.find((d) => d.id === channelId)
+    if (!dm) return
+    await closeDmById(dm.id, dm.isGroup)
   }
 
   // -------------------------------------------------------------------------
@@ -6710,6 +6745,18 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
               toast={toast}
             />
 
+            {/* Games — Coin Flip + Blackjack, betting real coins */}
+            <motion.button
+              onClick={() => setShowGames(true)}
+              whileHover={{ scale: 1.16, y: -1, rotate: -14 }}
+              whileTap={{ scale: 0.86 }}
+              transition={CHAT_POP}
+              className="veil-hover-glow rounded-md p-1.5 text-amber-300 hover:bg-amber-400/10"
+              title="Games — flip the coin or play blackjack with your coins"
+            >
+              <Dices className="h-4 w-4" />
+            </motion.button>
+
             {/* Online count */}
             <span className="veil-hover-glow hidden items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-xs text-white/60 md:flex">
               <Circle className="veil-twinkle h-2 w-2 fill-emerald-400 text-emerald-400" />
@@ -7357,10 +7404,12 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
                 dms={dms}
                 unread={unread}
                 activeId={channelId}
+                friends={friends}
                 target={dmTarget}
                 onTarget={setDmTarget}
-                onCreate={() => void createDm()}
+                onDm={(username) => void openDmWith(username)}
                 onOpen={(id) => setChannelId(id)}
+                onCloseDm={(id, isGroup) => void closeDmById(id, isGroup)}
                 onClose={() => setSocialPanel(null)}
               />
             ) : socialPanel === "groups" ? (
@@ -7368,6 +7417,7 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
                 dms={dms}
                 activeId={channelId}
                 friends={friends}
+                meId={account.id}
                 name={groupName}
                 picked={groupPicked}
                 users={groupUserInput}
@@ -7379,6 +7429,8 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
                 onUsers={setGroupUserInput}
                 onCreate={() => void createGroup()}
                 onOpen={(id) => setChannelId(id)}
+                onLeaveGroup={(id) => void closeDmById(id, true)}
+                onDeleteGroup={(id) => void deleteGroupById(id)}
                 onClose={() => setSocialPanel(null)}
               />
             ) : showMembers ? (
@@ -7450,6 +7502,16 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
             onAccount={updateAccount}
             members={members}
             onClose={() => setShowTransfer(false)}
+            toast={toast}
+          />
+        )}
+        {/* Games — Coin Flip + Blackjack against the real coin balance */}
+        {showGames && (
+          <GamesModal
+            account={account}
+            token={token}
+            onAccount={updateAccount}
+            onClose={() => setShowGames(false)}
             toast={toast}
           />
         )}
@@ -7817,23 +7879,45 @@ function DmsPanel({
   dms,
   unread,
   activeId,
+  friends,
   target,
   onTarget,
-  onCreate,
+  onDm,
   onOpen,
+  onCloseDm,
   onClose,
 }: {
   account: ChatAccount
   dms: DM[]
   unread: Record<string, number>
   activeId: string
+  friends: ChatAccount[]
   target: string
   onTarget: (v: string) => void
-  onCreate: () => void
+  onDm: (username: string) => void
   onOpen: (id: string) => void
+  onCloseDm: (id: string, isGroup: boolean) => void
   onClose: () => void
 }) {
   const solo = dms.filter((d) => !d.isGroup)
+  /* DMs are friends-only (owner ask) — the picker searches your FRIENDS,
+   * not strangers; the server enforces the same rule on the wire. */
+  const q = target.trim().replace(/^@/, "").toLowerCase()
+  const pickable = q
+    ? friends.filter(
+        (f) =>
+          f.username.toLowerCase().includes(q) ||
+          displayName(f).toLowerCase().includes(q),
+      )
+    : friends
+  /* Two-tap close: the first tap arms the X into a red “Sure?”, the
+   * second (within 2.8s) closes the DM off your sight. */
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+  useEffect(() => {
+    if (!confirmId) return
+    const t = setTimeout(() => setConfirmId(null), 2800)
+    return () => clearTimeout(t)
+  }, [confirmId])
   return (
     <SocialPanelShell
       icon={<MessageCircle className="h-3.5 w-3.5 shrink-0 text-orange-400" />}
@@ -7841,65 +7925,109 @@ function DmsPanel({
       count={solo.length}
       onClose={onClose}
     >
-      {/* Start a new DM */}
+      {/* Start a new DM — friends only */}
       <div className="flex items-center gap-1">
         <input
           value={target}
           onChange={(e) => onTarget(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && onCreate()}
-          placeholder="@username"
+          placeholder="Find a friend…"
           autoCapitalize="none"
           className="veil-focus-bloom min-w-0 flex-1 rounded-md border border-white/10 bg-black/40 px-2 py-1 text-xs text-white outline-none"
         />
-        <button
-          onClick={onCreate}
-          className="veil-press veil-hover-glow shrink-0 rounded-md bg-orange-400 px-2 py-1 text-xs font-semibold text-black"
-          title="Open the DM"
-        >
-          Open
-        </button>
+        {target && (
+          <button
+            onClick={() => onTarget("")}
+            className="shrink-0 rounded p-1 text-white/40 hover:bg-white/10 hover:text-white"
+            title="Clear the search"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        )}
       </div>
+      {friends.length === 0 ? (
+        <p className="px-1 py-2 text-[11px] leading-relaxed text-white/30">
+          DMs are friends-only — add someone in the Friends tab first.
+        </p>
+      ) : pickable.length === 0 ? (
+        <p className="px-1 py-2 text-[11px] text-white/30">
+          No friend matches “{target.trim()}”.
+        </p>
+      ) : (
+        <div className="space-y-0.5">
+          {pickable.slice(0, 6).map((f) => (
+            <button
+              key={f.id}
+              onClick={() => onDm(f.username)}
+              className="veil-hover-glow flex w-full items-center gap-2 rounded-md px-1.5 py-1 text-left hover:bg-white/5"
+              title={`DM @${f.username}`}
+            >
+              <AvatarWithAccessory account={f} size={22} />
+              <span
+                className="min-w-0 flex-1 truncate text-xs"
+                style={{ color: roleColor(f) }}
+              >
+                {displayName(f)}
+              </span>
+              <span className="shrink-0 text-[9px] font-semibold text-white/25">
+                @{f.username}
+              </span>
+              <MessageCircle className="h-3 w-3 shrink-0 text-orange-300/70" />
+            </button>
+          ))}
+          {pickable.length > 6 && (
+            <p className="px-1 pt-0.5 text-[10px] text-white/35">
+              +{pickable.length - 6} more — keep typing to narrow it down.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* The DM list — every row can be closed off your sight */}
       {solo.length === 0 ? (
         <p className="px-1 py-2 text-[11px] text-white/30">
-          No direct messages yet — start one with the box above.
+          No direct messages yet — start one with a friend above.
         </p>
       ) : (
         <div className="space-y-0.5">
           {solo.map((d, di) => {
             const label = dmLabel(d, account.id)
             const other = d.members.find((m) => m.id !== account.id)
+            const armed = confirmId === d.id
             return (
-              <motion.button
+              <motion.div
                 key={d.id}
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: Math.min(di * 0.03, 0.3), duration: 0.2, ease: "easeOut" }}
-                whileHover={{ x: 2 }}
-                onClick={() => onOpen(d.id)}
-                className={`flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left ${
-                  activeId === d.id ? "veil-pulse-glow bg-white/10" : "veil-hover-glow hover:bg-white/5"
+                className={`group flex w-full items-center gap-1 rounded-md py-1.5 pl-1.5 pr-1 ${
+                  activeId === d.id ? "veil-pulse-glow bg-white/10" : "hover:bg-white/5"
                 }`}
               >
-                <span className="relative shrink-0">
-                  {other ? (
-                    <AvatarWithAccessory account={other} size={26} />
-                  ) : (
-                    <span className="grid h-[26px] w-[26px] place-items-center rounded-full bg-white/10 text-[10px] font-bold text-white/60">
-                      ?
+                <button
+                  onClick={() => onOpen(d.id)}
+                  className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                >
+                  <span className="relative shrink-0">
+                    {other ? (
+                      <AvatarWithAccessory account={other} size={26} />
+                    ) : (
+                      <span className="grid h-[26px] w-[26px] place-items-center rounded-full bg-white/10 text-[10px] font-bold text-white/60">
+                        ?
+                      </span>
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className="block truncate text-sm font-medium"
+                      style={{ color: other ? roleColor(other) : undefined }}
+                    >
+                      {label}
                     </span>
-                  )}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span
-                    className="block truncate text-sm font-medium"
-                    style={{ color: other ? roleColor(other) : undefined }}
-                  >
-                    {label}
+                    <span className="block truncate text-[10px] text-white/40">
+                      @{other?.username || "?"}
+                    </span>
                   </span>
-                  <span className="block truncate text-[10px] text-white/40">
-                    @{other?.username || "?"}
-                  </span>
-                </span>
+                </button>
                 {unread[d.id] > 0 && (
                   <span
                     key={unread[d.id]}
@@ -7908,7 +8036,18 @@ function DmsPanel({
                     {unread[d.id] > 99 ? "99+" : unread[d.id]}
                   </span>
                 )}
-              </motion.button>
+                <button
+                  onClick={() => (armed ? onCloseDm(d.id, false) : setConfirmId(d.id))}
+                  className={`veil-press grid h-6 shrink-0 place-items-center rounded-md text-[9px] font-bold transition ${
+                    armed
+                      ? "min-w-9 bg-red-500/80 px-1 text-white"
+                      : "w-6 text-white/40 opacity-0 hover:bg-red-500/25 hover:text-red-300 focus-visible:opacity-100 group-hover:opacity-100"
+                  }`}
+                  title="Close DM — remove it from your sight"
+                >
+                  {armed ? "Sure?" : <X className="h-3 w-3" />}
+                </button>
+              </motion.div>
             )
           })}
         </div>
@@ -7921,6 +8060,7 @@ function GroupsPanel({
   dms,
   activeId,
   friends,
+  meId,
   name,
   picked,
   users,
@@ -7930,11 +8070,14 @@ function GroupsPanel({
   onUsers,
   onCreate,
   onOpen,
+  onLeaveGroup,
+  onDeleteGroup,
   onClose,
 }: {
   dms: DM[]
   activeId: string
   friends: ChatAccount[]
+  meId: string
   name: string
   picked: Record<string, boolean>
   users: string
@@ -7944,9 +8087,19 @@ function GroupsPanel({
   onUsers: (v: string) => void
   onCreate: () => void
   onOpen: (id: string) => void
+  onLeaveGroup: (id: string) => void
+  onDeleteGroup: (id: string) => void
   onClose: () => void
 }) {
   const groups = dms.filter((d) => d.isGroup)
+  /* Two-tap confirm — arming shows a red “Sure?” before the real tap
+   * (delete is forever; leave just hides it from your sight). */
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+  useEffect(() => {
+    if (!confirmId) return
+    const t = setTimeout(() => setConfirmId(null), 2800)
+    return () => clearTimeout(t)
+  }, [confirmId])
   return (
     <SocialPanelShell
       icon={<UsersRound className="h-3.5 w-3.5 shrink-0 text-cyan-300" />}
@@ -8011,42 +8164,758 @@ function GroupsPanel({
         </p>
       </div>
 
-      {/* Group list */}
+      {/* Group list — delete the ones you made, hide the rest */}
       {groups.length === 0 ? (
         <p className="px-1 py-2 text-[11px] text-white/30">
           No groups yet — make one with the box above.
         </p>
       ) : (
         <div className="space-y-0.5">
-          {groups.map((d, di) => (
-            <motion.button
-              key={d.id}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: Math.min(di * 0.03, 0.3), duration: 0.2, ease: "easeOut" }}
-              whileHover={{ x: 2 }}
-              onClick={() => onOpen(d.id)}
-              className={`flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left ${
-                activeId === d.id ? "veil-pulse-glow bg-white/10" : "veil-hover-glow hover:bg-white/5"
-              }`}
-            >
-              <span className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-md bg-cyan-400/15 text-cyan-300">
-                <UsersRound className="h-3.5 w-3.5" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-medium">{d.name || "Group"}</span>
-                <span className="block truncate text-[10px] text-white/40">
-                  {d.members.map((m) => displayName(m)).join(", ")}
+          {groups.map((d, di) => {
+            const mine = d.ownerId === meId
+            const armed = confirmId === d.id
+            return (
+              <motion.div
+                key={d.id}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: Math.min(di * 0.03, 0.3), duration: 0.2, ease: "easeOut" }}
+                className={`group flex w-full items-center gap-1 rounded-md py-1.5 pl-1.5 pr-1 ${
+                  activeId === d.id ? "veil-pulse-glow bg-white/10" : "hover:bg-white/5"
+                }`}
+              >
+                <button
+                  onClick={() => onOpen(d.id)}
+                  className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                >
+                  <span className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-md bg-cyan-400/15 text-cyan-300">
+                    <UsersRound className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">
+                      {d.name || "Group"}
+                      {mine && (
+                        <span
+                          className="ml-1.5 rounded bg-cyan-400/15 px-1 py-px align-middle text-[8px] font-bold uppercase tracking-wide text-cyan-300"
+                          title="You made this group"
+                        >
+                          yours
+                        </span>
+                      )}
+                    </span>
+                    <span className="block truncate text-[10px] text-white/40">
+                      {d.members.map((m) => displayName(m)).join(", ")}
+                    </span>
+                  </span>
+                </button>
+                <span className="shrink-0 rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold tabular-nums text-white/50">
+                  {d.members.length}
                 </span>
-              </span>
-              <span className="shrink-0 rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold tabular-nums text-white/50">
-                {d.members.length}
-              </span>
-            </motion.button>
-          ))}
+                {mine ? (
+                  <button
+                    onClick={() => (armed ? onDeleteGroup(d.id) : setConfirmId(d.id))}
+                    className={`veil-press grid h-6 shrink-0 place-items-center rounded-md text-[9px] font-bold transition ${
+                      armed
+                        ? "min-w-9 bg-red-500/80 px-1 text-white"
+                        : "w-6 text-white/40 opacity-0 hover:bg-red-500/25 hover:text-red-300 focus-visible:opacity-100 group-hover:opacity-100"
+                    }`}
+                    title="Delete group — gone for EVERY member (you made it)"
+                  >
+                    {armed ? "Sure?" : <Trash2 className="h-3 w-3" />}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => (armed ? onLeaveGroup(d.id) : setConfirmId(d.id))}
+                    className={`veil-press grid h-6 shrink-0 place-items-center rounded-md text-[9px] font-bold transition ${
+                      armed
+                        ? "min-w-9 bg-red-500/80 px-1 text-white"
+                        : "w-6 text-white/40 opacity-0 hover:bg-red-500/25 hover:text-red-300 focus-visible:opacity-100 group-hover:opacity-100"
+                    }`}
+                    title="Leave — remove it from your sight"
+                  >
+                    {armed ? "Sure?" : <LogOut className="h-3 w-3" />}
+                  </button>
+                )}
+              </motion.div>
+            )
+          })}
         </div>
       )}
     </SocialPanelShell>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Games — Coin Flip + Blackjack with real Veil Coins. The golden 3D coin
+// and the felt-table look come from the owner's own game files, rewired
+// to the server-side coin economy (the server owns every shuffle and
+// flip, so the results are the truth).
+// ---------------------------------------------------------------------------
+
+type GameCardT = {
+  suit: "hearts" | "diamonds" | "clubs" | "spades"
+  rank: string
+}
+
+type BlackjackState = {
+  id: string
+  bet: number
+  playerHand: GameCardT[]
+  dealerHand: GameCardT[]
+  holeHidden: boolean
+  status: "playing" | "done"
+  result: "win" | "lose" | "push" | "blackjack" | null
+  payout: number
+}
+
+const SUIT_GLYPH: Record<GameCardT["suit"], string> = {
+  hearts: "♥",
+  diamonds: "♦",
+  clubs: "♣",
+  spades: "♠",
+}
+
+function handTotal(hand: GameCardT[]): number {
+  let total = 0
+  let aces = 0
+  for (const c of hand) {
+    if (c.rank === "A") {
+      aces++
+      total += 11
+    } else if (c.rank === "K" || c.rank === "Q" || c.rank === "J" || c.rank === "10") {
+      total += 10
+    } else {
+      total += Number(c.rank) || 0
+    }
+  }
+  while (total > 21 && aces > 0) {
+    total -= 10
+    aces--
+  }
+  return total
+}
+
+/** One playing card (or a face-down back) with the deal-in animation. */
+function PlayCard({
+  card,
+  hidden,
+  overlap,
+  delay = 0,
+}: {
+  card?: GameCardT
+  hidden?: boolean
+  overlap?: boolean
+  delay?: number
+}) {
+  if (hidden || !card) {
+    return (
+      <motion.div
+        initial={{ y: -14, scale: 0.92, opacity: 0 }}
+        animate={{ y: 0, scale: 1, opacity: 1 }}
+        transition={{ delay, duration: 0.26, ease: [0.22, 1.1, 0.36, 1] }}
+        className={`h-[64px] w-[46px] shrink-0 rounded-lg sm:h-[80px] sm:w-[58px] ${overlap ? "-ml-6 sm:-ml-8" : ""}`}
+        style={{
+          background:
+            "repeating-linear-gradient(45deg, #221a0d 0px, #221a0d 6px, #2e2412 6px, #2e2412 12px)",
+          boxShadow:
+            "inset 0 0 0 3px #171208, inset 0 0 0 4px rgba(245,197,66,.35), 0 8px 20px -8px rgba(0,0,0,.7)",
+        }}
+        aria-label="Face-down card"
+      />
+    )
+  }
+  const red = card.suit === "hearts" || card.suit === "diamonds"
+  return (
+    <motion.div
+      initial={{ y: -14, scale: 0.92, opacity: 0 }}
+      animate={{ y: 0, scale: 1, opacity: 1 }}
+      transition={{ delay, duration: 0.26, ease: [0.22, 1.1, 0.36, 1] }}
+      className={`relative flex h-[64px] w-[46px] shrink-0 flex-col justify-between rounded-lg p-1.5 sm:h-[80px] sm:w-[58px] sm:p-2 ${overlap ? "-ml-6 sm:-ml-8" : ""}`}
+      style={{
+        background: "linear-gradient(#ffffff, #e4e4e7)",
+        boxShadow: "0 8px 20px -8px rgba(0,0,0,.7)",
+        color: red ? "#e11d48" : "#18181b",
+      }}
+    >
+      <span className="text-[11px] font-extrabold leading-none sm:text-[13px]">{card.rank}</span>
+      <span className="self-center text-xl leading-none sm:text-2xl">{SUIT_GLYPH[card.suit]}</span>
+      <span
+        className="self-end text-[11px] font-extrabold leading-none sm:text-[13px]"
+        style={{ transform: "rotate(180deg)" }}
+      >
+        {card.rank}
+      </span>
+    </motion.div>
+  )
+}
+
+/** The golden 3D coin — bet chips, pick a side, the server flips. */
+function CoinFlipGame({
+  account,
+  token,
+  onAccount,
+  toast,
+}: {
+  account: ChatAccount
+  token: string
+  onAccount: (a: ChatAccount) => void
+  toast: (msg: string, kind?: "ok" | "err") => void
+}) {
+  const [bet, setBet] = useState(10)
+  const [side, setSide] = useState<"heads" | "tails" | null>(null)
+  const [spinning, setSpinning] = useState(false)
+  const [rotation, setRotation] = useState(0)
+  const [outcome, setOutcome] = useState<{
+    landed: "heads" | "tails"
+    won: boolean
+    bet: number
+  } | null>(null)
+
+  /* The coin's 36-segment rim — built once. */
+  const edges = useMemo(() => {
+    const EDGE = 36
+    const R = 78
+    const T = 12
+    const CH = 2 * R * Math.sin(Math.PI / EDGE) + 1.5
+    return Array.from({ length: EDGE }, (_, i) => (
+      <div
+        key={i}
+        className="absolute left-1/2 top-1/2"
+        style={{
+          width: T,
+          height: CH,
+          marginLeft: -T / 2,
+          marginTop: -CH / 2,
+          background:
+            "repeating-linear-gradient(90deg, #8a6215 0px, #e0bc55 1.4px, #8a6215 2.8px, #b98f2a 3.4px)",
+          transform: `rotateZ(${(i * 360) / EDGE}deg) translateX(${R - 0.5}px) rotateY(90deg)`,
+        }}
+      />
+    ))
+  }, [])
+
+  const flip = async () => {
+    if (spinning) return
+    if (!side) {
+      toast("Pick heads or tails first.", "err")
+      return
+    }
+    if (bet < 1) {
+      toast("Bet at least 1 coin.", "err")
+      return
+    }
+    if (bet > account.coins) {
+      toast("Not enough coins for that bet.", "err")
+      return
+    }
+    setSpinning(true)
+    setOutcome(null)
+    try {
+      const data = await apiFetch<{
+        landed: "heads" | "tails"
+        won: boolean
+        payout: number
+        account: ChatAccount
+      }>("/api/chat-coinflip", {
+        method: "POST",
+        body: JSON.stringify({ token, bet, side }),
+      })
+      /* Spin the coin to wherever the SERVER says it landed. */
+      const mod = data.landed === "heads" ? 0 : 180
+      const cur = ((rotation % 360) + 360) % 360
+      const delta = (mod - cur + 360) % 360
+      const spins = 3 + Math.floor(Math.random() * 3)
+      setRotation(rotation + 360 * spins + delta)
+      setTimeout(() => {
+        setOutcome({ landed: data.landed, won: data.won, bet })
+        onAccount(data.account)
+        setSpinning(false)
+        toast(
+          data.won
+            ? `${data.landed.toUpperCase()} — you win +${bet} 🪙`
+            : `${data.landed.toUpperCase()} — you lose ${bet} 🪙`,
+          data.won ? "ok" : "err",
+        )
+      }, 1750)
+    } catch (e) {
+      setSpinning(false)
+      toast(e instanceof Error ? e.message : "The flip didn't land.", "err")
+    }
+  }
+
+  const coinFace =
+    "absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-full"
+  const coinFaceStyle: React.CSSProperties = {
+    background:
+      "radial-gradient(circle at 35% 28%, #ffefad 0%, #f8d264 32%, #e3a92c 62%, #b97e12 88%, #8f5c0a 100%)",
+    boxShadow:
+      "inset 0 0 0 5px rgba(146,96,16,.4), inset 0 0 0 7px rgba(255,236,170,.45), inset 0 -12px 24px rgba(118,68,5,.5), inset 0 10px 20px rgba(255,246,205,.35)",
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* The coin */}
+      <div className="grid place-items-center py-1" style={{ perspective: 1050 }}>
+        <button
+          onClick={() => void flip()}
+          disabled={spinning || !side}
+          className="relative block h-[150px] w-[150px] rounded-full outline-none ring-amber-300/40 transition-transform focus-visible:ring-4 enabled:active:scale-95 disabled:cursor-default"
+          style={{ transformStyle: "preserve-3d" }}
+          title={side ? `Flip for ${bet} 🪙 — you called ${side}` : "Pick heads or tails first"}
+          aria-label="Flip the coin"
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              transformStyle: "preserve-3d",
+              transform: `rotateX(${rotation}deg)`,
+              transition: "transform 1.7s cubic-bezier(0.2, 0.6, 0.2, 1)",
+            }}
+          >
+            {edges}
+            <div className={coinFace} style={{ ...coinFaceStyle, transform: "translateZ(6px)" }}>
+              <span className="text-4xl" style={{ color: "#7a5207", textShadow: "0 2px 0 rgba(255,240,190,.55)" }}>♛</span>
+              <span className="text-[11px] font-extrabold" style={{ color: "#7a5207", letterSpacing: "0.3em", textIndent: "0.3em" }}>HEADS</span>
+            </div>
+            <div className={coinFace} style={{ ...coinFaceStyle, transform: "rotateX(180deg) translateZ(6px)" }}>
+              <span className="text-4xl" style={{ color: "#7a5207", textShadow: "0 2px 0 rgba(255,240,190,.55)" }}>★</span>
+              <span className="text-[11px] font-extrabold" style={{ color: "#7a5207", letterSpacing: "0.3em", textIndent: "0.3em" }}>TAILS</span>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {/* Result */}
+      <div className="grid h-8 place-items-center" aria-live="polite">
+        {outcome && (
+          <motion.span
+            key={`${outcome.landed}-${outcome.won}-${outcome.bet}-${Date.now()}`}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 520, damping: 20 }}
+            className={`rounded-full border px-3.5 py-1 text-sm font-extrabold tracking-widest ${
+              outcome.won
+                ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                : "border-rose-400/30 bg-rose-400/10 text-rose-300"
+            }`}
+          >
+            {outcome.landed.toUpperCase()} · {outcome.won ? `WIN +${outcome.bet}` : `LOSE −${outcome.bet}`}
+          </motion.span>
+        )}
+        {spinning && !outcome && (
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-200/50">
+            flipping…
+          </span>
+        )}
+      </div>
+
+      {/* Side pick */}
+      <div className="flex justify-center gap-2">
+        {(["heads", "tails"] as const).map((s) => (
+          <button
+            key={s}
+            onClick={() => setSide(s)}
+            disabled={spinning}
+            className={`veil-press flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-bold transition disabled:opacity-50 ${
+              side === s
+                ? "border-amber-300/60 bg-amber-400/15 text-amber-200"
+                : "border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
+            }`}
+          >
+            <span>{s === "heads" ? "♛" : "★"}</span>
+            {s === "heads" ? "Heads" : "Tails"}
+            <span className="text-[10px] font-semibold text-white/35">pays 2×</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Bet */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center justify-center gap-1.5">
+          {[10, 25, 50, 100].map((v) => (
+            <button
+              key={v}
+              onClick={() => setBet((b) => b + v)}
+              disabled={spinning || account.coins < bet + v}
+              className="veil-press h-9 w-9 rounded-full border-2 border-amber-300/40 bg-white/5 text-xs font-extrabold text-amber-200 transition hover:scale-105 hover:bg-white/10 disabled:opacity-30"
+              title={`Add ${v} coins to the bet`}
+            >
+              {v}
+            </button>
+          ))}
+          <button
+            onClick={() => setBet(Math.max(0, account.coins))}
+            disabled={spinning || account.coins < 1}
+            className="veil-press h-9 rounded-full border-2 border-emerald-300/40 bg-emerald-400/10 px-3 text-[11px] font-extrabold text-emerald-300 transition hover:scale-105 hover:bg-emerald-400/20 disabled:opacity-30"
+            title="Bet everything"
+          >
+            MAX
+          </button>
+        </div>
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <span className="text-white/45">Bet</span>
+          <span className="rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-0.5 font-bold tabular-nums text-amber-200">
+            🪙 {bet.toLocaleString()}
+          </span>
+          {bet > 0 && (
+            <button
+              onClick={() => setBet(0)}
+              disabled={spinning}
+              className="text-xs text-white/40 underline-offset-2 hover:text-white/70 hover:underline"
+            >
+              clear
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Flip */}
+      <button
+        onClick={() => void flip()}
+        disabled={spinning || !side || bet < 1 || bet > account.coins}
+        className="veil-press veil-hover-glow flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-extrabold text-[#451a03] disabled:opacity-40"
+        style={{
+          background: "linear-gradient(#fcd34d, #d97706)",
+          boxShadow: "0 12px 32px -10px rgba(245,197,66,.55), inset 0 1px 0 rgba(255,255,255,.5)",
+        }}
+      >
+        {spinning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Dices className="h-4 w-4" />}
+        {spinning ? "Flipping…" : side ? `Flip for ${bet.toLocaleString()} 🪙` : "Pick a side to flip"}
+      </button>
+      <p className="text-center text-[10px] leading-relaxed text-white/35">
+        Correct call doubles your bet — the server flips, so what you see is what really landed.
+      </p>
+    </div>
+  )
+}
+
+/** Blackjack — the felt table, betting real coins, deck shuffled server-side. */
+function BlackjackGame({
+  account,
+  token,
+  onAccount,
+  toast,
+}: {
+  account: ChatAccount
+  token: string
+  onAccount: (a: ChatAccount) => void
+  toast: (msg: string, kind?: "ok" | "err") => void
+}) {
+  const [game, setGame] = useState<BlackjackState | null>(null)
+  const [bet, setBet] = useState(10)
+  const [busy, setBusy] = useState(false)
+
+  /* Resume an in-flight hand when the modal opens. */
+  useEffect(() => {
+    let stopped = false
+    apiFetch<{ game: BlackjackState | null }>("/api/chat-blackjack", {
+      method: "POST",
+      body: JSON.stringify({ token, action: "status" }),
+    })
+      .then((d) => {
+        if (!stopped && d.game) setGame(d.game)
+      })
+      .catch(() => {
+        /* first open just starts fresh */
+      })
+    return () => {
+      stopped = true
+    }
+  }, [token])
+
+  const act = async (
+    action: "start" | "hit" | "stand" | "double",
+    amount?: number,
+  ) => {
+    if (busy) return
+    setBusy(true)
+    try {
+      const data = await apiFetch<{
+        game: BlackjackState
+        account: ChatAccount
+      }>("/api/chat-blackjack", {
+        method: "POST",
+        body: JSON.stringify({ token, action, bet: amount }),
+      })
+      setGame(data.game)
+      onAccount(data.account)
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "The table hiccuped.", "err")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const phase =
+    game == null ? "betting" : game.status === "playing" ? "player" : "done"
+  const dealerTotal =
+    game && game.dealerHand.length
+      ? phase === "player"
+        ? `${handTotal(game.dealerHand.slice(0, 1))} + ?`
+        : handTotal(game.dealerHand)
+      : ""
+  const playerTotal = game?.playerHand.length ? handTotal(game.playerHand) : ""
+  const bust = !!game && handTotal(game.playerHand) > 21
+
+  return (
+    <div className="space-y-4">
+      {/* The table */}
+      <div
+        className="space-y-3 rounded-2xl border border-amber-200/10 p-3.5 sm:p-4"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,197,66,.06), transparent 60%), rgba(255,255,255,.02)",
+        }}
+      >
+        {/* Dealer */}
+        <div>
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-200/45">Dealer</span>
+            {dealerTotal !== "" && (
+              <span className="rounded-full border border-amber-200/15 bg-amber-50/5 px-2 py-0.5 text-[11px] font-extrabold tabular-nums text-amber-100/85">
+                {dealerTotal}
+              </span>
+            )}
+          </div>
+          <div className="flex min-h-[64px] items-center sm:min-h-[80px]">
+            {game?.dealerHand.length ? (
+              <>
+                {game.dealerHand.map((c, i) => (
+                  <PlayCard key={`d-${i}`} card={c} overlap={i > 0} delay={i * 0.09} />
+                ))}
+                {game.holeHidden && <PlayCard hidden overlap delay={0.09} />}
+              </>
+            ) : (
+              <>
+                <div className="h-[64px] w-[46px] rounded-lg border-[1.5px] border-dashed border-amber-200/15 sm:h-[80px] sm:w-[58px]" />
+                <div className="ml-2 h-[64px] w-[46px] rounded-lg border-[1.5px] border-dashed border-amber-200/15 sm:h-[80px] sm:w-[58px] sm:ml-3" />
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-200/20 to-transparent" />
+          <span className="whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.3em] text-amber-200/30">
+            blackjack pays 3 to 2
+          </span>
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-200/20 to-transparent" />
+        </div>
+
+        {/* Player */}
+        <div>
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-200/45">You</span>
+            {playerTotal !== "" && (
+              <span
+                className={`rounded-full border px-2 py-0.5 text-[11px] font-extrabold tabular-nums ${
+                  bust
+                    ? "border-rose-400/30 bg-rose-400/10 text-rose-300"
+                    : "border-amber-200/15 bg-amber-50/5 text-amber-100/85"
+                }`}
+              >
+                {playerTotal}
+              </span>
+            )}
+          </div>
+          <div className="flex min-h-[64px] items-center sm:min-h-[80px]">
+            {game?.playerHand.length ? (
+              game.playerHand.map((c, i) => (
+                <PlayCard key={`p-${i}`} card={c} overlap={i > 0} delay={i * 0.09} />
+              ))
+            ) : (
+              <>
+                <div className="h-[64px] w-[46px] rounded-lg border-[1.5px] border-dashed border-amber-200/15 sm:h-[80px] sm:w-[58px]" />
+                <div className="ml-2 h-[64px] w-[46px] rounded-lg border-[1.5px] border-dashed border-amber-200/15 sm:h-[80px] sm:w-[58px] sm:ml-3" />
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Result */}
+      <div className="grid h-8 place-items-center" aria-live="polite">
+        {game?.status === "done" && game.result && (
+          <motion.span
+            key={`${game.id}-${game.result}-${game.payout}`}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 520, damping: 20 }}
+            className={`rounded-full border px-3.5 py-1 text-sm font-extrabold ${
+              game.result === "win" || game.result === "blackjack"
+                ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                : game.result === "push"
+                  ? "border-zinc-400/30 bg-zinc-400/10 text-zinc-300"
+                  : "border-rose-400/30 bg-rose-400/10 text-rose-300"
+            }`}
+          >
+            {game.result === "blackjack"
+              ? `BLACKJACK! +${game.payout - game.bet} 🪙`
+              : game.result === "win"
+                ? `You win +${game.payout - game.bet} 🪙`
+                : game.result === "push"
+                  ? "Push — bet returned"
+                  : bust
+                    ? `Bust! −${game.bet} 🪙`
+                    : `Dealer wins −${game.bet} 🪙`}
+          </motion.span>
+        )}
+      </div>
+
+      {/* Controls */}
+      {phase === "betting" && (
+        <div className="space-y-2.5">
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
+            {[10, 25, 50, 100].map((v) => (
+              <button
+                key={v}
+                onClick={() => setBet((b) => b + v)}
+                disabled={account.coins < bet + v}
+                className="veil-press h-9 w-9 rounded-full border-2 border-amber-300/40 bg-white/5 text-xs font-extrabold text-amber-200 transition hover:scale-105 hover:bg-white/10 disabled:opacity-30"
+                title={`Add ${v} coins to the bet`}
+              >
+                {v}
+              </button>
+            ))}
+            <button
+              onClick={() => setBet(Math.max(0, account.coins))}
+              disabled={account.coins < 1}
+              className="veil-press h-9 rounded-full border-2 border-emerald-300/40 bg-emerald-400/10 px-3 text-[11px] font-extrabold text-emerald-300 transition hover:scale-105 hover:bg-emerald-400/20 disabled:opacity-30"
+              title="Bet everything"
+            >
+              MAX
+            </button>
+          </div>
+          <div className="flex items-center justify-center gap-2 text-sm">
+            <span className="text-white/45">Bet</span>
+            <span className="rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-0.5 font-bold tabular-nums text-amber-200">
+              🪙 {bet.toLocaleString()}
+            </span>
+            {bet > 0 && (
+              <button
+                onClick={() => setBet(0)}
+                className="text-xs text-white/40 underline-offset-2 hover:text-white/70 hover:underline"
+              >
+                clear
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => void act("start", bet)}
+            disabled={busy || bet < 1 || bet > account.coins}
+            className="veil-press veil-hover-glow flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-extrabold text-[#451a03] disabled:opacity-40"
+            style={{
+              background: "linear-gradient(#fcd34d, #d97706)",
+              boxShadow: "0 12px 32px -10px rgba(245,197,66,.55), inset 0 1px 0 rgba(255,255,255,.5)",
+            }}
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            Deal
+          </button>
+        </div>
+      )}
+
+      {phase === "player" && (
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <button
+            onClick={() => void act("hit")}
+            disabled={busy}
+            className="veil-press veil-hover-glow flex items-center gap-1.5 rounded-full px-6 py-2 text-sm font-extrabold text-[#451a03] disabled:opacity-40"
+            style={{
+              background: "linear-gradient(#fcd34d, #d97706)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,.5)",
+            }}
+          >
+            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null} Hit
+          </button>
+          <button
+            onClick={() => void act("stand")}
+            disabled={busy}
+            className="veil-press rounded-full border border-amber-200/20 bg-white/5 px-6 py-2 text-sm font-bold text-amber-100/80 hover:bg-white/10 disabled:opacity-40"
+          >
+            Stand
+          </button>
+          <button
+            onClick={() => void act("double")}
+            disabled={busy || (game?.playerHand.length ?? 0) !== 2 || account.coins < (game?.bet ?? 0)}
+            className="veil-press rounded-full border border-amber-200/20 bg-white/5 px-5 py-2 text-sm font-bold text-amber-100/80 hover:bg-white/10 disabled:opacity-40"
+            title="Double your bet, take one card, and stand"
+          >
+            Double
+          </button>
+        </div>
+      )}
+
+      {phase === "done" && (
+        <button
+          onClick={() => setGame(null)}
+          className="veil-press veil-hover-glow flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-extrabold text-[#451a03]"
+          style={{
+            background: "linear-gradient(#fcd34d, #d97706)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,.5)",
+          }}
+        >
+          New round
+        </button>
+      )}
+      <p className="text-center text-[10px] leading-relaxed text-white/35">
+        Dealer stands on 17 · double on your first two cards · the deck shuffles server-side.
+      </p>
+    </div>
+  )
+}
+
+/** The Games modal — one header dice button, two tables, one coin balance. */
+function GamesModal({
+  account,
+  token,
+  onAccount,
+  onClose,
+  toast,
+}: {
+  account: ChatAccount
+  token: string
+  onAccount: (a: ChatAccount) => void
+  onClose: () => void
+  toast: (msg: string, kind?: "ok" | "err") => void
+}) {
+  const [tab, setTab] = useState<"flip" | "blackjack">("flip")
+  return (
+    <ModalShell
+      title="Games"
+      icon={<Dices className="h-4 w-4 text-amber-300" />}
+      onClose={onClose}
+    >
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="flex rounded-full bg-white/5 p-0.5">
+          {(["flip", "blackjack"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`veil-press rounded-full px-3 py-1 text-xs font-bold transition ${
+                tab === t ? "bg-amber-400/15 text-amber-200" : "text-white/55 hover:text-white"
+              }`}
+            >
+              {t === "flip" ? "🪙 Coin Flip" : "♠ Blackjack"}
+            </button>
+          ))}
+        </div>
+        <span className="flex-1" />
+        <span
+          key={account.coins}
+          className="veil-coin-flip rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-1 text-xs font-bold tabular-nums text-amber-200"
+        >
+          🪙 {account.coins.toLocaleString()}
+        </span>
+      </div>
+      {tab === "flip" ? (
+        <CoinFlipGame account={account} token={token} onAccount={onAccount} toast={toast} />
+      ) : (
+        <BlackjackGame account={account} token={token} onAccount={onAccount} toast={toast} />
+      )}
+    </ModalShell>
   )
 }
 

@@ -17,6 +17,8 @@ export type CoinReason =
   | "blackjack_win"
   | "blackjack_loss"
   | "blackjack_forfeit"
+  | "coinflip_win"
+  | "coinflip_loss"
   | "message_reward"
   | "proxy_reward"
   | "daily_reward"
@@ -27,6 +29,8 @@ const KNOWN_REASONS = new Set([
   "blackjack_win",
   "blackjack_loss",
   "blackjack_forfeit",
+  "coinflip_win",
+  "coinflip_loss",
   "message_reward",
   "proxy_reward",
   "daily_reward",

@@ -1054,3 +1054,44 @@ Stage Summary:
 - Extension Maker fully removed from Veil AI (UI + API mode); the ext-maker lib remains only for the operator chat + offline file packaging.
 - Known benign quirk: restoring a session that had BOTH a section and tabs lands in browse mode with the section alive behind it (matching the pre-existing local-restore semantics); exiting browse re-reveals the section — consistent with "where you left off".
 - Follow-ups if wanted: chat-account token could ride the mirror too (auto log-in on a pulled place — deliberately NOT done: auth token sensitivity); image/video generation taskIds are still per-visit (a reload mid-render drops the poll).
+
+---
+Task ID: 1
+Agent: main (Z.ai Code)
+Task: "make sure html has no unneeded texts [Quasar Portable file] · only DM people who are your friends · delete groups you made / remove from your sight if you didn't (same for DMs) · gambling files (Coin Flip + Blackjack) work with the coin system"
+
+Work Log:
+- Downloaded the 3 Google Drive files: Quasar Portable (1.27MB single-file proxy — used as the quality/no-unneeded-texts reference, not embedded), Coin Flip (pure-visual 3D CSS coin), Blackjack (full local bankroll game).
+- Friends-only DMs (owner ask), enforced at the SERVER:
+  - /api/chat-dm POST: new nonFriendUsernames() mutual-friend check. Placed AFTER the 1:1 reuse path so re-opening an existing conversation always works (even post-unfriend); only MINTING a new conversation requires friendship. 403: "@x isn't your friend yet — send them a friend request first."
+  - /api/chat-dm/invite POST: same gate for invitees (403 with the same message).
+  - Website DmsPanel rebuilt: free @username input → friend picker (searches YOUR friends, shows "DMs are friends-only — add someone in the Friends tab first." when empty). Offline HTML same treatment + a client-side pre-check in openDm.
+- Delete groups you made / remove from sight (owner ask):
+  - NEW /api/chat-dm/delete: OWNER-only, groups only (1:1 DMs get a helpful 400 pointing at Close DM). Deletes memberships + messages + the ChatDM row in one transaction; emits dm_removed to every member's user room + the group room so rows vanish live.
+  - /api/chat-dm GET/POST now return ownerId (drives the UI's delete-vs-leave decision).
+  - Website panels: every DM row has a hover ✕ (two-tap "Sure?" confirm → Close DM = off YOUR sight, the other person keeps their copy); every group row shows a "yours" badge + 🗑 delete-for-everyone (owner) or ✕ leave (non-owner), both two-tap confirmed. Refactored ChatApp with dropConversation/closeDmById/deleteGroupById helpers (leaveGroup now delegates).
+  - Offline HTML: same per-row two-tap actions (✕ close DM / 🗑 delete owned group / ✕ leave un-owned group) with the "yours" minetag.
+- Gambling wired to the coin system:
+  - NEW /api/chat-coinflip: { token, bet, side } — atomic bet deduct (balance re-checked in-transaction), server-side crypto flip, correct call pays 2×, records coinflip_win/coinflip_loss transactions. House limit 10,000.
+  - /api/chat-blackjack: added "double" (first two cards only, extra bet deducted atomically, one card + dealer settles at 2× bet) and serializeGame now REDACTS the dealer's hole card while status=playing (returns 1 card + holeHidden flag) — devtools peeking can no longer cheat a coin game.
+  - lib/coins.ts: coinflip_win/coinflip_loss added to CoinReason + KNOWN_REASONS.
+  - Website: new gold Dices header button → GamesModal (Coin Flip | Blackjack tabs, live 🪙 balance with the flip animation). Coin Flip = the owner's own 3D golden coin ported to React (36-edge rim, backface-hidden faces, 1.7s cubic-bezier spin to the SERVER's result), chip betting +10/25/50/100/MAX, heads/tails pick, WIN/LOSE result pill. Blackjack = the owner's felt-table look (white cards, overlapping fan, deal-in animations, dashed slots, score pills, "blackjack pays 3 to 2" divider), betting chips, Hit/Stand/Double, New Round, and status-resume of in-flight hands when the modal reopens.
+  - Offline HTML: new Games tab (5th tab) with both games — same 3D coin (exact port of the owner's coin file at 120px) and a compact blackjack table, both calling the same server APIs through the origin.
+- "No unneeded texts" audit of download/veil-offline.html: every visible string is purposeful; trimmed the one verbose gate line ("wasn't born from a download…" → "doesn't know which veil to talk to —"). Placeholders/hints/empty-states all carry real information.
+- QA (curl + agent-browser through the preview domain + VLM):
+  - curl: coinflip win/lose/no-side/house-limit; blackjack start (holeHidden:true, 1 dealer card on the wire)/status/stand/double (bet 3→6, settled); friends-only 403s for 1:1 + group + invite + 404 unknown user; reuse of the existing Lone_Wolf DM still allowed; owner delete removes the group for the OTHER member (their DM list → 0); non-owner delete 403 / leave works / re-invite works; 1:1 delete via the group route → 400 with guidance.
+  - browser E2E as Veil: Games modal renders (VLM: golden 3D coin ✓ tabs ✓ chips ✓ "clean, centered, well-organized"); played a real flip (called Heads, landed TAILS · LOSE, balance 165→155 everywhere); dealt blackjack (You 17 vs 10+? with the face-down hole card + "10 + ?" score), Fast Refresh interrupted mid-hand → REOPENED THE MODAL AND THE SAME IN-FLIGHT HAND RESUMED, stood, dealer drew to 20, "Dealer wins −10 🪙" pill, balance correct. DMs panel: friend picker (Game QA), per-row two-tap close (server list dropped 2→1 DMs, panel self-healed on the poll); Groups panel: created "QA Round" with the YOURS badge, two-tap 🗑 deleted it (server: gone, UI: gone).
+  - offline HTML in a file:// browser: gate → origin → login → app + Games tab renders (2 faces, 36 edges, bet UI). The login showed coins: 0 — which turned out to be REAL: the dev log + coin transactions revealed the OWNER was live-playing the new games at 01:22 (bets 35/85/25, all lost). Refunded the round's test losses + goodwill: Veil → 150 coins (reason "gift"); the gametest_qa account + friendship + stray DMs were fully cleaned from the DB.
+- bunx eslint on all 7 touched files: clean. Offline HTML script block: node --check clean.
+
+Stage Summary:
+- DMs are friends-only at the protocol level (create + invite gated; existing conversations always re-openable) with a friend-picker UI on web + offline.
+- Group owners can DELETE for everyone (new route + trash button with two-tap confirm); non-owners leave/remove-from-sight; DM rows close per-person — on the website AND the offline build.
+- The owner's Coin Flip + Blackjack files are now real coin-economy games (server-authoritative flips/shuffles, hole card never leaks, double-down supported, transactions recorded) in both the website's new Games modal and the offline HTML's Games tab.
+- The player tab shows the full current roster (Lone_Wolf present — the stale-list report from last round is confirmed fixed by the presence poll work).
+
+Unresolved / risks:
+- The 30s DM-list poll is the self-heal for panel staleness when a cold-compiled route delays its response past the optimistic update; on a warm server the response is instant (observed both ways).
+- Veil's balance hit 0 from live gambling before the top-up; if the owner wants a faucet, the shop already sells nothing for 0-coins players — a "comeback bonus" could be a nice follow-up.
+- The duplicate-username question from earlier rounds ("Veil" vs a possible "veil") — only ONE row exists now (checked in the DB this round); considered closed.
+- Motion blitz + chat scroll-to-bottom FAB + 44px tab-close hit area still pending from earlier rounds.

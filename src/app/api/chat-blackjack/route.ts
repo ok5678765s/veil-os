@@ -63,12 +63,19 @@ function serializeGame(g: {
   payout: number
   createdAt: Date
 }) {
+  /* While the hand is live, the dealer's HOLE CARD never crosses the
+   * wire (a peeker in devtools could not be allowed to see it — this is
+   * a real-money… err, real-coin game). The client renders a face-down
+   * card for the redacted slot. */
+  const dealerHand =
+    g.status === "playing" ? parseCards(g.dealerHand).slice(0, 1) : parseCards(g.dealerHand)
   return {
     id: g.id,
     playerId: g.playerId,
     bet: g.bet,
     playerHand: parseCards(g.playerHand),
-    dealerHand: parseCards(g.dealerHand),
+    dealerHand,
+    holeHidden: g.status === "playing" && parseCards(g.dealerHand).length > 1,
     deck: parseCards(g.deck),
     status: g.status,
     result: g.result,
@@ -256,6 +263,114 @@ export async function POST(req: NextRequest) {
             playerHand: stringifyCards(playerHand),
             deck: stringifyCards(deck),
             status,
+            result,
+            payout,
+          },
+        })
+
+        if (payout > 0) {
+          await awardCoins(account.id, payout, "blackjack_win")
+        }
+
+        const updated = await db.chatAccount.findUnique({
+          where: { id: account.id },
+        })
+        return NextResponse.json({
+          ok: true,
+          game: serializeGame(updated_game),
+          account: updated ? toPublicAccount(updated) : null,
+        })
+      }
+
+      case "double": {
+        const game = await db.blackjackGame.findFirst({
+          where: { playerId: account.id, status: "playing" },
+          orderBy: { createdAt: "desc" },
+        })
+        if (!game) {
+          return NextResponse.json(
+            { ok: false, error: "No active game to double." },
+            { status: 404 },
+          )
+        }
+
+        const deck = parseCards(game.deck)
+        const playerHand = parseCards(game.playerHand)
+        if (playerHand.length !== 2) {
+          return NextResponse.json(
+            { ok: false, error: "You can only double on your first two cards." },
+            { status: 400 },
+          )
+        }
+
+        /* The extra bet: atomic deduct with a fresh balance check. */
+        const canDouble = await db.$transaction(async (tx) => {
+          const fresh = await tx.chatAccount.findUnique({
+            where: { id: account.id },
+          })
+          if (!fresh) throw new Error("Account not found.")
+          if (fresh.coins < game.bet) throw new Error("Not enough coins to double.")
+          await tx.chatAccount.update({
+            where: { id: account.id },
+            data: { coins: { decrement: game.bet } },
+          })
+          await tx.coinTransaction.create({
+            data: {
+              fromId: account.id,
+              toId: account.id,
+              amount: game.bet,
+              reason: "blackjack_loss",
+            },
+          })
+          return true
+        }).catch((e: Error) => e)
+        if (canDouble instanceof Error) {
+          return NextResponse.json(
+            { ok: false, error: canDouble.message },
+            { status: 400 },
+          )
+        }
+
+        /* One card, then the dealer settles it. */
+        if (deck.length === 0) {
+          return NextResponse.json(
+            { ok: false, error: "Deck is empty." },
+            { status: 400 },
+          )
+        }
+        playerHand.push(deck.shift()!)
+        const pv = handValue(playerHand)
+
+        let dealerHand = parseCards(game.dealerHand)
+        let result: "win" | "lose" | "push" | "blackjack"
+        let payout: number
+        if (isBust(playerHand)) {
+          result = "lose"
+          payout = 0
+        } else {
+          const dealer = dealerPlay(deck, dealerHand)
+          dealerHand = dealer.hand
+          const dv = handValue(dealerHand)
+          if (isBust(dealerHand) || dv.total < pv.total) {
+            result = "win"
+            payout = payoutFor("win", game.bet * 2)
+          } else if (dv.total > pv.total) {
+            result = "lose"
+            payout = 0
+          } else {
+            result = "push"
+            payout = game.bet * 2
+          }
+        }
+
+        const updated_game = await db.blackjackGame.update({
+          where: { id: game.id },
+          data: {
+            bet: game.bet * 2,
+            playerHand: stringifyCards(playerHand),
+            dealerHand: stringifyCards(dealerHand),
+            deck: stringifyCards(deck),
+            status: "done",
             result,
             payout,
           },

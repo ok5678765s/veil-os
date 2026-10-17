@@ -198,6 +198,86 @@
   .checks input{accent-color:var(--cyan)}
   .checks .cav{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;color:#fff;
     font-size:8px;font-weight:800;flex-shrink:0}
+  /* row actions — open area + close/leave/delete */
+  .prow .pmain{display:flex;align-items:center;gap:9px;flex:1;min-width:0;background:none;border:0;
+    padding:0;color:inherit;font:inherit;text-align:left}
+  .xbtn{width:22px;height:22px;border-radius:6px;color:var(--faint);font-size:11px;flex-shrink:0;
+    opacity:0;transition:opacity .12s,background .12s,color .12s;display:grid;place-items:center}
+  .prow:hover .xbtn{opacity:1}
+  .xbtn:hover{background:rgba(251,113,133,.2);color:var(--rose)}
+  .xbtn.sure{opacity:1;background:rgba(244,63,94,.85);color:#fff;font-size:9px;font-weight:800;
+    min-width:36px;width:auto;padding:0 4px;border-radius:6px}
+  .minetag{display:inline-block;margin-left:4px;padding:0 4px;border-radius:4px;
+    background:rgba(34,211,238,.15);color:#22d3ee;font-size:8px;font-weight:800;
+    text-transform:uppercase;vertical-align:middle;letter-spacing:.5px}
+
+  /* ── games ── */
+  .gtabs{display:flex;gap:4px;background:rgba(255,255,255,.05);border-radius:999px;padding:2px;margin-bottom:8px}
+  .gtab{flex:1;border-radius:999px;padding:5px 4px;font-size:10.5px;font-weight:700;color:var(--muted)}
+  .gtab.on{background:rgba(251,146,60,.15);color:var(--acc2)}
+  .gscene{perspective:900px;display:grid;place-items:center;padding:6px 0}
+  .coin-btn{border:0;background:none;padding:0;border-radius:50%;display:block;transition:transform .15s}
+  .coin-btn:not(:disabled):active{transform:scale(.96)}
+  .coin-btn:disabled{cursor:default}
+  .coin3d{position:relative;width:120px;height:120px;transform-style:preserve-3d;
+    transition:transform 1.6s cubic-bezier(.2,.6,.2,1);will-change:transform}
+  .cface{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    background:radial-gradient(circle at 35% 28%, #ffefad 0%, #f8d264 32%, #e3a92c 62%, #b97e12 88%, #8f5c0a 100%);
+    box-shadow:inset 0 0 0 5px rgba(146,96,16,.4), inset 0 0 0 7px rgba(255,236,170,.45),
+      inset 0 -12px 24px rgba(118,68,5,.5), inset 0 10px 20px rgba(255,246,205,.35)}
+  .cpip{font-size:32px;line-height:1;color:#7a5207;text-shadow:0 2px 0 rgba(255,240,190,.55)}
+  .clab{font-size:10px;font-weight:800;letter-spacing:.3em;text-indent:.3em;color:#7a5207}
+  .cedge{position:absolute;left:50%;top:50%;
+    background:repeating-linear-gradient(90deg,#8a6215 0px,#e0bc55 1.2px,#8a6215 2.4px,#b98f2a 3px)}
+  .gres{min-height:30px;display:grid;place-items:center;font-size:13px;font-weight:800;letter-spacing:.08em}
+  .gres.win{color:var(--em)}
+  .gres.lose{color:var(--rose)}
+  .gres.spin{color:rgba(253,230,138,.5);font-size:10px;text-transform:uppercase;letter-spacing:.3em}
+  .gsides{display:flex;justify-content:center;gap:6px;margin:6px 0}
+  .gside{border:1px solid var(--line2);background:rgba(255,255,255,.05);border-radius:999px;
+    padding:5px 12px;font-size:12px;font-weight:700;color:var(--muted)}
+  .gside.on{border-color:rgba(252,211,77,.6);background:rgba(251,146,60,.12);color:var(--acc2)}
+  .chiprow{display:flex;justify-content:center;gap:6px;margin:6px 0;flex-wrap:wrap}
+  .gchip{min-width:34px;height:34px;border-radius:50%;border:2px solid rgba(252,211,77,.4);
+    background:rgba(255,255,255,.04);color:var(--acc2);font-size:11px;font-weight:800;padding:0 6px}
+  .gchip.max{border-color:rgba(52,211,153,.4);color:var(--em)}
+  .gchip:disabled{opacity:.3}
+  .betline{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;
+    color:var(--muted);margin:4px 0 8px}
+  .betline b{color:var(--acc2)}
+  .betline .mini{font-size:10px;color:var(--faint);text-decoration:underline;text-underline-offset:2px}
+  .gbtn{width:100%;border-radius:999px;padding:8px 12px;font-weight:800;font-size:13px;
+    background:linear-gradient(#fcd34d,#d97706);color:#451a03}
+  .gbtn:disabled{opacity:.4}
+  .ghint{font-size:9.5px;color:var(--faint);text-align:center;margin-top:6px;line-height:1.5}
+  .bjtable{border:1px solid rgba(253,230,138,.1);border-radius:14px;padding:10px;
+    background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,197,66,.06), transparent 60%), rgba(255,255,255,.02)}
+  .bjrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .bjlab{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.25em;color:rgba(253,230,138,.45)}
+  .bjscore{font-size:10.5px;font-weight:800;border:1px solid rgba(253,230,138,.15);
+    background:rgba(254,243,199,.05);border-radius:999px;padding:1px 8px;color:rgba(254,243,199,.85)}
+  .bjcards{display:flex;min-height:56px;align-items:center;margin-bottom:8px}
+  .pcard{position:relative;width:40px;height:56px;border-radius:7px;flex-shrink:0;
+    background:linear-gradient(#fff,#e4e4e7);display:flex;flex-direction:column;justify-content:space-between;
+    padding:4px;box-shadow:0 6px 16px -6px rgba(0,0,0,.7);color:#18181b}
+  .pcard+.pcard,.pcard+.pslot{margin-left:-16px}
+  .pcard.red{color:#e11d48}
+  .pcard .cr{font-size:10px;font-weight:800;line-height:1}
+  .pcard .cp{font-size:15px;align-self:center;line-height:1}
+  .pcard.back{background:repeating-linear-gradient(45deg,#221a0d 0px,#221a0d 5px,#2e2412 5px,#2e2412 10px);
+    box-shadow:inset 0 0 0 3px #171208, inset 0 0 0 4px rgba(245,197,66,.35)}
+  .pslot{width:40px;height:56px;border:1.5px dashed rgba(253,230,138,.15);border-radius:7px;flex-shrink:0}
+  .pslot+.pslot{margin-left:6px}
+  .bjdiv{display:flex;align-items:center;gap:8px;margin:6px 0 10px}
+  .bjdiv .l{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(253,230,138,.2),transparent)}
+  .bjdiv span{font-size:8px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;
+    color:rgba(253,230,138,.3);white-space:nowrap}
+  .bjctl{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .bjb{border-radius:999px;padding:6px 16px;font-size:12px;font-weight:800}
+  .bjb.gold{background:linear-gradient(#fcd34d,#d97706);color:#451a03}
+  .bjb.ghost{border:1px solid rgba(253,230,138,.2);background:rgba(255,255,255,.04);color:rgba(254,243,199,.8)}
+  .bjb:disabled{opacity:.4}
   #toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,80px);z-index:50;
     background:#15152b;border:1px solid var(--line2);border-radius:12px;padding:9px 16px;font-size:12.5px;
     box-shadow:0 14px 40px rgba(0,0,0,.5);transition:transform .25s;max-width:86vw}
@@ -220,7 +300,7 @@
 <div class="screen" id="gate" hidden>
   <div class="card">
     <div class="logo"><div class="mark">V</div><h1>Veil</h1></div>
-    <p class="sub">This copy wasn't born from a download, so it doesn't know which veil to talk to. Paste the address of the veil site you use:</p>
+    <p class="sub">This copy doesn't know which veil to talk to — paste the address of the veil site you use:</p>
     <div class="field">
       <label>Veil site address</label>
       <input id="gateOrigin" placeholder="https://preview-chat-….space-z.ai" spellcheck="false" />
@@ -283,6 +363,7 @@
         <button class="tab" data-tab="friends">Friends<span class="bdg" id="friendBdg">0</span></button>
         <button class="tab" data-tab="dms">DMs</button>
         <button class="tab" data-tab="groups">Groups</button>
+        <button class="tab" data-tab="games">Games</button>
       </nav>
       <div class="pane on" id="pane-players">
         <div class="sec" id="onlineHd">Online — 0</div>
@@ -305,10 +386,10 @@
       </div>
       <div class="pane" id="pane-dms">
         <div class="mini-form">
-          <input id="dmInput" placeholder="@username" spellcheck="false" />
+          <input id="dmInput" placeholder="Find a friend…" spellcheck="false" />
           <button class="go" id="dmOpen">Open</button>
         </div>
-        <p class="hint">Direct messages — just the two of you.</p>
+        <p class="hint">Direct messages — friends only.</p>
         <div id="dmList"></div>
       </div>
       <div class="pane" id="pane-groups">
@@ -324,6 +405,40 @@
           <p class="hint">Tick friends and/or type @usernames — everyone gets in at once.</p>
         </div>
         <div id="groupList"></div>
+      </div>
+      <div class="pane" id="pane-games">
+        <div class="gtabs">
+          <button class="gtab on" data-g="flip">🪙 Coin Flip</button>
+          <button class="gtab" data-g="bj">♠ Blackjack</button>
+        </div>
+        <div id="g-flip">
+          <div class="gscene">
+            <button class="coin-btn" id="coinBtn" aria-label="Flip the coin" title="Pick heads or tails first">
+              <div class="coin3d" id="coinInner"></div>
+            </button>
+          </div>
+          <div class="gres" id="flipRes" aria-live="polite"></div>
+          <div class="gsides">
+            <button class="gside" data-side="heads">♛ Heads</button>
+            <button class="gside" data-side="tails">★ Tails</button>
+          </div>
+          <div class="chiprow" id="flipChips"></div>
+          <div class="betline">Bet <b id="flipBet">🪙 0</b><button class="mini" id="flipClear">clear</button></div>
+          <button class="gbtn" id="flipGo">Pick a side to flip</button>
+          <p class="ghint">Correct call doubles your bet — the server flips, so what you see is what really landed.</p>
+        </div>
+        <div id="g-bj" hidden>
+          <div class="bjtable">
+            <div class="bjrow"><span class="bjlab">Dealer</span><span class="bjscore" id="bjDealerScore"></span></div>
+            <div class="bjcards" id="bjDealerCards"></div>
+            <div class="bjdiv"><span class="l"></span><span>blackjack pays 3 to 2</span><span class="l"></span></div>
+            <div class="bjrow"><span class="bjlab">You</span><span class="bjscore" id="bjPlayerScore"></span></div>
+            <div class="bjcards" id="bjPlayerCards"></div>
+          </div>
+          <div class="gres" id="bjRes" aria-live="polite"></div>
+          <div id="bjCtl"></div>
+          <p class="ghint">Dealer stands on 17 · double on your first two cards · the deck shuffles server-side.</p>
+        </div>
       </div>
     </aside>
   </div>
@@ -758,21 +873,36 @@
       var av = other && other.avatarImage
         ? '<img src="' + esc(other.avatarImage) + '" alt="" />'
         : esc(((other && dName(other)) || "?")[0].toUpperCase());
-      return '<button class="prow dmrow' + (S.channel === d.id ? " on" : "") + '" data-open="' + esc(d.id) + '">' +
+      var armed = armedId === "dm:" + d.id;
+      return '<div class="prow dmrow' + (S.channel === d.id ? " on" : "") + '">' +
+        '<button class="pmain" data-open="' + esc(d.id) + '">' +
         '<div class="av" style="background:' + esc((other && other.avatarColor) || "#27272a") + '">' + av + "</div>" +
         '<div class="nm"><b>' + esc(dmLabel(d)) + "</b><span>@" + esc((other && other.username) || "?") + "</span></div>" +
-        "</button>";
-    }).join("") : '<div class="empty">No direct messages yet — start one above.</div>';
+        "</button>" +
+        (armed
+          ? '<button class="xbtn sure" data-close2="' + esc(d.id) + '">Sure?</button>'
+          : '<button class="xbtn" data-close="' + esc(d.id) + '" title="Close DM — remove it from your sight">✕</button>') +
+        "</div>";
+    }).join("") : '<div class="empty">No direct messages yet — start one with a friend above.</div>';
   }
   function renderGroups() {
     var groups = S.dms.filter(function (d) { return d.isGroup; });
     $("groupList").innerHTML = groups.length ? groups.map(function (d) {
-      return '<button class="prow dmrow' + (S.channel === d.id ? " on" : "") + '" data-open="' + esc(d.id) + '">' +
+      var mine = S.account && d.ownerId === S.account.id;
+      var armed = armedId === "g:" + d.id;
+      var action = armed
+        ? '<button class="xbtn sure" data-act2="' + esc(d.id) + '" data-mine="' + (mine ? 1 : 0) + '">Sure?</button>'
+        : mine
+          ? '<button class="xbtn" data-del="' + esc(d.id) + '" title="Delete group — gone for EVERY member (you made it)">🗑</button>'
+          : '<button class="xbtn" data-leave="' + esc(d.id) + '" title="Leave — remove it from your sight">✕</button>';
+      return '<div class="prow dmrow' + (S.channel === d.id ? " on" : "") + '">' +
+        '<button class="pmain" data-open="' + esc(d.id) + '">' +
         '<div class="av" style="background:rgba(34,211,238,.15);color:#22d3ee;font-size:13px">👥</div>' +
-        '<div class="nm"><b>' + esc(d.name || "Group") + "</b><span>" +
+        '<div class="nm"><b>' + esc(d.name || "Group") + (mine ? ' <span class="minetag">yours</span>' : "") + "</b><span>" +
           esc((d.members || []).map(dName).join(", ")) + "</span></div>" +
-        '<span class="cnt">' + (d.members || []).length + "</span>" +
-        "</button>";
+        "</button>" +
+        '<span class="cnt">' + (d.members || []).length + "</span>" + action +
+        "</div>";
     }).join("") : '<div class="empty">No groups yet — make one above.</div>';
   }
   function renderGroupChecks() {
@@ -796,6 +926,15 @@
       });
     });
     if (existing) { switchChannel(existing.id); $("dmInput").value = ""; return; }
+    /* Friends-only DMs (owner ask) — re-opening an old DM is always fine,
+       but a NEW one needs friendship (the server double-checks). */
+    var friend = S.friends.some(function (f) {
+      return String(f.username || "").toLowerCase() === who.toLowerCase();
+    });
+    if (!friend) {
+      toast("DMs are friends-only — add @" + who + " in the Friends tab first.", true);
+      return;
+    }
     post("/api/chat-dm", { token: S.token, targetUsername: who })
       .then(function (d) {
         if (d.dm && !S.dms.some(function (x) { return x.id === d.dm.id; })) S.dms.unshift(d.dm);
@@ -823,10 +962,50 @@
       toast("Group created — you + " + targets.length + " member" + (targets.length === 1 ? "" : "s") + ".");
     }).catch(function (e) { toast(e.message || "Failed to create the group.", true); });
   });
+  /* Two-tap row actions — first tap arms a red "Sure?", the second tap
+     (within 2.8s) does it. DM rows close off YOUR sight; group rows you
+     made DELETE for everyone, groups you didn't make just leave. */
+  var armedId = null, armedT = null;
+  function arm(id) {
+    armedId = id;
+    if (armedT) clearTimeout(armedT);
+    armedT = setTimeout(function () { armedId = null; renderDms(); renderGroups(); }, 2800);
+  }
+  function dropConversation(id) {
+    S.dms = S.dms.filter(function (d) { return d.id !== id; });
+    armedId = null;
+    if (S.channel === id) switchChannel("main"); else { renderDms(); renderGroups(); }
+  }
+  function closeConversation(id, isGroup) {
+    post("/api/chat-dm/leave", { token: S.token, dmId: id }).then(function () {
+      dropConversation(id);
+      toast(isGroup ? "Group left — it's off your sight." : "DM closed.");
+    }).catch(function (e) { toast(e.message || "Failed — try again.", true); });
+  }
+  function deleteGroup(id) {
+    post("/api/chat-dm/delete", { token: S.token, dmId: id }).then(function () {
+      dropConversation(id);
+      toast("Group deleted — gone for everyone.");
+    }).catch(function (e) { toast(e.message || "Delete failed.", true); });
+  }
   $("dmList").addEventListener("click", function (e) {
+    var sure = e.target.closest("button[data-close2]");
+    if (sure) { closeConversation(sure.dataset.close2, false); return; }
+    var x = e.target.closest("button[data-close]");
+    if (x) { arm("dm:" + x.dataset.close); renderDms(); return; }
     var b = e.target.closest("button[data-open]"); if (b) switchChannel(b.dataset.open);
   });
   $("groupList").addEventListener("click", function (e) {
+    var sure = e.target.closest("button[data-act2]");
+    if (sure) {
+      if (sure.dataset.mine === "1") deleteGroup(sure.dataset.act2);
+      else closeConversation(sure.dataset.act2, true);
+      return;
+    }
+    var del = e.target.closest("button[data-del]");
+    if (del) { arm("g:" + del.dataset.del); renderGroups(); return; }
+    var lv = e.target.closest("button[data-leave]");
+    if (lv) { arm("g:" + lv.dataset.leave); renderGroups(); return; }
     var b = e.target.closest("button[data-open]"); if (b) switchChannel(b.dataset.open);
   });
 
@@ -895,6 +1074,194 @@
       })
       .catch(function (e) { toast(e.message || "Daily claim failed.", true); });
   });
+
+  /* ── games — coin flip + blackjack, betting real coins ── */
+  var G = { bet: 10, side: null, spinning: false, rot: 0, bj: null, bjBet: 10, bjBusy: false };
+
+  function coinsNow() { return (S.account && S.account.coins) || 0; }
+  function setAccount(a) {
+    if (!a) return;
+    S.account = a;
+    try { localStorage.setItem(LS_SESSION, JSON.stringify({ token: S.token, account: S.account })); } catch (e) {}
+    $("coinsTxt").textContent = (a.coins || 0).toLocaleString();
+    renderFlip(); renderBjControls();
+  }
+
+  function gameTab(t) {
+    document.querySelectorAll(".gtab").forEach(function (b) { b.classList.toggle("on", b.dataset.g === t); });
+    $("g-flip").hidden = t !== "flip";
+    $("g-bj").hidden = t !== "bj";
+    if (t === "bj") bjStatus();
+  }
+  document.querySelectorAll(".gtab").forEach(function (b) {
+    b.addEventListener("click", function () { gameTab(b.dataset.g); });
+  });
+
+  /* the golden coin — built from the owner's own coin file (36-edge rim) */
+  (function buildCoin() {
+    var EDGE = 36, R = 60, T = 11;
+    var CH = 2 * R * Math.sin(Math.PI / EDGE) + 1.2;
+    var html = "";
+    for (var i = 0; i < EDGE; i++) {
+      var a = (i * 360) / EDGE;
+      html += '<div class="cedge" style="width:' + T + "px;height:" + CH + "px;margin-left:" + (-T / 2) + "px;margin-top:" + (-CH / 2) + "px;transform:rotateZ(" + a + "deg) translateX(" + (R - 0.5) + 'px) rotateY(90deg)"></div>';
+    }
+    html += '<div class="cface" style="transform:translateZ(' + (T / 2) + 'px)"><div class="cpip">♛</div><div class="clab">HEADS</div></div>';
+    html += '<div class="cface" style="transform:rotateX(180deg) translateZ(' + (T / 2) + 'px)"><div class="cpip">★</div><div class="clab">TAILS</div></div>';
+    $("coinInner").innerHTML = html;
+  })();
+
+  function renderFlip() {
+    $("flipChips").innerHTML = [10, 25, 50, 100].map(function (v) {
+      return '<button class="gchip" data-add="' + v + '"' + (coinsNow() < G.bet + v ? " disabled" : "") + ">+" + v + "</button>";
+    }).join("") + '<button class="gchip max" data-max="1"' + (coinsNow() < 1 ? " disabled" : "") + ">MAX</button>";
+    $("flipBet").textContent = "🪙 " + G.bet.toLocaleString();
+    document.querySelectorAll(".gside").forEach(function (b) {
+      b.classList.toggle("on", b.dataset.side === G.side);
+    });
+    var go = $("flipGo");
+    go.disabled = G.spinning || !G.side || G.bet < 1 || G.bet > coinsNow();
+    go.textContent = G.spinning ? "Flipping…" : G.side ? "Flip for " + G.bet.toLocaleString() + " 🪙" : "Pick a side to flip";
+    $("coinBtn").disabled = go.disabled;
+    $("coinBtn").title = G.side ? "Flip for " + G.bet + " 🪙 — you called " + G.side : "Pick heads or tails first";
+  }
+  document.querySelectorAll(".gside").forEach(function (b) {
+    b.addEventListener("click", function () { G.side = b.dataset.side; renderFlip(); });
+  });
+  $("flipChips").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b || b.disabled) return;
+    if (b.dataset.add) G.bet += Number(b.dataset.add);
+    if (b.dataset.max) G.bet = Math.max(0, coinsNow());
+    renderFlip();
+  });
+  $("flipClear").addEventListener("click", function () { G.bet = 0; renderFlip(); });
+  function doFlip() {
+    if (G.spinning || !G.side || G.bet < 1 || G.bet > coinsNow()) return;
+    G.spinning = true;
+    var res = $("flipRes");
+    res.className = "gres spin"; res.textContent = "flipping…";
+    renderFlip();
+    post("/api/chat-coinflip", { token: S.token, bet: G.bet, side: G.side }).then(function (d) {
+      var mod = d.landed === "heads" ? 0 : 180;
+      var cur = ((G.rot % 360) + 360) % 360;
+      var delta = (mod - cur + 360) % 360;
+      G.rot += 360 * (3 + Math.floor(Math.random() * 3)) + delta;
+      $("coinInner").style.transform = "rotateX(" + G.rot + "deg)";
+      setTimeout(function () {
+        G.spinning = false;
+        setAccount(d.account);
+        res.className = "gres " + (d.won ? "win" : "lose");
+        res.textContent = d.landed.toUpperCase() + " · " + (d.won ? "WIN +" + G.bet : "LOSE −" + G.bet);
+        toast(d.won ? d.landed.toUpperCase() + " — you win +" + G.bet + " 🪙" : d.landed.toUpperCase() + " — you lose " + G.bet + " 🪙", !d.won);
+        renderFlip();
+      }, 1750);
+    }).catch(function (e) {
+      G.spinning = false;
+      res.className = "gres"; res.textContent = "";
+      toast(e.message || "The flip didn't land.", true);
+      renderFlip();
+    });
+  }
+  $("flipGo").addEventListener("click", doFlip);
+  $("coinBtn").addEventListener("click", doFlip);
+
+  /* blackjack — the felt table, deck shuffled server-side */
+  var BJ_SUITS = { hearts: "♥", diamonds: "♦", clubs: "♣", spades: "♠" };
+  function bjVal(hand) {
+    var t = 0, aces = 0;
+    (hand || []).forEach(function (c) {
+      if (c.rank === "A") { aces++; t += 11; }
+      else if (c.rank === "K" || c.rank === "Q" || c.rank === "J" || c.rank === "10") t += 10;
+      else t += Number(c.rank) || 0;
+    });
+    while (t > 21 && aces > 0) { t -= 10; aces--; }
+    return t;
+  }
+  function bjCardHTML(c) {
+    if (!c) return '<div class="pslot"></div>';
+    var red = c.suit === "hearts" || c.suit === "diamonds";
+    return '<div class="pcard' + (red ? " red" : "") + '"><span class="cr">' + esc(c.rank) + '</span><span class="cp">' +
+      (BJ_SUITS[c.suit] || "") + '</span><span class="cr" style="transform:rotate(180deg);align-self:flex-end">' + esc(c.rank) + "</span></div>";
+  }
+  function bjRender() {
+    var g = G.bj;
+    var playing = g && g.status === "playing";
+    var done = g && g.status === "done";
+    var dCards;
+    if (g && g.dealerHand && g.dealerHand.length) {
+      dCards = g.dealerHand.map(bjCardHTML).join("");
+      if (g.holeHidden) dCards += '<div class="pcard back"></div>';
+    } else dCards = '<div class="pslot"></div><div class="pslot" style="margin-left:6px"></div>';
+    $("bjDealerCards").innerHTML = dCards;
+    $("bjDealerScore").textContent = g && g.dealerHand && g.dealerHand.length
+      ? (playing ? bjVal(g.dealerHand.slice(0, 1)) + " + ?" : bjVal(g.dealerHand)) : "";
+    var pCards = g && g.playerHand && g.playerHand.length
+      ? g.playerHand.map(bjCardHTML).join("")
+      : '<div class="pslot"></div><div class="pslot" style="margin-left:6px"></div>';
+    $("bjPlayerCards").innerHTML = pCards;
+    var pv = g && g.playerHand && g.playerHand.length ? bjVal(g.playerHand) : "";
+    $("bjPlayerScore").textContent = pv;
+    var res = $("bjRes");
+    if (done && g.result) {
+      res.className = "gres " + (g.result === "win" || g.result === "blackjack" ? "win" : g.result === "push" ? "" : "lose");
+      res.textContent = g.result === "blackjack" ? "BLACKJACK! +" + (g.payout - g.bet) + " 🪙"
+        : g.result === "win" ? "You win +" + (g.payout - g.bet) + " 🪙"
+        : g.result === "push" ? "Push — bet returned"
+        : (pv > 21 ? "Bust! −" : "Dealer wins −") + g.bet + " 🪙";
+    } else { res.className = "gres"; res.textContent = ""; }
+    renderBjControls();
+  }
+  function renderBjControls() {
+    var g = G.bj;
+    var phase = !g ? "betting" : g.status === "playing" ? "player" : "done";
+    var c = $("bjCtl");
+    if (phase === "betting") {
+      c.innerHTML = '<div class="chiprow">' + [10, 25, 50, 100].map(function (v) {
+        return '<button class="gchip" data-bjadd="' + v + '"' + (coinsNow() < G.bjBet + v ? " disabled" : "") + ">+" + v + "</button>";
+      }).join("") + '<button class="gchip max" data-bjmax="1">MAX</button></div>' +
+        '<div class="betline">Bet <b>🪙 ' + G.bjBet.toLocaleString() + '</b><button class="mini" id="bjClear">clear</button></div>' +
+        '<button class="gbtn" id="bjDeal"' + (G.bjBet < 1 || G.bjBet > coinsNow() ? " disabled" : "") + ">Deal</button>";
+    } else if (phase === "player") {
+      var canDouble = g.playerHand.length === 2 && coinsNow() >= g.bet;
+      c.innerHTML = '<div class="bjctl">' +
+        '<button class="bjb gold" data-bjact="hit">Hit</button>' +
+        '<button class="bjb ghost" data-bjact="stand">Stand</button>' +
+        '<button class="bjb ghost" data-bjact="double"' + (canDouble ? "" : " disabled") + ">Double</button></div>";
+    } else {
+      c.innerHTML = '<button class="gbtn" id="bjNew">New round</button>';
+    }
+  }
+  $("bjCtl").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b || b.disabled) return;
+    if (b.id === "bjClear") { G.bjBet = 0; renderBjControls(); return; }
+    if (b.id === "bjNew") { G.bj = null; bjRender(); return; }
+    if (b.dataset.bjadd) { G.bjBet += Number(b.dataset.bjadd); renderBjControls(); return; }
+    if (b.dataset.bjmax) { G.bjBet = Math.max(0, coinsNow()); renderBjControls(); return; }
+    if (b.id === "bjDeal") { bjAct("start", G.bjBet); return; }
+    if (b.dataset.bjact) bjAct(b.dataset.bjact);
+  });
+  function bjAct(action, bet) {
+    if (G.bjBusy) return;
+    G.bjBusy = true;
+    var body = { token: S.token, action: action };
+    if (bet != null) body.bet = bet;
+    post("/api/chat-blackjack", body).then(function (d) {
+      G.bj = d.game;
+      setAccount(d.account);
+      bjRender();
+      G.bjBusy = false;
+    }).catch(function (e) {
+      toast(e.message || "The table hiccuped.", true);
+      G.bjBusy = false;
+    });
+  }
+  function bjStatus() {
+    post("/api/chat-blackjack", { token: S.token, action: "status" }).then(function (d) {
+      if (d.game) { G.bj = d.game; bjRender(); }
+    }).catch(function () { /* fresh start */ });
+  }
+  renderFlip();
+  renderBjControls();
 
   /* ── go ── */
   boot();
