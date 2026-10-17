@@ -1541,3 +1541,38 @@ Unresolved / risks:
 - Equip action does not clear the opposite-slot... N/A (single slot per type is by design).
 - Backlog from earlier rounds: chat scroll-to-bottom FAB, 44px tab-close hit area, motion blitz pass, comeback bonus for 0-coin players.
 - The offline HTML locker previews accessories as a plain colored dot (no deco WebP offline) — cosmetic only.
+
+---
+Task ID: 4
+Agent: main (Z.ai Code)
+Task: Owner: "the html version should look like it was written by a human — no extra notes, just code — and it should be the ENTIRE website and look like it. also make stream recommendation more like youtube"
+
+Work Log:
+- Main site (src/components/veil/stream-section.tsx) — YouTube-ified the recommendations:
+  - Watch page is now YouTube's two-column layout: the player/meta/comments column owns the page and "Up next" rides a sticky 402px right rail (xl+) built from a new RelatedCard (compact: 160px thumb left, 2-line title, channel, views·age). Narrow screens get the same cards in a grid under the player. The related grid was REMOVED from inside StreamPlayer (its `more` prop went with it); RelayPlayer/GatePanel keep their own inline rails. upNext memo = video.related → browsing-context fallback → videoMeta.related, relay/gate excluded by design.
+  - For You page: the "Ranked for you · N watches learned · channels · topics · N hidden" transparency strip is GONE (the least YouTube thing on the page — chips + cards + rails is the whole surface now; the ranker still works, just silently).
+  - VideoCard's per-card "why" chip: emerald pill + sparkles → a muted zinc one-line hint under the views (YouTube's secondary-line style).
+- download/veil-offline.html — full rewrite from living-room-only (83KB/1537 lines) to the ENTIRE site in one file (150KB/~2900 lines), written in a hand style: sparse lowercase comments, no banner spam, no notes-to-reader, terse helpers:
+  - OS shell: top bar (brand/home, crumb, clock, presence pill, coins, daily, sign out) + home screen (time greeting, big clock + date, search, 10-app dock with inline SVG icons, "Recently watched" rail from local history) + full-screen section views with ‹ Home backs.
+  - LIVE apps through the origin (all CORS-open routes): Veil AI (POST /api/ai, markdown-lite bubbles + starter chips), Stream (GET feed?kind=foryou|shorts|popular + /api/yt/search + watch via /api/yt/video — progressive formats play in a <video>, HLS loads hls.js off the CDN, gated videos get an honest fallback panel with Up next from the browsing context; chips All/Live/Shorts/Watch again; shorts shelf rides the feed; local watch history in localStorage), Music (scsearch + scstream/itunes previews + sticky player bar with seek), Wallpapers (catalog grid, categories, tap-to-set backdrop with a #backdrop layer + dim).
+  - LOCAL apps: Links (localStorage CRUD), History (stream watch history + clear), Coder (sandboxed iframe JS scratchpad, console posts back via postMessage), Settings (accent swatches that live-recolor the OS, backdrop/motion toggles, export/import/wipe local data, session card).
+  - Chat living room ported VERBATIM (messages, day dividers, overlay rings, presence, players, friends, DMs, groups, two-tap actions, daily streak, coin flip, blackjack, shop + 🎒 locker) — now as a section with its own channel subheader.
+  - Kept: __VEIL_ORIGIN__ stamp literal (exactly 1), veil:origin + veil:offline-account LS keys — existing stamped downloads and the /api/offline stamping flow are untouched.
+- offline-download.tsx: popover + header doc now describe the whole-site single file (was "the living room").
+- QA (agent-browser, file:// + origin 127.0.0.1:3000, QA account osqa_build registered then FULLY deleted from the DB incl. messages/transactions):
+  - Site: For You renders without the strip; watch two-column verified with a mocked video answer (Playwright route) — 402px sticky rail, 12 compact cards, correct hide on relay/gate; narrow viewport shows the below-fold Up next grid; relay lane (what YouTube's rate-limiting currently serves) untouched and working; zero console/page errors.
+  - Offline: gate → register → OS boots; home clock/greeting/dock/search ✓ (VLM: "polished and professional… no visual glitches"); Stream: 38 feed cards + chips + sidebar + 10-card vertical shorts shelf ✓, search (20 real results) ✓, popular (23) ✓, shorts page (48 vertical 9:16) ✓, watch fallback (title/stats/8-card rail/Open-the-site) ✓ — native playback unverifiable live because YouTube is rate-limiting ALL extractions right now (site gets the same gate; relay/iframe path is the site's own fallback); AI chip question got a real reply ✓; Music search (16 rows) + playback (⏸ + sndcdn art) ✓; Wallpapers catalog returns empty upstream right now (all categories, site-wide) — added an honest empty state; Chat: 74 messages loaded, live pill, sent a message (rendered as mine) ✓; Shop tab: 37 items + locker ✓; Links add ✓; Coder runs fib ✓; Settings accent switch live-recolors ✓; home search → stream results ✓; mobile 390px: no overflow, side panel toggle works (VLM: fits, 44px+ targets).
+  - node --check on the extracted script: clean; every $("id") referenced exists; bunx eslint on both site files: clean; dev.log: zero errors.
+- Fixed during QA: shorts shelf now loads alongside the feed (was only on the Shorts page); watch `known` card now falls back to feed/results/history lookups (title + stats + rail were empty in the fallback before); failed channel avatars remove() to reveal the letter; piped-proxy thumb 502s are upstream (site-identical behavior, dark placeholder).
+
+Stage Summary:
+- The downloaded HTML IS the whole website now — every app, hand-written style, no notes — and the chat/games/shop feature set carried over 1:1.
+- Stream recommendations look like YouTube on BOTH builds: home chips/cards/shorts shelf + a real watch page with a sticky Up-next rail of compact cards.
+- Site-side: the transparency strip is gone, why-hints are muted, watch page is two-column.
+
+Unresolved / risks:
+- Native (non-relay) video playback couldn't be end-to-end verified ANYWHERE right now — YouTube is rate-limiting every extraction; the layout/components were verified with mocked answers and the fallback path live. Re-check when the gate flap closes.
+- piped.private.coffee image proxy is 502ing upstream → many dark thumbnails on both the site and the offline build (equal behavior; ytimg URLs load fine).
+- 4kwallpapers catalog API returns empty items for every category right now (upstream scrape) — offline + site wallpapers grids show empty states until it recovers.
+- The offline AI/music/stream talk to the origin at runtime (by design — single FILE, not offline-data); the chat/games have always worked this way.
+- Backlog from earlier rounds: chat scroll-to-bottom FAB, 44px tab-close hit area, motion blitz pass, comeback bonus for 0-coin players.
