@@ -29,7 +29,17 @@ export function checkPassword(pw: unknown): boolean {
 }
 
 export function isAuthedRequest(req: NextRequest): boolean {
-  const token = req.cookies.get(SESSION_COOKIE)?.value;
-  if (!token) return false;
-  return safeEqual(token, sessionTokenFor(process.env.QUASAR_PASSWORD ?? ""));
+  const expected = sessionTokenFor(process.env.QUASAR_PASSWORD ?? "");
+  // v2.3.7 — beyond the cookie, the session token may arrive as a header or a
+  // query param so the single-file "Quasar Portable" client (which cannot rely
+  // on cross-site cookies from file:// or another origin) can attach to a
+  // gated server. The token is identical to the cookie value and is only
+  // handed out by POST /api/session after a correct password.
+  const supplied =
+    req.cookies.get(SESSION_COOKIE)?.value ||
+    req.headers.get("x-quasar-token") ||
+    new URL(req.url).searchParams.get("qk") ||
+    "";
+  if (!supplied) return false;
+  return safeEqual(supplied, expected);
 }

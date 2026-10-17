@@ -554,7 +554,7 @@ function AppearanceTab() {
       <SwitchRow
         icon={Globe}
         label="Proxy engine"
-        hint="Which machinery loads remote pages in the browser. Quasar 2.1.0 (the default) rewrites server-side with runtime hooks, a service-worker safety net, WebSocket bridging, multi-account containers (right-click a tab), per-tab egress/UA, find-in-page (Ctrl+F) and a server-side static cache; Veil is the classic built-in lane. Every site — youtube.com included — loads through the engine you pick; video searches still land on the local library."
+        hint="Which machinery loads remote pages in the browser. Quasar 2.4.1 (the default) rewrites server-side with runtime hooks, a service-worker safety net, WebSocket bridging, multi-account containers (right-click a tab), per-tab egress/UA, find-in-page (Ctrl+F) and a server-side static cache; the 2.4.1 round neutralizes framebusters in both HTML pipelines (Roblox's top.location hijack can't break the frame), gates silent top-navigation behind a real click, exposes x-csrf-token so Roblox-style APIs can sign retries, and shares Domain= cookies (like .ROBLOSECURITY) across subdomains for logins; Veil is the classic built-in lane. Every site — youtube.com included — loads through the engine you pick; video searches still land on the local library."
         value={proxyEngine}
         options={Object.entries(PROXY_ENGINES).map(([id, e]) => ({ id, label: e.label }))}
         onChange={(id) =>

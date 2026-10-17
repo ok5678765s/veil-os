@@ -21,11 +21,12 @@
  *     rewriting bug can never lose content.
  */
 
-import { rewriteAttrs, rewriteCss } from "./rewriter";
+import { neutralizeInlineScript, rewriteAttrs, rewriteCss } from "./rewriter";
 
 const TAG_CAP = 1024 * 1024; // a single tag larger than this (e.g. huge data URIs) passes raw
 const STYLE_CAP = 512 * 1024; // style bodies above this pass raw
 const SCRIPT_TAIL_KEEP = 32; // chars held back in script mode to catch split closing tags
+const INLINE_SCRIPT_CAP = 64 * 1024; // inline bodies buffered up to here (framebuster pass)
 
 /** Parse the tag name out of a complete opening tag string. */
 function tagNameOf(tag: string): string {
@@ -115,6 +116,8 @@ export function createHtmlStream(
   let buf = "";
   let mode: "html" | "script" | "style" | "comment" = "html";
   let injected = false;
+  let scriptInline = false; // current <script> has no src= (body executes in-document)
+  let scriptHold = ""; // buffered body of the current inline script
 
   const emit = (controller: TransformStreamDefaultController<Uint8Array>, text: string) => {
     if (text) controller.enqueue(encoder.encode(text));
@@ -138,14 +141,36 @@ export function createHtmlStream(
       if (mode === "script") {
         const close = findClosingTag(buf, "script");
         if (close === -1) {
-          if (buf.length > SCRIPT_TAIL_KEEP) {
+          if (scriptInline) {
+            if (scriptHold.length + buf.length > INLINE_SCRIPT_CAP) {
+              // Fail-open: oversized inline body — flush raw and stream the rest.
+              emit(controller, scriptHold + buf);
+              scriptHold = "";
+              scriptInline = false;
+              buf = "";
+            } else {
+              scriptHold += buf;
+              buf = "";
+            }
+          } else if (buf.length > SCRIPT_TAIL_KEEP) {
             emit(controller, buf.slice(0, buf.length - SCRIPT_TAIL_KEEP));
             buf = buf.slice(-SCRIPT_TAIL_KEEP);
           }
           return;
         }
-        emit(controller, buf.slice(0, close));
+        if (scriptInline) {
+          const body = scriptHold + buf.slice(0, close);
+          try {
+            emit(controller, neutralizeInlineScript(body));
+          } catch {
+            emit(controller, body);
+          }
+          scriptHold = "";
+        } else {
+          emit(controller, buf.slice(0, close));
+        }
         buf = buf.slice(close);
+        scriptInline = false;
         mode = "html";
         continue;
       }
@@ -241,6 +266,7 @@ export function createHtmlStream(
 
       if (!drop && (lower === "script" || lower === "style")) {
         mode = lower;
+        if (lower === "script") scriptInline = !/\bsrc\s*=/i.test(tag);
       }
     }
   }
@@ -271,11 +297,13 @@ export function createHtmlStream(
     flush(controller) {
       try {
         if (!injected) emit(controller, options.injection);
+        if (scriptHold) emit(controller, scriptHold);
         emit(controller, buf);
       } catch {
         /* ignore */
       }
       buf = "";
+      scriptHold = "";
       mode = "html";
     },
   });

@@ -351,8 +351,30 @@ const SHOP_CATALOG: ShopItem[] = [
   ...ACCESSORY_ITEMS,
 ]
 
-export async function GET() {
-  return NextResponse.json({ ok: true, items: SHOP_CATALOG })
+export async function GET(req: NextRequest) {
+  /* Catalog is public. With a ?token= the response additionally carries
+   * the buyer's OWNED item ids (every shop_purchase:<id> transaction) so
+   * the UI can render a "My Items" section with free equip/unequip —
+   * the fix for the "I bought it, equipped something else, and my
+   * purchase vanished" confusion (owner report 2026-10-17). */
+  const token = req.nextUrl.searchParams.get("token")
+  if (!token) return NextResponse.json({ ok: true, items: SHOP_CATALOG })
+
+  const account = await getAccountFromToken(token)
+  if (!account) {
+    return NextResponse.json(
+      { ok: false, error: "Invalid or expired token." },
+      { status: 401 },
+    )
+  }
+  const purchaseRows = await db.coinTransaction.findMany({
+    where: { fromId: account.id, toId: account.id, reason: { startsWith: "shop_purchase:" } },
+    select: { reason: true },
+  })
+  const owned = [
+    ...new Set(purchaseRows.map((r) => r.reason.slice("shop_purchase:".length))),
+  ].filter((id) => SHOP_CATALOG.some((i) => i.id === id))
+  return NextResponse.json({ ok: true, items: SHOP_CATALOG, owned })
 }
 
 export async function POST(req: NextRequest) {
@@ -376,7 +398,7 @@ export async function POST(req: NextRequest) {
      * already-owned item just re-wears it). */
     if (body.action === "unequip") {
       const slot = body.itemId
-      const data: { tag?: string; tagColor?: string; pfpAccessory?: string; pfpOverlay?: string } =
+      const data: { tag?: string | null; tagColor?: string | null; pfpAccessory?: string | null; pfpOverlay?: string | null } =
         {}
       if (slot === "tag") {
         data.tag = null
@@ -398,6 +420,41 @@ export async function POST(req: NextRequest) {
         data,
       })
       return NextResponse.json({ ok: true, account: toPublicAccount(updated) })
+    }
+
+    /* Equip — free re-wear of an item the buyer already owns. This is the
+     * explicit counterpart to "unequip": the My Items section uses it so
+     * switching between owned decorations never charges (and never needs
+     * the re-buy dance). Ownership is validated server-side against the
+     * purchase ledger — an unowned id is a 400, not a free equip. */
+    if (body.action === "equip") {
+      const itemId = (body.itemId || "").trim()
+      const item = SHOP_CATALOG.find((i) => i.id === itemId)
+      if (!item) {
+        return NextResponse.json(
+          { ok: false, error: "That item does not exist in the shop." },
+          { status: 404 },
+        )
+      }
+      const owned = await db.coinTransaction.findFirst({
+        where: { fromId: account.id, toId: account.id, reason: `shop_purchase:${item.id}` },
+        select: { id: true },
+      })
+      if (!owned) {
+        return NextResponse.json(
+          { ok: false, error: "You don't own that item yet — buy it first." },
+          { status: 400 },
+        )
+      }
+      const updateData: { tag?: string; tagColor?: string; pfpAccessory?: string } =
+        item.type === "tag"
+          ? { tag: item.tagText, tagColor: item.tagColor }
+          : { pfpAccessory: item.accessory }
+      const updated = await db.chatAccount.update({
+        where: { id: account.id },
+        data: updateData,
+      })
+      return NextResponse.json({ ok: true, account: toPublicAccount(updated), item })
     }
 
     const itemId = (body.itemId || "").trim()

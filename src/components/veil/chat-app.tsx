@@ -1692,20 +1692,28 @@ function ShopPanel({
   toast: (msg: string, kind?: "ok" | "err") => void
 }) {
   const [items, setItems] = useState<ShopItem[]>([])
+  const [owned, setOwned] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [buying, setBuying] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await apiFetch<{ items: ShopItem[] }>("/api/chat-shop")
+      /* token in the query → the catalog response carries our OWNED ids so
+       * the My Items locker can render (purchases are permanent, but until
+       * now nothing in the UI ever showed them after a re-equip). */
+      const data = await apiFetch<{ items: ShopItem[]; owned?: string[] }>(
+        `/api/chat-shop?token=${encodeURIComponent(token)}`,
+      )
       setItems(data.items || [])
+      setOwned(new Set(data.owned || []))
     } catch {
       setItems([])
+      setOwned(new Set())
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [token])
 
   useEffect(() => {
     void load()
@@ -1724,9 +1732,30 @@ function ShopPanel({
       onAccount(data.account)
       // Refresh members so the new decoration shows in the players tab right away.
       onProfileUpdated?.()
+      setOwned((prev) => new Set(prev).add(item.id))
       toast(`Equipped ${item.label}!`, "ok")
     } catch (e) {
       toast(e instanceof Error ? e.message : "Purchase failed.", "err")
+    } finally {
+      setBuying(null)
+    }
+  }
+
+  /* Free re-wear of something already in the locker — the equip action
+   * validates ownership server-side, so switching decorations never
+   * charges and never needs the re-buy dance. */
+  const equip = async (item: ShopItem) => {
+    setBuying(item.id)
+    try {
+      const data = await apiFetch<{ account: ChatAccount }>("/api/chat-shop", {
+        method: "POST",
+        body: JSON.stringify({ token, action: "equip", itemId: item.id }),
+      })
+      onAccount(data.account)
+      onProfileUpdated?.()
+      toast(`Wearing ${item.label}.`, "ok")
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Couldn't equip.", "err")
     } finally {
       setBuying(null)
     }
@@ -1753,6 +1782,7 @@ function ShopPanel({
   const accessories = items.filter((i) => i.type === "accessory")
   const equippedTag = account.tag
   const equippedAccessory = account.pfpAccessory
+  const ownedItems = items.filter((i) => owned.has(i.id))
 
   return (
     <div>
@@ -1771,6 +1801,91 @@ function ShopPanel({
         </div>
       ) : (
         <div className="space-y-6">
+          {/* ------- 🎒 My Items — the locker (owner ask 2026-10-17) -------
+              Everything ever bought lives here forever: equip and unequip
+              as much as you like, switching is always free. */}
+          <section className="rounded-xl border border-orange-400/20 bg-orange-400/5 p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="veil-text-shine flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-orange-300/80">
+                🎒 My Items
+                <span className="rounded-full bg-orange-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-orange-300/90">
+                  {ownedItems.length}
+                </span>
+              </h4>
+              <span className="text-[11px] text-white/35">yours forever · switch free</span>
+            </div>
+            {ownedItems.length === 0 ? (
+              <p className="rounded-lg border border-dashed border-white/10 px-3 py-4 text-center text-xs leading-relaxed text-white/40">
+                Nothing here yet — anything you buy lands in this locker permanently, so you can
+                re-wear it any time without paying again.
+              </p>
+            ) : (
+              <div className="max-h-72 space-y-2 overflow-y-auto pr-1 veil-scroll-slim">
+                {ownedItems.map((it) => {
+                  const worn =
+                    it.type === "tag"
+                      ? equippedTag === it.tagText
+                      : equippedAccessory === it.accessory
+                  return (
+                    <div
+                      key={it.id}
+                      className={`veil-hover-lift flex items-center justify-between gap-3 rounded-lg border p-2.5 transition-colors ${
+                        worn
+                          ? "border-emerald-400/30 bg-emerald-400/10"
+                          : "border-white/10 bg-black/25 hover:border-white/20"
+                      }`}
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        {it.type === "tag" ? (
+                          <TagBadge tag={it.tagText} color={it.tagColor} />
+                        ) : (
+                          <AvatarWithAccessory
+                            account={{
+                              avatarColor: account.avatarColor,
+                              avatarImage: account.avatarImage,
+                              pfpAccessory: it.accessory,
+                            }}
+                            size={38}
+                          />
+                        )}
+                        <div className="flex min-w-0 flex-col">
+                          <span className="truncate text-sm font-medium">{it.label}</span>
+                          <span className="text-[11px] text-white/35">
+                            {it.type === "tag" ? "name tag" : "PFP accessory"}
+                          </span>
+                        </div>
+                      </div>
+                      {worn ? (
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span className="rounded-md bg-emerald-500/20 px-2 py-1 text-xs text-emerald-300">
+                            Worn ✓
+                          </span>
+                          <button
+                            onClick={() =>
+                              void unequip(it.type === "tag" ? "tag" : "accessory")
+                            }
+                            disabled={buying === `unequip:${it.type === "tag" ? "tag" : "accessory"}`}
+                            className="rounded-md px-2 py-1 text-[11px] text-white/40 underline-offset-2 hover:text-white/70 hover:underline"
+                          >
+                            take off
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          disabled={buying === it.id}
+                          onClick={() => void equip(it)}
+                          className="veil-press veil-hover-glow shrink-0 rounded-md bg-orange-400 px-3 py-1 text-xs font-semibold text-black disabled:opacity-40"
+                        >
+                          {buying === it.id ? "…" : "Wear"}
+                        </button>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </section>
+
           <section>
             <div className="mb-2 flex items-center justify-between">
               <h4 className="veil-text-shine text-xs font-semibold uppercase tracking-wide text-white/50">
@@ -1789,6 +1904,7 @@ function ShopPanel({
             <div className="grid gap-2 sm:grid-cols-2">
               {tags.map((t) => {
                 const equipped = equippedTag === t.tagText
+                const isOwned = owned.has(t.id)
                 const afford = account.coins >= t.price
                 return (
                   <div
@@ -1799,12 +1915,21 @@ function ShopPanel({
                       <TagBadge tag={t.tagText} color={t.tagColor} />
                       <span className="text-xs text-white/50">
                         🪙 {t.price.toLocaleString()}
+                        {isOwned && <span className="ml-1.5 text-[10px] uppercase tracking-wide text-emerald-300/80">owned</span>}
                       </span>
                     </div>
                     {equipped ? (
                       <span className="rounded-md bg-emerald-500/20 px-2 py-1 text-xs text-emerald-300">
                         Equipped
                       </span>
+                    ) : isOwned ? (
+                      <button
+                        disabled={buying === t.id}
+                        onClick={() => void equip(t)}
+                        className="veil-press veil-hover-glow rounded-md border border-orange-400/50 bg-orange-400/10 px-3 py-1 text-xs font-semibold text-orange-300 disabled:opacity-40"
+                      >
+                        {buying === t.id ? "…" : "Wear · free"}
+                      </button>
                     ) : (
                       <button
                         disabled={!afford || buying === t.id}
@@ -1838,6 +1963,7 @@ function ShopPanel({
             <div className="grid gap-2 sm:grid-cols-2">
               {accessories.map((a) => {
                 const equipped = equippedAccessory === a.accessory
+                const isOwned = owned.has(a.id)
                 const afford = account.coins >= a.price
                 return (
                   <div
@@ -1864,6 +1990,7 @@ function ShopPanel({
                         )}
                         <span className="text-xs text-white/50">
                           🪙 {a.price.toLocaleString()}
+                          {isOwned && <span className="ml-1.5 text-[10px] uppercase tracking-wide text-emerald-300/80">owned</span>}
                         </span>
                       </div>
                     </div>
@@ -1871,6 +1998,14 @@ function ShopPanel({
                       <span className="shrink-0 self-center rounded-md bg-emerald-500/20 px-2 py-1 text-xs text-emerald-300">
                         Equipped
                       </span>
+                    ) : isOwned ? (
+                      <button
+                        disabled={buying === a.id}
+                        onClick={() => void equip(a)}
+                        className="veil-press veil-hover-glow shrink-0 self-center rounded-md border border-orange-400/50 bg-orange-400/10 px-3 py-1 text-xs font-semibold text-orange-300 disabled:opacity-40"
+                      >
+                        {buying === a.id ? "…" : "Wear · free"}
+                      </button>
                     ) : (
                       <button
                         disabled={!afford || buying === a.id}
@@ -1887,8 +2022,8 @@ function ShopPanel({
           </section>
 
           <p className="text-center text-[11px] leading-relaxed text-white/30">
-            Purchases are permanent — re-equipping anything you already own is always free. Earn coins with the daily
-            reward, chatting, the games… and just browsing: 3-5 coins every few minutes on the proxy.
+            Purchases are permanent — everything you buy lives in 🎒 My Items up top, and re-wearing is always free. Earn
+            coins with the daily reward, chatting, the games… and just browsing: 3-5 coins every few minutes on the proxy.
           </p>
         </div>
       )}

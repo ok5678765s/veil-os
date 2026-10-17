@@ -257,6 +257,42 @@ const OPEN_TAG_RE = /<([a-zA-Z][a-zA-Z0-9:.-]*)((?:[^>"']|"[^"]*"|'[^']*')*?)(\/
 const SCRIPT_RE = /(<script\b[^>]*>)([\s\S]*?)(<\/script\s*>)/gi;
 const STYLE_RE = /(<style\b[^>]*>)([\s\S]*?)(<\/style\s*>)/gi;
 
+/* ------------------------------------------------------------------ */
+/* v2.4.1 — inline framebuster neutralization                          */
+/* ------------------------------------------------------------------ */
+
+const TOP_LOCATION_RE = /\b(?:window\.)?top\.location\b/g;
+const PARENT_LOCATION_RE = /\b(?:window\.)?parent\.location\b/g;
+const FRAME_CMP_RE =
+  /\b(?:window\.)?(?:top|parent|self)\s*(?:!==?|===?)\s*(?:window\.)?(?:top|parent|self)\b/g;
+
+/**
+ * v2.4.1 — defuse classic framebusting inline scripts.
+ *
+ * Sites like Roblox ship `if (top.location != self.location) { top.location =
+ * self.location.href; }`. Inside the app's managed iframe that hijacks the
+ * whole UI (and cascades into escapes to the real target). Both pipeline
+ * rewriters pipe every inline <script> body through this before serving it:
+ *
+ *   top.location     → self.location   (reads AND assignments become no-ops)
+ *   parent.location  → self.location
+ *   X <cmp> Y (top/parent/self) → literal true/false so buster branches die
+ *
+ * Sites legitimately addressing their own frames lose that ability under the
+ * proxy — the accepted trade-off (same one Ultraviolet/Scramjet make).
+ */
+export function neutralizeInlineScript(js: string): string {
+  if (!js || js.length > 2 * 1024 * 1024) return js;
+  let out = js.replace(TOP_LOCATION_RE, "self.location");
+  out = out.replace(PARENT_LOCATION_RE, "self.location");
+  out = out.replace(FRAME_CMP_RE, (m) => {
+    const ids: string[] = m.match(/top|parent|self/g) ?? [];
+    if (ids.length === 2 && ids[0] === ids[1]) return "true";
+    return ids.indexOf("top") !== -1 || ids.indexOf("parent") !== -1 ? "false" : m;
+  });
+  return out;
+}
+
 export interface RewriteHtmlOptions {
   /** Site fix whose client hooks should be announced to the bundle. */
   site?: SiteFix | null;
@@ -307,8 +343,15 @@ export function rewriteHtml(html: string, baseUrl: string, opts: RewriteHtmlOpti
     }
   });
 
-  // 4. Restore scripts untouched.
-  out = out.replace(/\u0000QSR(\d+)\u0000/g, (_m, idx: string) => scripts[Number(idx)] ?? "");
+  // 4. Restore scripts — inline framebusters neutralized (v2.4.1), otherwise untouched.
+  out = out.replace(/\u0000QSR(\d+)\u0000/g, (_m, idx: string) => {
+    const body = scripts[Number(idx)] ?? "";
+    try {
+      return neutralizeInlineScript(body);
+    } catch {
+      return body;
+    }
+  });
 
   // 5. Inject the data blob + hook bundle as the first element inside <head>.
   const hookTag = opts.injection ?? buildStandardInjection(baseUrl, opts.site ?? null);

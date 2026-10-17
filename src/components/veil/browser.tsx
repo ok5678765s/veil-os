@@ -536,6 +536,20 @@ export function BrowserView({
               title={title || target}
               className="h-full w-full border-0 bg-white"
               allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-read; clipboard-write"
+              /* v2.4.1 — the proxied lane now carries a sandbox token: same
+               * origin + scripts are still allowed (the SW hook layer and
+               * same-origin APIs keep working), but top-level navigation is
+               * gated behind a real user activation. Silent top.location
+               * hijacks (framebusters, device-redirect pages) can no longer
+               * escape the tunnel — they needed allow-top-navigation, which
+               * we simply never grant automatically. The FreeTube program
+               * (isFt lane) is our own same-origin page and stays outside
+               * the token so its SPA router history.pushState is untouched. */
+              sandbox={
+                isFt
+                  ? undefined
+                  : "allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-downloads allow-top-navigation-by-user-activation"
+              }
               /* The FreeTube program is same-origin and needs its API calls to
                * carry the page's Referer — the service reads it to bake
                * *reachable* absolute media URLs (the visitor's real origin, not

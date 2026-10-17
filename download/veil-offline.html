@@ -295,6 +295,16 @@
   .srow .worn{background:rgba(52,211,153,.18);color:var(--em)}
   .srow .tagp{font-size:9px;font-weight:800;color:#fff;border-radius:4px;padding:2px 7px;letter-spacing:.5px}
   .shopfoot{font-size:9.5px;color:var(--faint);text-align:center;margin-top:10px;line-height:1.5}
+  /* 🎒 My Items locker (v2 of the offline shop — owner ask 2026-10-17) */
+  .srow .pr .ownlab{font-style:normal;font-size:8px;text-transform:uppercase;letter-spacing:.6px;
+    color:var(--em);background:rgba(52,211,153,.12);border-radius:4px;padding:1px 5px;margin-left:4px}
+  .srow.owned{border-color:rgba(52,211,153,.22)}
+  .shopsec.locker{color:#fdba74;border:1px solid rgba(251,146,60,.22);background:rgba(251,146,60,.06);
+    border-radius:9px;padding:6px 9px;margin-top:0}
+  .shopsec.locker i{font-style:normal;font-size:8.5px;font-weight:600;text-transform:none;letter-spacing:.2px;color:var(--faint)}
+  .srow.locker{padding:7px 8px}
+  .srow.wornrow{border-color:rgba(52,211,153,.32);background:rgba(52,211,153,.07)}
+  .srow .buy.wear{background:rgba(251,146,60,.13);color:#fdba74;border:1px solid rgba(251,146,60,.45)}
   .bjtable{border:1px solid rgba(253,230,138,.1);border-radius:14px;padding:10px;
     background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,197,66,.06), transparent 60%), rgba(255,255,255,.02)}
   .bjrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
@@ -1386,11 +1396,15 @@
   renderBjControls();
 
   /* ── shop — spend coins on avatar overlays, tags, accessories ── */
-  var SHOP = { items: [], loaded: false, busy: false };
+  var SHOP = { items: [], owned: {}, loaded: false, busy: false };
   function loadShop() {
     if (SHOP.loaded) { renderShop(); return; }
-    api("/api/chat-shop").then(function (d) {
+    /* token in the query → the response carries our OWNED ids so the 🎒 My
+     * Items locker renders offline too (same as the in-app shop). */
+    api("/api/chat-shop?token=" + encodeURIComponent(S.token || "")).then(function (d) {
       SHOP.items = d.items || [];
+      SHOP.owned = {};
+      (d.owned || []).forEach(function (id) { SHOP.owned[id] = true; });
       SHOP.loaded = true;
       renderShop();
     }).catch(function () {
@@ -1402,12 +1416,27 @@
     SHOP.busy = true;
     post("/api/chat-shop", { token: S.token, itemId: itemId }).then(function (d) {
       setAccount(d.account);
+      SHOP.owned[itemId] = true;
       toast("Equipped " + (d.item && d.item.label ? d.item.label : "it") + "!");
       renderShop();
       loadMembers();
       SHOP.busy = false;
     }).catch(function (e) {
       toast(e.message || "Purchase failed.", true);
+      SHOP.busy = false;
+    });
+  }
+  function shopEquip(itemId) {
+    if (SHOP.busy) return;
+    SHOP.busy = true;
+    post("/api/chat-shop", { token: S.token, action: "equip", itemId: itemId }).then(function (d) {
+      setAccount(d.account);
+      toast("Wearing " + (d.item && d.item.label ? d.item.label : "it") + ".");
+      renderShop();
+      loadMembers();
+      SHOP.busy = false;
+    }).catch(function (e) {
+      toast(e.message || "Couldn't equip.", true);
       SHOP.busy = false;
     });
   }
@@ -1430,6 +1459,7 @@
     var equipped = it.type === "overlay" ? acc.pfpOverlay === it.overlay
       : it.type === "tag" ? acc.tag === it.tagText
       : acc.pfpAccessory === it.accessory;
+    var isOwned = !!SHOP.owned[it.id];
     var afford = (acc.coins || 0) >= it.price;
     var left;
     if (it.type === "overlay") {
@@ -1441,12 +1471,33 @@
     }
     var sub = it.type === "overlay" ? (it.desc || "Avatar decoration")
       : it.type === "tag" ? "Name tag" : "PFP accessory";
-    return '<div class="srow">' + left +
+    return '<div class="srow' + (isOwned && !equipped ? " owned" : "") + '">' + left +
       '<div class="nm"><b>' + esc(it.label) + "</b><span>" + esc(sub) + "</span></div>" +
-      '<span class="pr">🪙 ' + it.price.toLocaleString() + "</span>" +
+      '<span class="pr">🪙 ' + it.price.toLocaleString() + (isOwned ? ' <em class="ownlab">owned</em>' : "") + "</span>" +
       (equipped
         ? '<span class="worn">' + (it.type === "overlay" ? "Worn" : "On") + "</span>"
-        : '<button class="buy" data-buy="' + esc(it.id) + '"' + (afford ? "" : " disabled") + ">Buy</button>") +
+        : isOwned
+          ? '<button class="buy wear" data-wear="' + esc(it.id) + '">Wear · free</button>'
+          : '<button class="buy" data-buy="' + esc(it.id) + '"' + (afford ? "" : " disabled") + ">Buy</button>") +
+      "</div>";
+  }
+  function lockerRow(it) {
+    var acc = S.account || {};
+    var worn = it.type === "overlay" ? acc.pfpOverlay === it.overlay
+      : it.type === "tag" ? acc.tag === it.tagText
+      : acc.pfpAccessory === it.accessory;
+    var left;
+    if (it.type === "tag") {
+      left = '<span class="tagp" style="background:' + esc(it.tagColor || "#6b7280") + '">' + esc(it.tagText) + "</span>";
+    } else {
+      left = '<span class="pv"><i style="background:' + esc(acc.avatarColor || "#f97316") + '"></i></span>';
+    }
+    var sub = it.type === "tag" ? "name tag" : it.type === "overlay" ? "avatar overlay" : "PFP accessory";
+    return '<div class="srow locker' + (worn ? " wornrow" : "") + '">' + left +
+      '<div class="nm"><b>' + esc(it.label) + "</b><span>" + esc(sub) + "</span></div>" +
+      (worn
+        ? '<span class="worn">Worn ✓</span> <button class="shopoff" data-off="' + (it.type === "tag" ? "tag" : it.type === "overlay" ? "overlay" : "accessory") + '">take off</button>'
+        : '<button class="buy wear" data-wear="' + esc(it.id) + '">Wear</button>') +
       "</div>";
   }
   function renderShop() {
@@ -1454,20 +1505,27 @@
     var ov = SHOP.items.filter(function (i) { return i.type === "overlay"; });
     var tg = SHOP.items.filter(function (i) { return i.type === "tag"; });
     var ax = SHOP.items.filter(function (i) { return i.type === "accessory"; });
+    var mine = SHOP.items.filter(function (i) { return SHOP.owned[i.id]; });
+    var locker =
+      '<div class="shopsec locker"><span>🎒 My Items · ' + mine.length + '</span><i>yours forever · switch free</i></div>' +
+      (mine.length
+        ? mine.map(lockerRow).join("")
+        : '<div class="empty">Nothing here yet — anything you buy lands in this locker permanently.</div>');
     var head = function (label, slot, worn) {
       return '<div class="shopsec"><span>' + label + "</span>" +
         (worn ? '<button class="shopoff" data-off="' + slot + '">take off</button>' : "") + "</div>";
     };
-    $("shopBody").innerHTML =
+    $("shopBody").innerHTML = locker +
       head("Avatar overlays", "overlay", acc.pfpOverlay) + ov.map(shopRow).join("") +
       head("Name tags", "tag", acc.tag) + tg.map(shopRow).join("") +
       head("PFP accessories", "accessory", acc.pfpAccessory) + ax.map(shopRow).join("") +
-      '<p class="shopfoot">Purchases are permanent — re-equipping is free. Earn coins: daily reward, chatting, the games… and 3-5 coins every few minutes just browsing.</p>';
+      '<p class="shopfoot">Purchases are permanent — everything you buy lives in 🎒 My Items, re-wearing is free. Earn coins: daily reward, chatting, the games… and 3-5 coins every few minutes just browsing.</p>';
   }
   $("shopBody").addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b || b.disabled) return;
     if (b.dataset.buy) shopBuy(b.dataset.buy);
+    if (b.dataset.wear) shopEquip(b.dataset.wear);
     if (b.dataset.off) shopUnequip(b.dataset.off);
   });
 

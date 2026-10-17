@@ -78,6 +78,10 @@ const FORWARD_RES_HEADERS = [
   "content-length",
   "age",
   "retry-after",
+  // v2.4.1 — Roblox APIs answer first POSTs with 403 + x-csrf-token; the
+  // client JS must read it to sign the retry. Expose it on every response
+  // (tiny header, no security impact — it is meant for the client anyway).
+  "x-csrf-token",
 ];
 
 /** Recover the real referer from our proxied referer URL. */

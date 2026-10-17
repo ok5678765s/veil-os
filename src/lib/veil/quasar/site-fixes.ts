@@ -118,9 +118,10 @@ const FIXES: SiteFix[] = [
   },
   {
     id: "roblox",
-    match: ["roblox.com", "rbxcdn.com", "roblox-api.com"],
+    match: ["roblox.com", "rbxcdn.com", "roblox-api.com", "rbx.com"],
     flags: { noAst: true },
     clientHooks: ["fakeNotifications"],
+    note: "v2.4.1: SPA runs unrewritten (noAst) — the SW + runtime fetch/XHR hooks tunnel its runtime-built apis.roblox.com URLs; framebusters neutralized in the HTML pipelines; x-csrf-token exposed; Domain=.roblox.com cookies shared across subdomains. Game LAUNCH needs the native player (roblox-player://), browsing/search/login work.",
   },
   {
     id: "duckduckgo",

@@ -37,8 +37,12 @@ function jarKey(origin: string, container: string): string {
   return container + "\n" + origin;
 }
 
-function jarFor(origin: string, container: string): Map<string, string> {
-  const key = jarKey(origin, container);
+/** Key for the v2.4.1 domain-scoped jar (Domain=.roblox.com style cookies). */
+function domainJarKey(domain: string, container: string): string {
+  return container + "\nd:" + domain;
+}
+
+function jarFor(key: string): Map<string, string> {
   let jar = jars.get(key);
   if (!jar) {
     if (jars.size >= MAX_ORIGINS) {
@@ -51,6 +55,10 @@ function jarFor(origin: string, container: string): Map<string, string> {
   return jar;
 }
 
+function originJarFor(origin: string, container: string): Map<string, string> {
+  return jarFor(jarKey(origin, container));
+}
+
 function isExpired(setCookie: string): boolean {
   if (EXPIRED_RE.test(setCookie)) return true;
   const m = setCookie.match(/expires=([^;]+)/i);
@@ -61,14 +69,39 @@ function isExpired(setCookie: string): boolean {
   return false;
 }
 
-/** Absorb Set-Cookie headers from a target response. */
+/** Parse the Domain= attribute of a Set-Cookie (no leading dot, lowercase). */
+function cookieDomain(setCookie: string): string | null {
+  const m = setCookie.match(/;\s*domain\s*=\s*([^;]+)/i);
+  if (!m) return null;
+  return m[1].trim().toLowerCase().replace(/^\./, "") || null;
+}
+
+/** True when `host` equals or is a subdomain of `domain`. */
+function hostMatchesDomain(host: string, domain: string): boolean {
+  return host === domain || host.endsWith("." + domain);
+}
+
+/**
+ * Absorb Set-Cookie headers from a target response.
+ *
+ * v2.4.1 — cookies carrying a Domain attribute (e.g. Roblox's
+ * `.ROBLOSECURITY; Domain=.roblox.com`, set by auth.roblox.com but needed by
+ * www/apis/games subdomains) are stored in a DOMAIN jar shared by every
+ * subdomain of that domain, instead of being trapped on the origin that set
+ * them. Domainless cookies keep the exact pre-2.4.1 behavior.
+ */
 export function storeSetCookies(
   origin: string,
   setCookies: string[],
   container: string = DEFAULT_CONTAINER
 ): void {
   if (!setCookies.length) return;
-  const jar = jarFor(origin, container);
+  let host = "";
+  try {
+    host = new URL(origin).hostname.toLowerCase();
+  } catch {
+    return;
+  }
   for (const sc of setCookies) {
     const pair = sc.split(";")[0] ?? "";
     const i = pair.indexOf("=");
@@ -76,16 +109,23 @@ export function storeSetCookies(
     const name = pair.slice(0, i).trim();
     const value = pair.slice(i + 1).trim();
     if (!name) continue;
+    const domain = cookieDomain(sc);
+    let jar: Map<string, string>;
+    if (domain && hostMatchesDomain(host, domain)) {
+      jar = jarFor(domainJarKey(domain, container));
+    } else {
+      jar = originJarFor(origin, container);
+    }
     if (isExpired(sc) || value === "") {
       jar.delete(name);
     } else {
       jar.set(name, value);
     }
-  }
-  while (jar.size > MAX_COOKIES_PER_ORIGIN) {
-    const first = jar.keys().next().value;
-    if (!first) break;
-    jar.delete(first);
+    while (jar.size > MAX_COOKIES_PER_ORIGIN) {
+      const first = jar.keys().next().value;
+      if (!first) break;
+      jar.delete(first);
+    }
   }
 }
 
@@ -96,7 +136,7 @@ export function mergeClientCookies(
   container: string = DEFAULT_CONTAINER
 ): void {
   if (!cookies || typeof cookies !== "object") return;
-  const jar = jarFor(origin, container);
+  const jar = originJarFor(origin, container);
   for (const [name, value] of Object.entries(cookies)) {
     if (!name) continue;
     if (value === "") jar.delete(name);
@@ -104,15 +144,32 @@ export function mergeClientCookies(
   }
 }
 
-/** Build a Cookie header for a target origin (null when empty). */
+/**
+ * Build a Cookie header for a target origin (null when empty).
+ *
+ * v2.4.1 — merges the origin jar with every DOMAIN jar of the host's parent
+ * domains (www.roblox.com picks up the roblox.com domain jar), domain cookies
+ * listed first so origin-scoped values win on name collisions.
+ */
 export function cookieHeader(
   origin: string,
   container: string = DEFAULT_CONTAINER
 ): string | null {
-  const jar = jars.get(jarKey(origin, container));
-  if (!jar || jar.size === 0) return null;
   const parts: string[] = [];
-  for (const [k, v] of jar.entries()) parts.push(k + "=" + v);
+  try {
+    const host = new URL(origin).hostname.toLowerCase();
+    // Walk parent domains: a.b.c.com -> b.c.com -> c.com (TLD-only keys skipped).
+    const labels = host.split(".");
+    for (let i = 1; i < labels.length - 1; i++) {
+      const domain = labels.slice(i).join(".");
+      const djar = jars.get(domainJarKey(domain, container));
+      if (djar) for (const [k, v] of djar.entries()) parts.push(k + "=" + v);
+    }
+  } catch {
+    /* not a parseable origin — origin jar only */
+  }
+  const jar = jars.get(jarKey(origin, container));
+  if (jar) for (const [k, v] of jar.entries()) parts.push(k + "=" + v);
   return parts.length ? parts.join("; ") : null;
 }
 
@@ -148,9 +205,10 @@ export function jarStats(): { container: string; origin: string; cookies: number
   const out: { container: string; origin: string; cookies: number }[] = [];
   for (const [key, jar] of jars.entries()) {
     const i = key.indexOf("\n");
+    const scope = key.slice(i + 1);
     out.push({
       container: key.slice(0, i),
-      origin: key.slice(i + 1),
+      origin: scope.startsWith("d:") ? "*." + scope.slice(2) : scope,
       cookies: jar.size,
     });
   }
