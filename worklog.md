@@ -1,5 +1,79 @@
 # Veil OS — Worklog / Handover
 
+## Project status (2026-10-17 ~15:30 UTC) — THE REAL CENTERING BUG (Tailwind max-width clamp) + RANDOM-RESTART ROOT CAUSE (box memory)
+
+**Owner report: "ITEMS STILL AREN'T CENTERED SEE"** (with a 62×85 crop of
+Veil's avatar wearing the VR Halo — ring visibly offset). Both this AND the
+long-standing "it keeps restarting to home screen / stop random bugs" were
+root-caused and fixed this round, live-verified end to end.
+
+- Live preview: `https://preview-chat-5c473725-60a1-401a-a523-f3055da577e8.space-z.ai/`
+
+### 1. THE centering bug: Tailwind preflight clamped every decoration
+- DOM measurement proved it: the vrhalo `<img>` rendered **28×28 on a 28px
+  avatar** despite inline `width:130%` — positioned at top/left -15% but
+  SIZED to 100%. Every fullCell item (and puppy 120% / catears 106%) was
+  silently shrunk to the avatar box and shifted up-left ≈ the user's crop.
+- Cause: Tailwind Preflight ships `img { max-width: 100% }`; `max-width`
+  clamps `width` regardless of inline-style specificity.
+- **Fix** (`chat-app.tsx` DecoPartView): `maxWidth: "none"` on the deco
+  img. DOM-verified after: ratio 1.30, center offset dx=0 dy=0 on every
+  fullCell card in the shop grid (53 previews measured) and chat rows.
+
+### 2. Re-tuned the two owner-uploaded filters for the unclamped renderer
+- The puppy/cat-ear pins were dialed in during the clamped era → at true
+  scale the ears floated high above the head with a gap (VLM-confirmed on
+  the live shop cards).
+- Synthetic-avatar A/B renders + VLM judging picked final pins:
+  - puppy ears: top -30% / left -30% / w 160% (nose unchanged 63/27/46)
+  - catears: top -48% / left -20% / w 140%
+- Live shop re-verified: ears now hug the head's top arc like a real face
+  filter; nose on the face (VLM pass).
+
+### 3. "Random restarts to home screen" — root cause caught live
+- During QA the page spontaneously reset: shop modal → landing
+  ("connecting…" HMR overlay) → auto-restore. Reproduced twice.
+- **dev-watchdog.log is the smoking gun**: box MemAvailable dropped to
+  191-255MB repeatedly today (08:10, 08:34, 14:39, 14:56…) → emergency
+  restarts of next-server → each restart = HMR drop = page reload = home
+  screen reset (the section auto-restore then brings the chat back).
+- Memory audit: next-server 1.85GB (legit, warm tree) + **one idle
+  FreeTube viewer process ~1.4GB** (15-min idle cull was too generous on
+  the 3.9GB no-swap box) + QA chrome. Killing the freetube viewer alone
+  took MemAvailable 127MB → 1.5GB.
+- **Fix** (`mini-services/freetube-service/index.ts`):
+  - idle cull 15 min → **5 min** (respawn on demand is ~2s)
+  - new **box-pressure eviction**: MemAvailable < 600MB → cull the LRU
+    viewer immediately (one session must never take the site down)
+- After cleanup (freetube viewer killed + QA browser closed):
+  **MemAvailable 3.16GB**. Watchdog emergencies should stop.
+
+### 4. QA (agent-browser, live) — PASSED
+- Chat: Veil's worn vrhalo renders as a concentric 130% ring on message
+  avatars AND the players sidebar (DOM ratio 1.3 / offset 0; VLM pass).
+- Shop: full accessory grid scrolled + screenshotted; all fullCell cards
+  centered; puppy/catears re-tuned and verified; zero console errors;
+  lint clean on both changed files.
+
+## Known blockers / risks
+1. The dev box is memory-tight by design (3.9GB, no swap): any NEW
+   heavyweight per-viewer process will re-trigger pressure. The freetube
+   pressure-eviction guards it now, but keep an eye on dev-watchdog.log.
+2. Dev-only artifact: editing source while the preview is open triggers
+   Fast Refresh → modals (Games/Shop) close. NOT a user-facing bug in a
+   stable tree; section state survives (auto-restore works).
+3. vrhalo ring top edge nearly touches its source cell edge (source-
+   limited slight top clip, unchanged).
+4. Old emoji-accessory ownership rows remain inert (carried over).
+5. Full `bun run lint` still OOMs — lint targeted files only.
+
+## Priority recommendations for the next phase
+1. Watch dev-watchdog.log for a day: confirm no more emergency restarts.
+2. Profile next-server heap after a long session (plateau vs 2048 cap).
+3. Profile modal "worn decoration" summary + owned-items strip in shop.
+4. Offline single-file HTML version (carried-over ask).
+5. Scroll-to-bottom FAB with unread count (carried over).
+
 ## Project status (2026-10-17 ~08:45 UTC) — ANIMATED DECORATIONS + CENTERING FIX + BUY-REPLACEMENT VERIFIED
 
 **Owner asks shipped and browser-verified.** (a) "make sure animated" —

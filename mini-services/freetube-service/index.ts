@@ -115,8 +115,26 @@ if (G.__veilFtProcs) {
 }
 const procs: Map<string, Proc> = (G.__veilFtProcs = new Map());
 
-const IDLE_CULL_MS = 15 * 60_000; // viewer untouched for 15 min → culled
+const IDLE_CULL_MS = 5 * 60_000; // viewer untouched for 5 min → culled (was 15:
+// each live FreeTube program holds ~0.4-1.4GB on the 3.9GB no-swap box,
+// and a long cull window strangled the box into watchdog emergencies
+// that restarted the dev server under the user — the "it keeps
+// restarting to home screen" bug; respawn on demand is ~2s)
 const MAX_LIVE_VIEWERS = 8;       // hard cap; LRU evicted beyond this
+const BOX_PRESSURE_KB = 600_000;  // MemAvailable under ~600MB → cull LRU
+
+/** Box-level memory guard — culls the least-recently-used viewer when the
+ * machine itself is running out (same signal the dev watchdog uses). One
+ * viewer session must never take the whole site down with it. */
+function boxMemAvailKb(): number {
+  try {
+    const mi = readFileSync("/proc/meminfo", "utf8");
+    const m = /MemAvailable:\s+(\d+) kB/.exec(mi);
+    return m ? parseInt(m[1], 10) : 9_999_999;
+  } catch {
+    return 9_999_999;
+  }
+}
 
 function dataDirFor(viewer: string): string {
   // viewer keys are validated [A-Za-z0-9_-]{6,64} — safe as a dir name
@@ -242,6 +260,17 @@ if (!G.__veilFtInit) {
       if (now - p.lastUsed > IDLE_CULL_MS) {
         console.log(`[freetube-service] culling idle viewer ${p.viewer}`);
         killProc(p);
+      }
+    }
+    // Box-pressure eviction: with viewers still alive but the box out of
+    // memory, drop the LRU viewer (never the just-used one) so the dev
+    // server survives. The evicted viewer respawns in ~2s on next use.
+    if (procs.size > 0 && boxMemAvailKb() < BOX_PRESSURE_KB) {
+      let oldest: Proc | null = null;
+      for (const cand of procs.values()) if (!oldest || cand.lastUsed < oldest.lastUsed) oldest = cand;
+      if (oldest) {
+        console.log(`[freetube-service] box memory pressure — evicting LRU viewer ${oldest.viewer}`);
+        killProc(oldest);
       }
     }
   }, 60_000).unref?.();

@@ -281,14 +281,19 @@ function fullCell(src: string): Decoration {
 
 const DECORATIONS: Record<string, Decoration> = {
   /* ── Directly uploaded by the owner (static art) ────────────────── */
+  /* Pins re-tuned for the UNCLAMPED renderer (maxWidth:none fix): the
+   * old values were dialed in while Tailwind's preflight silently
+   * clamped >100% widths, so at true scale the ears floated high above
+   * the head with a gap. Now they hug the head's top arc like a real
+   * face filter. */
   puppy: {
     parts: [
-      { t: "img", src: "/deco-dog-ears.png", top: "-25%", left: "-10%", w: "120%" },
+      { t: "img", src: "/deco-dog-ears.png", top: "-30%", left: "-30%", w: "160%" },
       { t: "img", src: "/deco-dog-nose.png", top: "63%", left: "27%", w: "46%" },
     ],
   },
   catears: {
-    parts: [{ t: "img", src: "/deco-cat-ears.png", top: "-62%", left: "-3%", w: "106%" }],
+    parts: [{ t: "img", src: "/deco-cat-ears.png", top: "-48%", left: "-20%", w: "140%" }],
   },
 
   /* ── The 4-in-1 cell, as its four individual pieces (each on its
@@ -354,6 +359,11 @@ function DecoPartView({ part }: { part: DecoPart }) {
         right: part.right,
         bottom: part.bottom,
         width: part.w,
+        // Tailwind's preflight clamps every <img> to max-width:100%, which
+        // silently shrank the >100% decoration frames (130% full-cell, 120%
+        // puppy ears…) back down to the avatar box and shifted them up-left
+        // by their top/left offsets — the "not centered" bug. Opt out.
+        maxWidth: "none",
         zIndex: part.behind ? 0 : 2,
       }}
     />
