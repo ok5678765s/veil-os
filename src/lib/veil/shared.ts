@@ -52,6 +52,49 @@ export function viewerHeaders(): Record<string, string> {
   return { "x-veil-viewer": getViewerId() };
 }
 
+/* ── "When I come back" choice (Settings › Browsing) ──────────────────── */
+
+const KEEP_KEY = "veil:keep-session";
+const KEEP_MARKER = "veil:keep-sweep-v2";
+
+/**
+ * Read the keep-session choice with legacy-value healing.
+ *
+ * The default flipped to KEEP (owner request 2026-10-13), but browsers that
+ * had explicitly picked "Start page" BEFORE the flip kept
+ * veil:keep-session=0 forever — and the visibility sweep built around it
+ * dumped the user on the home screen on EVERY tab/app switch (the "it
+ * keeps restarting to home screen" report). The v2 marker is written ONLY
+ * by an explicit Settings choice made after this fix; a "0" without the
+ * marker is stale legacy and gets healed back to keep.
+ */
+export function readKeepSession(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    const v = window.localStorage.getItem(KEEP_KEY);
+    const marked = window.localStorage.getItem(KEEP_MARKER) === "1";
+    if (v === "0" && !marked) {
+      window.localStorage.removeItem(KEEP_KEY);
+      return true;
+    }
+    return v !== "0";
+  } catch {
+    return true;
+  }
+}
+
+/** Persist an EXPLICIT choice from Settings › Browsing — stamps the v2
+ *  marker so the value is honored from now on. */
+export function writeKeepSession(keep: boolean): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(KEEP_KEY, keep ? "1" : "0");
+    window.localStorage.setItem(KEEP_MARKER, "1");
+  } catch {
+    /* private mode — best effort */
+  }
+}
+
 /** Convert a bare user input into a navigable target URL (or a search). */
 export function normalizeInput(raw: string): string | null {
   const input = raw.trim();

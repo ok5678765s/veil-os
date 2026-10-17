@@ -950,3 +950,97 @@ html[data-veil-fancy="on"] .veil-skeleton {
     transform: none;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   AVATAR OVERLAY DECORATIONS (Shop › Overlays)
+   Always-on (a purchased decoration is identity, not garnish — it moves
+   regardless of the fancy-motion setting) but flattened under
+   prefers-reduced-motion at the bottom of this block.
+   veil-ov-origin: SVG <g>/<path> transform-box fix so percentage-free
+   rotate/scale animations orbit the ring's own center, not the page's.
+   ════════════════════════════════════════════════════════════════════════ */
+.veil-ov-origin { transform-box: fill-box; transform-origin: center; }
+/* Every overlay animation orbits its own center — the SVG default
+   (view-box origin) would fling scaled elements toward (0,0). */
+.veil-ov-spin,
+.veil-ov-spin-slow,
+.veil-ov-spin-fast,
+.veil-ov-spin-rev,
+.veil-ov-pulse,
+.veil-ov-twinkle,
+.veil-ov-flicker,
+.veil-ov-bob,
+.veil-ov-pulse-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes veil-ov-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.veil-ov-spin { animation: veil-ov-spin 14s linear infinite; }
+
+@keyframes veil-ov-spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+.veil-ov-spin-slow { animation: veil-ov-spin-slow 22s linear infinite; }
+
+@keyframes veil-ov-spin-fast {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.veil-ov-spin-fast { animation: veil-ov-spin-fast 9s linear infinite; }
+
+@keyframes veil-ov-spin-rev {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+.veil-ov-spin-rev { animation: veil-ov-spin-rev 18s linear infinite; }
+
+@keyframes veil-ov-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.25); opacity: 0.8; }
+}
+.veil-ov-pulse { animation: veil-ov-pulse 1.8s ease-in-out infinite; }
+
+@keyframes veil-ov-twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(0.78); }
+}
+.veil-ov-twinkle { animation: veil-ov-twinkle 2.2s ease-in-out infinite; }
+
+@keyframes veil-ov-flicker {
+  0%, 100% { opacity: 1; }
+  30%      { opacity: 0.55; }
+  55%      { opacity: 0.95; }
+  75%      { opacity: 0.65; }
+}
+.veil-ov-flicker { animation: veil-ov-flicker 0.9s ease-in-out infinite; }
+
+@keyframes veil-ov-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-2.5px) rotate(8deg); }
+}
+.veil-ov-bob { animation: veil-ov-bob 2.6s ease-in-out infinite; }
+
+@keyframes veil-ov-pulse-ring {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.05); opacity: 0.75; }
+}
+.veil-ov-pulse-ring { animation: veil-ov-pulse-ring 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .veil-ov-spin,
+  .veil-ov-spin-slow,
+  .veil-ov-spin-fast,
+  .veil-ov-spin-rev,
+  .veil-ov-pulse,
+  .veil-ov-twinkle,
+  .veil-ov-flicker,
+  .veil-ov-bob,
+  .veil-ov-pulse-ring {
+    animation: none !important;
+  }
+}

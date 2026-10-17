@@ -40,6 +40,7 @@ function msgAccount(u: LiveUser | undefined) {
     tag: null,
     tagColor: null,
     pfpAccessory: null,
+    pfpOverlay: null,
   }
 }
 

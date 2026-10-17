@@ -23,6 +23,7 @@ const FRIEND_SELECT = {
   tag: true,
   tagColor: true,
   pfpAccessory: true,
+  pfpOverlay: true,
 } as const
 
 type FriendProfile = {
@@ -35,6 +36,7 @@ type FriendProfile = {
   tag: string | null
   tagColor: string | null
   pfpAccessory: string | null
+  pfpOverlay: string | null
 }
 
 /** NEVER return a raw account row (it carries passwordHash!). Anything
@@ -49,6 +51,7 @@ function toFriendProfile(a: {
   tag?: string | null
   tagColor?: string | null
   pfpAccessory?: string | null
+  pfpOverlay?: string | null
 }): FriendProfile {
   return {
     id: a.id,
@@ -60,6 +63,7 @@ function toFriendProfile(a: {
     tag: a.tag ?? null,
     tagColor: a.tagColor ?? null,
     pfpAccessory: a.pfpAccessory ?? null,
+    pfpOverlay: a.pfpOverlay ?? null,
   }
 }
 

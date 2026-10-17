@@ -105,8 +105,8 @@
   .msg:hover{background:rgba(255,255,255,.025)}
   .msg.first{margin-top:10px}
   .msg .av{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
-    color:#fff;font-size:13px;font-weight:700;overflow:hidden;position:relative;background:#27272a}
-  .msg .av img{width:100%;height:100%;object-fit:cover}
+    color:#fff;font-size:13px;font-weight:700;position:relative;background:#27272a}
+  .msg .av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
   .msg .body{min-width:0;flex:1}
   .msg .head{display:flex;align-items:baseline;gap:8px}
   .msg .name{font-weight:700;font-size:13.5px}
@@ -147,8 +147,8 @@
     padding:5px 7px;transition:background .12s}
   .prow:hover{background:rgba(255,255,255,.05)}
   .prow .av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
-    color:#fff;font-size:11px;font-weight:700;overflow:hidden;position:relative;background:#27272a}
-  .prow .av img{width:100%;height:100%;object-fit:cover}
+    color:#fff;font-size:11px;font-weight:700;position:relative;background:#27272a}
+  .prow .av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
   .prow .dot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;
     border:2px solid var(--bg2);background:rgba(255,255,255,.25)}
   .prow.online .dot{background:var(--em);box-shadow:0 0 7px rgba(52,211,153,.7)}
@@ -169,7 +169,7 @@
   .req{display:flex;align-items:center;gap:8px;border:1px solid rgba(52,211,153,.25);
     background:var(--em-dim);border-radius:9px;padding:6px 8px;margin-bottom:5px}
   .req .av{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
-    color:#fff;font-size:10px;font-weight:700}
+    color:#fff;font-size:10px;font-weight:700;position:relative}
   .req .who{min-width:0;flex:1;font-size:11.5px}
   .req .who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .req .who span{display:block;font-size:9.5px;color:var(--em);opacity:.75}
@@ -181,7 +181,7 @@
   .outg{display:flex;align-items:center;gap:8px;border-radius:8px;padding:4px 8px;font-size:11.5px;color:var(--muted)}
   .outg:hover{background:rgba(255,255,255,.05)}
   .outg .av{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
-    color:#fff;font-size:9px;font-weight:700}
+    color:#fff;font-size:9px;font-weight:700;position:relative}
   .outg span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .outg button{color:var(--faint);font-size:13px}
   .outg button:hover{color:var(--rose)}
@@ -251,6 +251,50 @@
     background:linear-gradient(#fcd34d,#d97706);color:#451a03}
   .gbtn:disabled{opacity:.4}
   .ghint{font-size:9.5px;color:var(--faint);text-align:center;margin-top:6px;line-height:1.5}
+
+  /* ── avatar overlay decorations (shop) ── */
+  .ovring{position:absolute;left:-22%;top:-22%;width:144%;height:144%;pointer-events:none}
+  .ovring .ovs,.ovring .ovss,.ovring .ovsf,.ovring .ovsr,.ovring .ovp,.ovring .ovt,
+  .ovring .ovf,.ovring .ovb,.ovring .ovpr{transform-box:fill-box;transform-origin:center}
+  @keyframes ovspin{to{transform:rotate(360deg)}}
+  @keyframes ovspinrev{to{transform:rotate(-360deg)}}
+  @keyframes ovpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.8}}
+  @keyframes ovtwinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.78)}}
+  @keyframes ovflicker{0%,100%{opacity:1}30%{opacity:.55}55%{opacity:.95}75%{opacity:.65}}
+  @keyframes ovbob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2.5px) rotate(8deg)}}
+  @keyframes ovpulsering{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.75}}
+  .ovs{animation:ovspin 14s linear infinite}
+  .ovss{animation:ovspinrev 22s linear infinite}
+  .ovsf{animation:ovspin 9s linear infinite}
+  .ovsr{animation:ovspinrev 18s linear infinite}
+  .ovp{animation:ovpulse 1.8s ease-in-out infinite}
+  .ovt{animation:ovtwinkle 2.2s ease-in-out infinite}
+  .ovf{animation:ovflicker .9s ease-in-out infinite}
+  .ovb{animation:ovbob 2.6s ease-in-out infinite}
+  .ovpr{animation:ovpulsering 2.4s ease-in-out infinite}
+  @media (prefers-reduced-motion:reduce){
+    .ovs,.ovss,.ovsf,.ovsr,.ovp,.ovt,.ovf,.ovb,.ovpr{animation:none!important}
+  }
+
+  /* ── shop ── */
+  .shopsec{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;
+    color:var(--faint);margin:12px 2px 5px;display:flex;align-items:center;justify-content:space-between}
+  .shopsec:first-child{margin-top:0}
+  .shopoff{font-size:9.5px;color:var(--faint);text-decoration:underline;text-underline-offset:2px}
+  .srow{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:rgba(0,0,0,.2);
+    border-radius:11px;padding:8px;margin-bottom:5px}
+  .srow .pv{position:relative;width:34px;height:34px;flex-shrink:0;display:grid;place-items:center}
+  .srow .pv i{width:17px;height:17px;border-radius:50%;display:block}
+  .srow .nm{min-width:0;flex:1}
+  .srow .nm b{display:block;font-size:12px;font-weight:600}
+  .srow .nm span{display:block;font-size:9px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .srow .pr{font-size:10.5px;color:var(--acc2);font-weight:700;flex-shrink:0}
+  .srow .buy,.srow .worn{flex-shrink:0;border-radius:8px;padding:4px 10px;font-size:10.5px;font-weight:800}
+  .srow .buy{background:var(--acc);color:#0b0b16}
+  .srow .buy:disabled{opacity:.35}
+  .srow .worn{background:rgba(52,211,153,.18);color:var(--em)}
+  .srow .tagp{font-size:9px;font-weight:800;color:#fff;border-radius:4px;padding:2px 7px;letter-spacing:.5px}
+  .shopfoot{font-size:9.5px;color:var(--faint);text-align:center;margin-top:10px;line-height:1.5}
   .bjtable{border:1px solid rgba(253,230,138,.1);border-radius:14px;padding:10px;
     background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,197,66,.06), transparent 60%), rgba(255,255,255,.02)}
   .bjrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
@@ -410,6 +454,7 @@
         <div class="gtabs">
           <button class="gtab on" data-g="flip">🪙 Coin Flip</button>
           <button class="gtab" data-g="bj">♠ Blackjack</button>
+          <button class="gtab" data-g="shop">🛍 Shop</button>
         </div>
         <div id="g-flip">
           <div class="gscene">
@@ -438,6 +483,9 @@
           <div class="gres" id="bjRes" aria-live="polite"></div>
           <div id="bjCtl"></div>
           <p class="ghint">Dealer stands on 17 · double on your first two cards · the deck shuffles server-side.</p>
+        </div>
+        <div id="g-shop" hidden>
+          <div id="shopBody"><div class="empty">Loading the shop…</div></div>
         </div>
       </div>
     </aside>
@@ -659,6 +707,78 @@
     });
   }
 
+  /* ── avatar overlay decorations (vector-style rings, same ids as the shop) ── */
+  function ovPts(n, r, ph) {
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var a = (i / n) * Math.PI * 2 + (ph || 0);
+      out.push([50 + (r || 46) * Math.cos(a), 50 + (r || 46) * Math.sin(a)]);
+    }
+    return out;
+  }
+  var OV_DEFS = '<defs><linearGradient id="ovagrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+    '<stop offset="0%" stop-color="#f472b6"/><stop offset="33%" stop-color="#facc15"/>' +
+    '<stop offset="66%" stop-color="#34d399"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs>';
+  function ovRing(id) {
+    if (!id) return "";
+    var inner = "";
+    if (id === "hearts") {
+      inner = '<g class="ovs">' + ovPts(8).map(function (p, i) {
+        return '<g transform="translate(' + p[0] + " " + p[1] + ')"><g class="ovp" style="animation-delay:' + (i * 0.22) + 's">' +
+          '<path transform="scale(0.9)" fill="#f472b6" d="M0 4 C0 4 -5 0.5 -5 -2.5 C-5 -4.8 -3.2 -5.6 -1.6 -5 C-0.6 -4.6 0 -3.8 0 -3.8 C0 -3.8 0.6 -4.6 1.6 -5 C3.2 -5.6 5 -4.8 5 -2.5 C5 0.5 0 4 0 4 Z"/></g></g>';
+      }).join("") + "</g>";
+    } else if (id === "stars") {
+      inner = '<g class="ovss">' + ovPts(6).map(function (p, i) {
+        return '<g transform="translate(' + p[0] + " " + p[1] + ')"><g class="ovt" style="animation-delay:' + (i * 0.35) + 's">' +
+          '<path fill="#fbbf24" d="M0 -5.5 L1.6 -1.6 L5.7 -1.6 L2.4 0.9 L3.6 4.8 L0 2.4 L-3.6 4.8 L-2.4 0.9 L-5.7 -1.6 L-1.6 -1.6 Z"/></g></g>';
+      }).join("") + "</g>";
+    } else if (id === "flames") {
+      inner = '<g class="ovsf">' + ovPts(10).map(function (p, i) {
+        return '<g transform="translate(' + p[0] + " " + p[1] + ')"><g class="ovf" style="animation-delay:' + (i * 0.13) + 's">' +
+          '<path fill="' + (i % 2 ? "#fb923c" : "#f87171") + '" d="M0 -6 C2.2 -3.4 3.4 -1.4 3.2 0.8 C3 3.4 1.4 4.6 0 5.4 C-1.4 4.6 -3 3.4 -3.2 0.8 C-3.4 -1.4 -2.2 -3.4 0 -6 Z"/></g></g>';
+      }).join("") + "</g>";
+    } else if (id === "neon") {
+      inner = '<g class="ovpr"><circle cx="50" cy="50" r="46" fill="none" stroke="#22d3ee" stroke-width="2.5" opacity=".9" style="filter:drop-shadow(0 0 3px #22d3ee)"/>' +
+        '<circle cx="50" cy="50" r="41" fill="none" stroke="#67e8f9" stroke-width="1" stroke-dasharray="4 6" opacity=".7" class="ovss"/></g>';
+    } else if (id === "sakura") {
+      inner = '<g class="ovss">' + ovPts(8, 46, Math.PI / 8).map(function (p, i) {
+        return '<g transform="translate(' + p[0] + " " + p[1] + ') rotate(' + ((i * 360) / 8 + 30) + ')"><g class="ovb" style="animation-delay:' + (i * 0.3) + 's">' +
+          '<ellipse rx="3.2" ry="5" fill="' + (i % 2 ? "#f9a8d4" : "#fbcfe8") + '"/></g></g>';
+      }).join("") + "</g>";
+    } else if (id === "thunder") {
+      inner = '<g class="ovsf">' + ovPts(6).map(function (p, i) {
+        return '<g transform="translate(' + p[0] + " " + p[1] + ')"><g class="ovf" style="animation-delay:' + (i * 0.18) + 's">' +
+          '<polygon transform="scale(0.85)" fill="#facc15" points="0,-6 2.5,-1 0.5,-1 3,6 -3,0 -1,0 -3.5,6"/></g></g>';
+      }).join("") + "</g>";
+    } else if (id === "ice") {
+      inner = '<g class="ovss">' + ovPts(8).map(function (p, i) {
+        return '<g transform="translate(' + p[0] + " " + p[1] + ') rotate(' + ((i * 360) / 8) + ')"><g class="ovt" style="animation-delay:' + (i * 0.28) + 's">' +
+          '<polygon fill="' + (i % 2 ? "#a5f3fc" : "#7dd3fc") + '" points="0,-6.5 2.2,0 0,6.5 -2.2,0"/></g></g>';
+      }).join("") +
+        '<circle cx="50" cy="50" r="46" fill="none" stroke="#7dd3fc" stroke-width="0.8" opacity=".5"/></g>';
+    } else if (id === "aurora") {
+      inner = '<circle cx="50" cy="50" r="46" fill="none" stroke="url(#ovagrad)" stroke-width="3" stroke-linecap="round" stroke-dasharray="18 8" class="ovs"/>' +
+        ovPts(12).map(function (p, i) {
+          return '<circle r="' + (i % 3 === 0 ? 2 : 1.2) + '" fill="' + ["#f472b6", "#facc15", "#34d399", "#22d3ee"][i % 4] +
+            '" class="ovt" style="animation-delay:' + (i * 0.2) + 's" cx="' + p[0] + '" cy="' + p[1] + '"/>';
+        }).join("");
+    } else if (id === "gold") {
+      inner = '<g class="ovs"><circle cx="50" cy="50" r="46" fill="none" stroke="#d4a017" stroke-width="3.5" style="filter:drop-shadow(0 0 2.5px rgba(245,197,66,.8))"/>' +
+        '<circle cx="50" cy="50" r="41.5" fill="none" stroke="#fde68a" stroke-width="0.8" opacity=".7"/>' +
+        ovPts(8).map(function (p, i) {
+          return '<circle r="3.4" fill="' + ["#ef4444", "#34d399", "#60a5fa", "#eab308"][i % 4] +
+            '" stroke="#fde68a" stroke-width="0.8" class="ovt" style="animation-delay:' + (i * 0.3) + 's" cx="' + p[0] + '" cy="' + p[1] + '"/>';
+        }).join("") + "</g>";
+    } else if (id === "void") {
+      inner = '<g class="ovpr"><circle cx="50" cy="50" r="46" fill="none" stroke="#a78bfa" stroke-width="2" opacity=".85" style="filter:drop-shadow(0 0 4px #7c3aed)"/>' +
+        '<circle cx="50" cy="50" r="42" fill="none" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="2 5" class="ovsr"/>' +
+        ovPts(4).map(function (p, i) {
+          return '<circle r="2" fill="#a78bfa" class="ovt" style="animation-delay:' + (i * 0.4) + 's" cx="' + p[0] + '" cy="' + p[1] + '"/>';
+        }).join("") + "</g>";
+    } else return "";
+    return '<svg class="ovring" viewBox="0 0 100 100" aria-hidden="true">' + (id === "aurora" ? OV_DEFS : "") + inner + "</svg>";
+  }
+
   function renderMsgs() {
     var box = $("msgs");
     var atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
@@ -680,7 +800,7 @@
         : esc((dName(a) || "?")[0].toUpperCase());
       html +=
         '<div class="msg' + (grouped ? "" : " first") + (mine ? " mine" : "") + '">' +
-          '<div class="av" style="background:' + esc(a.avatarColor || "#27272a") + '">' + avInner + "</div>" +
+          '<div class="av" style="background:' + esc(a.avatarColor || "#27272a") + '">' + avInner + ovRing(a.pfpOverlay) + "</div>" +
           '<div class="body">' +
             (grouped ? "" :
               '<div class="head">' +
@@ -756,7 +876,7 @@
         ? '<img src="' + esc(m.avatarImage) + '" alt="" />'
         : esc((dName(m) || "?")[0].toUpperCase());
       return '<div class="prow' + (online ? " online" : "") + (S.account && m.id === S.account.id ? " mine" : "") + '">' +
-        '<div class="av" style="background:' + esc(m.avatarColor || "#27272a") + '">' + av + '<span class="dot"></span></div>' +
+        '<div class="av" style="background:' + esc(m.avatarColor || "#27272a") + '">' + av + ovRing(m.pfpOverlay) + '<span class="dot"></span></div>' +
         '<div class="nm"><b style="color:' + roleColor(m) + '">' + esc(dName(m)) + "</b>" +
         "<span>@" + esc(m.username || "") + "</span></div>" + pill + "</div>";
     };
@@ -809,7 +929,7 @@
         ? '<img src="' + esc(f.avatarImage) + '" alt="" />'
         : esc((dName(f) || "?")[0].toUpperCase());
       return '<div class="prow friendrow' + (S.onlineIds[f.id] ? " online" : "") + '">' +
-        '<div class="av" style="background:' + esc(f.avatarColor || "#27272a") + '">' + av + '<span class="dot"></span></div>' +
+        '<div class="av" style="background:' + esc(f.avatarColor || "#27272a") + '">' + av + ovRing(f.pfpOverlay) + '<span class="dot"></span></div>' +
         '<div class="nm"><b style="color:' + roleColor(f) + '">' + esc(dName(f)) + "</b><span>@" + esc(f.username) + "</span></div>" +
         '<button class="dm" data-dmuser="' + esc(f.username) + '" title="DM @' + esc(f.username) + '">✉</button>' +
         "</div>";
@@ -876,7 +996,7 @@
       var armed = armedId === "dm:" + d.id;
       return '<div class="prow dmrow' + (S.channel === d.id ? " on" : "") + '">' +
         '<button class="pmain" data-open="' + esc(d.id) + '">' +
-        '<div class="av" style="background:' + esc((other && other.avatarColor) || "#27272a") + '">' + av + "</div>" +
+        '<div class="av" style="background:' + esc((other && other.avatarColor) || "#27272a") + '">' + av + ovRing(other && other.pfpOverlay) + "</div>" +
         '<div class="nm"><b>' + esc(dmLabel(d)) + "</b><span>@" + esc((other && other.username) || "?") + "</span></div>" +
         "</button>" +
         (armed
@@ -1091,7 +1211,9 @@
     document.querySelectorAll(".gtab").forEach(function (b) { b.classList.toggle("on", b.dataset.g === t); });
     $("g-flip").hidden = t !== "flip";
     $("g-bj").hidden = t !== "bj";
+    $("g-shop").hidden = t !== "shop";
     if (t === "bj") bjStatus();
+    if (t === "shop") loadShop();
   }
   document.querySelectorAll(".gtab").forEach(function (b) {
     b.addEventListener("click", function () { gameTab(b.dataset.g); });
@@ -1262,6 +1384,92 @@
   }
   renderFlip();
   renderBjControls();
+
+  /* ── shop — spend coins on avatar overlays, tags, accessories ── */
+  var SHOP = { items: [], loaded: false, busy: false };
+  function loadShop() {
+    if (SHOP.loaded) { renderShop(); return; }
+    api("/api/chat-shop").then(function (d) {
+      SHOP.items = d.items || [];
+      SHOP.loaded = true;
+      renderShop();
+    }).catch(function () {
+      $("shopBody").innerHTML = '<div class="empty">Couldn\'t reach the shop — check the connection.</div>';
+    });
+  }
+  function shopBuy(itemId) {
+    if (SHOP.busy) return;
+    SHOP.busy = true;
+    post("/api/chat-shop", { token: S.token, itemId: itemId }).then(function (d) {
+      setAccount(d.account);
+      toast("Equipped " + (d.item && d.item.label ? d.item.label : "it") + "!");
+      renderShop();
+      loadMembers();
+      SHOP.busy = false;
+    }).catch(function (e) {
+      toast(e.message || "Purchase failed.", true);
+      SHOP.busy = false;
+    });
+  }
+  function shopUnequip(slot) {
+    if (SHOP.busy) return;
+    SHOP.busy = true;
+    post("/api/chat-shop", { token: S.token, action: "unequip", itemId: slot }).then(function (d) {
+      setAccount(d.account);
+      toast("Took it off.");
+      renderShop();
+      loadMembers();
+      SHOP.busy = false;
+    }).catch(function (e) {
+      toast(e.message || "Couldn't unequip.", true);
+      SHOP.busy = false;
+    });
+  }
+  function shopRow(it) {
+    var acc = S.account || {};
+    var equipped = it.type === "overlay" ? acc.pfpOverlay === it.overlay
+      : it.type === "tag" ? acc.tag === it.tagText
+      : acc.pfpAccessory === it.accessory;
+    var afford = (acc.coins || 0) >= it.price;
+    var left;
+    if (it.type === "overlay") {
+      left = '<span class="pv"><i style="background:' + esc(acc.avatarColor || "#f97316") + '"></i>' + ovRing(it.overlay) + "</span>";
+    } else if (it.type === "tag") {
+      left = '<span class="tagp" style="background:' + esc(it.tagColor || "#6b7280") + '">' + esc(it.tagText) + "</span>";
+    } else {
+      left = '<span class="pv"><i style="background:rgba(255,255,255,.08)"></i></span>';
+    }
+    var sub = it.type === "overlay" ? (it.desc || "Avatar decoration")
+      : it.type === "tag" ? "Name tag" : "PFP accessory";
+    return '<div class="srow">' + left +
+      '<div class="nm"><b>' + esc(it.label) + "</b><span>" + esc(sub) + "</span></div>" +
+      '<span class="pr">🪙 ' + it.price.toLocaleString() + "</span>" +
+      (equipped
+        ? '<span class="worn">' + (it.type === "overlay" ? "Worn" : "On") + "</span>"
+        : '<button class="buy" data-buy="' + esc(it.id) + '"' + (afford ? "" : " disabled") + ">Buy</button>") +
+      "</div>";
+  }
+  function renderShop() {
+    var acc = S.account || {};
+    var ov = SHOP.items.filter(function (i) { return i.type === "overlay"; });
+    var tg = SHOP.items.filter(function (i) { return i.type === "tag"; });
+    var ax = SHOP.items.filter(function (i) { return i.type === "accessory"; });
+    var head = function (label, slot, worn) {
+      return '<div class="shopsec"><span>' + label + "</span>" +
+        (worn ? '<button class="shopoff" data-off="' + slot + '">take off</button>' : "") + "</div>";
+    };
+    $("shopBody").innerHTML =
+      head("Avatar overlays", "overlay", acc.pfpOverlay) + ov.map(shopRow).join("") +
+      head("Name tags", "tag", acc.tag) + tg.map(shopRow).join("") +
+      head("PFP accessories", "accessory", acc.pfpAccessory) + ax.map(shopRow).join("") +
+      '<p class="shopfoot">Purchases are permanent — re-equipping is free. Earn coins: daily reward, chatting, the games… and 3-5 coins every few minutes just browsing.</p>';
+  }
+  $("shopBody").addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    if (b.dataset.buy) shopBuy(b.dataset.buy);
+    if (b.dataset.off) shopUnequip(b.dataset.off);
+  });
 
   /* ── go ── */
   boot();

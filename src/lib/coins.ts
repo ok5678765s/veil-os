@@ -21,6 +21,7 @@ export type CoinReason =
   | "coinflip_loss"
   | "message_reward"
   | "proxy_reward"
+  | "proxy_earn"
   | "daily_reward"
   | `shop_purchase:${string}`
 
@@ -33,6 +34,7 @@ const KNOWN_REASONS = new Set([
   "coinflip_loss",
   "message_reward",
   "proxy_reward",
+  "proxy_earn",
   "daily_reward",
 ])
 

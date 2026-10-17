@@ -35,6 +35,7 @@ import { useTabCloak } from "@/lib/veil/tab-cloak";
 import {
   isArcadeSource,
   isVeilAppUrl,
+  readKeepSession,
   uid,
   viewerHeaders,
   type HistoryResponse,
@@ -243,18 +244,12 @@ export default function Home() {
         }
         return; // same-tab recovery wins — skip the cross-session path
       }
-      // Default flipped (owner request 2026-10-17): tabs ALWAYS come back
-      // unless the user explicitly opted into the reset (Settings ›
-      // Browsing › "Start page" writes veil:keep-session=0). Being dumped
-      // on the start page after a restart was the standing complaint.
-      const keep = (() => {
-        try {
-          return window.localStorage.getItem("veil:keep-session") !== "0";
-        } catch {
-          return true;
-        }
-      })();
-      if (!keep) {
+      // Default flipped (owner request 2026-10-17 hardening): tabs ALWAYS
+      // come back unless the user explicitly re-opted into the reset AFTER
+      // the v2 marker shipped (Settings › Browsing › "Start page"). A bare
+      // "0" without the marker is a pre-flip leftover that kept dumping
+      // the user home on every tab switch — readKeepSession() heals it.
+      if (!readKeepSession()) {
         localStorage.removeItem(STORAGE_KEY);
       } else {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -392,11 +387,7 @@ export default function Home() {
   // mirror entirely. A failed boot GET never blind-wipes an existing row:
   // empty state is only pushed once the sync is known-good.
   const keepSessionLive = React.useCallback(() => {
-    try {
-      return window.localStorage.getItem("veil:keep-session") !== "0";
-    } catch {
-      return true;
-    }
+    return readKeepSession();
   }, []);
   const buildSessionPayload = React.useCallback(() => {
     return JSON.stringify({
@@ -883,15 +874,13 @@ export default function Home() {
     };
     const onVis = () => {
       if (document.visibilityState !== "hidden") return;
-      let keep = true;
-      try {
-        // Default flipped to KEEP (owner request 2026-10-13): switching away
-        // and coming back must never dump the user on the start page. Only
-        // an explicit "0" (Settings › Browsing › "Start page") resets.
-        keep = window.localStorage.getItem("veil:keep-session") !== "0";
-      } catch {
-        /* private mode — default keep */
-      }
+      // Default KEEP (owner request 2026-10-13, hardened 2026-10-17): only
+      // an explicit post-v2 "Start page" choice (Settings › Browsing — the
+      // marker is stamped by writeKeepSession) ever resets. A legacy "0"
+      // without the marker is healed away by readKeepSession() — THAT stale
+      // value was the "it keeps restarting to home screen" bug: the sweep
+      // fired on every tab/app switch and wiped the live session.
+      const keep = readKeepSession();
       if (!keep) {
         if (section) closeSection();
         if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
@@ -939,6 +928,77 @@ export default function Home() {
     window.addEventListener("veil:proxy-engine", onEngine);
     return () => window.removeEventListener("veil:proxy-engine", onEngine);
   }, []);
+
+  // ----- browsing rewards (3-5 coins per 1-5 minutes on the proxy) -----
+  // While a proxied tab is open, tick the coin server every 30s. The
+  // SERVER owns the schedule (proxyNextAwardAt on the account), so the
+  // client can only report "I'm browsing" — never speed up the payouts.
+  // An award updates the stored chat account, notifies any mounted ChatApp
+  // via its existing account-sync event, and pops a floating +🪙 chip.
+  const [proxyGain, setProxyGain] = React.useState<{ id: number; amount: number } | null>(null);
+  React.useEffect(() => {
+    if (mode !== "browse") return;
+    let stopped = false;
+    const tick = async () => {
+      if (stopped || document.visibilityState === "hidden") return;
+      let token = "";
+      try {
+        const raw = window.localStorage.getItem("veil:chat-account");
+        if (raw) {
+          const parsed = JSON.parse(raw) as { token?: unknown };
+          if (typeof parsed.token === "string" && parsed.token) token = parsed.token;
+        }
+      } catch {
+        /* not logged in / corrupt store — nothing to tick */
+      }
+      if (!token) return;
+      try {
+        const res = await fetch("/api/chat-coins", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ token, action: "proxy_tick" }),
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          awarded?: number;
+          account?: { username?: unknown } & Record<string, unknown>;
+        } | null;
+        const gained = Math.floor(Number(data?.awarded) || 0);
+        if (!gained || !data?.account) return;
+        // Refresh the stored chat account so the header balance is live
+        // the next time the chat opens…
+        try {
+          const raw = window.localStorage.getItem("veil:chat-account");
+          if (raw) {
+            const parsed = JSON.parse(raw) as { account?: unknown };
+            window.localStorage.setItem(
+              "veil:chat-account",
+              JSON.stringify({ ...parsed, account: data.account })
+            );
+          }
+        } catch {
+          /* best effort */
+        }
+        // …and any ALREADY-mounted ChatApp adopts it right now.
+        window.dispatchEvent(
+          new CustomEvent("veil:chat-account-updated", { detail: data.account })
+        );
+        const gain = { id: Date.now(), amount: gained };
+        setProxyGain(gain);
+        window.setTimeout(() => {
+          setProxyGain((g) => (g && g.id === gain.id ? null : g));
+        }, 3200);
+      } catch {
+        /* offline — the next tick retries */
+      }
+    };
+    void tick();
+    const t = setInterval(() => void tick(), 30_000);
+    return () => {
+      stopped = true;
+      clearInterval(t);
+    };
+  }, [mode]);
 
   // ----- section renderer -----
   const renderSection = (id: SectionId) => {
@@ -1065,6 +1125,31 @@ export default function Home() {
           </div>
         );
       })}
+
+      {/* Browsing-reward chip — pops in bottom-right when the proxy pays
+          out (3-5 coins every 1-5 minutes of active browsing). */}
+      <AnimatePresence>
+        {proxyGain && (
+          <motion.div
+            key={proxyGain.id}
+            initial={{ opacity: 0, y: 24, scale: 0.7 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -18, scale: 0.85 }}
+            transition={{ type: "spring", stiffness: 380, damping: 26 }}
+            className="pointer-events-none fixed bottom-6 right-6 z-[70] flex items-center gap-2 rounded-full border border-amber-300/30 bg-zinc-950/90 py-2 pl-3 pr-4 shadow-[0_8px_30px_-8px_rgba(245,197,66,0.5)] backdrop-blur-md"
+            role="status"
+            aria-live="polite"
+          >
+            <span className="veil-coin-flip text-lg leading-none">🪙</span>
+            <span className="text-sm font-bold tabular-nums text-amber-200">
+              +{proxyGain.amount}
+            </span>
+            <span className="text-[11px] font-medium uppercase tracking-wider text-amber-200/60">
+              browsing
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Global docked music player (listens for veil:music-play) */}
       <VeilMusicPlayer />

@@ -69,9 +69,11 @@ import {
   PROXY_ENGINES,
   SEARCH_ENGINES,
   proxyEngineId,
+  readKeepSession,
   searchEngineId,
   setProxyEngineId,
   viewerHeaders,
+  writeKeepSession,
   type ProxyEngineId,
 } from "@/lib/veil/shared";
 import {
@@ -736,7 +738,16 @@ function SessionSyncCard() {
           window.localStorage.removeItem("veil:section");
         }
         if (data.state?.keep === false) {
-          window.localStorage.setItem("veil:keep-session", "0");
+          // Adopt the other place's privacy choice — written through the
+          // v2 helper so the value is actually honored (a bare "0" without
+          // the marker gets healed away as stale legacy).
+          writeKeepSession(false);
+        } else {
+          try {
+            window.localStorage.removeItem("veil:keep-session");
+          } catch {
+            /* best effort */
+          }
         }
       } catch {
         /* private mode — the ?vv= identity adoption below still works */
@@ -866,8 +877,9 @@ function BrowsingTab() {
     try {
       // Default is KEEP — switching away and returning must never dump the
       // user on the start page (owner request 2026-10-13). Only an explicit
-      // "0" (the "Start page" choice below) opts back into the reset.
-      setKeepSession(window.localStorage.getItem("veil:keep-session") !== "0");
+      // post-v2 "Start page" choice (writeKeepSession stamps the marker)
+      // opts back into the reset; a pre-v2 leftover "0" is healed away.
+      setKeepSession(readKeepSession());
     } catch {
       /* private mode — defaults */
     }
@@ -892,11 +904,9 @@ function BrowsingTab() {
         onChange={(id) =>
           save(() => {
             setKeepSession(id === "keep");
-            try {
-              window.localStorage.setItem("veil:keep-session", id === "keep" ? "1" : "0");
-            } catch {
-              /* ignore */
-            }
+            // writeKeepSession stamps the v2 marker — from now on this
+            // EXPLICIT choice is honored by the visibility sweep (page.tsx).
+            writeKeepSession(id === "keep");
           })
         }
       />

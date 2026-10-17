@@ -120,6 +120,8 @@ type ChatAccount = {
   tag: string | null
   tagColor: string | null
   pfpAccessory: string | null
+  /** purchased avatar overlay decoration id ("hearts", "flames", …) */
+  pfpOverlay: string | null
   /** restored-from-backup placeholder — name is free to re-register */
   legacy?: boolean
   createdAt: string
@@ -136,6 +138,7 @@ type ChatMessageAccount = {
   tag: string | null
   tagColor: string | null
   pfpAccessory: string | null
+  pfpOverlay?: string | null
   legacy?: boolean
 }
 
@@ -204,6 +207,14 @@ type ShopItem =
       accessory: string
       price: number
     }
+  | {
+      id: string
+      type: "overlay"
+      label: string
+      overlay: string
+      price: number
+      desc?: string
+    }
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -250,6 +261,211 @@ const ACCESSORY_EMOJI: Record<
   partyhat: { emoji: "🎉", top: "-10px", left: "0", size: "0.85rem" },
   witchhat: { emoji: "🧙", top: "-14px", left: "0", size: "0.9rem" },
   flower: { emoji: "🌸", top: "-6px", left: "-4px", size: "0.85rem" },
+}
+
+/* ── Avatar overlay decorations ─────────────────────────────────────────
+ * Vector-style rings/orbits that wrap the whole avatar (Shop › Overlays).
+ * Drawn as pure SVG in a 100×100 viewBox — self-contained, no external
+ * assets — and animated with the veil-ov-* keyframes in globals.css.
+ * IDs match the shop catalog's overlay item ids (chat-shop route). */
+const OVERLAY_IDS = [
+  "hearts", "stars", "flames", "neon", "sakura",
+  "thunder", "ice", "aurora", "gold", "void",
+] as const
+type OverlayId = (typeof OVERLAY_IDS)[number]
+
+/** Points evenly spaced on the r=46 circle (viewBox 100×100). */
+function ringPoints(count: number, radius = 46, phase = 0) {
+  return Array.from({ length: count }, (_, i) => {
+    const a = (i / count) * Math.PI * 2 + phase
+    return { x: 50 + radius * Math.cos(a), y: 50 + radius * Math.sin(a) }
+  })
+}
+
+function OverlaySvg({ id }: { id: OverlayId }) {
+  switch (id) {
+    case "hearts": {
+      const pts = ringPoints(8)
+      return (
+        <g className="veil-ov-spin veil-ov-origin">
+          {pts.map((p, i) => (
+            <g key={i} transform={`translate(${p.x} ${p.y})`}>
+              <g className="veil-ov-pulse" style={{ animationDelay: `${i * 0.22}s` }}>
+                <path
+                  d="M0 4 C0 4 -5 0.5 -5 -2.5 C-5 -4.8 -3.2 -5.6 -1.6 -5 C-0.6 -4.6 0 -3.8 0 -3.8 C0 -3.8 0.6 -4.6 1.6 -5 C3.2 -5.6 5 -4.8 5 -2.5 C5 0.5 0 4 0 4 Z"
+                  fill="#f472b6"
+                  transform="scale(0.9)"
+                />
+              </g>
+            </g>
+          ))}
+        </g>
+      )
+    }
+    case "stars": {
+      const pts = ringPoints(6)
+      return (
+        <g className="veil-ov-spin-slow veil-ov-origin">
+          {pts.map((p, i) => (
+            <g key={i} transform={`translate(${p.x} ${p.y})`}>
+              <g className="veil-ov-twinkle" style={{ animationDelay: `${i * 0.35}s` }}>
+                <path
+                  d="M0 -5.5 L1.6 -1.6 L5.7 -1.6 L2.4 0.9 L3.6 4.8 L0 2.4 L-3.6 4.8 L-2.4 0.9 L-5.7 -1.6 L-1.6 -1.6 Z"
+                  fill="#fbbf24"
+                />
+              </g>
+            </g>
+          ))}
+        </g>
+      )
+    }
+    case "flames": {
+      const pts = ringPoints(10)
+      return (
+        <g className="veil-ov-spin-fast veil-ov-origin">
+          {pts.map((p, i) => (
+            <path
+              key={i}
+              d="M0 -6 C2.2 -3.4 3.4 -1.4 3.2 0.8 C3 3.4 1.4 4.6 0 5.4 C-1.4 4.6 -3 3.4 -3.2 0.8 C-3.4 -1.4 -2.2 -3.4 0 -6 Z"
+              fill={i % 2 ? "#fb923c" : "#f87171"}
+              className="veil-ov-flicker"
+              style={{ animationDelay: `${i * 0.13}s` }}
+              transform={`translate(${p.x} ${p.y})`}
+            />
+          ))}
+        </g>
+      )
+    }
+    case "neon":
+      return (
+        <g className="veil-ov-pulse-ring veil-ov-origin">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#22d3ee" strokeWidth="2.5" opacity="0.9" style={{ filter: "drop-shadow(0 0 3px #22d3ee)" }} />
+          <circle cx="50" cy="50" r="41" fill="none" stroke="#67e8f9" strokeWidth="1" strokeDasharray="4 6" opacity="0.7" className="veil-ov-spin-slow veil-ov-origin" />
+        </g>
+      )
+    case "sakura": {
+      const pts = ringPoints(8, 46, Math.PI / 8)
+      return (
+        <g className="veil-ov-spin-slow veil-ov-origin">
+          {pts.map((p, i) => (
+            <g key={i} transform={`translate(${p.x} ${p.y}) rotate(${(i * 360) / 8 + 30})`}>
+              <g className="veil-ov-bob" style={{ animationDelay: `${i * 0.3}s` }}>
+                <ellipse rx="3.2" ry="5" fill={i % 2 ? "#f9a8d4" : "#fbcfe8"} />
+              </g>
+            </g>
+          ))}
+        </g>
+      )
+    }
+    case "thunder": {
+      const pts = ringPoints(6)
+      return (
+        <g className="veil-ov-spin-fast veil-ov-origin">
+          {pts.map((p, i) => (
+            <polygon
+              key={i}
+              points="0,-6 2.5,-1 0.5,-1 3,6 -3,0 -1,0 -3.5,6"
+              fill="#facc15"
+              className="veil-ov-flicker"
+              style={{ animationDelay: `${i * 0.18}s` }}
+              transform={`translate(${p.x} ${p.y}) scale(0.85)`}
+            />
+          ))}
+        </g>
+      )
+    }
+    case "ice": {
+      const pts = ringPoints(8)
+      return (
+        <g className="veil-ov-spin-slow veil-ov-origin">
+          {pts.map((p, i) => (
+            <g key={i} transform={`translate(${p.x} ${p.y}) rotate(${(i * 360) / 8})`}>
+              <g className="veil-ov-twinkle" style={{ animationDelay: `${i * 0.28}s` }}>
+                <polygon points="0,-6.5 2.2,0 0,6.5 -2.2,0" fill={i % 2 ? "#a5f3fc" : "#7dd3fc"} />
+              </g>
+            </g>
+          ))}
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#7dd3fc" strokeWidth="0.8" opacity="0.5" />
+        </g>
+      )
+    }
+    case "aurora": {
+      const pts = ringPoints(12)
+      return (
+        <g>
+          <circle cx="50" cy="50" r="46" fill="none" stroke="url(#ov-aurora-grad)" strokeWidth="3" strokeLinecap="round" strokeDasharray="18 8" className="veil-ov-spin veil-ov-origin" />
+          {pts.map((p, i) => (
+            <circle
+              key={i}
+              r={i % 3 === 0 ? 2 : 1.2}
+              fill={["#f472b6", "#facc15", "#34d399", "#22d3ee"][i % 4]}
+              className="veil-ov-twinkle"
+              style={{ animationDelay: `${i * 0.2}s` }}
+              cx={p.x}
+              cy={p.y}
+            />
+          ))}
+        </g>
+      )
+    }
+    case "gold":
+      return (
+        <g className="veil-ov-spin veil-ov-origin">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#d4a017" strokeWidth="3.5" style={{ filter: "drop-shadow(0 0 2.5px rgba(245,197,66,0.8))" }} />
+          <circle cx="50" cy="50" r="41.5" fill="none" stroke="#fde68a" strokeWidth="0.8" opacity="0.7" />
+          {ringPoints(8).map((p, i) => (
+            <circle
+              key={i}
+              r="3.4"
+              fill={["#ef4444", "#34d399", "#60a5fa", "#eab308"][i % 4]}
+              stroke="#fde68a"
+              strokeWidth="0.8"
+              className="veil-ov-twinkle"
+              style={{ animationDelay: `${i * 0.3}s` }}
+              cx={p.x}
+              cy={p.y}
+            />
+          ))}
+        </g>
+      )
+    case "void":
+      return (
+        <g className="veil-ov-pulse-ring veil-ov-origin">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#a78bfa" strokeWidth="2" opacity="0.85" style={{ filter: "drop-shadow(0 0 4px #7c3aed)" }} />
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#c4b5fd" strokeWidth="1" strokeDasharray="2 5" className="veil-ov-spin-rev veil-ov-origin" />
+          {ringPoints(4).map((p, i) => (
+            <circle key={i} r="2" fill="#a78bfa" className="veil-ov-twinkle" style={{ animationDelay: `${i * 0.4}s` }} cx={p.x} cy={p.y} />
+          ))}
+        </g>
+      )
+  }
+}
+
+/** The full-frame overlay wrapper — sized to the avatar, ring drawn just
+ *  outside it. `preview` disables pointer events is already default; it
+ *  only exists to keep the shop grid clones visually identical. */
+function AvatarOverlay({ id, ariaHidden = true }: { id: string; ariaHidden?: boolean }) {
+  if (!OVERLAY_IDS.includes(id as OverlayId)) return null
+  return (
+    <svg
+      aria-hidden={ariaHidden}
+      viewBox="0 0 100 100"
+      className="pointer-events-none absolute"
+      style={{ inset: "-22%", width: "144%", height: "144%" }}
+    >
+      {id === "aurora" && (
+        <defs>
+          <linearGradient id="ov-aurora-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f472b6" />
+            <stop offset="33%" stopColor="#facc15" />
+            <stop offset="66%" stopColor="#34d399" />
+            <stop offset="100%" stopColor="#22d3ee" />
+          </linearGradient>
+        </defs>
+      )}
+      <OverlaySvg id={id as OverlayId} />
+    </svg>
+  )
 }
 
 const EMOJI_SET = [
@@ -777,6 +993,7 @@ function loadStoredAccount(): { account: ChatAccount; token: string } | null {
           tag: a.tag ?? null,
           tagColor: a.tagColor ?? null,
           pfpAccessory: a.pfpAccessory ?? null,
+          pfpOverlay: a.pfpOverlay ?? null,
           createdAt: a.createdAt ?? new Date(0).toISOString(),
         }
         return { account, token: parsed.token }
@@ -855,6 +1072,7 @@ export function AvatarWithAccessory({
     avatarColor: string
     avatarImage: string | null
     pfpAccessory: string | null
+    pfpOverlay?: string | null
     displayName?: string
     username?: string
   }
@@ -862,6 +1080,7 @@ export function AvatarWithAccessory({
   className?: string
 }) {
   const acc = ACCESSORY_EMOJI[account.pfpAccessory || ""]
+  const overlay = account.pfpOverlay || ""
   const name =
     (account.displayName && account.displayName.trim()) ||
     account.username ||
@@ -887,6 +1106,7 @@ export function AvatarWithAccessory({
           {initials(name)}
         </div>
       )}
+      {overlay && <AvatarOverlay id={overlay} />}
       {acc && (
         <span
           aria-hidden
@@ -1546,6 +1766,40 @@ function ShopModal({
   onClose: () => void
   toast: (msg: string, kind?: "ok" | "err") => void
 }) {
+  return (
+    <ModalShell
+      title="Veil Shop"
+      icon={<ShoppingBag className="h-4 w-4 text-orange-400" />}
+      onClose={onClose}
+      maxWidth="max-w-2xl"
+    >
+      <ShopPanel
+        account={account}
+        token={token}
+        onAccount={onAccount}
+        onProfileUpdated={onProfileUpdated}
+        toast={toast}
+      />
+    </ModalShell>
+  )
+}
+
+/** The shop body — used by BOTH the standalone Shop modal and the Shop tab
+ *  inside the Games modal (owner ask 2026-10-17: "add to gambling or games
+ *  a new one called shop"). One source of truth for catalog + previews. */
+function ShopPanel({
+  account,
+  token,
+  onAccount,
+  onProfileUpdated,
+  toast,
+}: {
+  account: ChatAccount
+  token: string
+  onAccount: (a: ChatAccount) => void
+  onProfileUpdated?: () => void
+  toast: (msg: string, kind?: "ok" | "err") => void
+}) {
   const [items, setItems] = useState<ShopItem[]>([])
   const [loading, setLoading] = useState(true)
   const [buying, setBuying] = useState<string | null>(null)
@@ -1577,9 +1831,9 @@ function ShopModal({
         },
       )
       onAccount(data.account)
-      // Refresh members so the new accessory shows in the players tab right away.
+      // Refresh members so the new decoration shows in the players tab right away.
       onProfileUpdated?.()
-      toast(`Purchased ${item.label}!`, "ok")
+      toast(`Equipped ${item.label}!`, "ok")
     } catch (e) {
       toast(e instanceof Error ? e.message : "Purchase failed.", "err")
     } finally {
@@ -1587,18 +1841,32 @@ function ShopModal({
     }
   }
 
+  const unequip = async (slot: "tag" | "accessory" | "overlay") => {
+    setBuying(`unequip:${slot}`)
+    try {
+      const data = await apiFetch<{ account: ChatAccount }>("/api/chat-shop", {
+        method: "POST",
+        body: JSON.stringify({ token, action: "unequip", itemId: slot }),
+      })
+      onAccount(data.account)
+      onProfileUpdated?.()
+      toast("Took it off.", "ok")
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Couldn't unequip.", "err")
+    } finally {
+      setBuying(null)
+    }
+  }
+
   const tags = items.filter((i) => i.type === "tag")
   const accessories = items.filter((i) => i.type === "accessory")
+  const overlays = items.filter((i) => i.type === "overlay")
   const equippedTag = account.tag
   const equippedAccessory = account.pfpAccessory
+  const equippedOverlay = account.pfpOverlay
 
   return (
-    <ModalShell
-      title="Veil Shop"
-      icon={<ShoppingBag className="h-4 w-4 text-orange-400" />}
-      onClose={onClose}
-      maxWidth="max-w-2xl"
-    >
+    <div>
       {/* key={coins} — the balance pill flashes (level-flash) and the
           coin emoji 720°-flips every time the balance changes. */}
       <div key={account.coins} className="veil-level-flash mb-4 flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-3">
@@ -1615,9 +1883,86 @@ function ShopModal({
       ) : (
         <div className="space-y-6">
           <section>
-            <h4 className="veil-text-shine mb-2 text-xs font-semibold uppercase tracking-wide text-white/50">
-              Name Tags
-            </h4>
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="veil-text-shine text-xs font-semibold uppercase tracking-wide text-white/50">
+                Avatar Overlays
+              </h4>
+              {equippedOverlay && (
+                <button
+                  onClick={() => void unequip("overlay")}
+                  disabled={buying === "unequip:overlay"}
+                  className="rounded-md px-2 py-0.5 text-[11px] text-white/40 underline-offset-2 hover:text-white/70 hover:underline"
+                >
+                  take off
+                </button>
+              )}
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {overlays.map((o) => {
+                const equipped = equippedOverlay === o.overlay
+                const afford = account.coins >= o.price
+                return (
+                  <div
+                    key={o.id}
+                    className="veil-hover-lift veil-hover-tilt veil-border-dance flex items-center justify-between rounded-xl border border-white/10 bg-black/20 p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* live preview — the exact SVG ring that wraps the avatar */}
+                      <div className="relative grid h-11 w-11 shrink-0 place-items-center">
+                        <div
+                          className="rounded-full"
+                          style={{
+                            width: 22,
+                            height: 22,
+                            background: `linear-gradient(135deg, ${account.avatarColor}, #18181b)`,
+                          }}
+                        />
+                        <AvatarOverlay id={o.overlay} />
+                      </div>
+                      <div className="flex min-w-0 flex-col">
+                        <span className="text-sm font-medium">{o.label}</span>
+                        <span className="truncate text-[11px] text-white/40">
+                          {o.desc || "Avatar decoration"}
+                        </span>
+                        <span className="text-xs text-white/50">
+                          🪙 {o.price.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                    {equipped ? (
+                      <span className="shrink-0 rounded-md bg-emerald-500/20 px-2 py-1 text-xs text-emerald-300">
+                        Worn
+                      </span>
+                    ) : (
+                      <button
+                        disabled={!afford || buying === o.id}
+                        onClick={() => void buy(o)}
+                        className="veil-press veil-hover-glow shrink-0 rounded-md bg-orange-400 px-3 py-1 text-xs font-semibold text-black disabled:opacity-40"
+                      >
+                        {buying === o.id ? "…" : "Buy"}
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+
+          <section>
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="veil-text-shine text-xs font-semibold uppercase tracking-wide text-white/50">
+                Name Tags
+              </h4>
+              {equippedTag && (
+                <button
+                  onClick={() => void unequip("tag")}
+                  disabled={buying === "unequip:tag"}
+                  className="rounded-md px-2 py-0.5 text-[11px] text-white/40 underline-offset-2 hover:text-white/70 hover:underline"
+                >
+                  take off
+                </button>
+              )}
+            </div>
             <div className="grid gap-2 sm:grid-cols-2">
               {tags.map((t) => {
                 const equipped = equippedTag === t.tagText
@@ -1653,9 +1998,20 @@ function ShopModal({
           </section>
 
           <section>
-            <h4 className="veil-text-shine mb-2 text-xs font-semibold uppercase tracking-wide text-white/50">
-              PFP Accessories
-            </h4>
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="veil-text-shine text-xs font-semibold uppercase tracking-wide text-white/50">
+                PFP Accessories
+              </h4>
+              {equippedAccessory && (
+                <button
+                  onClick={() => void unequip("accessory")}
+                  disabled={buying === "unequip:accessory"}
+                  className="rounded-md px-2 py-0.5 text-[11px] text-white/40 underline-offset-2 hover:text-white/70 hover:underline"
+                >
+                  take off
+                </button>
+              )}
+            </div>
             <div className="grid gap-2 sm:grid-cols-2">
               {accessories.map((a) => {
                 const equipped = equippedAccessory === a.accessory
@@ -1695,9 +2051,14 @@ function ShopModal({
               })}
             </div>
           </section>
+
+          <p className="text-center text-[11px] leading-relaxed text-white/30">
+            Purchases are permanent — re-equipping anything you already own is always free. Earn coins with the daily
+            reward, chatting, the games… and just browsing: 3-5 coins every few minutes on the proxy.
+          </p>
         </div>
       )}
-    </ModalShell>
+    </div>
   )
 }
 
@@ -1819,6 +2180,7 @@ function ProfileModal({
                 avatarColor: account.avatarColor,
                 avatarImage,
                 pfpAccessory: account.pfpAccessory,
+                pfpOverlay: account.pfpOverlay,
                 displayName: displayNameInput,
                 username: account.username,
               }}
@@ -2506,6 +2868,7 @@ function PinnedPanel({
                     avatarColor: m.account.avatarColor,
                     avatarImage: m.account.avatarImage,
                     pfpAccessory: m.account.pfpAccessory,
+                    pfpOverlay: m.account.pfpOverlay ?? null,
                     displayName: m.account.displayName,
                     username: m.account.username,
                   }}
@@ -3744,6 +4107,7 @@ const MessageRow = memo(function MessageRow({
                 avatarColor: msg.account.avatarColor,
                 avatarImage: msg.account.avatarImage,
                 pfpAccessory: msg.account.pfpAccessory,
+                pfpOverlay: msg.account.pfpOverlay ?? null,
                 displayName: msg.account.displayName,
                 username: msg.account.username,
               }}
@@ -4216,6 +4580,7 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
         tag: null,
         tagColor: null,
         pfpAccessory: null,
+        pfpOverlay: null,
         createdAt: new Date(0).toISOString(),
       })),
     [liveMembers],
@@ -4685,6 +5050,7 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
           tag: known?.tag ?? null,
           tagColor: known?.tagColor ?? null,
           pfpAccessory: known?.pfpAccessory ?? null,
+          pfpOverlay: known?.pfpOverlay ?? null,
         },
       }
       setMessages((prev) =>
@@ -5267,6 +5633,7 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
           tag: fromMessage.account.tag,
           tagColor: fromMessage.account.tagColor,
           pfpAccessory: fromMessage.account.pfpAccessory,
+          pfpOverlay: fromMessage.account.pfpOverlay ?? null,
           createdAt: new Date().toISOString(),
         })
       }
@@ -8867,7 +9234,7 @@ function BlackjackGame({
   )
 }
 
-/** The Games modal — one header dice button, two tables, one coin balance. */
+/** The Games modal — one header dice button, the tables, the shop, one coin balance. */
 function GamesModal({
   account,
   token,
@@ -8881,7 +9248,7 @@ function GamesModal({
   onClose: () => void
   toast: (msg: string, kind?: "ok" | "err") => void
 }) {
-  const [tab, setTab] = useState<"flip" | "blackjack">("flip")
+  const [tab, setTab] = useState<"flip" | "blackjack" | "shop">("flip")
   return (
     <ModalShell
       title="Games"
@@ -8890,7 +9257,7 @@ function GamesModal({
     >
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <div className="flex rounded-full bg-white/5 p-0.5">
-          {(["flip", "blackjack"] as const).map((t) => (
+          {(["flip", "blackjack", "shop"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -8898,7 +9265,7 @@ function GamesModal({
                 tab === t ? "bg-amber-400/15 text-amber-200" : "text-white/55 hover:text-white"
               }`}
             >
-              {t === "flip" ? "🪙 Coin Flip" : "♠ Blackjack"}
+              {t === "flip" ? "🪙 Coin Flip" : t === "blackjack" ? "♠ Blackjack" : "🛍 Shop"}
             </button>
           ))}
         </div>
@@ -8912,8 +9279,15 @@ function GamesModal({
       </div>
       {tab === "flip" ? (
         <CoinFlipGame account={account} token={token} onAccount={onAccount} toast={toast} />
-      ) : (
+      ) : tab === "blackjack" ? (
         <BlackjackGame account={account} token={token} onAccount={onAccount} toast={toast} />
+      ) : (
+        <ShopPanel
+          account={account}
+          token={token}
+          onAccount={onAccount}
+          toast={toast}
+        />
       )}
     </ModalShell>
   )

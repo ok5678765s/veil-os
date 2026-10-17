@@ -154,6 +154,12 @@ export type ChatBackupAccount = {
   tag: string | null
   tagColor: string | null
   pfpAccessory: string | null
+  /* v1.2 — economy + decoration state (optional so pre-streak backups
+   * still parse; the streak fields were the "streak doesn't work" bug:
+   * every rollback re-seeded accounts with the streak silently wiped). */
+  pfpOverlay?: string | null
+  dailyRewardStreak?: number
+  lastRewardClaim?: string | null
   legacy: boolean
   createdAt: string
   /** bcrypt hash — carried so a restore keeps the account LOGGABLE with
@@ -230,6 +236,9 @@ export async function collectChatBackup(): Promise<ChatBackupV1> {
       tag: a.tag,
       tagColor: a.tagColor,
       pfpAccessory: a.pfpAccessory,
+      pfpOverlay: a.pfpOverlay,
+      dailyRewardStreak: a.dailyRewardStreak,
+      lastRewardClaim: a.lastRewardClaim ? a.lastRewardClaim.toISOString() : null,
       legacy: a.legacy,
       createdAt: a.createdAt.toISOString(),
       passwordHash: a.passwordHash,
@@ -362,6 +371,38 @@ export async function restoreChatBackup(
     if (live) {
       idMap.set(a.id, live.id)
       res.accountsMapped++
+      /* Refresh the row from the backup. The dominant restore case is a
+       * platform rollback: the db file reverted to an older moment while
+       * the committed backup (written seconds before the rollback) is
+       * NEWER — without this refresh, coins / streaks / purchases snap
+       * back to the rollback point. Fields the backup omits (pre-v1.2
+       * files) are left untouched so old backups still restore cleanly. */
+      await db.chatAccount
+        .update({
+          where: { id: live.id },
+          data: {
+            displayName: a.displayName || a.username,
+            avatarColor: a.avatarColor || live.avatarColor,
+            avatarImage: typeof a.avatarImage === "string" ? a.avatarImage : live.avatarImage,
+            bio: typeof a.bio === "string" ? a.bio.slice(0, 500) : live.bio,
+            muted: !!a.muted,
+            banned: !!a.banned,
+            coins: Number.isFinite(a.coins) ? Math.max(0, Math.floor(a.coins)) : live.coins,
+            tag: a.tag ?? null,
+            tagColor: a.tagColor ?? null,
+            pfpAccessory: a.pfpAccessory ?? null,
+            ...(a.pfpOverlay !== undefined ? { pfpOverlay: a.pfpOverlay ?? null } : {}),
+            ...(typeof a.dailyRewardStreak === "number" && Number.isFinite(a.dailyRewardStreak)
+              ? { dailyRewardStreak: Math.max(0, Math.floor(a.dailyRewardStreak)) }
+              : {}),
+            ...(typeof a.lastRewardClaim === "string"
+              ? { lastRewardClaim: safeDate(a.lastRewardClaim) ?? null }
+              : {}),
+          },
+        })
+        .catch(() => {
+          /* row raced away — the create path below won't run either */
+        })
       continue
     }
     /* Restore the ORIGINAL password hash when the backup carries one —
@@ -393,6 +434,12 @@ export async function restoreChatBackup(
         tag: a.tag ?? null,
         tagColor: a.tagColor ?? null,
         pfpAccessory: a.pfpAccessory ?? null,
+        pfpOverlay: a.pfpOverlay ?? null,
+        dailyRewardStreak:
+          typeof a.dailyRewardStreak === "number" && Number.isFinite(a.dailyRewardStreak)
+            ? Math.max(0, Math.floor(a.dailyRewardStreak))
+            : 0,
+        lastRewardClaim: safeDate(a.lastRewardClaim ?? undefined) ?? null,
         /* A restored password = a REAL, loggable account (not a free
          * name) — legacy stays false so the login route accepts it. */
         legacy: restoredHash ? false : true,

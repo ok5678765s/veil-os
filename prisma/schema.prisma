@@ -103,8 +103,10 @@ model ChatAccount {
   tag          String? // purchased name tag text (e.g. "Cool Dude")
   tagColor     String? // tag badge color
   pfpAccessory String? // purchased PFP accessory id (e.g. "crown", "halo")
+  pfpOverlay   String? // purchased PFP overlay decoration id (e.g. "hearts", "flames")
   dailyRewardStreak Int      @default(0) // current consecutive-day claim streak
   lastRewardClaim   DateTime? // timestamp of last daily reward claim
+  proxyNextAwardAt  DateTime? // browsing rewards: earliest moment the next 3-5 coin award unlocks
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

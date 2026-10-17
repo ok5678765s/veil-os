@@ -251,6 +251,76 @@ export async function POST(req: NextRequest) {
         })
       }
 
+      case "proxy_tick": {
+        /* Browsing rewards (owner ask 2026-10-17): while the user is
+         * actively browsing through the proxy, they earn 3-5 coins every
+         * 1-5 minutes. The CLIENT ticks every 30s while a proxied tab is
+         * open; the SERVER owns the schedule (proxyNextAwardAt on the
+         * account) so a tampered client can't speed it up. The next
+         * window is re-rolled after every award. */
+        const now = new Date()
+        const MIN_WINDOW_MS = 60_000 // 1 minute
+        const MAX_WINDOW_MS = 300_000 // 5 minutes
+        const MIN_AWARD = 3
+        const MAX_AWARD = 5
+        const rollWindow = () =>
+          MIN_WINDOW_MS + Math.floor(Math.random() * (MAX_WINDOW_MS - MIN_WINDOW_MS + 1))
+
+        const next = account.proxyNextAwardAt?.getTime() ?? null
+        if (next == null) {
+          // First tick of a browsing session: schedule the first award.
+          await db.chatAccount.update({
+            where: { id: account.id },
+            data: { proxyNextAwardAt: new Date(now.getTime() + rollWindow()) },
+          })
+          return NextResponse.json({ ok: true, awarded: 0 })
+        }
+        if (now.getTime() < next) {
+          return NextResponse.json({
+            ok: true,
+            awarded: 0,
+            nextInMs: next - now.getTime(),
+          })
+        }
+        // A schedule that has been due for a long time means the user left
+        // (ticks only arrive while a proxied tab is open) — re-warm the
+        // window from now instead of handing out an instant award.
+        if (now.getTime() - next > 2 * MAX_WINDOW_MS) {
+          await db.chatAccount.update({
+            where: { id: account.id },
+            data: { proxyNextAwardAt: new Date(now.getTime() + rollWindow()) },
+          })
+          return NextResponse.json({ ok: true, awarded: 0 })
+        }
+        // Due — award and reschedule. Stale gaps (user closed the veil for
+        // hours) don't back-pay: the window is re-rolled from NOW.
+        const award = MIN_AWARD + Math.floor(Math.random() * (MAX_AWARD - MIN_AWARD + 1))
+        const [tx, updated] = await db.$transaction([
+          db.coinTransaction.create({
+            data: {
+              fromId: account.id,
+              toId: account.id,
+              amount: award,
+              reason: "proxy_earn",
+            },
+          }),
+          db.chatAccount.update({
+            where: { id: account.id },
+            data: {
+              coins: { increment: award },
+              proxyNextAwardAt: new Date(now.getTime() + rollWindow()),
+            },
+          }),
+        ])
+        return NextResponse.json({
+          ok: true,
+          awarded: award,
+          transaction: tx,
+          balance: updated.coins,
+          account: toPublicAccount(updated),
+        })
+      }
+
       case "daily_reward_status": {
         const tzMin = clampTzMin(body.tz)
         const now = Date.now()
