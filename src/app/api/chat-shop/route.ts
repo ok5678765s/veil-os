@@ -19,104 +19,187 @@ type ShopItem =
       label: string
       accessory: string
       price: number
-    }
-  | {
-      id: string
-      type: "overlay"
-      label: string
-      overlay: string
-      price: number
       /** one-line description the shop card shows under the preview */
       desc: string
     }
 
-/* Avatar overlay decorations — vector-style rings/orbits drawn as SVG
- * (self-contained: no external assets, no hotlinked art). IDs match the
- * OVERLAYS registry in chat-app.tsx. */
-const OVERLAY_ITEMS: Extract<ShopItem, { type: "overlay" }>[] = [
+/* PFP accessories — owner refresh 2026-10-17.
+ *
+ * The old emoji accessories and the ring "avatar overlays" are RETIRED
+ * (removed from the catalog entirely). The new set is built from the
+ * owner's uploaded assets — the puppy filter (jpg) and the cat ears
+ * (avif), processed into transparent PNGs at public/deco-*.png — plus
+ * vector recreations of the avatar-decoration reference sheet
+ * (magnific.com vectors + the screen recording in upload/).
+ *
+ * The reference sheet's combined "joy-cons + glowing cat ears" cell is
+ * split into its four individual pieces (earL/earR/joyconL/joyconR),
+ * exactly as requested. IDs match the DECORATIONS registry keys in
+ * chat-app.tsx (the renderer). */
+const ACCESSORY_ITEMS: Extract<ShopItem, { type: "accessory" }>[] = [
   {
-    id: "ov-hearts",
-    type: "overlay",
-    label: "Heart Halo",
-    overlay: "hearts",
+    id: "acc-puppy",
+    type: "accessory",
+    label: "Puppy Filter",
+    accessory: "puppy",
+    price: 4500,
+    desc: "Floppy ears + a wet nose",
+  },
+  {
+    id: "acc-catears",
+    type: "accessory",
+    label: "Cat Ears",
+    accessory: "catears",
+    price: 3500,
+    desc: "Black kitty ears, pink inside",
+  },
+  {
+    id: "acc-ear-l",
+    type: "accessory",
+    label: "Cat Ear · Left",
+    accessory: "earL",
+    price: 1200,
+    desc: "One glowing orange ear",
+  },
+  {
+    id: "acc-ear-r",
+    type: "accessory",
+    label: "Cat Ear · Right",
+    accessory: "earR",
+    price: 1200,
+    desc: "One glowing orange ear",
+  },
+  {
+    id: "acc-joycon-l",
+    type: "accessory",
+    label: "Joy-Con · Left",
+    accessory: "joyconL",
+    price: 2200,
+    desc: "Peach controller at your side",
+  },
+  {
+    id: "acc-joycon-r",
+    type: "accessory",
+    label: "Joy-Con · Right",
+    accessory: "joyconR",
+    price: 2200,
+    desc: "Lavender controller at your side",
+  },
+  {
+    id: "acc-sprout",
+    type: "accessory",
+    label: "Sprout",
+    accessory: "sprout",
     price: 1500,
-    desc: "Pink hearts orbiting your avatar",
+    desc: "A little plant growing on you",
   },
   {
-    id: "ov-stars",
-    type: "overlay",
-    label: "Star Orbit",
-    overlay: "stars",
-    price: 2000,
-    desc: "Golden stars circling slowly",
+    id: "acc-clover",
+    type: "accessory",
+    label: "Clover Crown",
+    accessory: "clover",
+    price: 2600,
+    desc: "Lucky clovers around your head",
   },
   {
-    id: "ov-flames",
-    type: "overlay",
-    label: "Ring of Fire",
-    overlay: "flames",
-    price: 2500,
-    desc: "A living flame ring",
+    id: "acc-potion",
+    type: "accessory",
+    label: "Potion Bottle",
+    accessory: "potion",
+    price: 2800,
+    desc: "Bubbling blue brew",
   },
   {
-    id: "ov-neon",
-    type: "overlay",
-    label: "Neon Pulse",
-    overlay: "neon",
-    price: 2500,
-    desc: "Glowing cyan ring that breathes",
-  },
-  {
-    id: "ov-sakura",
-    type: "overlay",
-    label: "Sakura Bloom",
-    overlay: "sakura",
+    id: "acc-afro",
+    type: "accessory",
+    label: "Rainbow Afro",
+    accessory: "afro",
     price: 3000,
-    desc: "Falling cherry petals",
+    desc: "The clown classic",
   },
   {
-    id: "ov-thunder",
-    type: "overlay",
-    label: "Storm Surge",
-    overlay: "thunder",
-    price: 3500,
-    desc: "Crackling electric sparks",
+    id: "acc-headset",
+    type: "accessory",
+    label: "Neon Headset",
+    accessory: "headset",
+    price: 3800,
+    desc: "Glowing cyan gaming audio",
   },
   {
-    id: "ov-ice",
-    type: "overlay",
-    label: "Frost Crystal",
-    overlay: "ice",
-    price: 3500,
-    desc: "Circling ice shards",
-  },
-  {
-    id: "ov-aurora",
-    type: "overlay",
-    label: "Aurora Ring",
-    overlay: "aurora",
+    id: "acc-santa",
+    type: "accessory",
+    label: "Santa Hat",
+    accessory: "santa",
     price: 4000,
-    desc: "A rainbow aurora halo",
+    desc: "Jingle ready",
   },
   {
-    id: "ov-gold",
-    type: "overlay",
-    label: "Gold Spin",
-    overlay: "gold",
+    id: "acc-batmoon",
+    type: "accessory",
+    label: "Bat & Moon",
+    accessory: "batmoon",
+    price: 4200,
+    desc: "A bat perched on a crescent",
+  },
+  {
+    id: "acc-gcrown",
+    type: "accessory",
+    label: "Golden Crown",
+    accessory: "gcrown",
     price: 5000,
-    desc: "Spinning gold with gems",
+    desc: "Fit for royalty",
   },
   {
-    id: "ov-void",
-    type: "overlay",
-    label: "Void Echo",
-    overlay: "void",
+    id: "acc-portal",
+    type: "accessory",
+    label: "Blue Portal",
+    accessory: "portal",
+    price: 5500,
+    desc: "Swirling vortex behind you",
+  },
+  {
+    id: "acc-wolfhelm",
+    type: "accessory",
+    label: "Wolf Helm",
+    accessory: "wolfhelm",
     price: 6000,
-    desc: "A dark purple pulse ring",
+    desc: "With crackling sparks",
+  },
+  {
+    id: "acc-katanas",
+    type: "accessory",
+    label: "Crossed Katanas",
+    accessory: "katanas",
+    price: 6500,
+    desc: "Samurai aura, behind you",
+  },
+  {
+    id: "acc-wreath",
+    type: "accessory",
+    label: "Laurel Wreath",
+    accessory: "wreath",
+    price: 4800,
+    desc: "Champion's laurels",
+  },
+  {
+    id: "acc-y2025",
+    type: "accessory",
+    label: "Gold 2025",
+    accessory: "y2025",
+    price: 3600,
+    desc: "Shiny gold numerals",
+  },
+  {
+    id: "acc-headdress",
+    type: "accessory",
+    label: "Royal Headdress",
+    accessory: "headdress",
+    price: 8000,
+    desc: "Purple & gold wings",
   },
 ]
 
-// 6 name tags + 8 PFP accessories + 10 avatar overlays, prices 1000–10000.
+// 6 name tags + 20 PFP accessories (uploads + reference recreations).
 const SHOP_CATALOG: ShopItem[] = [
   {
     id: "tag-gold",
@@ -166,63 +249,7 @@ const SHOP_CATALOG: ShopItem[] = [
     tagColor: "#8e44ad",
     price: 10000,
   },
-  {
-    id: "acc-crown",
-    type: "accessory",
-    label: "Crown",
-    accessory: "crown",
-    price: 1000,
-  },
-  {
-    id: "acc-halo",
-    type: "accessory",
-    label: "Halo",
-    accessory: "halo",
-    price: 2000,
-  },
-  {
-    id: "acc-horns",
-    type: "accessory",
-    label: "Devil Horns",
-    accessory: "horns",
-    price: 3000,
-  },
-  {
-    id: "acc-glasses",
-    type: "accessory",
-    label: "Cool Shades",
-    accessory: "glasses",
-    price: 4000,
-  },
-  {
-    id: "acc-headphones",
-    type: "accessory",
-    label: "Headphones",
-    accessory: "headphones",
-    price: 5000,
-  },
-  {
-    id: "acc-partyhat",
-    type: "accessory",
-    label: "Party Hat",
-    accessory: "partyhat",
-    price: 6000,
-  },
-  {
-    id: "acc-witchhat",
-    type: "accessory",
-    label: "Witch Hat",
-    accessory: "witchhat",
-    price: 8000,
-  },
-  {
-    id: "acc-flower",
-    type: "accessory",
-    label: "Flower Crown",
-    accessory: "flower",
-    price: 10000,
-  },
-  ...OVERLAY_ITEMS,
+  ...ACCESSORY_ITEMS,
 ]
 
 export async function GET() {
@@ -258,10 +285,12 @@ export async function POST(req: NextRequest) {
       } else if (slot === "accessory") {
         data.pfpAccessory = null
       } else if (slot === "overlay") {
+        // Overlays are retired — this only clears any straggler value
+        // left on an account from before the refresh.
         data.pfpOverlay = null
       } else {
         return NextResponse.json(
-          { ok: false, error: "Unknown slot — expected tag, accessory or overlay." },
+          { ok: false, error: "Unknown slot — expected tag or accessory." },
           { status: 400 },
         )
       }
@@ -305,15 +334,12 @@ export async function POST(req: NextRequest) {
         tag?: string
         tagColor?: string
         pfpAccessory?: string
-        pfpOverlay?: string
       } = {}
       if (item.type === "tag") {
         updateData.tag = item.tagText
         updateData.tagColor = item.tagColor
-      } else if (item.type === "accessory") {
-        updateData.pfpAccessory = item.accessory
       } else {
-        updateData.pfpOverlay = item.overlay
+        updateData.pfpAccessory = item.accessory
       }
 
       const updated = await tx.chatAccount.update({

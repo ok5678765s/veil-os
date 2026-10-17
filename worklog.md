@@ -1,5 +1,119 @@
 # Veil OS — Worklog / Handover
 
+## Project status (2026-10-17 ~04:15 UTC) — SHOP REFRESH: REAL AVATAR DECORATIONS + VEIL 50K + BUG SWEEP
+
+**All three owner asks shipped and browser-verified.** (a) The PFP
+accessory catalog was REPLACED with the owner's uploaded assets plus
+vector recreations of the reference sheet — the old emoji accessories
+and the ring "avatar overlays" are GONE; (b) Veil was granted 50,000
+coins (and immediately live-tested by the owner: bought the Puppy
+Filter within a minute); (c) a bug sweep fixed the shop-card layout
+overflow and hardened chat-coins against empty-body 500s. E2E'd with
+agent-browser: buy → equip → render on avatars → unequip → free
+re-equip all pass, zero console errors.
+
+- Live preview: `https://preview-chat-5c473725-60a1-401a-a523-f3055da577e8.space-z.ai/`
+
+## What was done this round
+
+### 1. Uploaded assets → real decoration PNGs
+- Owner uploads processed into transparent, white-unmixed PNGs:
+  - `public/deco-dog-ears.png` (410×138) + `public/deco-dog-nose.png`
+    (144×84) — the puppy filter jpg split at the natural whitespace
+    gap, white removed WITH color unmixing
+    (`o = a·c + (1-a)·white` → `c = (o-(1-a)·255)/a`) so the
+    progressive-JPEG white fringes are gone (VLM-verified clean).
+  - `public/deco-cat-ears.png` (480×480) — the avif converted,
+    white keyed out (VLM-verified clean).
+
+### 2. New decoration engine (chat-app.tsx)
+- DELETED: `ACCESSORY_EMOJI` (14 emoji mappings), `OVERLAY_IDS`,
+  `ringPoints`, `OverlaySvg` (10 ring overlays), `AvatarOverlay`, and
+  the entire "Avatar Overlays" shop section + the overlay ShopItem
+  variant (client AND route). `pfpOverlay` stays in the DB schema/API
+  plumbing (always null now) to avoid a migration; the route keeps a
+  straggler-cleanup unequip branch.
+- NEW: `DECORATIONS` registry — each accessory = a list of parts:
+  - `img` parts (the uploaded PNGs) positioned by % of the avatar box
+  - `svg` parts drawn in a 100×100 viewBox stretched 160% around the
+    avatar (inset -30%), so art overflows the head like real pfp
+    decorations; `behind` parts paint UNDER the avatar image
+    (z 0 vs avatar z 1 vs front parts z 2)
+  - animations reuse the veil-ov-* keyframes (reduced-motion safe)
+- `AvatarWithAccessory` rewritten around the registry — every consumer
+  (message rows, player list, DMs, groups, header, profile) gets the
+  new system through the same component.
+
+### 3. The 20-item catalog (chat-shop route, prices 1200–8000)
+- Uploaded: **Puppy Filter** (4500, ears+nose), **Cat Ears** (3500)
+- The split reference cell ("one has 4 at once — use the 4 individual
+  ones"): **Cat Ear · Left / Right** (glowing orange, 1200 each) and
+  **Joy-Con · Left** (peach, 2200) / **Joy-Con · Right** (lavender,
+  2200)
+- Reference-sheet recreations (SVG): Sprout, Clover Crown, Potion
+  Bottle, Rainbow Afro, Neon Headset, Santa Hat, Bat & Moon, Golden
+  Crown, Blue Portal, Wolf Helm, Crossed Katanas (behind), Laurel
+  Wreath, Gold 2025, Royal Headdress
+- Shop cards now show a LIVE preview: the buyer's own avatar wearing
+  the item (exact renderer, overflow included) + desc line.
+
+### 4. Veil 50k grant
+- `coins: 17 → 50,017` + ledger row `owner_grant:shop_test_20261017`.
+  The owner then bought the Puppy Filter live (balance 45,517 → later
+  41,517 after QA bought+kept santa, then re-equipped puppy FREE).
+
+### 5. Bug sweep ("stop random bugs happening")
+- **Shop card overflow (REAL, measured)**: Buy buttons/Equipped badge
+  were pushed up to 60px outside their cards on 12 of 25 cards — the
+  left content group lacked `min-w-0` so `truncate` descriptions
+  (nowrap min-content) couldn't shrink. Fixed: `min-w-0` on the group,
+  `shrink-0 self-center` + row `gap-3` on badge/button. Re-measured:
+  25 cards, 0 overflows, 12px badge↔text gap.
+- **Joy-Con placement**: first pass floated too far from the head
+  (VLM-flagged); moved to hug the face sides (x 9–30 / 70–91).
+- **chat-coins empty-body 500s** (seen in dev.log as "SyntaxError:
+  Unexpected end of JSON input"): aborted/unload POSTs now answer a
+  quiet 400 instead of a 500 + console spam.
+- **Reset-to-home**: verified the previously-shipped v2 keep-session
+  healing is consistent (settings toggle + session-pull both write
+  through `writeKeepSession`; visibility sweep only fires on explicit
+  post-v2 "0"). Hard-reload E2E: chat section restored from the server
+  mirror — no forced home screen.
+- Transient dev-only artifacts (NOT user-facing): Fast Refresh remounts
+  during edits can drop the open modal once; a black screen happened
+  once mid-refresh storm and self-healed on reload.
+
+### 6. QA (agent-browser, live) — ALL PASSED
+- Login as Veil → shop (Games modal → 🛍 Shop tab): Name Tags +
+  PFP Accessories only (no Overlays section), 26 items, live previews
+  all render (VLM-verified design-by-design; "2025" text confirmed
+  digit-by-digit after zoom — earlier read was a small-size misread).
+- E2E purchase: Santa Hat bought (−4000, tx logged, Equipped badge,
+  toast, avatar wearing it in messages + roster) → unequip (null,
+  no refund) → re-equip owned Puppy Filter (FREE, 0 coins moved).
+- Balance pill shows live totals; Veil left wearing puppy (as the
+  owner had it).
+- Mobile 390px: shop single-column, no overflow; chat rows with the
+  puppy-ears avatar fit cleanly.
+- ESLint on all three changed files: clean. No browser console errors.
+
+## Known blockers / risks
+1. Old accessory purchases (acc-crown etc.) are orphaned — nobody had
+   one equipped (verified by DB query), and ownership rows are inert.
+2. `pfpOverlay` column remains in schema/API types (always null) —
+   remove in a later migration if desired.
+3. Full `bun run lint` still OOMs — lint targeted files only.
+4. Standing platform-rollback risks from previous rounds still apply
+   (secret triple-homing, backup loops).
+
+## Priority recommendations for the next phase
+1. Motion polish on the new decorations (idle sway on wreath/katanas,
+   sparkle bursts on gcrown/headdress).
+2. Decoration pickers elsewhere: profile modal "worn" summary + a
+   "my decorations" owned-items strip in the shop.
+3. Offline HTML version (carried over ask).
+4. Scroll-to-bottom FAB with unread count (carried over).
+
 ## Project status (2026-10-10 ~16:30 UTC) — "KEEPS SIGNING ME OUT" FIXED + BUNDLES REFRESHED
 
 **Both user asks shipped.** (a) git bundles refreshed — newest

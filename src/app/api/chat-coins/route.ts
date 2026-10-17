@@ -91,7 +91,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
+    /* Parse defensively: browsers abort in-flight POSTs during unload /
+     * hot reloads, and the server then sees an empty body. That is not
+     * a server bug — answer 400 quietly instead of a scary 500 +
+     * console spam (was seen as "SyntaxError: Unexpected end of JSON
+     * input" in dev.log). */
+    let body: {
       token?: string
       action?: string
       toUsername?: string
@@ -99,6 +104,14 @@ export async function POST(req: NextRequest) {
       reason?: string
       limit?: number
       tz?: number
+    }
+    try {
+      body = (await req.json()) as typeof body
+    } catch {
+      return NextResponse.json(
+        { ok: false, error: "Malformed request body." },
+        { status: 400 },
+      )
     }
 
     const token = body.token
