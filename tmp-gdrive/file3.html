@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blackjack</title>
+<style>
+  :root { color-scheme: dark }
+  * { margin: 0; padding: 0; box-sizing: border-box }
+  body {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    padding: 1.25rem 1rem 2rem; background: #0c0a07; color: #fef3c7;
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1 {
+    font-size: 1.45rem; font-weight: 800; margin: 0.2rem 0 0.7rem;
+    background: linear-gradient(#fef9c3, #f59e0b);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .balance {
+    display: flex; align-items: center; gap: 0.45rem; border: 1px solid rgba(253, 230, 138, 0.15);
+    background: rgba(254, 243, 199, 0.04); border-radius: 999px; padding: 0.3rem 1rem; font-size: 0.85rem;
+    color: rgba(253, 230, 138, 0.55);
+  }
+  .balance b { color: #fde68a; font-size: 0.95rem }
+  .table {
+    width: 100%; max-width: 36rem; border: 1px solid rgba(253, 230, 138, 0.1); border-radius: 2rem;
+    padding: 1.5rem 1.25rem; margin-top: 1.1rem;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245, 197, 66, 0.05), transparent 60%), rgba(255, 255, 255, 0.02);
+  }
+  .hand-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+    color: rgba(253, 230, 138, 0.45); margin-bottom: 0.55rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .score {
+    font-size: 0.72rem; font-weight: 800; color: rgba(254, 243, 199, 0.85); letter-spacing: 0;
+    border: 1px solid rgba(253, 230, 138, 0.15); background: rgba(254, 243, 199, 0.05);
+    padding: 0.12rem 0.65rem; border-radius: 999px;
+  }
+  .cards { display: flex; min-height: 7rem; align-items: center }
+  @media (min-width: 640px) { .cards { min-height: 8rem } }
+  .divider { display: flex; align-items: center; gap: 0.8rem; margin: 1.25rem 0 }
+  .divider .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(253, 230, 138, 0.2), transparent) }
+  .divider span {
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase;
+    color: rgba(253, 230, 138, 0.3); white-space: nowrap;
+  }
+  .card {
+    position: relative; width: 5rem; height: 7rem; border-radius: 0.75rem; flex-shrink: 0;
+    background: linear-gradient(#ffffff, #e4e4e7); display: flex; flex-direction: column;
+    justify-content: space-between; padding: 0.5rem;
+    box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.7);
+    animation: deal 0.36s cubic-bezier(0.22, 1.1, 0.36, 1) both;
+  }
+  .card + .card { margin-left: -2rem }
+  @media (min-width: 640px) { .card { width: 6rem; height: 8rem } }
+  .card .corner { font-size: 0.85rem; font-weight: 800; line-height: 1 }
+  .card .corner.b { transform: rotate(180deg); align-self: flex-end }
+  .card .pip { font-size: 1.9rem; align-self: center; line-height: 1 }
+  .card.red { color: #e11d48 }
+  .card:not(.red) { color: #18181b }
+  .card.back {
+    background: repeating-linear-gradient(45deg, #221a0d 0px, #221a0d 6px, #2e2412 6px, #2e2412 12px);
+    box-shadow: inset 0 0 0 4px #171208, inset 0 0 0 5px rgba(245, 197, 66, 0.35), 0 8px 20px -8px rgba(0, 0, 0, 0.7);
+  }
+  .card.no-anim { animation: none }
+  .slot { width: 5rem; height: 7rem; border: 1.5px dashed rgba(253, 230, 138, 0.15); border-radius: 0.75rem; flex-shrink: 0 }
+  .slot + .slot { margin-left: -2rem }
+  @media (min-width: 640px) { .slot { width: 6rem; height: 8rem } }
+  @keyframes deal { from { opacity: 0; transform: translateY(-16px) scale(0.9) } to { opacity: 1; transform: none } }
+  .message { min-height: 2.4rem; display: flex; align-items: center; margin-top: 0.9rem }
+  .message span {
+    display: none; font-size: 0.85rem; font-weight: 800; border-radius: 999px; padding: 0.35rem 1rem;
+    animation: pop 0.35s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+  }
+  .message.show span { display: inline-block }
+  .message.win span { background: rgba(52, 211, 153, 0.1); color: #6ee7b7; border: 1px solid rgba(52, 211, 153, 0.25) }
+  .message.lose span { background: rgba(244, 63, 94, 0.1); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.25) }
+  .message.push span { background: rgba(161, 161, 170, 0.1); color: #d4d4d8; border: 1px solid rgba(161, 161, 170, 0.25) }
+  @keyframes pop { 0% { transform: scale(0.5); opacity: 0 } 60% { transform: scale(1.1); opacity: 1 } 100% { transform: scale(1) } }
+  .controls { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; margin-top: 0.4rem; width: 100% }
+  .chip-row { display: flex; gap: 0.7rem }
+  .chip {
+    width: 3rem; height: 3rem; border-radius: 50%; border: 2px solid; background: rgba(255, 255, 255, 0.03);
+    font-weight: 800; font-size: 0.72rem; cursor: pointer; font-family: inherit;
+    transition: transform 0.12s, background 0.12s;
+  }
+  .chip:hover:not(:disabled) { transform: scale(1.07); background: rgba(255, 255, 255, 0.07) }
+  .chip:disabled { opacity: 0.3; cursor: default }
+  .chip.c10 { border-color: rgba(161, 161, 170, 0.6); color: #e4e4e7 }
+  .chip.c25 { border-color: rgba(252, 211, 77, 0.7); color: #fde68a }
+  .chip.c50 { border-color: rgba(251, 146, 60, 0.7); color: #fdba74 }
+  .chip.c100 { border-color: rgba(52, 211, 153, 0.7); color: #6ee7b7 }
+  .bet-line { font-size: 0.85rem; color: rgba(253, 230, 138, 0.6); display: flex; align-items: center; gap: 0.8rem }
+  .bet-line b { color: #fde68a }
+  .btn {
+    font-family: inherit; font-weight: 800; font-size: 0.95rem; border-radius: 999px;
+    padding: 0.8rem 2.4rem; cursor: pointer; transition: transform 0.12s, filter 0.12s, background 0.12s;
+    border: 1px solid transparent;
+  }
+  .btn:active:not(:disabled) { transform: scale(0.95) }
+  .btn:disabled { opacity: 0.4; cursor: default }
+  .btn.gold {
+    background: linear-gradient(#fcd34d, #d97706); color: #451a03;
+    box-shadow: 0 12px 32px -10px rgba(245, 197, 66, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  .btn.gold:hover:not(:disabled) { filter: brightness(1.06) }
+  .btn.ghost { background: rgba(255, 255, 255, 0.03); border-color: rgba(253, 230, 138, 0.2); color: rgba(254, 243, 199, 0.8) }
+  .btn.ghost:hover:not(:disabled) { background: rgba(255, 255, 255, 0.06) }
+  .btn.sm { padding: 0.4rem 1rem; font-size: 0.72rem; font-weight: 700 }
+  .row { display: flex; gap: 0.7rem; flex-wrap: wrap; justify-content: center }
+  .status {
+    font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: rgba(253, 230, 138, 0.4); min-height: 1.3rem; margin-top: 0.6rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .message span { animation-duration: 0.05s }
+  }
+</style>
+</head>
+<body>
+  <h1>Blackjack</h1>
+  <div class="balance">Balance: <b id="balance">$500</b></div>
+  <div class="table">
+    <div>
+      <div class="hand-label"><span>Dealer</span><span class="score" id="dealerScore"></span></div>
+      <div class="cards" id="dealerCards"></div>
+    </div>
+    <div class="divider"><div class="line"></div><span>Blackjack pays 3 to 2</span><div class="line"></div></div>
+    <div>
+      <div class="hand-label"><span>You</span><span class="score" id="playerScore"></span></div>
+      <div class="cards" id="playerCards"></div>
+    </div>
+  </div>
+  <div class="message" id="messageWrap" aria-live="polite"><span id="message"></span></div>
+  <div class="controls" id="controls"></div>
+  <p class="status" id="status"></p>
+
+<script>
+  var RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+  var SUITS = [['\u2660\uFE0E', false], ['\u2665\uFE0E', true], ['\u2666\uFE0E', true], ['\u2663\uFE0E', false]];
+  var CHIPS = [10, 25, 50, 100];
+
+  var state = {
+    deck: [], player: [], dealer: [], holeHidden: true,
+    phase: 'betting', bet: 0, activeBet: 0, bankroll: loadBankroll(), timer: null
+  };
+  var prevDealer = 0, prevPlayer = 0;
+
+  function loadBankroll() {
+    try {
+      var v = localStorage.getItem('bj-bankroll');
+      var n = v ? Number(v) : NaN;
+      return Number.isFinite(n) ? n : 500;
+    } catch (e) { return 500 }
+  }
+  function saveBankroll() {
+    try { localStorage.setItem('bj-bankroll', String(state.bankroll)) } catch (e) {}
+  }
+  function buildDeck() {
+    var d = [];
+    for (var s = 0; s < SUITS.length; s++)
+      for (var r = 0; r < RANKS.length; r++) d.push({ rank: RANKS[r], suit: SUITS[s][0], red: SUITS[s][1] });
+    for (var i = d.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = d[i]; d[i] = d[j]; d[j] = tmp;
+    }
+    return d;
+  }
+  function cardVal(rank) {
+    if (rank === 'A') return 1;
+    if (rank === 'J' || rank === 'Q' || rank === 'K') return 10;
+    return Number(rank);
+  }
+  function handValue(cards) {
+    var t = 0, aces = 0;
+    for (var i = 0; i < cards.length; i++) { t += cardVal(cards[i].rank); if (cards[i].rank === 'A') aces++ }
+    var soft = false;
+    if (aces > 0 && t + 10 <= 21) { t += 10; soft = true }
+    return { total: t, soft: soft };
+  }
+  function isBlackjack(cards) { return cards.length === 2 && handValue(cards).total === 21 }
+  function draw() {
+    if (state.deck.length < 6) state.deck = buildDeck();
+    return state.deck.pop();
+  }
+  function $(id) { return document.getElementById(id) }
+
+  function cardHTML(c, i, hidden, animate) {
+    var anim = animate ? '' : ' no-anim';
+    if (hidden) return '<div class="card back' + anim + '" style="animation-delay:' + (i < 2 ? i * 90 : 0) + 'ms" aria-label="Hidden card"></div>';
+    return '<div class="card' + (c.red ? ' red' : '') + anim + '" style="animation-delay:' + (i < 2 ? i * 90 : 0) + 'ms">' +
+      '<span class="corner">' + c.rank + '</span><span class="pip">' + c.suit + '</span><span class="corner b">' + c.rank + '</span></div>';
+  }
+  function handHTML(cards, hideHole, prevCount) {
+    if (!cards.length) return '<div class="slot"></div><div class="slot"></div>';
+    var out = '';
+    for (var i = 0; i < cards.length; i++)
+      out += cardHTML(cards[i], i, hideHole && i === 1, i >= prevCount);
+    return out;
+  }
+  function showMsg(text, cls) {
+    var w = $('messageWrap');
+    w.className = 'message show ' + cls;
+    $('message').textContent = text;
+  }
+  function hideMsg() { $('messageWrap').className = 'message' }
+
+  function render() {
+    $('balance').textContent = '$' + state.bankroll;
+    $('dealerCards').innerHTML = handHTML(state.dealer, state.holeHidden, prevDealer);
+    $('playerCards').innerHTML = handHTML(state.player, false, prevPlayer);
+    prevDealer = state.dealer.length;
+    prevPlayer = state.player.length;
+    $('dealerScore').textContent = state.dealer.length
+      ? (state.holeHidden ? handValue(state.dealer.slice(0, 1)).total + ' + ?' : handValue(state.dealer).total)
+      : '';
+    $('playerScore').textContent = state.player.length ? handValue(state.player).total : '';
+    renderControls();
+  }
+
+  function renderControls() {
+    var c = $('controls');
+    $('status').textContent = state.phase === 'dealer' ? 'Dealer draws\u2026' : '';
+    if (state.phase === 'betting') {
+      var chips = '';
+      for (var i = 0; i < CHIPS.length; i++) {
+        var v = CHIPS[i];
+        chips += '<button class="chip c' + v + '" data-chip="' + v + '"' + (state.bankroll < state.bet + v ? ' disabled' : '') + '>$' + v + '</button>';
+      }
+      c.innerHTML = '<div class="chip-row">' + chips + '</div>' +
+        '<div class="bet-line">Bet: <b>$' + state.bet + '</b>' +
+        (state.bet > 0 ? '<button class="btn ghost sm" id="clearBet">Clear</button>' : '') + '</div>' +
+        '<button class="btn gold" id="dealBtn"' + (state.bet === 0 ? ' disabled' : '') + '>Deal</button>' +
+        (state.bankroll === 0 && state.bet === 0 ? '<button class="btn ghost" id="claimBtn">Out of chips \u2014 claim $500</button>' : '');
+      var chipBtns = c.querySelectorAll('[data-chip]');
+      for (var k = 0; k < chipBtns.length; k++) {
+        chipBtns[k].onclick = function () { state.bet += Number(this.dataset.chip); render() };
+      }
+      var cl = $('clearBet');
+      if (cl) cl.onclick = function () { state.bet = 0; render() };
+      $('dealBtn').onclick = deal;
+      var cm = $('claimBtn');
+      if (cm) cm.onclick = function () { state.bankroll = 500; saveBankroll(); render() };
+    } else if (state.phase === 'player') {
+      var canDouble = state.player.length === 2 && state.bankroll >= state.activeBet;
+      c.innerHTML = '<div class="row">' +
+        '<button class="btn gold" id="hitBtn">Hit</button>' +
+        '<button class="btn ghost" id="standBtn">Stand</button>' +
+        '<button class="btn ghost" id="doubleBtn"' + (canDouble ? '' : ' disabled') + '>Double</button></div>';
+      $('hitBtn').onclick = hit;
+      $('standBtn').onclick = stand;
+      if (canDouble) $('doubleBtn').onclick = doubleDown;
+    } else if (state.phase === 'done') {
+      c.innerHTML = '<button class="btn gold" id="newBtn">New Round</button>';
+      $('newBtn').onclick = newRound;
+    } else {
+      c.innerHTML = '';
+    }
+  }
+
+  function deal() {
+    if (state.phase !== 'betting' || state.bet <= 0) return;
+    if (state.deck.length < 10) state.deck = buildDeck();
+    state.player = [draw(), draw()];
+    state.dealer = [draw(), draw()];
+    state.holeHidden = true;
+    state.activeBet = state.bet;
+    hideMsg();
+    state.bankroll -= state.bet;
+    saveBankroll();
+
+    var pbj = isBlackjack(state.player), dbj = isBlackjack(state.dealer);
+    if (pbj || dbj) {
+      state.holeHidden = false;
+      state.phase = 'done';
+      if (pbj && dbj) {
+        state.bankroll += state.bet;
+        showMsg('Both blackjack \u2014 push', 'push');
+      } else if (pbj) {
+        var winnings = Math.floor(state.bet * 1.5);
+        state.bankroll += state.bet + winnings;
+        showMsg('Blackjack! You win $' + winnings, 'win');
+      } else {
+        showMsg('Dealer blackjack', 'lose');
+      }
+      saveBankroll();
+    } else {
+      state.phase = 'player';
+    }
+    render();
+  }
+
+  function hit() {
+    if (state.phase !== 'player') return;
+    state.player.push(draw());
+    var total = handValue(state.player).total;
+    if (total > 21) {
+      state.phase = 'done';
+      showMsg('Bust! You lose $' + state.activeBet, 'lose');
+    } else if (total === 21) {
+      dealerTurn();
+    }
+    render();
+  }
+
+  function stand() {
+    if (state.phase !== 'player') return;
+    dealerTurn();
+    render();
+  }
+
+  function doubleDown() {
+    if (state.phase !== 'player' || state.player.length !== 2 || state.bankroll < state.activeBet) return;
+    state.bankroll -= state.activeBet;
+    state.activeBet *= 2;
+    saveBankroll();
+    state.player.push(draw());
+    if (handValue(state.player).total > 21) {
+      state.phase = 'done';
+      showMsg('Bust! You lose $' + state.activeBet, 'lose');
+      render();
+    } else {
+      dealerTurn();
+      render();
+    }
+  }
+
+  function dealerTurn() {
+    state.phase = 'dealer';
+    state.holeHidden = false;
+    state.timer = setTimeout(step, 650);
+    function step() {
+      if (handValue(state.dealer).total < 17) {
+        state.dealer.push(draw());
+        render();
+        state.timer = setTimeout(step, 700);
+      } else {
+        settle();
+      }
+    }
+  }
+
+  function settle() {
+    var p = handValue(state.player).total;
+    var d = handValue(state.dealer).total;
+    if (d > 21) { state.bankroll += state.activeBet * 2; showMsg('Dealer busts! You win $' + state.activeBet, 'win') }
+    else if (p > d) { state.bankroll += state.activeBet * 2; showMsg('You win $' + state.activeBet, 'win') }
+    else if (p === d) { state.bankroll += state.activeBet; showMsg('Push \u2014 bet returned', 'push') }
+    else showMsg('Dealer wins', 'lose');
+    state.phase = 'done';
+    saveBankroll();
+    render();
+  }
+
+  function newRound() {
+    state.player = [];
+    state.dealer = [];
+    state.holeHidden = true;
+    state.bet = 0;
+    state.activeBet = 0;
+    state.phase = 'betting';
+    prevDealer = 0;
+    prevPlayer = 0;
+    hideMsg();
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>

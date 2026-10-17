@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coin Flip</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box }
+  body {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1.9rem; background: #0c0a07; color: #fef3c7; padding: 1.5rem;
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .scene { perspective: 1100px }
+  .coin-btn {
+    border: 0; background: none; padding: 0; border-radius: 50%; display: block;
+    transition: transform 0.15s;
+  }
+  .coin-btn:not(:disabled):active { transform: scale(0.96) }
+  .coin-btn:focus-visible { outline: 3px solid rgba(252, 211, 77, 0.55); outline-offset: 10px }
+  .coin-btn:disabled { cursor: default }
+  .coin {
+    position: relative; width: 200px; height: 200px; transform-style: preserve-3d;
+    transition: transform 1.6s cubic-bezier(0.2, 0.6, 0.2, 1); will-change: transform;
+  }
+  @media (max-width: 420px) {
+    .coin { width: 168px; height: 168px }
+    .coin .face .pip { font-size: 46px }
+  }
+  .face {
+    position: absolute; inset: 0; border-radius: 50%;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    background: radial-gradient(circle at 35% 28%, #ffefad 0%, #f8d264 32%, #e3a92c 62%, #b97e12 88%, #8f5c0a 100%);
+    box-shadow:
+      inset 0 0 0 7px rgba(146, 96, 16, 0.4), inset 0 0 0 9px rgba(255, 236, 170, 0.45),
+      inset 0 -16px 30px rgba(118, 68, 5, 0.5), inset 0 14px 26px rgba(255, 246, 205, 0.35);
+  }
+  .face .pip { font-size: 56px; line-height: 1; color: #7a5207; text-shadow: 0 2px 0 rgba(255, 240, 190, 0.55) }
+  .face .label {
+    font-size: 17px; font-weight: 800; letter-spacing: 0.32em; text-indent: 0.32em; color: #7a5207;
+    text-shadow: 0 1px 0 rgba(255, 240, 190, 0.85), 0 -1px 1px rgba(122, 82, 7, 0.5);
+  }
+  .face .sheen {
+    position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.4), transparent 42%);
+  }
+  .edge {
+    position: absolute; left: 50%; top: 50%;
+    background: repeating-linear-gradient(90deg, #8a6215 0px, #e0bc55 1.4px, #8a6215 2.8px, #b98f2a 3.4px);
+  }
+  .result {
+    min-height: 3.4rem; display: flex; align-items: center;
+    font-size: 2.4rem; font-weight: 800; letter-spacing: 0.14em; text-indent: 0.14em;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .result.heads { background-image: linear-gradient(#fef9c3, #f59e0b) }
+  .result.tails { background-image: linear-gradient(#f4f4f5, #a1a1aa) }
+  .hint { color: rgba(253, 230, 138, 0.4); font-size: 0.75rem; letter-spacing: 0.28em; text-transform: uppercase }
+  @keyframes pop { 0% { transform: scale(0.5); opacity: 0 } 60% { transform: scale(1.1); opacity: 1 } 100% { transform: scale(1) } }
+  .pop { animation: pop 0.42s cubic-bezier(0.22, 1.2, 0.36, 1) both }
+  @media (prefers-reduced-motion: reduce) {
+    .coin { transition-duration: 0.35s }
+    .pop { animation-duration: 0.05s }
+  }
+</style>
+</head>
+<body>
+  <button class="coin-btn scene" id="coin" aria-label="Flip the coin">
+    <div class="coin" id="inner"></div>
+  </button>
+  <div class="result" id="result" aria-live="polite"></div>
+  <p class="hint" id="hint">Click the coin to flip</p>
+
+<script>
+  var EDGE = 36, R = 100, T = 14;
+  var CH = 2 * R * Math.sin(Math.PI / EDGE) + 1.5;
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FLIP_MS = REDUCED ? 350 : 1600;
+  if (REDUCED) document.getElementById('inner').style.transitionDuration = '0.35s';
+
+  // Build coin
+  var html = '';
+  for (var i = 0; i < EDGE; i++) {
+    var a = (i * 360) / EDGE;
+    html += '<div class="edge" style="width:' + T + 'px;height:' + CH + 'px;margin-left:' + (-T / 2) + 'px;margin-top:' + (-CH / 2) + 'px;transform:rotateZ(' + a + 'deg) translateX(' + (R - 0.5) + 'px) rotateY(90deg)"></div>';
+  }
+  html += '<div class="face" style="transform:translateZ(' + (T / 2) + 'px)"><div class="pip">\u265A\uFE0E</div><div class="label">HEADS</div><div class="sheen"></div></div>';
+  html += '<div class="face" style="transform:rotateX(180deg) translateZ(' + (T / 2) + 'px)"><div class="pip">\u2605\uFE0E</div><div class="label">TAILS</div><div class="sheen"></div></div>';
+  document.getElementById('inner').innerHTML = html;
+
+  var inner = document.getElementById('inner');
+  var coinBtn = document.getElementById('coin');
+  var resultEl = document.getElementById('result');
+  var hintEl = document.getElementById('hint');
+  var rotation = 0;
+  var flipping = false;
+
+  function flip() {
+    if (flipping) return;
+    flipping = true;
+    var heads = Math.random() < 0.5;
+    var mod = heads ? 0 : 180;
+    var cur = ((rotation % 360) + 360) % 360;
+    var delta = (mod - cur + 360) % 360;
+    var spins = REDUCED ? 1 : 3 + Math.floor(Math.random() * 3);
+    rotation += 360 * spins + delta;
+    inner.style.transform = 'rotateX(' + rotation + 'deg)';
+    hintEl.style.display = 'none';
+    resultEl.textContent = '';
+    resultEl.className = 'result';
+    setTimeout(function () {
+      flipping = false;
+      resultEl.textContent = heads ? 'HEADS' : 'TAILS';
+      resultEl.className = 'result pop ' + (heads ? 'heads' : 'tails');
+    }, FLIP_MS);
+  }
+
+  coinBtn.addEventListener('click', flip);
+  window.addEventListener('keydown', function (e) {
+    if ((e.code === 'Space' || e.code === 'Enter') && e.target !== coinBtn && !e.repeat) {
+      e.preventDefault();
+      flip();
+    }
+  });
+</script>
+</body>
+</html>
