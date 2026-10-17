@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T18:09:45.961Z",
+  "exportedAt": "2026-10-17T18:15:20.820Z",
   "counts": {
     "accounts": 54,
-    "messages": 86,
+    "messages": 87,
     "dms": 3
   },
   "accounts": [
@@ -123,10 +123,10 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 50006,
+      "coins": 55067,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": "santa",
+      "pfpAccessory": "puppy",
       "pfpOverlay": null,
       "dailyRewardStreak": 3,
       "lastRewardClaim": "2026-10-17T04:23:42.483Z",
@@ -2088,6 +2088,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T17:54:32.608Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvcpvghz002nltjgdqo98str",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "h",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T18:15:14.759Z",
       "editedAt": null
     }
   ],
