@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T18:15:54.415Z",
+  "exportedAt": "2026-10-17T18:20:58.750Z",
   "counts": {
-    "accounts": 54,
-    "messages": 86,
+    "accounts": 55,
+    "messages": 87,
     "dms": 3
   },
   "accounts": [
@@ -1141,6 +1141,27 @@
       "legacy": false,
       "createdAt": "2026-10-17T17:50:34.460Z",
       "passwordHash": "$2b$10$l9Wh.PVpn1T/aXdttcMJIOmEWQGM4jOMzRWCc3CJFozQ9hmpQgWdW"
+    },
+    {
+      "id": "cmvcq2gv4002qltjg2s7aggqc",
+      "username": "ytyuiop",
+      "displayName": "cvbhnjk",
+      "avatarColor": "#f97316",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 101,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-17T18:20:41.823Z",
+      "passwordHash": "$2b$10$/t9FkRUIs/f4qpqgchhLDe2Xv0SJExYIcbOHIm47pemmHu2SpARw2"
     }
   ],
   "messages": [
@@ -2089,6 +2110,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-17T17:54:32.608Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvcq2p3d002sltjgidosu5zt",
+      "channelId": "main",
+      "accountId": "cmvcq2gv4002qltjg2s7aggqc",
+      "content": "wsp nigga",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T18:20:52.489Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -2103,7 +2135,7 @@
       "id": "cmvbn5oa80005ltg2y1fpoa8u",
       "name": null,
       "isGroup": false,
-      "ownerId": "cmuu20ppm0005jkxecvmo7qpu",
+      "ownerId": "cmv7j4j6u000dr7bux9lflbkd",
       "createdAt": "2026-10-17T00:11:26.385Z"
     },
     {
@@ -2122,10 +2154,6 @@
     {
       "dmId": "cmv3efs6z0007skxvepbcjobg",
       "accountId": "cmv39b8yz0000skxvqvf3dfai"
-    },
-    {
-      "dmId": "cmvbn5oa80005ltg2y1fpoa8u",
-      "accountId": "cmuu20ppm0005jkxecvmo7qpu"
     },
     {
       "dmId": "cmvbn5oa80005ltg2y1fpoa8u",
