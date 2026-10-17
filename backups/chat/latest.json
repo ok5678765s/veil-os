@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T16:16:46.687Z",
+  "exportedAt": "2026-10-17T16:18:50.524Z",
   "counts": {
     "accounts": 53,
-    "messages": 83,
+    "messages": 84,
     "dms": 3
   },
   "accounts": [
@@ -123,10 +123,10 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 50001,
+      "coins": 50002,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": "puppy",
+      "pfpAccessory": "arch",
       "pfpOverlay": null,
       "dailyRewardStreak": 3,
       "lastRewardClaim": "2026-10-17T04:23:42.483Z",
@@ -2034,6 +2034,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-17T16:16:26.241Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvclp5m30005ltr2npunh9cg",
+      "channelId": "main",
+      "accountId": "cmuu20ppm0005jkxecvmo7qpu",
+      "content": "player custoizattions",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-17T16:18:22.252Z",
       "editedAt": null
     }
   ],
