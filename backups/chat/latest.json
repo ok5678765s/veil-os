@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-17T15:28:26.967Z",
+  "exportedAt": "2026-10-17T16:16:46.687Z",
   "counts": {
     "accounts": 53,
     "messages": 83,
@@ -123,7 +123,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 23232,
+      "coins": 50001,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "puppy",
@@ -2026,14 +2026,14 @@
       "editedAt": null
     },
     {
-      "id": "cmvcjwp1z0003lt0gox5qkob7",
+      "id": "cmvclmo3l0001ltr2jds052ee",
       "channelId": "main",
       "accountId": "cmuu20ppm0005jkxecvmo7qpu",
-      "content": "h",
+      "content": "roblox may work now",
       "replyTo": null,
       "replyToContent": null,
       "replyToUsername": null,
-      "createdAt": "2026-10-17T15:28:14.808Z",
+      "createdAt": "2026-10-17T16:16:26.241Z",
       "editedAt": null
     }
   ],
