@@ -11,17 +11,21 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { QRCodeSVG } from "qrcode.react";
 import {
   ArrowLeft,
   BadgeCheck,
+  Check,
   ChevronLeft,
   ChevronRight,
+  Copy,
   ExternalLink,
   Globe,
   Loader2,
   Play,
   RotateCw,
   Search,
+  Smartphone,
   ThumbsDown,
   ThumbsUp,
   WifiOff,
@@ -65,6 +69,25 @@ const R = {
   greenHover: "#00c67d",
   red: "#ff4747",
 };
+
+/** execCommand copy fallback for embeds where the async clipboard API is
+ * permission-blocked (returns success so the UI can still confirm). */
+function legacyCopy(text: string): boolean {
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
 
 /* ------------------------------------------------------------------ */
 /* Small parts                                                         */
@@ -915,6 +938,26 @@ export function RobloxTab({
     return false;
   }, [playTarget, onLaunch]);
 
+  /* Copy the game page URL — clipboard API with a textarea fallback for
+   * restricted embeds (the preview iframe's permissions policy can deny
+   * navigator.clipboard; execCommand still works from a user gesture). */
+  const [copied, setCopied] = React.useState(false);
+  const copyLink = React.useCallback(() => {
+    if (!playTarget) return;
+    const url = robloxGamePageUrl(playTarget.placeId);
+    const done = () => {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(url).then(done, () => {
+        if (legacyCopy(url)) done();
+      });
+    } else if (legacyCopy(url)) {
+      done();
+    }
+  }, [playTarget]);
+
   /* ----- Esc: dialog → back ----- */
   React.useEffect(() => {
     if (!active) return;
@@ -1113,16 +1156,54 @@ export function RobloxTab({
                   </>
                 ) : embedded ? (
                   <>
-                    <p className="text-center text-[13px]" style={{ color: R.sub }}>
-                      This preview can&apos;t hand off to the Roblox app — open
-                      the game page to play.
+                    {/* QR hero — the one path that goes from the preview
+                     * straight INTO the game: scan with a phone that has the
+                     * Roblox app, tap Play there. */}
+                    <p className="text-center text-[12.5px] leading-snug" style={{ color: R.sub }}>
+                      Browsers can&apos;t run Roblox games — not even roblox.com.
+                      The game runs in the Roblox app on your device:
                     </p>
+                    <div className="my-1 flex items-center gap-4 self-stretch rounded-xl p-3" style={{ background: R.panel }}>
+                      <div className="rounded-lg bg-white p-2 shadow-inner">
+                        <QRCodeSVG
+                          value={robloxGamePageUrl(playTarget.placeId)}
+                          size={116}
+                          level="M"
+                          bgColor="#ffffff"
+                          fgColor="#191b1d"
+                          aria-label={`QR code linking to ${playTarget.name} on roblox.com`}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="flex items-center gap-1.5 text-[13px] font-bold text-white">
+                          <Smartphone aria-hidden className="size-3.5" style={{ color: R.green }} />
+                          Scan to play
+                        </p>
+                        <p className="mt-1 text-[11.5px] leading-relaxed" style={{ color: R.dim }}>
+                          Opens this game on your phone — tap the green Play
+                          there and the Roblox app joins it.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={copyLink}
+                          className="mt-2 flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[11.5px] font-semibold transition hover:brightness-125 active:scale-95"
+                          style={{ background: copied ? R.green : R.panelHover, color: copied ? "#fff" : R.sub }}
+                        >
+                          {copied ? (
+                            <Check aria-hidden className="size-3.5" />
+                          ) : (
+                            <Copy aria-hidden className="size-3.5" />
+                          )}
+                          {copied ? "Copied!" : "Copy link"}
+                        </button>
+                      </div>
+                    </div>
                     <button
                       type="button"
                       onClick={() => {
                         if (openGamePage()) setPlayTarget(null);
                       }}
-                      className="mt-1 flex h-10 w-full items-center justify-center gap-2 rounded-lg text-[14px] font-bold uppercase tracking-wide text-white transition hover:brightness-110 active:scale-95"
+                      className="flex h-10 w-full items-center justify-center gap-2 rounded-lg text-[14px] font-bold uppercase tracking-wide text-white transition hover:brightness-110 active:scale-95"
                       style={{ background: R.green }}
                     >
                       <ExternalLink aria-hidden className="size-4" />
@@ -1149,17 +1230,18 @@ export function RobloxTab({
                       style={{ color: R.dim }}
                     >
                       <Play aria-hidden className="size-3" />
-                      Try launching the app anyway
+                      Try launching the app on this device
                     </button>
-                    <p className="mt-1 max-w-[26ch] text-center text-[10.5px] leading-relaxed" style={{ color: R.dim }}>
-                      Tip: open Veil in its own tab (↗ above the preview) and
-                      Play launches the Roblox app directly.
+                    <p className="mt-1 max-w-[30ch] text-center text-[10.5px] leading-relaxed" style={{ color: R.dim }}>
+                      This device: open Veil in its own tab (↗ above the
+                      preview) and Play launches the Roblox app directly.
                     </p>
                   </>
                 ) : (
                   <>
                     <p className="text-center text-[13px]" style={{ color: R.sub }}>
-                      Roblox didn&apos;t open? Launch it again — or open the real game page.
+                      Roblox didn&apos;t open? Launch it again — or take the game
+                      to your phone.
                     </p>
                     <button
                       type="button"
@@ -1181,6 +1263,37 @@ export function RobloxTab({
                       <ExternalLink aria-hidden className="size-3.5" />
                       Game page on roblox.com
                     </button>
+                    <div className="mt-1 flex items-center gap-3 self-stretch rounded-xl p-2.5" style={{ background: R.panel }}>
+                      <div className="rounded-lg bg-white p-1.5">
+                        <QRCodeSVG
+                          value={robloxGamePageUrl(playTarget.placeId)}
+                          size={72}
+                          level="M"
+                          bgColor="#ffffff"
+                          fgColor="#191b1d"
+                          aria-label={`QR code linking to ${playTarget.name} on roblox.com`}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[12px] font-semibold text-white">Play on your phone instead</p>
+                        <p className="text-[10.5px] leading-relaxed" style={{ color: R.dim }}>
+                          Scan → tap Play → the app joins the game.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={copyLink}
+                          className="mt-1.5 flex h-7 items-center gap-1.5 rounded-lg px-2 text-[11px] font-semibold transition hover:brightness-125 active:scale-95"
+                          style={{ background: copied ? R.green : R.panelHover, color: copied ? "#fff" : R.sub }}
+                        >
+                          {copied ? (
+                            <Check aria-hidden className="size-3" />
+                          ) : (
+                            <Copy aria-hidden className="size-3" />
+                          )}
+                          {copied ? "Copied!" : "Copy link"}
+                        </button>
+                      </div>
+                    </div>
                   </>
                 )}
               </div>
