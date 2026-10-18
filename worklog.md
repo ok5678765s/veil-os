@@ -1784,3 +1784,37 @@ Stage Summary:
 - Artifacts: src/components/veil/roblox/roblox-tab.tsx (QR + copy play dialog, both contexts; legacyCopy), package.json (+qrcode.react).
 - Standing notes: agent-browser's `frame` command cannot switch into cross-origin sandboxed iframes in this environment — same-origin embed simulation (create iframe from the page itself) is the working QA pattern. Clipboard APIs correctly refuse synthetic clicks; use real CDP clicks (find role button click) to test copy flows.
 - The owner's account credentials were NOT used and are NOT stored anywhere; they should rotate that password.
+
+---
+Task ID: 5 (owner: "continue you stopped" — finishing the restore: extension maker + messages/accounts + now.gg roblox)
+Agent: main (Z.ai Code)
+Task: Continue the interrupted restore session. Verify the three owner asks landed (Extension Maker back, messages/accounts back, Roblox playable via now.gg), finish the missing pieces, and QA everything live.
+
+Work Log:
+- CONTEXT RECOVERY: the previous session (commit 569baec) had already restored the Extension Maker (ai-section.tsx Maker mode + api/ai/route.ts make=ext path), run scripts/restore-merge.cjs (67 accounts / 114 messages merged from backups/chat/history/chat-2026-10-17-19-23-15.json after the platform rollback orphaned the community), and written the now.gg catalog (shared.ts CLOUD_GAMES, 11 live entries) + CloudRow UI. The session died MID-FILE: roblox-tab.tsx had cloudTarget state, launchCloud/copyCloudLink callbacks and Esc handling — but the cloud dialog JSX was NEVER RENDERED (clicking a Cloud card did nothing).
+- BUILT the missing cloud dialog: now.gg banner tile header (pink #ff42a5 accent), "Play in my browser" primary (openExternalTab → real now.gg tab), "Open in the Veil browser" (onLaunch fallback — the path that works inside the sandboxed preview), popup-blocked state (cloudBlocked → Veil browser becomes primary), copy link with Copied! feedback, backdrop/Esc close.
+- PLAY DIALOG CLOUD TWINS: games now.gg streams (cloudMatchFor on the name) now lead the play dialog — embedded: big pink "Play in your browser — no download" hero above the QR (copy adjusts to "Prefer the app?"); top-level: compact "Or play {game} in this browser" row under the QR. Clicking either transitions into the cloud dialog.
+- BUG (parse error): TS's scanner chokes on TWO-LINE JSX comments in this exact context — `',' expected` at the next expression (bisected: any 2-line {/* … */} before {playCloudTwin && (} errors; single-line fine; same 2-line comment elsewhere parses). All inserted comments made single-line; parse verified CLEAN via ts.parseDiagnostics.
+- EVERGREEN CLOUD ROW: during QA a roblox.com slow refresh (7.4s, cache expiry + HMR race) errored the home fetch and the ErrorCard early-return swallowed the whole HomeView INCLUDING the static CloudRow. Fixed: CloudRow renders first, error card below it — cloud play now survives a full roblox.com outage.
+- SEARCH CLOUD RESULTS: SearchView now leads with matching now.gg cloud cards (normalized alias contains-match both ways) — searching "brookhaven" shows the browser-playable Brookhaven cloud card above the 30 live results; the error/empty states keep cloud hits visible too.
+- QA (agent-browser, live, 1440×900):
+  - Roblox tab: Cloud play row renders 11 real now.gg games (Brookhaven/Adopt Me!/Blox Fruits/Dandy's World/Strongest Battlegrounds/99 Nights/Ink Game/Evade/Forsaken/Fish It/Anime Rangers X), tiles loading from cdn.now.gg.
+  - Cloud card → dialog: banner img + buttons verified in-DOM; real click on Copy link → "Copied!"; Esc closes.
+  - Search "brookhaven": VLM-verified — pink CLOUD badge card on top, "30 results" grid below, zero errors.
+  - Detail → Play (top-level): spinner → fallback panel with Launch Roblox / game page / QR phone row / "Or play Brookhaven in this browser" twin → click → cloud dialog transition verified.
+  - LAUNCH: "Play in my browser" opened a REAL https://now.gg/apps/Brookhaven/19905/Brookhaven.html tab. (now.gg shows its "Something went wrong" screen to the HEADLESS browser — their anti-bot rejects headless+datacenter; curl confirms all 11 URLs 200 and real browsers get the streaming player. Cannot verify actual gameplay from this sandbox — target-side ceiling, same class as the QR path.)
+  - Extension Maker: switcher shows Chat/Image/Video/Maker; Maker click → aria-pressed, mode banner, placeholder swaps to "Describe the extension to build…"; E2E curl POST /api/ai {make:"ext"} streamed a REAL 88KB build (neon click-counter, complete self-contained HTML ending </html>).
+  - Messages & accounts: registered a throwaway account through the real UI (register mode → form → Create account) → roster shows "Offline — 78" with the restored community (Veil OWNER, Canadian Spy MOD, SpiffyBoss5111 MOD, ppJA, Avangard, brah, DONNIBOI, …); message history fully present with day separators (Sept 15→22: "ollo", "holy grammar", "gobler of glizzys", "I can smell him from here"… and October: Lone_Wolf "also add the actual roblox plss", ilovejesus, marquee haynes, PokeBlader) + the clstickmanduel.html 42KB attachment. VLM-verified screenshot. QA account deleted afterwards (67 accounts / 114 messages final).
+  - Zero page/console errors across the flows; parse + eslint clean on all touched files; dev.log healthy.
+- Ops notes: agent-browser RELOAD wedges CDP on this heavy page — always close + fresh session instead; nav "roblox" tab label is capitalized "Roblox" in the button text; the boot-guard auto-reload (server restart) closes open apps mid-QA by design — re-open and continue.
+
+Stage Summary:
+- All three owner asks are DONE and verified live: ① Extension Maker fully restored (UI + API, real builds stream), ② the community is back (67 accounts / 114 messages, roster + full history + attachments visible in the UI), ③ Roblox now plays the now.gg way — Cloud play row, cloud dialogs, search/detail/play-dialog cloud twins, real now.gg tabs, and an evergreen cloud row that outlives roblox.com outages.
+- Committed as a61ad61 (roblox-tab.tsx: +277/−20). The restore-merge and AI-maker restore were already in HEAD (569baec).
+- The only unverifiable-from-sandbox step is now.gg's actual gameplay stream (their anti-bot blocks headless browsers) — every URL mechanic is confirmed working; real-browser users get the player.
+
+Unresolved / risks:
+- now.gg catalog is curated/hardcoded (11 titles) — new now.gg Roblox entries need manual catalog updates; a scraper could automate it but their catalog API isn't public/documented.
+- cloudMatchFor is name-based — Roblox catalog names that drift from now.gg's listing (e.g. "Brookhaven 🏡RP [UPDATE]") still match via normalized contains, but exotic renames would miss.
+- The TS two-line-JSX-comment scanner quirk: if future edits paste multi-line {/* */} comments before expressions in this file, parse errors reappear — keep them single-line.
+- Roblox live rows still depend on roblox.com APIs (9s server timeouts, in-memory cache 120s/home) — the evergreen CloudRow covers outages, but the live rows themselves have no offline fallback.
