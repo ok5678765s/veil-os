@@ -142,7 +142,12 @@ export function downloadExtPackage(ext: AiExt): string {
 export function parseExtReply(reply: string): AiExt | null {
   const src = String(reply || "");
   const fence = /```(?:html)?\s*\n([\s\S]*?)```/.exec(src);
-  let html = fence ? fence[1].trim() : "";
+  /* Only a block that actually looks like an HTML page counts as an app —
+   * the AI Coder also answers plain code questions (```python, ```js, ...)
+   * whose blocks must stay chat code, never become a broken "app" card. */
+  const looksHtml = (s: string) =>
+    /<!doctype html|<html[\s>]|<body[\s>]|<!--\s*veil-ext/i.test(s);
+  let html = fence && looksHtml(fence[1]) ? fence[1].trim() : "";
 
   if (html.length < 400) {
     /* fence-less: anchor on the metadata comment, else the LAST doctype

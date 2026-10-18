@@ -1915,3 +1915,31 @@ Unresolved / risks:
 - Compact builds trade some polish for speed (fewer flourishes, terse code) — if the owner wants richer apps, the prompt's line ceiling is the knob to turn.
 - thinking:{type:"disabled"} is now on every /api/ai + /api/ai-operator call — if a future feature needs deep reasoning (e.g. complex debugging), it should opt back into thinking for that call only.
 - Next candidates: "rebuild with changes" (remix an existing build), made-builds in the arcade search, syntax highlighting in View code.
+
+---
+Task ID: 1 (single-agent session)
+Agent: main (Z.ai Code)
+Task: Owner directive: "should give it to you not AS A APP when it codes it doset code l;arge it codes small les than 10KN" — the speed fix over-corrected: builds were clamped tiny (<10KB). Restore LARGE full-featured builds, and make the coder answer code requests as CODE (any language), not always a wrapped "app". Also surface "give it to you" (Save .html) directly on the card.
+
+Work Log:
+- CODE_SYSTEM_PROMPT rewritten: "senior engineer who writes COMPLETE, FULL-FEATURED code — never a minimal stub". Two request paths: (A) browser things → ONE self-contained HTML page, target 300-800 lines, 15-40KB is normal and good, real depth (game loop + delta time, settings, stats, keyboard AND touch, animations, edge cases, devicePixelRatio); (B) other code (Python/Node CLI/React/SQL/bash/algorithm/regex/config) → the actual code in ONE fenced block with the right language tag, complete, never '...' placeholders, one explanation line, NOT wrapped as an HTML app. Dense style kept (no comment spam/padding/dead code). thinking stays disabled (the speed win that matters).
+- parseExtReply (server route.ts AND client ext-maker.ts twins): fenced blocks now must LOOK like HTML (doctype | <html | <body | veil-ext comment) to become an app — a ```python/```js answer ≥400 chars can no longer be misparsed into a broken "AI Extension" card; it stays chat code.
+- Nudge logic: new hasClosedFence() helper; the prose-only nudge (streaming + JSON paths) now requires NO closed fence (a code answer is a success, not a failure); the nudge LOOP breaks on parseExtReply(full) || hasClosedFence(full) (fixed a live-observed double-nudge: python request → nudge landed the code → loop nudged AGAIN because parseExtReply was still null). NUDGE_PROMPT/NUDGE_HARD_PROMPT reworded to be path-aware (html block for web requests, right language tag otherwise).
+- Client safety net ② (ai-section.tsx): condition /```html/ → /```/ — a python/js code answer no longer triggers the false "Described — but not built" amber warning; it renders as a normal markdown message with its code block.
+- "Give it to you": downloadExtFile(ext) hoisted to module level; NEW "Save .html" button directly on the ExtCard (next to View code) — the raw build lands on disk as a real file without opening View code first. ExtCodeDialog's Save .html now shares the same helper.
+- Copy: armed strip → "describe what to build (a full web app) or ask for code in any language. Big and complete, streamed live."; composer placeholder gains the python example; footer → "…and code in any language, zero external requests".
+- QA (curl + agent-browser + VLM, all live):
+  - Large build (curl, "retro brick breaker with power-ups, levels, high score board"): 74s end-to-end incl. 2 auto-continuation rounds (token cap on a big build — the repair system working as designed), 32.1KB / 1003 lines, valid ext + closed fence.
+  - Code answer (curl, python file-renamer): 9s, ```python fence, ext=null, no doctype; first model turn was genuinely intro-only (112 chars, no code) → the nudge correctly fired once and landed the code; the double-nudge bug was caught HERE and fixed; re-test (js debounce): 4s, ```javascript, ZERO continuing frames.
+  - UI (agent-browser): python fold-function request → code rendered INLINE in chat, no "Described — but not built", no app card. App build ("memory match with move counter, timer, best score") → live console mid-build (4.1 KB · 167 lines, live code header, 700-char tail), card landed at 17 KB with Play in the Arcade / Preview / View code / Save .html (VLM-verified screenshot). Zero browser console errors; eslint clean on all 3 touched files; dev server 200 (a few benign ECONNRESET aborts from benchmark cutoffs — SSE client disconnects, server recovered instantly).
+- Files: MODIFIED src/app/api/ai/route.ts, src/lib/veil/ext-maker.ts, src/components/veil/ai-section.tsx.
+
+Stage Summary:
+- The AI Coder is now FAST AND BIG: thinking disabled (starts writing immediately) + full-featured output (17-32KB builds, 300-1000 lines) + live code console while it streams. Speed came from removing the reasoning delay, never from shrinking the code — the 80-220-line clamp is gone.
+- It GIVES YOU THE CODE: non-app requests (python/js/sql/bash/react/...) answered as real code blocks in chat (never force-wrapped as an app), and every app card carries a direct Save .html button (plus Copy code / Save .html in View code).
+- Robustness: code answers can't be misparsed as apps (HTML gate), can't trigger the prose-only nudge (hasClosedFence), can't hit the false "not built" warning (any-fence check), and the nudge loop stops once ANY code lands.
+
+Unresolved / risks:
+- Big builds (30KB+) can hit the 16384-token output cap → the continuation rounds add ~10-20s each (transparent, auto-repaired, live console keeps streaming — verified). If the owner wants even bigger builds, raising max_tokens is the next knob.
+- The model occasionally answers intro-only (no code) even for code requests — the nudge repairs it in one round (verified live); acceptable.
+- Next candidates: "rebuild with changes" (remix an existing build), made-builds in the arcade search, syntax highlighting in View code, download filename for non-HTML code answers (currently chat-only rendering).

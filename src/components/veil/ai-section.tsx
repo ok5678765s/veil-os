@@ -350,6 +350,19 @@ function fileNameSlug(ext: AiExt): string {
   return `${slug || "veil-app"}.html`;
 }
 
+/* ── “Give it to you”: the raw build as a real .html file on disk.
+   Shared by the ExtCard button and the View-code dialog. ── */
+function downloadExtFile(ext: AiExt): void {
+  const url = URL.createObjectURL(new Blob([ext.html], { type: "text/html" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileNameSlug(ext);
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
 /* ── Live preview — the build running INLINE in a sandboxed iframe,
    never a browser tab, never a new window. No allow-popups in the
    sandbox, so even window.open attempts inside the build stay put. ── */
@@ -449,16 +462,7 @@ function ExtCodeDialog({ ext, open, onOpenChange }: { ext: AiExt; open: boolean;
    * a browser tab, never a new window. */
   const openPreview = () => setPreviewing(true);
 
-  const downloadRaw = () => {
-    const url = URL.createObjectURL(new Blob([ext.html], { type: "text/html" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileNameSlug(ext);
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
-  };
+  const downloadRaw = () => downloadExtFile(ext);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -599,6 +603,16 @@ function ExtCard({ ext }: { ext: AiExt }) {
         >
           <Eye aria-hidden className="h-3.5 w-3.5" />
           {shown ? "Hide code" : "View code"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => downloadExtFile(ext)}
+          title="Save the raw build as an .html file"
+          className="veil-press h-8 gap-1.5 rounded-xl border-zinc-700 bg-zinc-900/60 px-3 text-[12.5px] font-medium text-zinc-300 hover:border-violet-500/40 hover:text-violet-200"
+        >
+          <Download aria-hidden className="h-3.5 w-3.5" />
+          Save .html
         </Button>
         <p className="w-full text-[11px] leading-relaxed text-zinc-500 sm:w-auto sm:flex-1 sm:text-right">
           Saved to <span className="text-zinc-300">My AI builds</span> — runs right here or inside the Arcade, never a browser tab.
@@ -944,7 +958,7 @@ function Bubble({
               Retry
             </button>
           </>
-        ) : maker && !msg.ext && !/```html/.test(msg.content) ? (
+        ) : maker && !msg.ext && !/```/.test(msg.content) ? (
           <>
             {/* Safety net ②: prose-only — the model described the app but never
                 wrote a code block (a known quirk; even the server's nudges
@@ -1917,8 +1931,8 @@ export function AiSection({
           >
             <FileCode2 aria-hidden className="h-3.5 w-3.5 shrink-0 text-violet-300" />
             <p className="min-w-0 flex-1 text-[11.5px] leading-snug text-violet-200/90">
-              AI Coder armed — describe what to build, and the next answer arrives
-              as a complete, working web app.
+              AI Coder armed — describe what to build (a full web app) or ask for code in
+              any language. Big and complete, streamed live.
             </p>
             <button
               type="button"
@@ -2118,7 +2132,7 @@ export function AiSection({
             }}
             placeholder={
               maker
-                ? "Describe what to build — “a pomodoro timer with stats”, “a neon snake game”, “a landing page”…"
+                ? "Describe what to build — “a pomodoro timer with stats”, “a neon snake game”… or ask for code in any language — “a Python script that renames files”…"
                 : genMode === "image"
                   ? "Describe the image — “a lighthouse in a storm, oil painting style”…"
                   : genMode === "video"
@@ -2169,7 +2183,7 @@ export function AiSection({
         <p className="mx-auto mt-2 max-w-2xl text-center text-[11px] text-zinc-600">
           {maker ? (
             <>
-              Powered by GLM · AI Coder writes complete single-file web apps — HTML, CSS and JS, zero external requests
+              Powered by GLM · AI Coder writes complete single-file web apps — HTML, CSS and JS — and code in any language, zero external requests
             </>
           ) : genMode === "image" ? (
             <>Powered by GLM · AI Image — enter paints, Shift+Enter adds a line</>

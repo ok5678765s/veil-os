@@ -106,29 +106,32 @@ const EXT_SYSTEM_PROMPT = [
 ].join("\n");
 
 const CODE_SYSTEM_PROMPT = [
-  "You are Veil AI in AI CODER mode — a FAST HTML maker. The user describes ANYTHING buildable for the web (a page, tool, widget, dashboard, calculator, timer, game, toy, demo...) and you write the code: ONE complete, self-contained HTML page with all the HTML, CSS and JavaScript inline. It renders and runs exactly as delivered.",
+  "You are Veil AI in AI CODER mode — a senior engineer who writes COMPLETE, FULL-FEATURED code. The user describes anything and you deliver the whole thing — never a minimal stub, never a demo sketch.",
   "",
-  "SPEED IS THE #1 RULE. You write compact, dense, working code — never bloated:",
-  "- Target 80-220 lines total (hard ceiling ~300). Fewer is better as long as it fully works.",
-  "- NO comments at all (the only comment is the metadata line). No blank-line padding. No dead code. No placeholder sections.",
-  "- Shortest correct implementation: one CSS block, one JS block, minimal DOM, terse helpers. The user is watching the code stream in live — every line costs their time.",
+  "TWO kinds of requests — pick correctly:",
+  "A) Anything that runs in a browser (page, tool, widget, dashboard, game, toy, demo...): build ONE complete, self-contained HTML page with all the HTML, CSS and JavaScript inline. Make it RICH and FULL-FEATURED:",
+  "- Target 300-800 lines. 15-40KB of code is normal and good — do NOT artificially shrink the app. If a feature is implied by the request, build it.",
+  "- Real depth: proper game loop (requestAnimationFrame + delta time), score, win/lose, restart, settings, stats, keyboard AND touch controls, animations, edge-case handling, polish.",
+  "- Crisp on high-DPI (scale canvas by devicePixelRatio when drawing).",
+  "B) Code in another language or a non-page form (a Python script, a Node CLI, a React component, SQL, bash, an algorithm, a regex, a config...): write THAT code — ONE fenced block with the correct language tag, complete and runnable, full length, NEVER truncated with '...' placeholders. One short explanation line before it. Do NOT wrap it as an HTML app.",
+  "",
+  "Style (both paths): dense professional code — no comment spam, no blank-line padding, no dead code; every line does work.",
   "",
   "Output format (follow EXACTLY):",
-  "1. One short intro sentence (max 1 line, no heading, no bullet list).",
-  "2. Then ONE fenced code block tagged html containing the ENTIRE page — nothing after the closing fence.",
-  "3. The first line inside the block, right after <!doctype html>, must be a metadata comment:",
+  "1. One short intro sentence (max 1 line).",
+  "2. Then ONE fenced code block — tagged html for browser apps (path A), or the right language for code answers (path B) — nothing after the closing fence.",
+  "3. HTML apps only: the first line inside the block, right after <!doctype html>, must be the metadata comment:",
   "   <!-- veil-ext {\"name\":\"Short Name\",\"desc\":\"One-line description\",\"icon\":\"icon\"} -->",
   "   icon must be ONE of: bot, joypad, image, globe, dices, search, spark, calc, trophy, zap, timer, brush, pen, filetext, monitor, key, palette, worm, bomb, music, heart, desktop, play, archive, package.",
   "",
-  "Hard rules for the page you write:",
+  "Hard rules for HTML app pages:",
   "- Zero external requests: no CDN, no fetch, no import, no web fonts, no images from the web. Inline <style> and <script> only — everything lives in the one file.",
-  "- Real working logic: actual state, actual interactivity — never a mockup. If it's a game: a proper loop, score, restart, controls for BOTH keyboard and touch. If it's a tool: it must actually work end-to-end.",
-  "- Responsive (mobile-first), clean dark theme with ONE vibrant accent, decent typography and spacing.",
+  "- Fully responsive (mobile-first), polished dark theme with ONE vibrant accent, cohesive typography and spacing.",
   "- <!doctype html> + <meta charset=\"utf-8\"> + <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> + <title>.",
   "- localStorage guarded with try/catch for scores/settings/state.",
   "- No alert()/confirm()/prompt(). No external libraries. No window.open, no target=_blank, never navigate away (runs in a sandboxed srcdoc iframe).",
   "",
-  "If the request is unclear, pick a reasonable interpretation and build it — never answer with questions instead of the code block.",
+  "If the request is unclear, pick a reasonable interpretation and build it — never answer with questions instead of code.",
 ].join("\n");
 
 /** A reply that started writing an app page but never finished it —
@@ -281,19 +284,28 @@ const CONTINUE_PROMPT = [
  *  quirk: intro, no code). One nudge makes it actually build; without this
  *  the user had to notice and re-ask manually. */
 const NUDGE_PROMPT = [
-  "You answered without building anything.",
-  "Build it now, following the output format exactly:",
-  "one short intro sentence, then ONE fenced ```html code block containing the ENTIRE self-contained app page, nothing after the closing fence.",
+  "You answered without writing any code.",
+  "Write the code now, following the output format exactly:",
+  "if the request is a web page/app: one short intro sentence, then ONE fenced ```html code block containing the ENTIRE self-contained app page, nothing after the closing fence;",
+  "if it is code in another language: the complete code in ONE fenced block with the right language tag.",
 ].join(" ");
 
 /** Second-stage nudge — the model answered the FIRST nudge with yet
  *  another description (observed live: two intros merged, no code, no
  *  card). This one forbids everything that is not the code block. */
 const NUDGE_HARD_PROMPT = [
-  "That reply STILL contained no code block — you described the app again.",
-  "Reply now with EXACTLY two things and nothing else: one short intro line, then ONE fenced ```html code block containing the complete self-contained app page.",
-  "No more description, no summary, no apologies. The code block or nothing.",
+  "That reply STILL contained no code block — you described it again.",
+  "Reply now with EXACTLY two things and nothing else: one short intro line, then ONE fenced code block — ```html with the complete self-contained app page for web requests, or the right language tag for other code. No more description, no summary, no apologies. The code block or nothing.",
 ].join(" ");
+
+/** A reply that already contains a complete fenced code block — a legit
+ *  AI Coder answer (path B: python/js/sql/... or any tagged block). The
+ *  prose-only nudge must never fire on these; it exists solely for replies
+ *  that describe without writing a single line of code. */
+function hasClosedFence(t: string): boolean {
+  const first = t.indexOf("```");
+  return first !== -1 && t.indexOf("```", first + 3) !== -1;
+}
 
 /** Pull the app out of an Extension Maker reply.
  * Handles the documented fenced-block shape AND the fence-less raw page
@@ -303,7 +315,12 @@ const NUDGE_HARD_PROMPT = [
 function parseExtReply(reply: string): { name: string; desc: string; icon: string; html: string } | null {
   const src = String(reply || "");
   const fence = /```(?:html)?\s*\n([\s\S]*?)```/.exec(src);
-  let html = fence ? fence[1].trim() : "";
+  /* Only a block that actually looks like an HTML page counts as an app —
+   * the AI Coder also answers plain code questions (```python, ```js, ...)
+   * whose blocks must stay chat code, never become a broken "app" card. */
+  const looksHtml = (s: string) =>
+    /<!doctype html|<html[\s>]|<body[\s>]|<!--\s*veil-ext/i.test(s);
+  let html = fence && looksHtml(fence[1]) ? fence[1].trim() : "";
 
   if (html.length < 400) {
     /* fence-less: anchor on the metadata comment, else the LAST doctype
@@ -541,6 +558,7 @@ export async function POST(req: Request): Promise<Response> {
               if (
                 !looksTruncated(full) &&
                 !parseExtReply(full) &&
+                !hasClosedFence(full) &&
                 Date.now() - started < TOTAL_CAP_MS
               ) {
                 /* Intro-only reply: up to two nudges, the second much
@@ -583,7 +601,9 @@ export async function POST(req: Request): Promise<Response> {
                     }
                     full = mergeContinuation(full, more);
                   }
-                  if (parseExtReply(full)) break;
+                  /* Success = an app OR any complete code answer (python/
+                   * js/sql…): both satisfy the request, so stop nudging. */
+                  if (parseExtReply(full) || hasClosedFence(full)) break;
                 }
               }
 
@@ -679,8 +699,8 @@ export async function POST(req: Request): Promise<Response> {
 
     // Truncated builds get the same auto-repair treatment as streaming.
     if (maker) {
-      // ① intro-only nudge
-      if (!looksTruncated(content) && !parseExtReply(content)) {
+      // ① intro-only nudge (a closed code fence = a legit code answer — never nudged)
+      if (!looksTruncated(content) && !parseExtReply(content) && !hasClosedFence(content)) {
         const nudge = (await llmCreate<{
           choices?: { message?: { content?: string } }[];
         }>({
