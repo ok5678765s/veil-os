@@ -178,9 +178,9 @@ export default function Home() {
   }, []);
   const closeSection = React.useCallback(() => setSection(null), []);
 
-  // Cross-section hops for the Cloud Game Studio: "Play in the Arcade"
-  // (a made game is starting in the Arcade's Roblox tab) and the Roblox
-  // tab's "Make your own game" CTA (opens the AI section in Games mode).
+  // Cross-section hops for AI Coder: "Play in the Arcade"
+  // (a made build is starting in the Arcade's Roblox tab) and the Roblox
+  // tab's "Build with AI Coder" CTA (opens the AI section in Coder mode).
   React.useEffect(() => {
     const onPlay = () => openSection("arcade");
     const onMake = () => openSection("ai");

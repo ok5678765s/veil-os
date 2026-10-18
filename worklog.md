@@ -1851,3 +1851,38 @@ Unresolved / risks:
 - The made-game iframe runs with sandbox allow-scripts+allow-same-origin (AI-generated HTML on our origin) — same trust model as the old extension flow; a stricter sandbox would break localStorage best-scores.
 - Builds can be interrupted by the box's boot-guard auto-reloads (dev-infra artifact); the Retry notice recovers them. Heavy tsc runs on this box can trigger watchdog pressure — prefer targeted eslint during QA.
 - Next candidates: cloud-game catalog auto-discovery, made-game editing/remixing ("rebuild with changes"), and a made-games presence in the arcade search.
+
+---
+Task ID: 1
+Agent: main (Z.ai Code, no subagents — surgical cross-file event wiring, done in-context)
+Task: Replace "Make Your Own Cloud Game" (Cloud Game Studio) with an HTML maker named "AI Coder" (AI writes HTML + other code inline), and remove the now.gg cloud-game iframe entirely (owner: "the now gg shouldnt be a iframe and it dosent even work").
+
+Work Log:
+- /app/api/ai/route.ts: make schema z.enum(["ext","game"]) → z.enum(["ext","code","game"]) ("game" kept as retired alias so a stale bundle can't 400). GAME_SYSTEM_PROMPT replaced with CODE_SYSTEM_PROMPT (AI CODER mode, HTML maker): any web build (page/tool/widget/dashboard/game) as ONE self-contained HTML page with all HTML/CSS/JS inline; real working logic, mobile-first responsive, localStorage state, no external requests, no alert/window.open/target=_blank, runs in sandboxed srcdoc iframe. maker/makerPrompt selection updated ("ext" keeps EXT_SYSTEM_PROMPT, everything else → CODE_SYSTEM_PROMPT).
+- /lib/veil/cloud-games.ts: rebranded to AI Coder ("My AI builds"); proxiedUrl (the now.gg iframe helper) DELETED; defaults now "My AI Build"/"Built with AI Coder"/icon filetext. localStorage key "veil:cloud-games:v1" UNCHANGED so existing saved builds survive. Event names (veil:play-made-game, veil:cloud-games-changed, veil:open-ai-games) and the pending-slot handoffs unchanged — the cross-section wiring still works.
+- /components/veil/ai-section.tsx: NEW ExtPreviewDialog — the build runs INLINE in a sandboxed iframe dialog (sandbox WITHOUT allow-popups so even window.open inside a build stays in-frame; header: name + "Runs right here in Veil · sandboxed · no browser tab" + Reload). The OLD openPreview (window.open of a blob URL = NEW TAB, rule violation) is gone — ExtCodeDialog's "Preview" button now opens the inline dialog. ExtCard rebranded: [Play in the Arcade] [Preview] [View code] + "Saved to My AI builds — runs right here or inside the Arcade, never a browser tab." Chip "Games"/Joystick → "AI Coder"/FileCode2 (Joystick import kept — used by ExtIcon map + suggestions). Entry card → "AI Coder / Describe any page, tool or game — I write the HTML/CSS/JS, it runs right here". Status strip → "AI Coder armed…". Placeholder → "Describe what to build…". make:"game" → make:"code". Streaming texts → "Veil AI is writing the code…/finishing the build…". Footer → "Powered by GLM · AI Coder writes complete single-file web apps…". Cut-off notice reworded (build, not game).
+- /components/veil/roblox/roblox-tab.tsx: ALL now.gg cloud code removed — CloudCard + CloudRow (147 lines) deleted; cloud twins in SearchView gone; the detail-page cloud banner gone; the play-dialog cloud-twin hero/row (both embedded and top-level branches) gone; EmbeddedPlayer simplified to made-builds only (srcDoc iframe, AI badge, no cloud link button, no "stream not loading" fallback footer — nothing ever opens a browser tab now); sandbox drops allow-popups. MadeGamesRow rebranded → "My AI builds — written by AI Coder from your description — runs right here" with "Build with AI Coder" CTA; cards show FileCode2 art + AI badge + "ready to run/played N×". R.cloud/cloudHover palette entries, Cloud/Gamepad2/openExternalTab/normGameName/CLOUD_GAMES/cloudMatchFor/proxiedUrl imports all removed.
+- /components/veil/roblox/shared.ts: the entire now.gg section deleted (CloudGame interface, CLOUD_GAMES 11-title catalog, normGameName, cloudMatchFor, openExternalTab).
+- page.tsx + arcade-section.tsx: hop comments rebranded to AI Coder (event wiring untouched).
+- Note: a pre-existing manual "HTML Coder" section (coder-section.tsx, nav "Coder") exists — the AI-section mode is labeled "AI Coder" everywhere to disambiguate.
+- Fixed a self-inflicted JSX break mid-surgery (a `)}` was briefly replaced by `) : (` in the play dialog's non-embedded branch) — caught by re-reading the diff, restored before any compile.
+
+Verification (agent-browser live + curl + VLM):
+- tsc: 118 errors BEFORE == 118 AFTER (all pre-existing SDK looseness; zero in touched files). eslint clean on all 7 touched files.
+- dev.log healthy (GET / 200, /api/roblox 200 in 22ms, no errors).
+- AI section: "AI Coder" chip + entry card + armed strip + placeholder + GLM footer all present; zero "cloud"/"now.gg"/"Game Studio" text.
+- curl make:"code" build ("Tap Tally click counter"): 2337 SSE frames → done frame with parsed ext {name:"Tap Tally", desc, icon, html} — the new prompt path works end-to-end server-side.
+- UI golden path: prompt "mood ring page" → (one boot-guard reload mid-build, amber Retry notice caught it exactly as designed) → Retry → "Mood Ring" build card. Preview → INLINE dialog rendered the live app ("PASSIONATE — Click the ring to see your mood"), synthetic click registered, window.length===1 (no new tabs). "Play in the Arcade" → hops to Arcade → Roblox tab → "Now playing: Mood Ring" embedded player, game rendered inside; VLM-verified the screenshot (arcade top bar, roblox tab active, AI badge, Stop button, and explicitly NO now.gg / "Cloud play" anywhere).
+- Roblox tab after full reload: "My AI builds" row with Mood Ring + Color Rush (localStorage persisted), "Build with AI Coder" CTA → hops to AI section with Coder mode armed; Esc chain (player → close) works; live roblox.com rows still load; zero now.gg/Cloud play anywhere in the DOM.
+
+Stage Summary:
+- The Cloud Game Studio is REPLACED by AI CODER: describe any web page/tool/game → Veil AI writes the complete HTML/CSS/JS → Preview runs INLINE (sandboxed, no popups possible) → "Play in the Arcade" runs it embedded in the Arcade's Roblox tab → builds persist in "My AI builds" and replay/delete from there.
+- now.gg is fully removed (catalog, cloud rows, cloud twins, cloud banners, proxied iframe player, escape-hatch footer). Roblox tab = native roblox.com charts/search/game pages + roblox-player:// deep link + your own AI builds. Nothing in the AI Coder or build-player flow can open a browser tab or new window.
+- Files: MODIFIED src/app/api/ai/route.ts, src/lib/veil/cloud-games.ts, src/components/veil/ai-section.tsx, src/components/veil/roblox/roblox-tab.tsx, src/components/veil/roblox/shared.ts, src/app/page.tsx, src/components/veil/arcade-section.tsx.
+- Cron: previous v1-v3 webDevReview jobs were dead ("Disabled due to exec limits exceeded") — deleted all three, created fresh "Veil dev review cycle v4" (job 467085, every 15 min, active).
+
+Unresolved / risks:
+- Boot-guard auto-reloads can interrupt a long AI Coder build mid-stream (dev-infra artifact); the amber "Retry" notice recovers it — verified live. Real-browser users on a stable tab are unaffected.
+- The made-build iframe runs sandbox allow-scripts+allow-same-origin (needed for localStorage best-scores in builds) — same trust model as the old extension flow.
+- Owner should hard-refresh (Ctrl+Shift+R) once if they see the old "Games" chip / cloud rows — zombie bundle.
+- Next candidates: "rebuild with changes" (edit/remix an existing build), a made-builds presence in the arcade search, and showing the build's code with syntax highlighting.

@@ -60,12 +60,14 @@ const bodySchema = z.object({
     )
     .min(1)
     .max(40),
-  /** "ext" → Extension Maker mode (legacy); "game" → Cloud Game
-   *  Studio mode. Both make the assistant build a single self-contained
-   *  HTML app/game; the server extracts it as a structured { name, desc,
-   *  icon, html } payload. Games play embedded in the Arcade's Roblox
-   *  tab — never a browser tab. */
-  make: z.enum(["ext", "game"]).optional(),
+  /** "ext" → Extension Maker mode (legacy); "code" → AI Coder mode
+   *  ("game" is the retired Cloud Game Studio spelling, still accepted
+   *  so a stale bundle can't 400). Both make the assistant build a
+   *  single self-contained HTML app — HTML with inline CSS/JS — and
+   *  the server extracts it as a structured { name, desc, icon, html }
+   *  payload. Builds preview inline and play embedded in the Arcade —
+   *  never a browser tab. */
+  make: z.enum(["ext", "code", "game"]).optional(),
   /** stream: true → Server-Sent Events instead of one JSON blob. Long
    *  builds (Extension Maker) can take 30-90s; a silent connection gets
    *  cut by outer proxies which answer with an HTML error page the
@@ -103,26 +105,25 @@ const EXT_SYSTEM_PROMPT = [
   "If the request is unclear, pick a reasonable interpretation and build it — never answer with questions instead of the code block.",
 ].join("\n");
 
-const GAME_SYSTEM_PROMPT = [
-  "You are Veil AI in Cloud Game Studio mode. The user describes a game — usually a Roblox-style experience (obby, tycoon, simulator, clicker, battlegrounds, horror, racing, tower defense...) — and you build it as ONE complete, self-contained HTML page that plays embedded inside the Veil Arcade.",
+const CODE_SYSTEM_PROMPT = [
+  "You are Veil AI in AI CODER mode — an HTML maker. The user describes ANYTHING buildable for the web (a page, tool, widget, dashboard, calculator, timer, game, toy, demo...) and you write the code: ONE complete, self-contained HTML page with all the HTML, CSS and JavaScript inline. It renders and runs exactly as delivered.",
   "",
   "Output format (follow EXACTLY):",
   "1. One short intro sentence (max 2 lines, no heading, no bullet list).",
-  "2. Then ONE fenced code block tagged html containing the ENTIRE game — nothing after the closing fence.",
+  "2. Then ONE fenced code block tagged html containing the ENTIRE page — nothing after the closing fence.",
   "3. The first line inside the block, right after <!doctype html>, must be a metadata comment:",
   "   <!-- veil-ext {\"name\":\"Short Name\",\"desc\":\"One-line description\",\"icon\":\"icon\"} -->",
   "   icon must be ONE of: bot, joypad, image, globe, dices, search, spark, calc, trophy, zap, timer, brush, pen, filetext, monitor, key, palette, worm, bomb, music, heart, desktop, play, archive, package.",
   "",
-  "Hard rules for the game page:",
-  "- Zero external requests: no CDN, no fetch, no import, no web fonts, no images from the web. Inline <style> and <script> only.",
-  "- A real GAME, not a demo: a proper game loop (requestAnimationFrame + delta time), score/coins/levels, difficulty that ramps, win AND lose states, a restart button, and pause when the tab loses focus.",
-  "- Controls for BOTH keyboard (WASD / arrows / space) and touch (on-screen buttons or drag zones) — it must be playable on a phone.",
-  "- Canvas-based rendering (crisp on high-DPI: scale by devicePixelRatio), or DOM only if it genuinely fits better.",
-  "- The page fills the viewport (100dvh, no page scroll), dark theme with ONE vibrant accent, polished HUD.",
-  "- localStorage (guarded with try/catch) for best scores; safe if storage is unavailable.",
-  "- No alert()/confirm()/prompt(); use inline UI. No external libraries. Optional: tiny WebAudio blips started on first user gesture.",
-  "- The game runs inside an iframe (srcdoc): never rely on window.top, never navigate away.",
-  "- Aim for a genuinely fun, juicy game: particles/screenshake where it fits, roughly 250-700 lines.",
+  "Hard rules for the page you write:",
+  "- Zero external requests: no CDN, no fetch, no import, no web fonts, no images from the web. Inline <style> and <script> only — everything it needs lives in the one file.",
+  "- Real, working code: actual logic, actual state, actual interactivity — never a mockup with placeholder buttons. If it's a game: a proper loop (requestAnimationFrame + delta time), score, win/lose, restart, and controls for BOTH keyboard and touch. If it's a tool: it must actually work end-to-end.",
+  "- Fully responsive (mobile-first), polished typography and spacing, a cohesive design (dark theme with ONE vibrant accent unless the request clearly calls for something else), crisp on high-DPI (scale canvas by devicePixelRatio when drawing).",
+  "- <!doctype html> + <html lang=\"en\"> + <meta charset=\"utf-8\"> + <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> + <title> + <meta name=\"description\">.",
+  "- localStorage (guarded with try/catch) for scores/settings/state; safe if storage is unavailable.",
+  "- No alert()/confirm()/prompt(); build inline UI instead. No external libraries. No window.open, no navigation away, no target=_blank links.",
+  "- The page runs inside a sandboxed iframe (srcdoc): never rely on window.top, never navigate away.",
+  "- Aim for genuinely production-quality: roughly 250-700 lines.",
   "",
   "If the request is unclear, pick a reasonable interpretation and build it — never answer with questions instead of the code block.",
 ].join("\n");
@@ -432,9 +433,10 @@ export async function POST(req: Request): Promise<Response> {
 
   // Keep the tail of the conversation for context.
   const history = parsed.data.messages.slice(-20);
-  const maker = parsed.data.make === "ext" || parsed.data.make === "game";
-  /* The Studio's prompt is game-tuned; the legacy ext flow keeps its own. */
-  const makerPrompt = parsed.data.make === "game" ? GAME_SYSTEM_PROMPT : EXT_SYSTEM_PROMPT;
+  const maker = parsed.data.make === "ext" || parsed.data.make === "code" || parsed.data.make === "game";
+  /* AI Coder's prompt builds any self-contained web app; the legacy ext
+   * flow keeps its own. "game" (retired spelling) maps to AI Coder. */
+  const makerPrompt = parsed.data.make === "ext" ? EXT_SYSTEM_PROMPT : CODE_SYSTEM_PROMPT;
   const wantStream = parsed.data.stream === true;
   // Images on the last user message → the multimodal (vision) endpoint.
   const hasImages = (() => {

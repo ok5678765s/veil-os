@@ -908,8 +908,8 @@ export function ArcadeSection({
     return () => window.removeEventListener("veil:open-arcade-apps", onJump);
   }, [selectTab]);
 
-  // "Play in the Arcade" from the AI section's Cloud Game Studio: the
-  // made game starts in the Roblox tab's embedded player (RobloxTab
+  // "Play in the Arcade" from the AI section's AI Coder: the
+  // made build starts in the Roblox tab's embedded player (RobloxTab
   // listens for the same event / consumes the pending slot itself).
   // The jump slot covers the post-reload first-open race — the event
   // fired before this section ever mounted.

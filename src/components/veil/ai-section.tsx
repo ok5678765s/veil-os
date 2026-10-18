@@ -337,7 +337,7 @@ function TypingDots() {
   );
 }
 
-/* ── View HTML — the actual code, in the open ───────────────────── */
+/* ── View code — the actual source, in the open ───────────────────── */
 const CODE_LINES_MAX = 1500;
 
 function fileNameSlug(ext: AiExt): string {
@@ -346,11 +346,79 @@ function fileNameSlug(ext: AiExt): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 40);
-  return `${slug || "veil-ext"}.html`;
+  return `${slug || "veil-app"}.html`;
+}
+
+/* ── Live preview — the build running INLINE in a sandboxed iframe,
+   never a browser tab, never a new window. No allow-popups in the
+   sandbox, so even window.open attempts inside the build stay put. ── */
+function ExtPreviewDialog({ ext, open, onOpenChange }: { ext: AiExt; open: boolean; onOpenChange: (v: boolean) => void }) {
+  const [reloads, setReloads] = React.useState(0);
+  const [loaded, setLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    if (open) {
+      setLoaded(false);
+      setReloads(0);
+    }
+  }, [open, ext.html]);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl gap-0 overflow-hidden border-zinc-800 bg-zinc-950/95 p-0 backdrop-blur-xl sm:rounded-2xl">
+        <DialogHeader className="flex-row items-center gap-3 border-b border-zinc-800 bg-violet-500/[0.06] px-4 py-3">
+          <span
+            aria-hidden
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 ring-1 ring-violet-400/30"
+          >
+            <MonitorPlay className="h-4.5 w-4.5 text-violet-300" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <DialogTitle className="truncate text-[14px] font-semibold text-zinc-50">{ext.name} — live preview</DialogTitle>
+            <DialogDescription className="truncate text-[12px] text-zinc-400">
+              Runs right here in Veil · sandboxed · no browser tab
+            </DialogDescription>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setLoaded(false);
+              setReloads((r) => r + 1);
+            }}
+            aria-label="Reload the preview"
+            title="Reload"
+            className="veil-press h-8 gap-1.5 rounded-xl border-zinc-700 bg-zinc-900/60 px-3 text-[12.5px] font-medium text-zinc-300 hover:border-violet-500/40 hover:text-violet-200"
+          >
+            <RotateCw aria-hidden className="h-3.5 w-3.5" />
+            Reload
+          </Button>
+        </DialogHeader>
+        <div className="relative h-[68vh] bg-zinc-950">
+          {!loaded && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3">
+              <Loader2 aria-hidden className="h-6 w-6 animate-spin text-violet-300" />
+              <p className="text-[12.5px] text-zinc-400">Starting {ext.name}…</p>
+            </div>
+          )}
+          <iframe
+            key={reloads}
+            srcDoc={ext.html}
+            title={`${ext.name} live preview`}
+            className="absolute inset-0 size-full border-0 bg-white"
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-downloads"
+            allow="fullscreen; autoplay; gamepad"
+            onLoad={() => setLoaded(true)}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 function ExtCodeDialog({ ext, open, onOpenChange }: { ext: AiExt; open: boolean; onOpenChange: (v: boolean) => void }) {
   const [copied, setCopied] = React.useState(false);
+  const [previewing, setPreviewing] = React.useState(false);
   const lines = React.useMemo(() => ext.html.replace(/\r\n?/g, "\n").split("\n"), [ext.html]);
   const shown = lines.length > CODE_LINES_MAX;
   const view = shown ? lines.slice(0, CODE_LINES_MAX) : lines;
@@ -376,11 +444,9 @@ function ExtCodeDialog({ ext, open, onOpenChange }: { ext: AiExt; open: boolean;
     setTimeout(() => setCopied(false), 1800);
   };
 
-  const openPreview = () => {
-    const url = URL.createObjectURL(new Blob([ext.html], { type: "text/html" }));
-    window.open(url, "_blank", "noopener");
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-  };
+  /* Preview runs INLINE (sandboxed iframe inside the dialog) — never
+   * a browser tab, never a new window. */
+  const openPreview = () => setPreviewing(true);
 
   const downloadRaw = () => {
     const url = URL.createObjectURL(new Blob([ext.html], { type: "text/html" }));
@@ -426,8 +492,8 @@ function ExtCodeDialog({ ext, open, onOpenChange }: { ext: AiExt; open: boolean;
             onClick={openPreview}
             className="veil-press h-8 gap-1.5 rounded-xl border-zinc-700 bg-zinc-900/60 px-3 text-[12.5px] font-medium text-zinc-300 hover:border-violet-500/40 hover:text-violet-200"
           >
-            <ExternalLink aria-hidden className="h-3.5 w-3.5" />
-            Open preview
+            <MonitorPlay aria-hidden className="h-3.5 w-3.5" />
+            Preview
           </Button>
           <Button
             type="button"
@@ -462,17 +528,19 @@ function ExtCodeDialog({ ext, open, onOpenChange }: { ext: AiExt; open: boolean;
           )}
         </div>
       </DialogContent>
+      {previewing && <ExtPreviewDialog ext={ext} open={previewing} onOpenChange={setPreviewing} />}
     </Dialog>
   );
 }
 
-/* ── Cloud Game card — the built game, ready to play in the Arcade ── */
+/* ── AI Coder build card — the finished app, ready to run ────────── */
 function ExtCard({ ext }: { ext: AiExt }) {
   const [shown, setShown] = React.useState(false);
+  const [preview, setPreview] = React.useState(false);
   const [launched, setLaunched] = React.useState(false);
   const gameId = React.useRef<string | null>(null);
   const kb = Math.round(ext.html.length / 1024);
-  /* Save into “My Cloud Games” and hand off to the Arcade — the game
+  /* Save into “My AI builds” and hand off to the Arcade — the build
    * plays embedded in the Roblox tab, never a browser tab. */
   const playInArcade = () => {
     const stored = saveMadeGame({
@@ -515,19 +583,31 @@ function ExtCard({ ext }: { ext: AiExt }) {
         <Button
           type="button"
           variant="outline"
+          onClick={() => setPreview(true)}
+          className="veil-press h-8 gap-1.5 rounded-xl border-zinc-700 bg-zinc-900/60 px-3 text-[12.5px] font-medium text-zinc-300 hover:border-violet-500/40 hover:text-violet-200"
+        >
+          <MonitorPlay aria-hidden className="h-3.5 w-3.5" />
+          Preview
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
           onClick={() => setShown((s) => !s)}
           aria-expanded={shown}
           className="veil-press h-8 gap-1.5 rounded-xl border-zinc-700 bg-zinc-900/60 px-3 text-[12.5px] font-medium text-zinc-300 hover:border-violet-500/40 hover:text-violet-200"
         >
           <Eye aria-hidden className="h-3.5 w-3.5" />
-          {shown ? "Hide HTML" : "View HTML"}
+          {shown ? "Hide code" : "View code"}
         </Button>
         <p className="w-full text-[11px] leading-relaxed text-zinc-500 sm:w-auto sm:flex-1 sm:text-right">
-          Saved to <span className="text-zinc-300">My Cloud Games</span> — plays inside the Arcade’s Roblox tab, no browser tab.
+          Saved to <span className="text-zinc-300">My AI builds</span> — runs right here or inside the Arcade, never a browser tab.
         </p>
       </div>
       {shown && (
         <ExtCodeDialog ext={ext} open={shown} onOpenChange={setShown} />
+      )}
+      {preview && (
+        <ExtPreviewDialog ext={ext} open={preview} onOpenChange={setPreview} />
       )}
     </div>
   );
@@ -658,7 +738,7 @@ function Bubble({
                 <Loader2 aria-hidden className="h-4 w-4 shrink-0 animate-spin text-violet-300" />
                 <div className="min-w-0">
                   <p className="text-[13px] font-medium text-zinc-100">
-                    {msg.note ? "Veil AI is finishing the game…" : "Veil AI is building the game…"}
+                    {msg.note ? "Veil AI is finishing the build…" : "Veil AI is writing the code…"}
                   </p>
                   <p className="text-[11.5px] text-zinc-500">
                     {msg.note ? (
@@ -810,8 +890,8 @@ function Bubble({
               <div className="min-w-0">
                 <p className="text-[13px] font-medium text-zinc-100">The build came back incomplete.</p>
                 <p className="mt-0.5 text-[12.5px] text-zinc-500">
-                  The model stopped mid-code — the game wasn&rsquo;t finished, so there&rsquo;s nothing
-                  to play yet. Ask again (a retry usually lands a complete page).
+                  The model stopped mid-code — the build wasn&rsquo;t finished, so there&rsquo;s nothing
+                  to run yet. Ask again (a retry usually lands a complete page).
                 </p>
               </div>
             </div>
@@ -958,7 +1038,7 @@ export function AiSection({
   }, []);
 
   /* Cross-section jump: "veil:open-ai-games" (e.g. the Roblox tab's
-   * My Cloud Games row) opens this section in Cloud Game Studio mode.
+   * My AI builds row) opens this section in AI Coder mode.
    * The pending slot covers the first-ever-open race (the event fires
    * before this section's listener attaches). */
   React.useEffect(() => {
@@ -1072,7 +1152,7 @@ export function AiSection({
           signal: ctrl.signal,
           body: JSON.stringify({
             stream: true,
-            ...(makeExt ? { make: "game" } : {}),
+            ...(makeExt ? { make: "code" } : {}),
             messages: (() => {
               const clean = history.filter((m) => !m.error && !m.streaming);
               // The LAST user message is the only one that carries
@@ -1093,7 +1173,7 @@ export function AiSection({
                    the first build). The prose summary carries the context. */
                 content: (
                   m.ext
-                    ? stripExtHtml(m.content) || `[Built "${m.ext.name}" — a playable cloud game]`
+                    ? stripExtHtml(m.content) || `[Built "${m.ext.name}" — a complete web app]`
                     : m.content
                 ).slice(0, 20000),
                 ...(i === lastUser && m.images?.length ? { images: m.images.slice(0, 4) } : {}),
@@ -1577,7 +1657,7 @@ export function AiSection({
           AI assistant
         </Badge>
         <div className="ml-auto flex items-center gap-1.5">
-          {/* Mode switcher — Chat · Image · Video · Games (Cloud Game Studio) */}
+          {/* Mode switcher — Chat · Image · Video · Coder (AI Coder) */}
           <div
             role="group"
             aria-label="Veil AI mode"
@@ -1587,7 +1667,7 @@ export function AiSection({
               { id: "chat", label: "Chat", icon: Bot, active: !maker && !genMode, on: "border-emerald-400/60 bg-emerald-500/20 text-emerald-200", off: "text-zinc-400 hover:text-zinc-100" },
               { id: "image", label: "Image", icon: ImageIcon, active: genMode === "image", on: "border-cyan-400/60 bg-cyan-500/20 text-cyan-200", off: "text-zinc-400 hover:text-cyan-200" },
               { id: "video", label: "Video", icon: MonitorPlay, active: genMode === "video", on: "border-rose-400/60 bg-rose-500/20 text-rose-200", off: "text-zinc-400 hover:text-rose-200" },
-              { id: "ext", label: "Games", icon: Joystick, active: maker, on: "border-violet-400/60 bg-violet-500/20 text-violet-200", off: "text-zinc-400 hover:text-violet-200" },
+              { id: "ext", label: "AI Coder", icon: FileCode2, active: maker, on: "border-violet-400/60 bg-violet-500/20 text-violet-200", off: "text-zinc-400 hover:text-violet-200" },
             ] as const).map((m) => (
               <button
                 key={m.id}
@@ -1613,7 +1693,7 @@ export function AiSection({
                       ? "AI Image — describe a picture, Veil paints it"
                       : m.id === "video"
                         ? "AI Video — describe a scene, Veil renders it (1-4 min)"
-                        : "Cloud Game Studio — describe a game and Veil AI builds it, playable inside the Arcade"
+                        : "AI Coder — describe any web page, tool or game and Veil AI writes the HTML/CSS/JS"
                 }
                 className={cn(
                   "veil-press inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[12px] font-semibold transition sm:px-3",
@@ -1696,7 +1776,7 @@ export function AiSection({
                 ))}
               </div>
 
-              {/* Cloud Game Studio entry card — make your own cloud game */}
+              {/* AI Coder entry card — the HTML maker */}
               <button
                 type="button"
                 onClick={() => {
@@ -1710,14 +1790,14 @@ export function AiSection({
                   aria-hidden
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 ring-1 ring-violet-400/30"
                 >
-                  <Joystick aria-hidden className="h-4 w-4 text-violet-300" />
+                  <FileCode2 aria-hidden className="h-4 w-4 text-violet-300" />
                 </span>
                 <span className="min-w-0">
                   <span className="block text-[13.5px] font-semibold text-zinc-100 group-hover:text-violet-100">
-                    Make Your Own Cloud Game
+                    AI Coder
                   </span>
                   <span className="block truncate text-[12px] text-zinc-400">
-                    Describe any game — I build it, and it plays right inside the Arcade
+                    Describe any page, tool or game — I write the HTML/CSS/JS, it runs right here
                   </span>
                 </span>
                 <Sparkles aria-hidden className="ml-auto h-4 w-4 shrink-0 text-violet-300/70 group-hover:text-violet-300" />
@@ -1789,22 +1869,22 @@ export function AiSection({
 
       {/* ---------------- input row ---------------- */}
       <div className="relative z-20 shrink-0 border-t border-zinc-800/80 bg-zinc-950/85 px-4 py-3 backdrop-blur-xl sm:px-6">
-        {/* Cloud Game Studio status strip */}
+        {/* AI Coder status strip */}
         {maker && (
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto mb-2 flex w-full max-w-2xl flex-wrap items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/[0.08] px-3 py-1.5"
           >
-            <Joystick aria-hidden className="h-3.5 w-3.5 shrink-0 text-violet-300" />
+            <FileCode2 aria-hidden className="h-3.5 w-3.5 shrink-0 text-violet-300" />
             <p className="min-w-0 flex-1 text-[11.5px] leading-snug text-violet-200/90">
-              Cloud Game Studio armed — describe the game, and the next answer arrives
-              ready to play inside the Arcade.
+              AI Coder armed — describe what to build, and the next answer arrives
+              as a complete, working web app.
             </p>
             <button
               type="button"
               onClick={() => setMaker(false)}
-              aria-label="Leave Cloud Game Studio mode"
+              aria-label="Leave AI Coder mode"
               className="veil-press shrink-0 rounded-full border border-violet-500/30 px-2 py-0.5 text-[10.5px] font-medium text-violet-200/80 transition hover:border-violet-300/60 hover:text-violet-100"
             >
               off
@@ -1999,7 +2079,7 @@ export function AiSection({
             }}
             placeholder={
               maker
-                ? "Describe the game to build — “a neon obby with lava jumps and a high score”…"
+                ? "Describe what to build — “a pomodoro timer with stats”, “a neon snake game”, “a landing page”…"
                 : genMode === "image"
                   ? "Describe the image — “a lighthouse in a storm, oil painting style”…"
                   : genMode === "video"
@@ -2050,7 +2130,7 @@ export function AiSection({
         <p className="mx-auto mt-2 max-w-2xl text-center text-[11px] text-zinc-600">
           {maker ? (
             <>
-              Powered by GLM · Extension Maker builds single-file apps — zero requests, offline forever
+              Powered by GLM · AI Coder writes complete single-file web apps — HTML, CSS and JS, zero external requests
             </>
           ) : genMode === "image" ? (
             <>Powered by GLM · AI Image — enter paints, Shift+Enter adds a line</>

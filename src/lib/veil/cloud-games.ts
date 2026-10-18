@@ -1,15 +1,15 @@
 /**
- * Veil — Cloud Games made by the owner (Cloud Game Studio).
+ * Veil — apps built by the owner with AI CODER (the HTML maker that
+ * replaced the Extension Maker, and before that the Cloud Game Studio).
  *
- * The AI section's Cloud Game Studio (which replaced the Extension Maker)
- * builds complete self-contained HTML games. They live here:
- * - a localStorage-backed store ("My Cloud Games") that survives reloads,
+ * AI Coder asks the model for complete self-contained HTML pages (all
+ * HTML/CSS/JS inline). They live here:
+ * - a localStorage-backed store ("My AI builds") that survives reloads,
  * - a pending-play handoff so "Play in the Arcade" works from ANY section
- *   (the AI section → the Arcade's Roblox tab, where the game runs in an
- *   embedded player — never a browser tab),
- * - the proxied-URL helper that lets now.gg cloud games run inside an
- *   Arcade iframe: the veil proxy strips X-Frame-Options / CSP
- *   frame-ancestors, so the stream embeds where the raw site would not.
+ *   (the AI section → the Arcade's Roblox tab, where the build runs in an
+ *   embedded player — never a browser tab, never a new window),
+ * - a pending hop back the other way ("Build with AI Coder" in the
+ *   Arcade arms the AI section's Coder mode).
  */
 
 export interface MadeGame {
@@ -27,11 +27,11 @@ export interface MadeGame {
 const STORE_KEY = "veil:cloud-games:v1";
 const MAX_GAMES = 24;
 
-/** window event: a made game should start playing in the Arcade now. */
+/** window event: a made build should start playing in the Arcade now. */
 export const PLAY_MADE_GAME_EVENT = "veil:play-made-game";
-/** window event: the made-games store changed (save/delete). */
+/** window event: the made-builds store changed (save/delete). */
 export const MADE_GAMES_CHANGED_EVENT = "veil:cloud-games-changed";
-/** window event: open the AI section in Cloud Game Studio mode. */
+/** window event: open the AI section in AI Coder mode. */
 export const OPEN_AI_GAMES_EVENT = "veil:open-ai-games";
 
 function isMadeGame(x: unknown): x is MadeGame {
@@ -73,7 +73,7 @@ function persist(list: MadeGame[]): void {
   }
 }
 
-/** Save (or update) a made game. Returns the stored game with its id. */
+/** Save (or update) a made build. Returns the stored build with its id. */
 export function saveMadeGame(
   game: Omit<MadeGame, "id" | "at" | "plays"> & { id?: string }
 ): MadeGame {
@@ -81,9 +81,9 @@ export function saveMadeGame(
   const existing = game.id ? list.find((g) => g.id === game.id) : undefined;
   const stored: MadeGame = {
     id: game.id || "mg-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    name: (game.name || "My Cloud Game").slice(0, 60),
-    desc: (game.desc || "Made in the Cloud Game Studio").slice(0, 160),
-    icon: game.icon || "joypad",
+    name: (game.name || "My AI Build").slice(0, 60),
+    desc: (game.desc || "Built with AI Coder").slice(0, 160),
+    icon: game.icon || "filetext",
     html: game.html,
     at: existing ? existing.at : Date.now(),
     plays: existing ? existing.plays : 0,
@@ -159,13 +159,13 @@ export function playMadeGameInArcade(id: string): void {
   }
 }
 
-/* Same handoff for the AI hop: "Make your own game" (Roblox tab) opens
- * the AI section in Cloud Game Studio mode. If the section isn't
+/* Same handoff for the AI hop: "Build with AI Coder" (Roblox tab) opens
+ * the AI section in AI Coder mode. If the section isn't
  * mounted yet (first-ever open), the event fires into the void — the
  * pending slot below bridges exactly that gap. */
 let pendingAiGames = false;
 
-/** Open the AI section in Cloud Game Studio mode (any section → AI). */
+/** Open the AI section in AI Coder mode (any section → AI). */
 export function requestAiGames(): void {
   pendingAiGames = true;
   try {
@@ -175,26 +175,9 @@ export function requestAiGames(): void {
   }
 }
 
-/** Consume a pending AI-games hop (true once, then false). */
+/** Consume a pending AI-coder hop (true once, then false). */
 export function takePendingAiGames(): boolean {
   const v = pendingAiGames;
   pendingAiGames = false;
   return v;
-}
-
-/* ------------------------------------------------------------------ */
-/* Embedding helper                                                    */
-/* ------------------------------------------------------------------ */
-
-/**
- * Route an external page through the veil proxy so it can live inside an
- * Arcade iframe: the proxy strips X-Frame-Options / CSP frame-ancestors
- * and keeps every subresource on this origin. This is what lets now.gg's
- * cloud stream play INSIDE the Arcade instead of a browser tab.
- */
-export function proxiedUrl(url: string): string {
-  const u = (url || "").trim();
-  if (!u) return "";
-  if (u.startsWith("/")) return u;
-  return "/api/p/" + u.replace(/^https?:\/\//, (m) => m);
 }
