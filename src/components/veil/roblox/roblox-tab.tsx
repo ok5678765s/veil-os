@@ -18,6 +18,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  Cloud,
   Copy,
   ExternalLink,
   Globe,
@@ -33,6 +34,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  CLOUD_GAMES,
+  cloudMatchFor,
   fetchRobloxDetail,
   fetchRobloxHome,
   fetchRobloxSearch,
@@ -43,10 +46,12 @@ import {
   launchRobloxApp,
   loadRecent,
   maturityLabel,
+  openExternalTab,
   openRobloxGamePageTab,
   ratingPct,
   recordRecentGame,
   robloxGamePageUrl,
+  type CloudGame,
   type RecentGame,
   type RobloxDetailResponse,
   type RobloxGameCard,
@@ -68,6 +73,9 @@ const R = {
   green: "#00b06f",
   greenHover: "#00c67d",
   red: "#ff4747",
+  /* now.gg's own brand pink — the cloud accent. */
+  cloud: "#ff42a5",
+  cloudHover: "#ff5cb1",
 };
 
 /** execCommand copy fallback for embeds where the async clipboard API is
@@ -178,6 +186,7 @@ function GameCard({
   subtitle?: string;
 }) {
   const pct = ratingPct(game.upVotes, game.downVotes);
+  const cloud = cloudMatchFor(game.name);
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -203,6 +212,16 @@ function GameCard({
               style={{ background: "#e8bd43" }}
             >
               Ad
+            </span>
+          )}
+          {cloud && (
+            <span
+              className="absolute bottom-1 left-1 flex items-center gap-0.5 rounded px-1 py-px text-[8px] font-bold uppercase tracking-wider text-white"
+              style={{ background: R.cloud }}
+              title="Also playable in your browser via now.gg's cloud — no install"
+            >
+              <Cloud aria-hidden className="size-2" />
+              Cloud
             </span>
           )}
           <span
@@ -365,6 +384,153 @@ function GameRow({
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Cloud play row — now.gg streams these right in the browser          */
+/* ------------------------------------------------------------------ */
+
+function CloudCard({
+  game,
+  index,
+  onPlayCloud,
+}: {
+  game: CloudGame;
+  index: number;
+  onPlayCloud: (cg: CloudGame) => void;
+}) {
+  return (
+    <motion.button
+      type="button"
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "0px 0px -40px 0px" }}
+      transition={{ duration: 0.3, delay: (index % 8) * 0.03 }}
+      onClick={() => onPlayCloud(game)}
+      aria-label={`Play ${game.name} in the cloud`}
+      className="group relative w-[196px] shrink-0 overflow-hidden rounded-xl border border-white/10 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/60 sm:w-[212px]"
+      style={{ background: R.panel }}
+    >
+      <span className="relative block aspect-video overflow-hidden">
+        <img
+          src={game.tile}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.display = "none";
+          }}
+          className="absolute inset-0 size-full object-cover transition-transform duration-200 group-hover:scale-[1.04]"
+        />
+        <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
+        <span
+          className="absolute left-1.5 top-1.5 flex items-center gap-1 rounded px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider text-white"
+          style={{ background: R.cloud }}
+        >
+          <Cloud aria-hidden className="size-2.5" />
+          Cloud
+        </span>
+        <span
+          aria-hidden
+          className="absolute inset-0 flex items-center justify-center opacity-0 transition group-hover:opacity-100"
+        >
+          <span
+            className="flex size-11 scale-75 items-center justify-center rounded-full text-white shadow-lg transition-transform duration-200 group-hover:scale-100"
+            style={{ background: R.cloud }}
+          >
+            <Play aria-hidden className="size-4 translate-x-px fill-white" />
+          </span>
+        </span>
+      </span>
+      <span className="block px-2.5 pb-2.5 pt-2">
+        <span className="block truncate text-[13px] font-semibold leading-tight text-white">
+          {game.name}
+        </span>
+        <span className="mt-0.5 flex items-center gap-1 text-[10.5px] font-medium" style={{ color: R.cloudHover }}>
+          <Cloud aria-hidden className="size-2.5" />
+          plays in your browser
+        </span>
+      </span>
+    </motion.button>
+  );
+}
+
+function CloudRow({ onPlayCloud }: { onPlayCloud: (cg: CloudGame) => void }) {
+  const scroller = React.useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = React.useState({ left: false, right: false });
+
+  const measure = React.useCallback(() => {
+    const el = scroller.current;
+    if (!el) return;
+    setEdges({
+      left: el.scrollLeft > 8,
+      right: el.scrollLeft + el.clientWidth < el.scrollWidth - 8,
+    });
+  }, []);
+
+  React.useEffect(() => {
+    measure();
+    const el = scroller.current;
+    if (!el) return;
+    el.addEventListener("scroll", measure, { passive: true });
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", measure);
+      ro.disconnect();
+    };
+  }, [measure]);
+
+  const nudge = (dir: 1 | -1) => {
+    const el = scroller.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: "smooth" });
+  };
+
+  return (
+    <section aria-label="Cloud play" className="group/row relative mb-7">
+      <div className="mb-2.5 flex flex-wrap items-center gap-2.5">
+        <h2 className="flex items-center gap-1.5 text-[16px] font-bold text-white">
+          <Cloud aria-hidden className="size-4" style={{ color: R.cloud }} />
+          Cloud play
+        </h2>
+        <span className="truncate text-[11.5px]" style={{ color: R.dim }}>
+          no download — the real game, streamed to your browser by now.gg
+        </span>
+      </div>
+      <div className="relative">
+        <div
+          ref={scroller}
+          className="veil-scroll-slim flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {CLOUD_GAMES.map((cg, i) => (
+            <CloudCard key={cg.key} game={cg} index={i} onPlayCloud={onPlayCloud} />
+          ))}
+        </div>
+        {edges.left && (
+          <button
+            type="button"
+            onClick={() => nudge(-1)}
+            aria-label="Scroll cloud play left"
+            className="absolute -left-1 top-1/2 z-10 hidden size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/70 text-white opacity-0 backdrop-blur-md transition group-hover/row:opacity-100 focus-visible:opacity-100 md:flex"
+          >
+            <ChevronLeft aria-hidden className="size-5" />
+          </button>
+        )}
+        {edges.right && (
+          <button
+            type="button"
+            onClick={() => nudge(1)}
+            aria-label="Scroll cloud play right"
+            className="absolute -right-1 top-1/2 z-10 hidden size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/70 text-white opacity-0 backdrop-blur-md transition group-hover/row:opacity-100 focus-visible:opacity-100 md:flex"
+          >
+            <ChevronRight aria-hidden className="size-5" />
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function SkeletonCards({ count = 8, wide = false }: { count?: number; wide?: boolean }) {
   return (
     <div className={cn("flex gap-3 overflow-hidden", wide && "flex-wrap")}>
@@ -434,6 +600,7 @@ function HomeView({
   retry,
   onOpen,
   onPlay,
+  onPlayCloud,
 }: {
   home: RobloxHomeResponse | null;
   loading: boolean;
@@ -442,11 +609,13 @@ function HomeView({
   retry: () => void;
   onOpen: (g: RobloxGameCard) => void;
   onPlay: (g: RobloxGameCard) => void;
+  onPlayCloud: (cg: CloudGame) => void;
 }) {
   if (error && !home) return <ErrorCard message={error} onRetry={retry} />;
 
   return (
     <>
+      <CloudRow onPlayCloud={onPlayCloud} />
       {recent.length > 0 && (
         <GameRow
           title="Continue"
@@ -475,7 +644,7 @@ function HomeView({
         ))
       )}
       <p className="pt-1 text-center text-[11px]" style={{ color: R.dim }}>
-        live from roblox.com — play launches the Roblox app on your device
+        live from roblox.com — Play launches the Roblox app · ☁ cloud games play right in your browser
       </p>
     </>
   );
@@ -552,6 +721,7 @@ function DetailView({
   onBack,
   onOpen,
   onPlay,
+  onPlayCloud,
 }: {
   detail: RobloxDetailResponse | null;
   loading: boolean;
@@ -560,6 +730,7 @@ function DetailView({
   onBack: () => void;
   onOpen: (g: RobloxGameCard) => void;
   onPlay: (g: RobloxGameCard) => void;
+  onPlayCloud: (cg: CloudGame) => void;
 }) {
   const [expanded, setExpanded] = React.useState(false);
 
@@ -584,6 +755,7 @@ function DetailView({
   const pct = ratingPct(g.upVotes, g.downVotes);
   const maturity = maturityLabel(g.maturity);
   const desc = g.description.trim();
+  const cloud = cloudMatchFor(g.name);
 
   return (
     <div>
@@ -672,6 +844,39 @@ function DetailView({
           Play
         </button>
       </div>
+
+      {/* cloud banner — this exact game is playable in a browser tab */}
+      {cloud && (
+        <div
+          className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3"
+          style={{ borderColor: `${R.cloud}55`, background: `${R.cloud}14` }}
+        >
+          <span
+            aria-hidden
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-white"
+            style={{ background: R.cloud }}
+          >
+            <Cloud className="size-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[13.5px] font-bold text-white">
+              Play this in your browser — no download
+            </p>
+            <p className="text-[11.5px] leading-snug" style={{ color: R.sub }}>
+              now.gg streams the real game from their cloud to any browser tab.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onPlayCloud(cloud)}
+            className="flex h-10 shrink-0 items-center gap-2 rounded-lg px-5 text-[13.5px] font-bold uppercase tracking-wide text-white shadow-[0_6px_20px_rgba(255,66,165,0.35)] transition hover:brightness-110 active:scale-95"
+            style={{ background: R.cloud }}
+          >
+            <Cloud aria-hidden className="size-4" />
+            Cloud play
+          </button>
+        </div>
+      )}
 
       {/* stats */}
       <div className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
@@ -790,6 +995,9 @@ export function RobloxTab({
   const [recent, setRecent] = React.useState<RecentGame[]>([]);
   const [playTarget, setPlayTarget] = React.useState<RobloxGameCard | null>(null);
   const [launching, setLaunching] = React.useState(false);
+  const [cloudTarget, setCloudTarget] = React.useState<CloudGame | null>(null);
+  const [cloudBlocked, setCloudBlocked] = React.useState(false);
+  const [cloudCopied, setCloudCopied] = React.useState(false);
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const searchInput = React.useRef<HTMLInputElement>(null);
@@ -958,11 +1166,47 @@ export function RobloxTab({
     }
   }, [playTarget]);
 
-  /* ----- Esc: dialog → back ----- */
+  /* ----- cloud play (now.gg) ----- */
+  const openCloud = React.useCallback((cg: CloudGame) => {
+    setCloudTarget(cg);
+    setCloudBlocked(false);
+    setPlayTarget(null);
+  }, []);
+
+  const launchCloud = React.useCallback(() => {
+    if (!cloudTarget) return;
+    if (openExternalTab(cloudTarget.url)) {
+      setCloudTarget(null);
+      return;
+    }
+    setCloudBlocked(true);
+  }, [cloudTarget]);
+
+  const copyCloudLink = React.useCallback(() => {
+    if (!cloudTarget) return;
+    const url = cloudTarget.url;
+    const done = () => {
+      setCloudCopied(true);
+      window.setTimeout(() => setCloudCopied(false), 1600);
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(url).then(done, () => {
+        if (legacyCopy(url)) done();
+      });
+    } else if (legacyCopy(url)) {
+      done();
+    }
+  }, [cloudTarget]);
+
+  /* ----- Esc: cloud dialog → play dialog → back ----- */
   React.useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
+      if (cloudTarget) {
+        setCloudTarget(null);
+        return;
+      }
       if (playTarget) {
         setPlayTarget(null);
         return;
@@ -972,7 +1216,7 @@ export function RobloxTab({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, playTarget, view, query, goBack]);
+  }, [active, cloudTarget, playTarget, view, query, goBack]);
 
   const inSearch = view.kind === "search";
 
@@ -1066,6 +1310,7 @@ export function RobloxTab({
               retry={() => void loadHome(false)}
               onOpen={openGame}
               onPlay={play}
+              onPlayCloud={openCloud}
             />
           )}
           {inSearch && (
@@ -1092,6 +1337,7 @@ export function RobloxTab({
               onBack={goBack}
               onOpen={openGame}
               onPlay={play}
+              onPlayCloud={openCloud}
             />
           )}
         </div>
