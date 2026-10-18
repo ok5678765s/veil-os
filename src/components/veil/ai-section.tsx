@@ -63,7 +63,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { uid } from "@/lib/veil/shared";
 import { cn } from "@/lib/utils";
-import { downloadExtPackage, liveCutExt, parseExtReply, stripExtHtml, type AiExt } from "@/lib/veil/ext-maker";
+import { liveCutExt, parseExtReply, stripExtHtml, type AiExt } from "@/lib/veil/ext-maker";
+import { OPEN_AI_GAMES_EVENT, playMadeGameInArcade, saveMadeGame, takePendingAiGames } from "@/lib/veil/cloud-games";
 import {
   beginPick,
   fmtAttSize,
@@ -465,11 +466,26 @@ function ExtCodeDialog({ ext, open, onOpenChange }: { ext: AiExt; open: boolean;
   );
 }
 
-/* ── Extension Maker card — the built app, ready to keep ────────── */
+/* ── Cloud Game card — the built game, ready to play in the Arcade ── */
 function ExtCard({ ext }: { ext: AiExt }) {
   const [shown, setShown] = React.useState(false);
-  const [saved, setSaved] = React.useState(false);
+  const [launched, setLaunched] = React.useState(false);
+  const gameId = React.useRef<string | null>(null);
   const kb = Math.round(ext.html.length / 1024);
+  /* Save into “My Cloud Games” and hand off to the Arcade — the game
+   * plays embedded in the Roblox tab, never a browser tab. */
+  const playInArcade = () => {
+    const stored = saveMadeGame({
+      ...(gameId.current ? { id: gameId.current } : {}),
+      name: ext.name,
+      desc: ext.desc,
+      icon: ext.icon,
+      html: ext.html,
+    });
+    gameId.current = stored.id;
+    setLaunched(true);
+    playMadeGameInArcade(stored.id);
+  };
   return (
     <div className="veil-pop-in mt-2 overflow-hidden rounded-2xl border border-violet-500/30 bg-zinc-950/80">
       <div className="flex items-center gap-3 border-b border-violet-500/20 bg-violet-500/[0.08] px-4 py-3">
@@ -490,14 +506,11 @@ function ExtCard({ ext }: { ext: AiExt }) {
       <div className="flex flex-wrap items-center gap-2 px-4 py-3">
         <Button
           type="button"
-          onClick={() => {
-            downloadExtPackage(ext);
-            setSaved(true);
-          }}
+          onClick={playInArcade}
           className="veil-hover-glow veil-press h-8 gap-1.5 rounded-xl bg-violet-500 px-3 text-[12.5px] font-medium text-white shadow-lg shadow-violet-500/20 hover:bg-violet-400"
         >
-          <Download aria-hidden className="h-3.5 w-3.5" />
-          {saved ? "Downloaded — drop into the file" : "Download extension"}
+          <Play aria-hidden className="h-3.5 w-3.5" />
+          {launched ? "Playing in the Arcade — launch again" : "Play in the Arcade"}
         </Button>
         <Button
           type="button"
@@ -510,7 +523,7 @@ function ExtCard({ ext }: { ext: AiExt }) {
           {shown ? "Hide HTML" : "View HTML"}
         </Button>
         <p className="w-full text-[11px] leading-relaxed text-zinc-500 sm:w-auto sm:flex-1 sm:text-right">
-          A Veil extension — open the offline Veil file → <span className="text-zinc-300">Extensions</span>, pick it.
+          Saved to <span className="text-zinc-300">My Cloud Games</span> — plays inside the Arcade’s Roblox tab, no browser tab.
         </p>
       </div>
       {shown && (
@@ -645,7 +658,7 @@ function Bubble({
                 <Loader2 aria-hidden className="h-4 w-4 shrink-0 animate-spin text-violet-300" />
                 <div className="min-w-0">
                   <p className="text-[13px] font-medium text-zinc-100">
-                    {msg.note ? "Veil AI is finishing the app…" : "Veil AI is building the app…"}
+                    {msg.note ? "Veil AI is finishing the game…" : "Veil AI is building the game…"}
                   </p>
                   <p className="text-[11.5px] text-zinc-500">
                     {msg.note ? (
@@ -797,8 +810,8 @@ function Bubble({
               <div className="min-w-0">
                 <p className="text-[13px] font-medium text-zinc-100">The build came back incomplete.</p>
                 <p className="mt-0.5 text-[12.5px] text-zinc-500">
-                  The model stopped mid-code — the app wasn&rsquo;t finished, so there&rsquo;s nothing
-                  to install yet. Ask again (a retry usually lands a complete page).
+                  The model stopped mid-code — the game wasn&rsquo;t finished, so there&rsquo;s nothing
+                  to play yet. Ask again (a retry usually lands a complete page).
                 </p>
               </div>
             </div>
@@ -944,6 +957,21 @@ export function AiSection({
     }
   }, []);
 
+  /* Cross-section jump: "veil:open-ai-games" (e.g. the Roblox tab's
+   * My Cloud Games row) opens this section in Cloud Game Studio mode.
+   * The pending slot covers the first-ever-open race (the event fires
+   * before this section's listener attaches). */
+  React.useEffect(() => {
+    const activate = () => {
+      setMaker(true);
+      setGenMode(null);
+      setTimeout(() => taRef.current?.focus(), 80);
+    };
+    window.addEventListener(OPEN_AI_GAMES_EVENT, activate);
+    if (takePendingAiGames()) activate();
+    return () => window.removeEventListener(OPEN_AI_GAMES_EVENT, activate);
+  }, []);
+
   /* Persist (debounced, plus an immediate flush on pagehide so a reload
    * never loses the last exchange). An in-flight streaming bubble is
    * recorded as interrupted=true for the restore above. The flush runs
@@ -1044,7 +1072,7 @@ export function AiSection({
           signal: ctrl.signal,
           body: JSON.stringify({
             stream: true,
-            ...(makeExt ? { make: "ext" } : {}),
+            ...(makeExt ? { make: "game" } : {}),
             messages: (() => {
               const clean = history.filter((m) => !m.error && !m.streaming);
               // The LAST user message is the only one that carries
@@ -1065,7 +1093,7 @@ export function AiSection({
                    the first build). The prose summary carries the context. */
                 content: (
                   m.ext
-                    ? stripExtHtml(m.content) || `[Built "${m.ext.name}" — an installable extension]`
+                    ? stripExtHtml(m.content) || `[Built "${m.ext.name}" — a playable cloud game]`
                     : m.content
                 ).slice(0, 20000),
                 ...(i === lastUser && m.images?.length ? { images: m.images.slice(0, 4) } : {}),
@@ -1549,7 +1577,7 @@ export function AiSection({
           AI assistant
         </Badge>
         <div className="ml-auto flex items-center gap-1.5">
-          {/* Mode switcher — Chat · Image · Video · Extension Maker */}
+          {/* Mode switcher — Chat · Image · Video · Games (Cloud Game Studio) */}
           <div
             role="group"
             aria-label="Veil AI mode"
@@ -1559,7 +1587,7 @@ export function AiSection({
               { id: "chat", label: "Chat", icon: Bot, active: !maker && !genMode, on: "border-emerald-400/60 bg-emerald-500/20 text-emerald-200", off: "text-zinc-400 hover:text-zinc-100" },
               { id: "image", label: "Image", icon: ImageIcon, active: genMode === "image", on: "border-cyan-400/60 bg-cyan-500/20 text-cyan-200", off: "text-zinc-400 hover:text-cyan-200" },
               { id: "video", label: "Video", icon: MonitorPlay, active: genMode === "video", on: "border-rose-400/60 bg-rose-500/20 text-rose-200", off: "text-zinc-400 hover:text-rose-200" },
-              { id: "ext", label: "Maker", icon: Package, active: maker, on: "border-violet-400/60 bg-violet-500/20 text-violet-200", off: "text-zinc-400 hover:text-violet-200" },
+              { id: "ext", label: "Games", icon: Joystick, active: maker, on: "border-violet-400/60 bg-violet-500/20 text-violet-200", off: "text-zinc-400 hover:text-violet-200" },
             ] as const).map((m) => (
               <button
                 key={m.id}
@@ -1585,7 +1613,7 @@ export function AiSection({
                       ? "AI Image — describe a picture, Veil paints it"
                       : m.id === "video"
                         ? "AI Video — describe a scene, Veil renders it (1-4 min)"
-                        : "Extension Maker — describe an app or game and Veil AI builds it as an installable Veil extension"
+                        : "Cloud Game Studio — describe a game and Veil AI builds it, playable inside the Arcade"
                 }
                 className={cn(
                   "veil-press inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[12px] font-semibold transition sm:px-3",
@@ -1668,7 +1696,7 @@ export function AiSection({
                 ))}
               </div>
 
-              {/* Extension Maker entry card */}
+              {/* Cloud Game Studio entry card — make your own cloud game */}
               <button
                 type="button"
                 onClick={() => {
@@ -1682,14 +1710,14 @@ export function AiSection({
                   aria-hidden
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 ring-1 ring-violet-400/30"
                 >
-                  <Package aria-hidden className="h-4 w-4 text-violet-300" />
+                  <Joystick aria-hidden className="h-4 w-4 text-violet-300" />
                 </span>
                 <span className="min-w-0">
                   <span className="block text-[13.5px] font-semibold text-zinc-100 group-hover:text-violet-100">
-                    Extension Maker
+                    Make Your Own Cloud Game
                   </span>
                   <span className="block truncate text-[12px] text-zinc-400">
-                    Describe an app or game — I build it as an extension for the offline Veil file
+                    Describe any game — I build it, and it plays right inside the Arcade
                   </span>
                 </span>
                 <Sparkles aria-hidden className="ml-auto h-4 w-4 shrink-0 text-violet-300/70 group-hover:text-violet-300" />
@@ -1761,22 +1789,22 @@ export function AiSection({
 
       {/* ---------------- input row ---------------- */}
       <div className="relative z-20 shrink-0 border-t border-zinc-800/80 bg-zinc-950/85 px-4 py-3 backdrop-blur-xl sm:px-6">
-        {/* Extension Maker status strip */}
+        {/* Cloud Game Studio status strip */}
         {maker && (
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto mb-2 flex w-full max-w-2xl flex-wrap items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/[0.08] px-3 py-1.5"
           >
-            <Package aria-hidden className="h-3.5 w-3.5 shrink-0 text-violet-300" />
+            <Joystick aria-hidden className="h-3.5 w-3.5 shrink-0 text-violet-300" />
             <p className="min-w-0 flex-1 text-[11.5px] leading-snug text-violet-200/90">
-              Extension Maker armed — describe the app or game, and the next answer arrives as an
-              installable extension for the offline Veil file.
+              Cloud Game Studio armed — describe the game, and the next answer arrives
+              ready to play inside the Arcade.
             </p>
             <button
               type="button"
               onClick={() => setMaker(false)}
-              aria-label="Leave Extension Maker mode"
+              aria-label="Leave Cloud Game Studio mode"
               className="veil-press shrink-0 rounded-full border border-violet-500/30 px-2 py-0.5 text-[10.5px] font-medium text-violet-200/80 transition hover:border-violet-300/60 hover:text-violet-100"
             >
               off
@@ -1971,7 +1999,7 @@ export function AiSection({
             }}
             placeholder={
               maker
-                ? "Describe the extension to build — “a neon snake game with a high score”…"
+                ? "Describe the game to build — “a neon obby with lava jumps and a high score”…"
                 : genMode === "image"
                   ? "Describe the image — “a lighthouse in a storm, oil painting style”…"
                   : genMode === "video"

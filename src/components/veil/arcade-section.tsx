@@ -64,6 +64,7 @@ import { BackdropVideo } from "@/components/veil/backdrop-video";
 import { MathGame } from "@/components/veil/math-game";
 import { RobloxTab } from "@/components/veil/roblox/roblox-tab";
 import { routeUrl, setArcadeFrame } from "@/lib/veil/shared";
+import { takePendingRobloxJump } from "@/lib/veil/cloud-games";
 import {
   THEME_GRADIENTS,
   loadWallpaperSelection,
@@ -905,6 +906,18 @@ export function ArcadeSection({
     const onJump = () => selectTab("roblox");
     window.addEventListener("veil:open-arcade-apps", onJump);
     return () => window.removeEventListener("veil:open-arcade-apps", onJump);
+  }, [selectTab]);
+
+  // "Play in the Arcade" from the AI section's Cloud Game Studio: the
+  // made game starts in the Roblox tab's embedded player (RobloxTab
+  // listens for the same event / consumes the pending slot itself).
+  // The jump slot covers the post-reload first-open race — the event
+  // fired before this section ever mounted.
+  React.useEffect(() => {
+    const onPlay = () => selectTab("roblox");
+    window.addEventListener("veil:play-made-game", onPlay);
+    if (takePendingRobloxJump()) selectTab("roblox");
+    return () => window.removeEventListener("veil:play-made-game", onPlay);
   }, [selectTab]);
 
   // Search + Enter launches the first matching title straight into the player.

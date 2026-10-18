@@ -60,10 +60,12 @@ const bodySchema = z.object({
     )
     .min(1)
     .max(40),
-  /** "ext" → Extension Maker mode: the assistant builds a single
-   *  self-contained HTML app and the server extracts it as a structured
-   *  { name, desc, icon, html } extension payload the caller can install. */
-  make: z.literal("ext").optional(),
+  /** "ext" → Extension Maker mode (legacy); "game" → Cloud Game
+   *  Studio mode. Both make the assistant build a single self-contained
+   *  HTML app/game; the server extracts it as a structured { name, desc,
+   *  icon, html } payload. Games play embedded in the Arcade's Roblox
+   *  tab — never a browser tab. */
+  make: z.enum(["ext", "game"]).optional(),
   /** stream: true → Server-Sent Events instead of one JSON blob. Long
    *  builds (Extension Maker) can take 30-90s; a silent connection gets
    *  cut by outer proxies which answer with an HTML error page the
@@ -97,6 +99,30 @@ const EXT_SYSTEM_PROMPT = [
   "- No alert()/confirm()/prompt(); use inline UI. No external libraries.",
   "- Aim for a genuinely fun/usable, polished app: real game loop, real state, restart, score/progress, win/lose states where sensible. Roughly 150-600 lines.",
   "- The page runs inside a sandboxed iframe (srcdoc): never rely on window.top, never navigate away.",
+  "",
+  "If the request is unclear, pick a reasonable interpretation and build it — never answer with questions instead of the code block.",
+].join("\n");
+
+const GAME_SYSTEM_PROMPT = [
+  "You are Veil AI in Cloud Game Studio mode. The user describes a game — usually a Roblox-style experience (obby, tycoon, simulator, clicker, battlegrounds, horror, racing, tower defense...) — and you build it as ONE complete, self-contained HTML page that plays embedded inside the Veil Arcade.",
+  "",
+  "Output format (follow EXACTLY):",
+  "1. One short intro sentence (max 2 lines, no heading, no bullet list).",
+  "2. Then ONE fenced code block tagged html containing the ENTIRE game — nothing after the closing fence.",
+  "3. The first line inside the block, right after <!doctype html>, must be a metadata comment:",
+  "   <!-- veil-ext {\"name\":\"Short Name\",\"desc\":\"One-line description\",\"icon\":\"icon\"} -->",
+  "   icon must be ONE of: bot, joypad, image, globe, dices, search, spark, calc, trophy, zap, timer, brush, pen, filetext, monitor, key, palette, worm, bomb, music, heart, desktop, play, archive, package.",
+  "",
+  "Hard rules for the game page:",
+  "- Zero external requests: no CDN, no fetch, no import, no web fonts, no images from the web. Inline <style> and <script> only.",
+  "- A real GAME, not a demo: a proper game loop (requestAnimationFrame + delta time), score/coins/levels, difficulty that ramps, win AND lose states, a restart button, and pause when the tab loses focus.",
+  "- Controls for BOTH keyboard (WASD / arrows / space) and touch (on-screen buttons or drag zones) — it must be playable on a phone.",
+  "- Canvas-based rendering (crisp on high-DPI: scale by devicePixelRatio), or DOM only if it genuinely fits better.",
+  "- The page fills the viewport (100dvh, no page scroll), dark theme with ONE vibrant accent, polished HUD.",
+  "- localStorage (guarded with try/catch) for best scores; safe if storage is unavailable.",
+  "- No alert()/confirm()/prompt(); use inline UI. No external libraries. Optional: tiny WebAudio blips started on first user gesture.",
+  "- The game runs inside an iframe (srcdoc): never rely on window.top, never navigate away.",
+  "- Aim for a genuinely fun, juicy game: particles/screenshake where it fits, roughly 250-700 lines.",
   "",
   "If the request is unclear, pick a reasonable interpretation and build it — never answer with questions instead of the code block.",
 ].join("\n");
@@ -406,7 +432,9 @@ export async function POST(req: Request): Promise<Response> {
 
   // Keep the tail of the conversation for context.
   const history = parsed.data.messages.slice(-20);
-  const maker = parsed.data.make === "ext";
+  const maker = parsed.data.make === "ext" || parsed.data.make === "game";
+  /* The Studio's prompt is game-tuned; the legacy ext flow keeps its own. */
+  const makerPrompt = parsed.data.make === "game" ? GAME_SYSTEM_PROMPT : EXT_SYSTEM_PROMPT;
   const wantStream = parsed.data.stream === true;
   // Images on the last user message → the multimodal (vision) endpoint.
   const hasImages = (() => {
@@ -432,7 +460,7 @@ export async function POST(req: Request): Promise<Response> {
       const enc = new TextEncoder();
       const stream = await create<AsyncIterable<unknown>>(
         {
-          messages: toLlmMessages(history, maker ? EXT_SYSTEM_PROMPT : SYSTEM_PROMPT),
+          messages: toLlmMessages(history, maker ? makerPrompt : SYSTEM_PROMPT),
           stream: true,
           ...(maker ? { max_tokens: 16384 } : {}),
         },
@@ -517,7 +545,7 @@ export async function POST(req: Request): Promise<Response> {
                   const nudge = await llmCreate<AsyncIterable<unknown>>(
                     {
                       messages: [
-                        { role: "system", content: EXT_SYSTEM_PROMPT },
+                        { role: "system", content: makerPrompt },
                         ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
                         { role: "assistant", content: full.slice(0, 4000) },
                         { role: "user", content: round === 0 ? NUDGE_PROMPT : NUDGE_HARD_PROMPT },
@@ -559,7 +587,7 @@ export async function POST(req: Request): Promise<Response> {
                 const cont = await llmCreate<AsyncIterable<unknown>>(
                   {
                     messages: [
-                      { role: "system", content: EXT_SYSTEM_PROMPT },
+                      { role: "system", content: makerPrompt },
                       ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
                       { role: "assistant", content: full.slice(-16000) },
                       { role: "user", content: CONTINUE_PROMPT },
@@ -623,7 +651,7 @@ export async function POST(req: Request): Promise<Response> {
       choices?: { message?: { content?: string }; delta?: { content?: string } }[];
       usage?: unknown;
     }>({
-      messages: toLlmMessages(history, maker ? EXT_SYSTEM_PROMPT : SYSTEM_PROMPT),
+      messages: toLlmMessages(history, maker ? makerPrompt : SYSTEM_PROMPT),
       ...(maker ? { max_tokens: 16384 } : {}),
     })) as { choices?: { message?: { content?: string }; delta?: { content?: string } }[]; usage?: unknown };
 
@@ -644,7 +672,7 @@ export async function POST(req: Request): Promise<Response> {
           choices?: { message?: { content?: string } }[];
         }>({
           messages: [
-            { role: "system", content: EXT_SYSTEM_PROMPT },
+            { role: "system", content: makerPrompt },
             ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
             { role: "assistant", content: content.slice(0, 4000) },
             { role: "user", content: NUDGE_PROMPT },
@@ -660,7 +688,7 @@ export async function POST(req: Request): Promise<Response> {
           choices?: { message?: { content?: string } }[];
         }>({
           messages: [
-            { role: "system", content: EXT_SYSTEM_PROMPT },
+            { role: "system", content: makerPrompt },
             ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
             { role: "assistant", content: content.slice(-16000) },
             { role: "user", content: CONTINUE_PROMPT },

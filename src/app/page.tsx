@@ -178,6 +178,20 @@ export default function Home() {
   }, []);
   const closeSection = React.useCallback(() => setSection(null), []);
 
+  // Cross-section hops for the Cloud Game Studio: "Play in the Arcade"
+  // (a made game is starting in the Arcade's Roblox tab) and the Roblox
+  // tab's "Make your own game" CTA (opens the AI section in Games mode).
+  React.useEffect(() => {
+    const onPlay = () => openSection("arcade");
+    const onMake = () => openSection("ai");
+    window.addEventListener("veil:play-made-game", onPlay);
+    window.addEventListener("veil:open-ai-games", onMake);
+    return () => {
+      window.removeEventListener("veil:play-made-game", onPlay);
+      window.removeEventListener("veil:open-ai-games", onMake);
+    };
+  }, [openSection]);
+
   // Keep the reopen hint in sync — removed the moment the section closes.
   // The first run is skipped: on a reload-restore the mount pass still
   // sees section=null, and a remove there would race the restore effect
