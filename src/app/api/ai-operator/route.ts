@@ -153,9 +153,12 @@ function invalidateInstalledAppsCache(): void {
 }
 
 /* ── watchdogs + stream plumbing (same contracts as /api/ai) ── */
-const UPSTREAM_STALL_MS = 90_000
-const UPSTREAM_SILENCE_MS = 150_000
-const CREATE_TIMEOUT_MS = 75_000
+const UPSTREAM_STALL_MS = 60_000
+const UPSTREAM_SILENCE_MS = 75_000
+const CREATE_TIMEOUT_MS = 45_000
+/* Repair rounds get a tighter budget so a wedged repair create can't
+ * outrun the client's no-delta watchdog (see /api/ai). */
+const REPAIR_CREATE_TIMEOUT_MS = 30_000
 const TOTAL_CAP_MS = 6 * 60_000
 const HARD_DEADLINE_MS = TOTAL_CAP_MS + 60_000
 const CONTINUATION_ROUNDS = 2
@@ -724,7 +727,7 @@ export async function POST(req: NextRequest): Promise<Response> {
             } catch {
               closed = true
             }
-          }, 4000)
+          }, 2000)
 
           const hardTimer = setTimeout(() => {
             if (closed) return
@@ -776,7 +779,7 @@ export async function POST(req: NextRequest): Promise<Response> {
                     thinking: { type: "disabled" },
                     max_tokens: 16384,
                   },
-                  { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS },
+                  { attempts: 2, createTimeoutMs: REPAIR_CREATE_TIMEOUT_MS },
                 )
                 const more = await consumeStream(nudge, (d) => send({ delta: d }), (r) => (finishReason = r))
                 if (more.trim()) {
@@ -810,7 +813,7 @@ export async function POST(req: NextRequest): Promise<Response> {
                   thinking: { type: "disabled" },
                   max_tokens: 16384,
                 },
-                { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS },
+                { attempts: 2, createTimeoutMs: REPAIR_CREATE_TIMEOUT_MS },
               )
               const more = await consumeStream(cont, (d) => send({ delta: d }), (r) => (finishReason = r))
               if (!more.trim()) break

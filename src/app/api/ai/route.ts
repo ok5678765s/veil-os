@@ -171,9 +171,14 @@ function mergeContinuation(a: string, b: string): string {
  *      the model stopped writing) → UPSTREAM_SILENCE_MS
  *   ④ anything unforeseen → HARD_DEADLINE_MS force-sends a terminal
  *      frame, so the client ALWAYS settles, never spins at "N KB" */
-const UPSTREAM_STALL_MS = 90_000;
-const UPSTREAM_SILENCE_MS = 150_000;
-const CREATE_TIMEOUT_MS = 75_000;
+const UPSTREAM_STALL_MS = 60_000;
+const UPSTREAM_SILENCE_MS = 75_000;
+const CREATE_TIMEOUT_MS = 45_000;
+/* Repair rounds (nudge/continuation) get a TIGHTER per-attempt budget:
+ * 2 attempts × 30s + backoff stays under the client's 75s no-delta
+ * watchdog, so a wedged repair create turns into a client auto-retry
+ * instead of a frozen code tail. */
+const REPAIR_CREATE_TIMEOUT_MS = 30_000;
 const TOTAL_CAP_MS = 6 * 60_000;
 const HARD_DEADLINE_MS = TOTAL_CAP_MS + 60_000;
 const CONTINUATION_ROUNDS = 2;
@@ -507,6 +512,9 @@ export async function POST(req: Request): Promise<Response> {
           };
           // Heartbeat — keeps outer proxies from declaring the pipe dead
           // while the model thinks. Comments are legal SSE and ignored.
+          // 2s: a stalled round-gap create must FEEL alive (the elapsed
+          // timer ticks, the note explains the phase) and a dead pipe must
+          // trip the client's QUIET watchdog fast, not after a minute.
           const heart = setInterval(() => {
             if (closed) return;
             try {
@@ -514,7 +522,7 @@ export async function POST(req: Request): Promise<Response> {
             } catch {
               closed = true;
             }
-          }, 4000);
+          }, 2000);
 
           /* HARD DEADLINE — the guarantee the client can rely on: whatever
            * hangs (create, a stream that neither yields nor errors, the
@@ -582,7 +590,7 @@ export async function POST(req: Request): Promise<Response> {
                       thinking: { type: "disabled" },
                       max_tokens: 16384,
                     },
-                    { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS }
+                    { attempts: 2, createTimeoutMs: REPAIR_CREATE_TIMEOUT_MS }
                   );
                   const more = await consumeStream(
                     nudge,
@@ -627,7 +635,7 @@ export async function POST(req: Request): Promise<Response> {
                     thinking: { type: "disabled" },
                     max_tokens: 16384,
                   },
-                  { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS }
+                  { attempts: 2, createTimeoutMs: REPAIR_CREATE_TIMEOUT_MS }
                 );
                 const more = await consumeStream(
                   cont,

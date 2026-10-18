@@ -1943,3 +1943,30 @@ Unresolved / risks:
 - Big builds (30KB+) can hit the 16384-token output cap → the continuation rounds add ~10-20s each (transparent, auto-repaired, live console keeps streaming — verified). If the owner wants even bigger builds, raising max_tokens is the next knob.
 - The model occasionally answers intro-only (no code) even for code requests — the nudge repairs it in one round (verified live); acceptable.
 - Next candidates: "rebuild with changes" (remix an existing build), made-builds in the arcade search, syntax highlighting in View code, download filename for non-HTML code answers (currently chat-only rendering).
+
+---
+Task ID: 1 (single-agent session)
+Agent: main (Z.ai Code)
+Task: Owner report: "sometimes it freezes" — the AI Coder occasionally locks up. Diagnose the freeze windows and bound every one of them.
+
+Work Log:
+- DIAGNOSIS (freeze map, worst-case math):
+  ① Stalled model mid-code: server silence watchdog 150s + client no-delta backstop 180s → up to 3 MINUTES of frozen code tail (heartbeats + elapsed timer ticking, nothing else moving).
+  ② Repair-round gaps (nudge/continuation create a FRESH model call between rounds): create timeout 75s × 2 attempts ≈ 150s+ with only the "finishing the build…" note visible.
+  ③ SUBMIT freeze — the worst one: a wedged model-server create() happens BEFORE the SSE response's first byte, so the client's fetch itself hangs with ZERO watchdogs armed (the stream watchdogs only start after the fetch resolves). Unbounded until the server's own create timeout × retries.
+- Server /api/ai/route.ts + /api/ai-operator/route.ts (twinned constants): UPSTREAM_STALL_MS 90s→60s, UPSTREAM_SILENCE_MS 150s→75s, CREATE_TIMEOUT_MS 75s→45s, heartbeat 4s→2s (a stalled pipe trips the client QUIET watchdog fast; round gaps feel alive).
+- NEW REPAIR_CREATE_TIMEOUT_MS = 30s for the nudge/continuation rounds (2 attempts × 30s + backoff = ~61s < the client's 75s no-delta watchdog — a wedged repair create can no longer outrun the client backstop and freeze the tail).
+- Client ai-section.tsx: NO_DELTA_MS 180s→75s (matches the server silence watchdog — a wedged build becomes an auto-retry, not a freeze), QUIET_MS 60s→45s.
+- NEW CONNECT WATCHDOG (the submit freeze): the fetch is raced against a 100s timer; if no response headers arrive, it rejects with "the model server never started writing (create timed out)" — a reason already on the retryable list, so the catch path quietly retries once before surfacing. Timer cleared on success; on abort/failure the stray timer's rejection is swallowed by the settled race (no unhandled rejection).
+- Fixed a self-inflicted brace bug in the race insert (fetch options object not closed before connectGuard) — caught by eslint parse, repaired, re-linted clean.
+- QA: eslint clean on all 3 files; curl regression build (dice roller) 53s / 28.4KB / zero error frames / heartbeats flowing; UI golden path through the NEW fetch race (neon clock) — streamed ("2.2 KB · 81 lines" mid-build), landed as a card (Play in the Arcade / Save .html present), zero browser console errors, dev.log healthy. Watchdog math verified on paper: every freeze mode now resolves to either visible progress, an auto-retry (≤100s), or an error bubble with Retry — never an unbounded hang.
+
+Stage Summary:
+- Every freeze window is now bounded: submit-hang ≤100s (was unbounded), mid-code stall ≤75s (was 180s), repair-round gap ≤61s (was ~150s). All of them end in the existing one-shot quiet auto-retry or an error bubble with Retry — and the live console keeps ticking throughout so the wait is never a dead screen.
+- Watchdog ladder (each layer catches what the one above misses): client connect 100s → server create 45s/30s per attempt → server silence 75s → client no-delta 75s → server hard deadline 7min (terminal frame, guaranteed settle).
+- Files: MODIFIED src/app/api/ai/route.ts, src/app/api/ai-operator/route.ts, src/components/veil/ai-section.tsx.
+
+Unresolved / risks:
+- The dev box's boot-guard auto-reload can still interrupt a build (dev-infra artifact, not app logic) — the amber Retry notice recovers it; production builds are unaffected.
+- A genuinely slow (but healthy) model that pauses >75s between tokens would now be retried — acceptable trade: no observed pauses that long on live streams (deltas flow continuously).
+- Next candidates: "rebuild with changes" (remix an existing build), made-builds in the arcade search, syntax highlighting in View code.

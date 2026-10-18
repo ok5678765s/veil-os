@@ -1199,14 +1199,29 @@ export function AiSection({
          * both abort; the AbortError branch unwinds without an error bubble. */
         const ctrl = new AbortController();
         liveCtrl.current = ctrl;
-        const res = await fetch("/api/ai", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          signal: ctrl.signal,
-          body: JSON.stringify({
-            stream: true,
-            ...(makeExt ? { make: "code" } : {}),
-            messages: (() => {
+        /* CONNECT WATCHDOG — a wedged model-server create happens BEFORE the
+         * response's first byte, so none of the stream watchdogs below are
+         * even armed yet: the fetch itself just… hangs. That was the
+         * "submitted and nothing happens" freeze. Bound it: no headers in
+         * CONNECT_MS → abort (the reason matches the retryable list, so the
+         * catch path quietly retries once before surfacing). */
+        const CONNECT_MS = 100_000;
+        let connectTimer: ReturnType<typeof setTimeout> | undefined;
+        const connectGuard = new Promise<never>((_, reject) => {
+          connectTimer = setTimeout(() => {
+            reject(new Error("the model server never started writing (create timed out)"));
+            ctrl.abort();
+          }, CONNECT_MS);
+        });
+        const res = await Promise.race([
+          fetch("/api/ai", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            signal: ctrl.signal,
+            body: JSON.stringify({
+              stream: true,
+              ...(makeExt ? { make: "code" } : {}),
+              messages: (() => {
               const clean = history.filter((m) => !m.error && !m.streaming);
               // The LAST user message is the only one that carries
               // attachments to the model (older turns' images would
@@ -1242,8 +1257,11 @@ export function AiSection({
                   : {}),
               }));
             })(),
+            }),
           }),
-        });
+          connectGuard,
+        ]);
+        if (connectTimer) clearTimeout(connectTimer);
 
         // Content-type is checked BEFORE any JSON parse: an HTML error page
         // from a restarting server must never become "Unexpected token '<'".
@@ -1333,9 +1351,11 @@ export function AiSection({
          *   ② NO_DELTA_MS — heartbeats keep flowing but no delta or
          *      continuing frame arrives: the server is wedged mid-build
          *      and its own heartbeats are masking the death. That is the
-         *      exact "stuck at N KB" freeze mode. */
-        const QUIET_MS = 60_000;
-        const NO_DELTA_MS = 180_000;
+         *      exact "stuck at N KB" freeze mode — it used to be 3 whole
+         *      minutes; 75s matches the server's silence watchdog so a
+         *      wedged build turns into an auto-retry, not a freeze. */
+        const QUIET_MS = 45_000;
+        const NO_DELTA_MS = 75_000;
         let lastProgress = Date.now();
         const touch = () => {
           lastProgress = Date.now();
