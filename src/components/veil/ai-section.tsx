@@ -44,6 +44,7 @@ import {
   Send,
   Square,
   Sparkles,
+  Terminal,
   Timer,
   Trophy,
   TriangleAlert,
@@ -613,6 +614,41 @@ function ExtCard({ ext }: { ext: AiExt }) {
   );
 }
 
+/** Live build console — the AI Coder's code streaming in real time.
+ *  A terminal-style tail (bottom-anchored, so the newest lines always
+ *  stay visible) plus a running elapsed-seconds counter: even a long
+ *  build feels alive instead of a silent KB counter. Mounts only while
+ *  a maker reply streams, so the ticker's interval never outlives it. */
+function BuildConsole({ codeTail }: { codeTail: string }) {
+  const [secs, setSecs] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setSecs((s) => s + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="mt-2.5 overflow-hidden rounded-lg border border-zinc-700/50 bg-zinc-950/70">
+      <div className="flex items-center justify-between gap-2 border-b border-zinc-800/70 px-2.5 py-1">
+        <span
+          aria-hidden
+          className="flex items-center gap-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-violet-300/70"
+        >
+          <Terminal className="h-3 w-3" /> live code
+        </span>
+        <span className="font-mono text-[9.5px] tabular-nums text-zinc-500">{secs}s</span>
+      </div>
+      <div className="flex max-h-24 flex-col justify-end overflow-hidden">
+        <pre
+          aria-hidden
+          className="whitespace-pre-wrap break-all px-2.5 py-1.5 font-mono text-[10px] leading-[1.5] text-emerald-300/60"
+        >
+          {codeTail}
+          <span className="veil-ai-caret ml-px inline-block h-3 w-[6px] translate-y-[2px] rounded-[1.5px] bg-emerald-400/80" />
+        </pre>
+      </div>
+    </div>
+  );
+}
+
 function Bubble({
   msg,
   maker,
@@ -734,22 +770,25 @@ function Bubble({
           ) : live && live.building ? (
             <>
               {live.prose && <AssistantMessage content={live.prose} onOpenUrl={onOpenUrl} />}
-              <div className="mt-1 flex items-center gap-3 rounded-xl border border-violet-500/25 bg-violet-500/[0.06] px-3.5 py-2.5">
-                <Loader2 aria-hidden className="h-4 w-4 shrink-0 animate-spin text-violet-300" />
-                <div className="min-w-0">
-                  <p className="text-[13px] font-medium text-zinc-100">
-                    {msg.note ? "Veil AI is finishing the build…" : "Veil AI is writing the code…"}
-                  </p>
-                  <p className="text-[11.5px] text-zinc-500">
-                    {msg.note ? (
-                      <>
-                        {msg.note} · {(live.bytes / 1024).toFixed(1)} KB so far.
-                      </>
-                    ) : (
-                      `${(live.bytes / 1024).toFixed(1)} KB written — the code stays hidden until it lands.`
-                    )}
-                  </p>
+              <div className="mt-1 rounded-xl border border-violet-500/25 bg-violet-500/[0.06] px-3.5 py-2.5">
+                <div className="flex items-center gap-3">
+                  <Loader2 aria-hidden className="h-4 w-4 shrink-0 animate-spin text-violet-300" />
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-medium text-zinc-100">
+                      {msg.note ? "Veil AI is finishing the build…" : "Veil AI is writing the code…"}
+                    </p>
+                    <p className="text-[11.5px] text-zinc-500">
+                      {msg.note ? (
+                        <>
+                          {msg.note} · {(live.bytes / 1024).toFixed(1)} KB so far.
+                        </>
+                      ) : (
+                        `${(live.bytes / 1024).toFixed(1)} KB · ${live.lines} lines — streaming below.`
+                      )}
+                    </p>
+                  </div>
                 </div>
+                <BuildConsole codeTail={live.codeTail} />
               </div>
               <p className="mt-1 text-[10.5px] text-zinc-600">
                 Taking too long? The stop button next to the composer cancels and keeps your text.

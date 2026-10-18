@@ -106,24 +106,27 @@ const EXT_SYSTEM_PROMPT = [
 ].join("\n");
 
 const CODE_SYSTEM_PROMPT = [
-  "You are Veil AI in AI CODER mode — an HTML maker. The user describes ANYTHING buildable for the web (a page, tool, widget, dashboard, calculator, timer, game, toy, demo...) and you write the code: ONE complete, self-contained HTML page with all the HTML, CSS and JavaScript inline. It renders and runs exactly as delivered.",
+  "You are Veil AI in AI CODER mode — a FAST HTML maker. The user describes ANYTHING buildable for the web (a page, tool, widget, dashboard, calculator, timer, game, toy, demo...) and you write the code: ONE complete, self-contained HTML page with all the HTML, CSS and JavaScript inline. It renders and runs exactly as delivered.",
+  "",
+  "SPEED IS THE #1 RULE. You write compact, dense, working code — never bloated:",
+  "- Target 80-220 lines total (hard ceiling ~300). Fewer is better as long as it fully works.",
+  "- NO comments at all (the only comment is the metadata line). No blank-line padding. No dead code. No placeholder sections.",
+  "- Shortest correct implementation: one CSS block, one JS block, minimal DOM, terse helpers. The user is watching the code stream in live — every line costs their time.",
   "",
   "Output format (follow EXACTLY):",
-  "1. One short intro sentence (max 2 lines, no heading, no bullet list).",
+  "1. One short intro sentence (max 1 line, no heading, no bullet list).",
   "2. Then ONE fenced code block tagged html containing the ENTIRE page — nothing after the closing fence.",
   "3. The first line inside the block, right after <!doctype html>, must be a metadata comment:",
   "   <!-- veil-ext {\"name\":\"Short Name\",\"desc\":\"One-line description\",\"icon\":\"icon\"} -->",
   "   icon must be ONE of: bot, joypad, image, globe, dices, search, spark, calc, trophy, zap, timer, brush, pen, filetext, monitor, key, palette, worm, bomb, music, heart, desktop, play, archive, package.",
   "",
   "Hard rules for the page you write:",
-  "- Zero external requests: no CDN, no fetch, no import, no web fonts, no images from the web. Inline <style> and <script> only — everything it needs lives in the one file.",
-  "- Real, working code: actual logic, actual state, actual interactivity — never a mockup with placeholder buttons. If it's a game: a proper loop (requestAnimationFrame + delta time), score, win/lose, restart, and controls for BOTH keyboard and touch. If it's a tool: it must actually work end-to-end.",
-  "- Fully responsive (mobile-first), polished typography and spacing, a cohesive design (dark theme with ONE vibrant accent unless the request clearly calls for something else), crisp on high-DPI (scale canvas by devicePixelRatio when drawing).",
-  "- <!doctype html> + <html lang=\"en\"> + <meta charset=\"utf-8\"> + <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> + <title> + <meta name=\"description\">.",
-  "- localStorage (guarded with try/catch) for scores/settings/state; safe if storage is unavailable.",
-  "- No alert()/confirm()/prompt(); build inline UI instead. No external libraries. No window.open, no navigation away, no target=_blank links.",
-  "- The page runs inside a sandboxed iframe (srcdoc): never rely on window.top, never navigate away.",
-  "- Aim for genuinely production-quality: roughly 250-700 lines.",
+  "- Zero external requests: no CDN, no fetch, no import, no web fonts, no images from the web. Inline <style> and <script> only — everything lives in the one file.",
+  "- Real working logic: actual state, actual interactivity — never a mockup. If it's a game: a proper loop, score, restart, controls for BOTH keyboard and touch. If it's a tool: it must actually work end-to-end.",
+  "- Responsive (mobile-first), clean dark theme with ONE vibrant accent, decent typography and spacing.",
+  "- <!doctype html> + <meta charset=\"utf-8\"> + <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> + <title>.",
+  "- localStorage guarded with try/catch for scores/settings/state.",
+  "- No alert()/confirm()/prompt(). No external libraries. No window.open, no target=_blank, never navigate away (runs in a sandboxed srcdoc iframe).",
   "",
   "If the request is unclear, pick a reasonable interpretation and build it — never answer with questions instead of the code block.",
 ].join("\n");
@@ -460,10 +463,15 @@ export async function POST(req: Request): Promise<Response> {
      * the old code surfaced those as instant 502s. */
     if (wantStream) {
       const enc = new TextEncoder();
+      /* thinking disabled — the maker must START WRITING CODE immediately
+       * (a thinking model burns 20-60s reasoning before the first line,
+       * which is exactly the "coder takes too long" complaint). Same for
+       * plain chat: short answers never need chain-of-thought. */
       const stream = await create<AsyncIterable<unknown>>(
         {
           messages: toLlmMessages(history, maker ? makerPrompt : SYSTEM_PROMPT),
           stream: true,
+          thinking: { type: "disabled" },
           ...(maker ? { max_tokens: 16384 } : {}),
         },
         { createTimeoutMs: CREATE_TIMEOUT_MS }
@@ -553,6 +561,7 @@ export async function POST(req: Request): Promise<Response> {
                         { role: "user", content: round === 0 ? NUDGE_PROMPT : NUDGE_HARD_PROMPT },
                       ],
                       stream: true,
+                      thinking: { type: "disabled" },
                       max_tokens: 16384,
                     },
                     { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS }
@@ -595,6 +604,7 @@ export async function POST(req: Request): Promise<Response> {
                       { role: "user", content: CONTINUE_PROMPT },
                     ],
                     stream: true,
+                    thinking: { type: "disabled" },
                     max_tokens: 16384,
                   },
                   { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS }
@@ -654,6 +664,7 @@ export async function POST(req: Request): Promise<Response> {
       usage?: unknown;
     }>({
       messages: toLlmMessages(history, maker ? makerPrompt : SYSTEM_PROMPT),
+      thinking: { type: "disabled" },
       ...(maker ? { max_tokens: 16384 } : {}),
     })) as { choices?: { message?: { content?: string }; delta?: { content?: string } }[]; usage?: unknown };
 
@@ -679,6 +690,7 @@ export async function POST(req: Request): Promise<Response> {
             { role: "assistant", content: content.slice(0, 4000) },
             { role: "user", content: NUDGE_PROMPT },
           ],
+          thinking: { type: "disabled" },
           max_tokens: 16384,
         }, { attempts: 2 })) as { choices?: { message?: { content?: string } }[] };
         const more = nudge.choices?.[0]?.message?.content ?? "";
@@ -695,6 +707,7 @@ export async function POST(req: Request): Promise<Response> {
             { role: "assistant", content: content.slice(-16000) },
             { role: "user", content: CONTINUE_PROMPT },
           ],
+          thinking: { type: "disabled" },
           max_tokens: 16384,
         }, { attempts: 2 })) as { choices?: { message?: { content?: string } }[] };
         const more = cont.choices?.[0]?.message?.content ?? "";

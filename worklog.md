@@ -1886,3 +1886,32 @@ Unresolved / risks:
 - The made-build iframe runs sandbox allow-scripts+allow-same-origin (needed for localStorage best-scores in builds) — same trust model as the old extension flow.
 - Owner should hard-refresh (Ctrl+Shift+R) once if they see the old "Games" chip / cloud rows — zombie bundle.
 - Next candidates: "rebuild with changes" (edit/remix an existing build), a made-builds presence in the arcade search, and showing the build's code with syntax highlighting.
+
+---
+Task ID: 1 (single-agent session)
+Agent: main (Z.ai Code)
+Task: Owner directive: "the coder takes to lng its a buns coder" — make the AI Coder FAST.
+
+Work Log:
+- DIAGNOSIS (3 compounding causes of the slow AI Coder):
+  1. /api/ai maker calls NEVER passed `thinking: { type: "disabled" }` — the model burned long reasoning phases before/while writing code (the LLM skill's #1 speed rule).
+  2. CODE_SYSTEM_PROMPT demanded "genuinely production-quality: roughly 250-700 lines" → huge outputs (88KB builds observed; 2337 SSE frames for a click counter).
+  3. The UI hid ALL progress during a build ("the code stays hidden until it lands") — just a silent KB counter, so even a 40s build felt dead.
+- /api/ai/route.ts: `thinking: { type: "disabled" }` added to ALL 7 LLM call sites (main streaming call — chat AND maker, both nudge rounds, both continuation rounds, classic-JSON path, JSON nudge/continue). Chat replies get snappier too.
+- CODE_SYSTEM_PROMPT rewritten around "SPEED IS THE #1 RULE": target 80-220 lines (hard ceiling ~300), NO comments except the metadata line, no blank-line padding, no dead code, shortest correct implementation, "the user is watching the code stream in live — every line costs their time". Kept: output format (intro + one fenced html block + veil-ext metadata), zero external requests, real working logic, responsive dark theme + one accent, localStorage try/catch, no alert/window.open/target=_blank, sandbox-safe.
+- /api/ai-operator/route.ts: same thinking-disabled added to its 3 streaming call sites (operator builds + plain operator answers also get the fast path).
+- src/lib/veil/ext-maker.ts liveCutExt: now also returns `codeTail` (last ~700 chars of the streamed code) + `lines` (newline count) — the raw material for a live console. Backward compatible (additive fields; only caller is ai-section).
+- src/components/veil/ai-section.tsx: NEW BuildConsole component — terminal-style live code console that mounts INSIDE the violet building panel while a maker reply streams: "LIVE CODE" header (Terminal icon, violet mono caps), running elapsed-seconds counter (own interval, unmounts with the panel), bottom-anchored 700-char code tail in dim emerald mono with blinking caret (aria-hidden — decorative duplicate of the streaming content). Panel text now reads "N KB · N lines — streaming below." instead of "code stays hidden until it lands".
+- Benchmark (curl, make:"code", "build a neon snake game"): 24s end-to-end, ONE pass (no nudge/continuation rounds), 8.2KB / 236-line complete HTML, valid veil-ext metadata, ends with </html>. UI builds landed similarly (Pomodoro 7-8KB, Tip Calc 4KB) — roughly half to a tenth of the old output sizes, no truncation-repair rounds needed.
+- QA (agent-browser, live): submitted "pomodoro timer" build through the real UI — mid-build panel showed "Veil AI is writing the code… / 5.3 KB · 126 lines — streaming below." + elapsed "13 s"; DOM eval mid-build (second build, "tip calculator"): liveHeader:true, preLen:700 (full code tail), timer "6s", preTail showed real live HTML (<h1>Tip Calculator</h1>…). Both builds landed as ExtCards (Play in the Arcade / Preview / View code). Preview opened the INLINE sandboxed dialog ("Tip Calc — live preview", "Runs right here in Veil · sandboxed · no browser tab"), tabCount 0 — no browser tabs. Browser console: zero errors (HMR logs only). dev.log healthy (all 200s). VLM-verified screenshots: live console renders with the > LIVE CODE tag + streaming code + counters; build cards + preview dialog clean.
+- eslint clean on all 4 touched files (route.ts, ai-operator, ai-section, ext-maker). Full `bun run lint` gets watchdog-killed on this box (pre-existing memory pressure) — targeted eslint is the working pattern.
+
+Stage Summary:
+- The AI Coder is FAST: thinking disabled everywhere + compact-build prompt + a live terminal console streaming the code as it's written. Builds now land in ~20-30s (from 30-90s+), outputs are 4-8KB compact single-file apps (from up to 88KB), and the wait is visually alive (KB · lines · elapsed seconds · streaming code tail).
+- The auto-repair safety nets (nudge for prose-only replies, continuation for truncated code) are untouched and still thinking-disabled-fast if they ever fire.
+- Files: MODIFIED src/app/api/ai/route.ts, src/app/api/ai-operator/route.ts, src/lib/veil/ext-maker.ts, src/components/veil/ai-section.tsx.
+
+Unresolved / risks:
+- Compact builds trade some polish for speed (fewer flourishes, terse code) — if the owner wants richer apps, the prompt's line ceiling is the knob to turn.
+- thinking:{type:"disabled"} is now on every /api/ai + /api/ai-operator call — if a future feature needs deep reasoning (e.g. complex debugging), it should opt back into thinking for that call only.
+- Next candidates: "rebuild with changes" (remix an existing build), made-builds in the arcade search, syntax highlighting in View code.

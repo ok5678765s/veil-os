@@ -221,9 +221,18 @@ export function stripExtHtml(content: string): string {
  * a doctype, or the veil-ext metadata comment — so the raw HTML is
  * never painted into the chat while it's being written. The code's
  * only home is the ExtCard's "View HTML" viewer. Returns the prose
- * so far plus how many bytes of code have landed.
+ * so far, how many bytes of code have landed, plus a TAIL of the code
+ * (last ~700 chars) and the line count — the AI Coder's build panel
+ * streams that tail live in a mini console, so a build never feels
+ * like a silent KB counter.
  */
-export function liveCutExt(content: string): { prose: string; building: boolean; bytes: number } {
+export function liveCutExt(content: string): {
+  prose: string;
+  building: boolean;
+  bytes: number;
+  codeTail: string;
+  lines: number;
+} {
   const src = String(content || "");
   let cut = -1;
   const fence = src.indexOf("```");
@@ -232,6 +241,13 @@ export function liveCutExt(content: string): { prose: string; building: boolean;
   if (doc !== -1 && (cut === -1 || doc < cut)) cut = doc;
   const meta = src.indexOf("<!-- veil-ext");
   if (meta !== -1 && (cut === -1 || meta < cut)) cut = meta;
-  if (cut === -1) return { prose: src, building: false, bytes: 0 };
-  return { prose: src.slice(0, cut).trim(), building: true, bytes: Math.max(0, src.length - cut) };
+  if (cut === -1) return { prose: src, building: false, bytes: 0, codeTail: "", lines: 0 };
+  const code = src.slice(cut);
+  return {
+    prose: src.slice(0, cut).trim(),
+    building: true,
+    bytes: Math.max(0, code.length),
+    codeTail: code.slice(-700),
+    lines: (code.match(/\n/g) ?? []).length,
+  };
 }

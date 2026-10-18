@@ -700,6 +700,7 @@ export async function POST(req: NextRequest): Promise<Response> {
         {
           messages: llmMessages(),
           stream: true,
+          thinking: { type: "disabled" },
           max_tokens: 16384,
         },
         { createTimeoutMs: CREATE_TIMEOUT_MS },
@@ -772,6 +773,7 @@ export async function POST(req: NextRequest): Promise<Response> {
                       { role: "user", content: round === 0 ? NUDGE_PROMPT : NUDGE_HARD_PROMPT },
                     ],
                     stream: true,
+                    thinking: { type: "disabled" },
                     max_tokens: 16384,
                   },
                   { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS },
@@ -805,6 +807,7 @@ export async function POST(req: NextRequest): Promise<Response> {
                     { role: "user", content: CONTINUE_PROMPT },
                   ],
                   stream: true,
+                  thinking: { type: "disabled" },
                   max_tokens: 16384,
                 },
                 { attempts: 2, createTimeoutMs: CREATE_TIMEOUT_MS },
