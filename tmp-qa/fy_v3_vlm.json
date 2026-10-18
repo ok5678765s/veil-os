@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) **Yes**, the filter chip row (All, News, Sports, Live, etc.) is pinned at the very top of the content area, with the video cards scrolled beneath it.\n2) **No**, there are no visible shelf headings like \"Watch it again\" or \"Shorts\" in this view; only the filter chips and a grid of video cards are shown.\n3) **No**, there are no glitches or overlaps visible.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1792287549,
+  "id": "202610180939067911f66ab6534ac6",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "202610180939067911f66ab6534ac6",
+  "usage": {
+    "completion_tokens": 92,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1751,
+    "prompt_tokens_details": {
+      "cached_tokens": 2
+    },
+    "total_tokens": 1843
+  }
+}

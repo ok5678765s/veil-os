@@ -34,6 +34,7 @@ import {
   BellOff,
   Check,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   ChevronUp,
   CirclePause,
@@ -226,17 +227,104 @@ interface YtPost {
 
 type PageKey = "foryou" | "shorts" | "popular" | "subs" | "playlists" | "history";
 
-/** For You filter chips — the YouTube-home row of slices over the
- * personalized feed (client-side, driven by subs / likes / history). */
-type FyFilter = "all" | "subs" | "new" | "live" | "liked" | "watched";
-const FY_CHIPS: { key: FyFilter; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "subs", label: "From your subs" },
-  { key: "new", label: "Recently uploaded" },
-  { key: "live", label: "Live" },
-  { key: "liked", label: "Liked" },
-  { key: "watched", label: "Watched" },
+/** For You filter chips — YouTube's home chip bar: All, the TOPIC
+ * slices (Music / Gaming / Computer programming / …) classified from
+ * what's actually on the wire, then the functional slices (Live,
+ * Recently uploaded, subs, liked, watched). The chips ARE the page's
+ * header — YouTube home starts at the chip row, not a title. */
+type FyFilter = "all" | "subs" | "new" | "live" | "liked" | "watched" | `topic:${string}`;
+
+/** Topic patterns for the chip bar — first match wins, so the order is
+ * deliberate (gaming's vocabulary is unmistakable, music has to beat
+ * "official video" to movies' "trailer", code words never collide with
+ * the rest). A card with no hit just rides "All". */
+const FY_TOPICS: { key: string; label: string; re: RegExp }[] = [
+  {
+    key: "gaming",
+    label: "Gaming",
+    re: /\b(gaming|gameplay|gamer|minecraft|fortnite|roblox|terraria|speedrun|speedrunner|boss ?fight|rpg|fps|esports?|let'?s play|playthrough|walkthrough|noob|clutch|valorant|counter-?strike|csgo|cs2|gta|elden ring|zelda|mario|pokemon|pokémon|among us|league of legends|dota|apex legends|warzone|call of duty|black ops|skyrim|fallout|cyberpunk|steam deck|ps5|xbox|nintendo switch)\b/i,
+  },
+  {
+    key: "music",
+    label: "Music",
+    re: /\b(music|songs?|album|single|lyrics?|official (audio|video|music video)|music video|remix|cover|acoustic|instrumental|beats?|concert|tour|setlist|guitar|piano|drums?|vocal|singer|band|dj |edm|rap|hip ?hop|jazz|rock|metal|pop song|lofi|lo-?fi|playlist|soundtrack|ost|feat\.?|ft\.?|prod\.?)\b/i,
+  },
+  {
+    key: "code",
+    label: "Computer programming",
+    re: /\b(programming|programmer|code|coding|coder|developer|dev|javascript|typescript|python|rust lang|golang|java(?!script)|c\+\+|php|ruby|sql|html|css|react|next\.?js|node|deno|bun|api|git\b|docker|kubernetes|linux|terminal|shell|bash|regex|algorithm|data structures?|frontend|backend|full ?stack|web ?dev|software engineer|vs ?code|neovim|vim|vscode)\b/i,
+  },
+  {
+    key: "ai",
+    label: "Artificial intelligence",
+    re: /\b(\bai\b|artificial intelligence|machine learning|deep learning|neural (nets?|networks?)|llms?|chatgpt|gpt-?[45o]|claude|gemini|midjourney|stable ?diffusion|diffusion model|transformers?|openai|anthropic|agents?)\b/i,
+  },
+  {
+    key: "news",
+    label: "News",
+    re: /\b(news|breaking|headline|politics|political|election|senate|congress|parliament|president|governor|mayor|supreme court|lawsuit|court rules|journalist|coverage|protest)\b/i,
+  },
+  {
+    key: "sports",
+    label: "Sports",
+    re: /\b(nba|nfl|mlb|nhl|soccer|football|basketball|baseball|hockey|tennis|golf|boxing|ufc|mma|f1\b|formula 1|nascar|olympics?|world cup|champions league|premier league|la liga|match|highlights|touchdown|home run|playoffs?|tournament|athlete|goal of)\b/i,
+  },
+  {
+    key: "science",
+    label: "Science",
+    re: /\b(science|scientist|physics|quantum|chemistry|biology|space\b|nasa|astronomy|astrophys|rocket|mars|moon|neuro ?science|brains?|experiment|research|study finds|genome|dna\b|evolution|climate|math|mathematics)\b/i,
+  },
+  {
+    key: "tech",
+    label: "Gadgets",
+    re: /\b(iphone|ipad|android|smartphone|laptops?|macbook|gadgets?|unboxing|tech|technology|gpus?|cpus?|nvidia|amd\b|rtx|keyboards?|headphones|earbuds|cameras?|drones?|smart ?watch|wearables?|ssd|ram\b|flagship)\b/i,
+  },
+  {
+    key: "movies",
+    label: "Movies",
+    re: /\b(movies?|films?|trailers?|teasers?|official trailer|scenes?|cinema|box office|directors?|actors?|netflix|hbo|marvel|avengers|star wars)\b/i,
+  },
+  {
+    key: "comedy",
+    label: "Comedy",
+    re: /\b(comedy|funny|hilarious|comedian|stand ?up|sketch|skits?|memes?|pranks?|jokes?|roast|fails?)\b/i,
+  },
+  {
+    key: "cars",
+    label: "Cars",
+    re: /\b(cars?|engines?|supercars?|tesla|bmw|toyota|honda|ford\b|porsche|ferrari|lamborghini|mustang|corvette|turbo|manual transmission|drag race|car ?review|driving)\b/i,
+  },
+  {
+    key: "cooking",
+    label: "Cooking",
+    re: /\b(recipes?|cooking|cook\b|food|meals?|kitchen|baking|bake\b|chef|grill|bbq|dinner|lunch|breakfast|dessert|cakes?|pasta|pizza|steak|ramen|sushi)\b/i,
+  },
+  {
+    key: "travel",
+    label: "Travel",
+    re: /\b(travel|trips?|journey|vlog|adventure|tour guide|japan|tokyo|korea|paris|london|new york|city tour|hikes?|hiking|camping|van life|abroad|visit)\b/i,
+  },
+  {
+    key: "finance",
+    label: "Finance",
+    re: /\b(stocks?|crypto|bitcoin|ethereum|markets?|investing|investments?|money|finance|financial|economy|inflation|wall street|trading|traders?|portfolio|retirement|salary|budget)\b/i,
+  },
+  {
+    key: "podcast",
+    label: "Podcasts",
+    re: /\b(podcasts?|full episode|interview|talk show|guests?|episode \d+|ep\.? ?\d+)\b/i,
+  },
 ];
+
+/** The chip bar's topic classifier — a card belongs to the first topic
+ * whose pattern its title + channel name hits, or to none ("All").
+ * Structurally typed (title + author only): the river carries both
+ * YtCards and the ranker's RankCard spreads, and both classify. */
+function classifyCard(card: { title: string; author: string }): string | null {
+  const hay = `${card.title} ${card.author}`;
+  for (const t of FY_TOPICS) if (t.re.test(hay)) return t.key;
+  return null;
+}
 
 const PAGE_NAV: { key: PageKey; label: string; icon: LucideIcon }[] = [
   { key: "foryou", label: "For You", icon: Sparkles },
@@ -245,6 +333,13 @@ const PAGE_NAV: { key: PageKey; label: string; icon: LucideIcon }[] = [
   { key: "subs", label: "Subscriptions", icon: Rss },
   { key: "playlists", label: "Playlists", icon: ListVideo },
   { key: "history", label: "History", icon: HistoryIcon },
+];
+
+/** The sidebar's "You" group — YouTube splits its rail into the main
+ * pages and a personal section (History, Playlists) under a divider. */
+const PAGE_YOU: { key: PageKey; label: string; icon: LucideIcon }[] = [
+  { key: "history", label: "History", icon: HistoryIcon },
+  { key: "playlists", label: "Playlists", icon: ListVideo },
 ];
 
 const PAGE_TONE: Record<PageKey, { chip: string; active: string; icon: string }> = {
@@ -2420,7 +2515,9 @@ function VideoCard({
       <div className="mt-3 flex gap-3">
         <ChannelAvatar name={card.author} id={card.authorId} size={36} onChannel={onChannel} avatar={card.avatar} />
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-2 text-[14px] font-medium leading-snug text-zinc-100">{card.title}</h3>
+          <h3 className="line-clamp-2 text-[14px] font-medium leading-snug text-zinc-100" title={card.why ? `${card.title} — ${card.why}` : card.title}>
+            {card.title}
+          </h3>
           {card.authorId && onChannel ? (
             <button
               type="button"
@@ -2445,11 +2542,8 @@ function VideoCard({
             {card.views > 0 && card.published && <span className="mx-1">·</span>}
             {ageLabel(card.published)}
           </p>
-          {card.why && (
-            <p className="mt-1 truncate text-[11.5px] text-zinc-500" title={card.why}>
-              {card.why}
-            </p>
-          )}
+          {/* the personalization "why" rides the title attribute only —
+             YouTube's card body is nothing but title / channel / stats */}
         </div>
       </div>
     </motion.div>
@@ -2622,25 +2716,89 @@ function ShortSkeletons({ n = 10 }: { n?: number }) {
   );
 }
 
-/** A horizontal shorts rail for the For You feed. */
+/* ------------------------------------------------------------------ */
+/* Shelf rows — YouTube's horizontal shelves (Shorts, Watch it again)   */
+/* with the hover ‹ › arrows that nudge the rail by most of a viewport  */
+/* ------------------------------------------------------------------ */
+
+/** One of the round ‹ › buttons that ride a shelf's edges on hover.
+ * Desktop pointers only — touch swipes the rail directly. */
+function ShelfArrow({ dir, onClick }: { dir: -1 | 1; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={dir < 0 ? "Scroll the shelf left" : "Scroll the shelf right"}
+      className={cn(
+        "absolute top-[38%] z-10 hidden size-9 -translate-y-1/2 items-center justify-center rounded-full bg-zinc-950/95 text-zinc-200 opacity-0 shadow-xl shadow-black/50 ring-1 ring-zinc-700 backdrop-blur transition hover:bg-zinc-900 hover:text-zinc-50 focus-visible:opacity-100 group-hover/shelf:opacity-100 md:flex",
+        dir < 0 ? "left-0" : "right-0",
+      )}
+    >
+      {dir < 0 ? (
+        <ChevronLeft aria-hidden className="size-4.5" />
+      ) : (
+        <ChevronRight aria-hidden className="size-4.5" />
+      )}
+    </button>
+  );
+}
+
+/** A horizontally scrollable shelf row with edge-aware arrows — the
+ * container every interleaved shelf (Shorts, Watch it again) uses. */
+function ShelfRow({ children }: { children: React.ReactNode }) {
+  const rowRef = React.useRef<HTMLDivElement | null>(null);
+  const [edges, setEdges] = React.useState({ l: false, r: false });
+  const update = React.useCallback(() => {
+    const el = rowRef.current;
+    if (!el) return;
+    const l = el.scrollLeft > 8;
+    const r = el.scrollLeft + el.clientWidth < el.scrollWidth - 8;
+    /* bail out on the same value — a fresh object every render would
+     * loop the no-deps effect below forever (React bails on ===) */
+    setEdges((prev) => (prev.l === l && prev.r === r ? prev : { l, r }));
+  }, []);
+  React.useEffect(() => {
+    /* run after every render — children arriving (avatars, cards) change
+     * the scroll width and the arrows have to catch up. Safe with the
+     * value-guarded setter above: identical edges never re-render. */
+    update();
+  });
+  const nudge = (dir: -1 | 1) => {
+    const el = rowRef.current;
+    if (el) el.scrollBy({ left: dir * Math.max(320, el.clientWidth * 0.8), behavior: "smooth" });
+  };
+  return (
+    <div className="relative">
+      {edges.l && <ShelfArrow dir={-1} onClick={() => nudge(-1)} />}
+      <div ref={rowRef} onScroll={update} className="veil-scroll-slim -mx-1 flex gap-3 overflow-x-auto px-1 pb-2">
+        {children}
+      </div>
+      {edges.r && <ShelfArrow dir={1} onClick={() => nudge(1)} />}
+    </div>
+  );
+}
+
+/** A horizontal shorts rail for the For You feed — YouTube's Shorts
+ * shelf: the mark + a 20px bold heading, then the 9:16 card row. */
 function ShortsRail({ shorts, onWatch }: { shorts: YtCard[]; onWatch: (id: string, card: YtCard) => void }) {
   return (
-    <section aria-label="Shorts shelf" className="my-5">
-      <div className="mb-2.5 flex items-center gap-2">
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-fuchsia-500/15 ring-1 ring-fuchsia-500/30">
-          <Zap aria-hidden className="size-3.5 text-fuchsia-400" />
+    <section aria-label="Shorts shelf" className="group/shelf my-6">
+      <div className="mb-3 flex items-center gap-2.5">
+        {/* the Shorts mark — the rounded play tile, like the logo */}
+        <span aria-hidden className="flex size-6 shrink-0 items-center justify-center rounded-[7px] bg-zinc-100">
+          <svg viewBox="0 0 24 24" className="size-4 text-zinc-900" fill="currentColor">
+            <path d="M9.5 7v10l8-5-8-5Z" />
+          </svg>
         </span>
-        <h3 className="text-[12.5px] font-semibold uppercase tracking-wider text-zinc-400">Shorts</h3>
-        <div aria-hidden className="h-px flex-1 bg-zinc-800/70" />
-        <span className="shrink-0 text-[10.5px] tabular-nums text-zinc-600">{shorts.length} on the wire</span>
+        <h3 className="text-[20px] font-bold tracking-tight text-zinc-50">Shorts</h3>
       </div>
-      <div className="veil-scroll-slim -mx-1 flex gap-3 overflow-x-auto px-1 pb-2">
+      <ShelfRow>
         {shorts.map((c, i) => (
           <div key={`${c.id}-${i}`} className="w-40 shrink-0 sm:w-44">
             <ShortCard card={c} index={i} onWatch={onWatch} />
           </div>
         ))}
-      </div>
+      </ShelfRow>
     </section>
   );
 }
@@ -2716,11 +2874,6 @@ function WatchAgainCard({
             {fmtTime(card.durationSec)}
           </span>
         ) : null}
-        {/* the watched-when label */}
-        <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded-md bg-black/85 px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-zinc-300">
-          <RotateCcw aria-hidden className="size-3 text-rose-400" />
-          {relTime(at)}
-        </span>
       </div>
       <div className="mt-2 px-0.5">
         <h4 className="line-clamp-2 text-[13px] font-medium leading-snug text-zinc-100 group-hover:text-white">
@@ -2732,13 +2885,13 @@ function WatchAgainCard({
   );
 }
 
-/** "Watch again" — YouTube-home's shelf for videos you've already seen.
- * The For You feed hides watched videos (the server excludes them from
- * every round), so without this rail they'd be unreachable from the main
- * page after a reload. This is their home: the most recent history
- * entries, one click from a re-watch, with a door to the full History
- * page. Hidden while the feed is sliced by a chip — slices are for
- * finding NEW things; this rail is for going back. */
+/** "Watch it again" — YouTube-home's shelf for videos you've already
+ * seen. The For You feed hides watched videos (the server excludes
+ * them from every round), so without this rail they'd be unreachable
+ * from the main page after a reload. This is their home: the most
+ * recent history entries, one click from a re-watch, with a door to
+ * the full History page. Hidden while the feed is sliced by a chip —
+ * slices are for finding NEW things; this rail is for going back. */
 function WatchAgainRail({
   entries,
   paused,
@@ -2753,32 +2906,32 @@ function WatchAgainRail({
   const shown = entries.slice(0, 14);
   if (shown.length === 0) return null;
   return (
-    <section aria-label="Watch again — your recent history" className="my-5">
-      <div className="mb-2.5 flex items-center gap-2">
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-rose-500/15 ring-1 ring-rose-500/30">
-          <RotateCcw aria-hidden className="size-3.5 text-rose-400" />
-        </span>
-        <h3 className="shrink-0 text-[12.5px] font-semibold uppercase tracking-wider text-zinc-400">Watch again</h3>
-        <span className="shrink-0 text-[10.5px] tabular-nums text-zinc-600">
-          {entries.length} watched{paused ? " · recording paused" : ""}
-        </span>
-        <div aria-hidden className="h-px flex-1 bg-zinc-800/70" />
+    <section aria-label="Watch it again — your recent history" className="group/shelf my-6">
+      <div className="mb-3 flex items-center gap-2.5">
+        <RotateCcw aria-hidden className="size-5 shrink-0 text-zinc-100" />
+        <h3 className="text-[20px] font-bold tracking-tight text-zinc-50">Watch it again</h3>
+        {paused && (
+          <span className="ml-1 rounded-md bg-zinc-800/80 px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-zinc-500 ring-1 ring-zinc-700/50">
+            recording paused
+          </span>
+        )}
+        <div className="flex-1" />
         <button
           type="button"
           onClick={onOpenHistory}
           aria-label="Open the full watch history page"
-          className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-400 transition hover:bg-zinc-800/70 hover:text-zinc-100"
+          className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[12px] font-medium text-zinc-400 transition hover:bg-zinc-800/70 hover:text-zinc-100"
         >
-          See all <ChevronRight aria-hidden className="size-3.5" />
+          History <ChevronRight aria-hidden className="size-4" />
         </button>
       </div>
-      <div className="veil-scroll-slim -mx-1 flex gap-3 overflow-x-auto px-1 pb-2">
+      <ShelfRow>
         {shown.map((h, i) => (
           <div key={`${h.card.id}-${h.at}`} className="w-44 shrink-0 sm:w-52">
             <WatchAgainCard entry={h} index={i} onWatch={onWatch} />
           </div>
         ))}
-      </div>
+      </ShelfRow>
     </section>
   );
 }
@@ -2822,6 +2975,116 @@ function PageHeader({
       >
         {reloading ? <Loader2 aria-hidden className="size-3.5 animate-spin" /> : <RefreshCw aria-hidden className="size-3.5" />}
       </Button>
+    </div>
+  );
+}
+
+/** YouTube's home chip bar — All, the topic slices, the functional
+ * slices. This IS the For You page's header: the bar pins under the
+ * stream header while the grid scrolls, shows ‹ › arrows when the row
+ * overflows (desktop), and carries the feed's refresh control at the
+ * right edge (mobile gets it as the last chip in the swipeable row). */
+function FyChipBar({
+  chips,
+  active,
+  onPick,
+  onReload,
+  reloading,
+}: {
+  chips: { key: FyFilter; label: string; count: number }[];
+  active: FyFilter;
+  onPick: (key: FyFilter) => void;
+  onReload: () => void;
+  reloading: boolean;
+}) {
+  const rowRef = React.useRef<HTMLDivElement | null>(null);
+  const [edges, setEdges] = React.useState({ l: false, r: false });
+  const update = React.useCallback(() => {
+    const el = rowRef.current;
+    if (!el) return;
+    const l = el.scrollLeft > 8;
+    const r = el.scrollLeft + el.clientWidth < el.scrollWidth - 8;
+    /* same-value bail-out — the no-deps effect below must not loop */
+    setEdges((prev) => (prev.l === l && prev.r === r ? prev : { l, r }));
+  }, []);
+  React.useEffect(() => {
+    update();
+  });
+  const nudge = (dir: -1 | 1) => {
+    const el = rowRef.current;
+    if (el) el.scrollBy({ left: dir * Math.max(260, el.clientWidth * 0.75), behavior: "smooth" });
+  };
+  return (
+    <div className="relative mb-5 lg:sticky lg:-top-6 lg:z-10 lg:-mx-6 lg:border-b lg:border-zinc-800/70 lg:bg-zinc-950/95 lg:px-6 lg:py-2.5 lg:backdrop-blur-md">
+      <div className="flex items-center">
+        {edges.l && (
+          <button
+            type="button"
+            onClick={() => nudge(-1)}
+            aria-label="Scroll the chips left"
+            className="absolute left-0 top-1/2 z-10 hidden size-7 -translate-y-1/2 items-center justify-center rounded-full bg-zinc-900/95 text-zinc-300 shadow-lg ring-1 ring-zinc-700 transition hover:bg-zinc-800 hover:text-zinc-50 lg:flex"
+          >
+            <ChevronLeft aria-hidden className="size-4" />
+          </button>
+        )}
+        <div
+          ref={rowRef}
+          onScroll={update}
+          role="group"
+          aria-label="Filter the For You feed"
+          className="veil-scroll-slim flex min-w-0 flex-1 gap-2 overflow-x-auto py-0.5"
+        >
+          {chips.map((chip) => {
+            const on = active === chip.key;
+            return (
+              <button
+                key={chip.key}
+                type="button"
+                onClick={() => onPick(chip.key)}
+                aria-pressed={on}
+                title={chip.count > 0 ? `${chip.label} — ${chip.count} in this round` : chip.label}
+                className={cn(
+                  "veil-press flex h-8 shrink-0 items-center rounded-lg px-3 text-[13px] font-medium transition active:scale-[0.97]",
+                  on ? "bg-zinc-100 text-zinc-900" : "bg-zinc-800/80 text-zinc-200 hover:bg-zinc-700/80",
+                )}
+              >
+                {chip.label}
+              </button>
+            );
+          })}
+          {/* the mobile refresh control — rides the swipeable row */}
+          <button
+            type="button"
+            onClick={onReload}
+            aria-label="Deal a fresh feed"
+            title="Deal a fresh feed"
+            className="veil-press ml-1 flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-zinc-800/80 px-3 text-[13px] font-medium text-zinc-300 transition hover:bg-zinc-700/80 lg:hidden"
+          >
+            {reloading ? (
+              <Loader2 aria-hidden className="size-3.5 animate-spin" />
+            ) : (
+              <RotateCcw aria-hidden className="size-3.5" />
+            )}
+          </button>
+        </div>
+        {/* the desktop refresh control — pinned at the bar's right edge */}
+        <div className="ml-2 hidden shrink-0 items-center gap-2.5 pl-1 lg:flex">
+          <div aria-hidden className="h-5 w-px bg-zinc-800/80" />
+          <button
+            type="button"
+            onClick={onReload}
+            aria-label="Deal a fresh feed"
+            title="Deal a fresh feed"
+            className="flex size-8 items-center justify-center rounded-full text-zinc-400 transition hover:bg-zinc-800/70 hover:text-zinc-100"
+          >
+            {reloading ? (
+              <Loader2 aria-hidden className="size-4 animate-spin" />
+            ) : (
+              <RotateCcw aria-hidden className="size-4" />
+            )}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -4005,9 +4268,6 @@ function ShortCard({ card, index, onWatch }: { card: YtCard; index: number; onWa
               <Play aria-hidden className="size-5 translate-x-0.5 text-white fill-white" />
             </span>
           </div>
-          <span className="absolute bottom-2 right-2 rounded-md bg-fuchsia-500/95 px-1.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wide text-white">
-            short
-          </span>
         </div>
         <CardFeedbackMenu card={card} />
       </div>
@@ -4018,12 +4278,6 @@ function ShortCard({ card, index, onWatch }: { card: YtCard; index: number; onWa
           <ChannelAvatar name={card.author} id={card.authorId} size={20} avatar={card.avatar} />
           <span className="min-w-0 truncate text-[11px] text-zinc-400">{card.author}</span>
         </div>
-        {card.why && (
-          <p className="mt-1 flex items-center gap-1 truncate text-[10.5px] text-fuchsia-300/75" title={card.why}>
-            <Sparkles aria-hidden className="size-3 shrink-0" />
-            <span className="truncate">{card.why}</span>
-          </p>
-        )}
         <p className="mt-0.5 truncate text-[11px] tabular-nums text-zinc-500">
           {card.views > 0 ? `${fmtCount(card.views)} views` : ageLabel(card.published) || "short"}
         </p>
@@ -8564,6 +8818,11 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
       const liked = new Set(Object.entries(readAllRatings()).filter(([, r]) => r === "like").map(([id]) => id));
       return cards.filter((c) => liked.has(c.id));
     }
+    /* topic slices — the chip bar's Music / Gaming / … classifiers */
+    if (fyFilter.startsWith("topic:")) {
+      const topic = fyFilter.slice(6);
+      return cards.filter((c) => classifyCard(c) === topic);
+    }
     /* watched — the REAL history, not the river's intersection: the
      * server excludes watched ids from every round, so after a reload
      * the river holds none of them (the old dead end: chip count 0
@@ -8576,33 +8835,49 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
     const watched = watchedIdsSnapshot();
     return cards.filter((c) => watched.has(c.id));
   }, [fyBase, fyFilter, subsVersion, ratingsVersion, histEntries]);
-  /* live counts for every chip (one pass over the base river) — the
-   * little numbered badges that tell the user what each slice holds
-   * before they click it */
-  const fyChipCounts = React.useMemo((): Record<FyFilter, number> => {
-    const counts: Record<FyFilter, number> = { all: 0, subs: 0, new: 0, live: 0, liked: 0, watched: 0 };
+  /* the topic counts behind the chip bar — one classifier pass over the
+   * live river; a topic needs a few cards on the wire to earn its chip */
+  const fyTopicCounts = React.useMemo(() => {
+    const counts = new Map<string, number>();
     if (fyBase.length === 0) return counts;
     const watched = watchedIdsSnapshot();
-    const subs = new Set(Object.keys(readSubs()));
-    const liked = new Set(
-      Object.entries(readAllRatings())
-        .filter(([, r]) => r === "like")
-        .map(([id]) => id),
-    );
-    const cutoff = Date.now() / 1000 - 48 * 3600;
     for (const c of fyBase) {
-      if (!watched.has(c.id)) counts.all++;
-      if (subs.has(c.authorId)) counts.subs++;
-      if ((c.publishedAt ?? 0) >= cutoff) counts.new++;
-      if (c.live) counts.live++;
-      if (liked.has(c.id)) counts.liked++;
-      if (watched.has(c.id)) counts.watched++;
+      if (watched.has(c.id)) continue;
+      const t = classifyCard(c);
+      if (t) counts.set(t, (counts.get(t) ?? 0) + 1);
     }
-    /* the Watched slice is history-backed (see fyFiltered) — its count
-     * must match what the slice actually shows, not the river */
-    if (histEntries) counts.watched = histEntries.length;
     return counts;
-  }, [fyBase, subsVersion, ratingsVersion, histEntries]);
+  }, [fyBase]);
+  /* the chip list itself — All, the topics this round actually has (by
+   * count, capped at ten), then the functional slices. Exactly
+   * YouTube's home bar: topical first, Live/uploads/subs/liked/watched
+   * riding after. */
+  const fyChipList = React.useMemo(() => {
+    const chips: { key: FyFilter; label: string; count: number }[] = [{ key: "all", label: "All", count: 0 }];
+    const min = fyBase.length < 30 ? 2 : 3;
+    const topics = FY_TOPICS.map((t) => ({ ...t, n: fyTopicCounts.get(t.key) ?? 0 }))
+      .filter((t) => t.n >= min)
+      .sort((a, b) => b.n - a.n)
+      .slice(0, 10);
+    for (const t of topics) chips.push({ key: `topic:${t.key}`, label: t.label, count: t.n });
+    chips.push(
+      { key: "live", label: "Live", count: 0 },
+      { key: "new", label: "Recently uploaded", count: 0 },
+      { key: "subs", label: "From your subs", count: 0 },
+      { key: "liked", label: "Liked", count: 0 },
+      { key: "watched", label: "Watched", count: 0 },
+    );
+    return chips;
+  }, [fyTopicCounts, fyBase]);
+  const fyChipLabel = React.useCallback(
+    (key: FyFilter) => fyChipList.find((c) => c.key === key)?.label ?? key,
+    [fyChipList],
+  );
+  /* a stale topic chip (the feed re-dealt and that topic vanished)
+   * falls back to All — the page never strands on an empty slice */
+  React.useEffect(() => {
+    if (fyFilter.startsWith("topic:") && !fyChipList.some((c) => c.key === fyFilter)) setFyFilter("all");
+  }, [fyChipList, fyFilter]);
   const fyChipsVisible =
     (fyFilter !== "all" && fyFiltered.length === 0) || fyFiltered.length > 0 || fyAll.length > 0;
 
@@ -9383,8 +9658,35 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                * pins flush with the top of the scroll area */}
               <aside aria-label="Stream pages" className="sticky -top-6 hidden h-fit w-56 shrink-0 lg:block">
                 <nav className="flex flex-col gap-0.5 rounded-2xl border border-zinc-800/80 bg-zinc-900/50 p-2">
-                  <p className="px-3 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-zinc-600">Pages</p>
-                  {PAGE_NAV.map((item) => {
+                  {PAGE_NAV.slice(0, 4).map((item) => {
+                    const active = page === item.key;
+                    return (
+                      <button
+                        key={item.key}
+                        type="button"
+                        onClick={() => goPage(item.key)}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "group flex items-center gap-4 rounded-xl px-3 py-2.5 text-left outline-none transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-rose-500/40",
+                          active ? "bg-zinc-800/80 text-zinc-100" : "text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-100",
+                        )}
+                      >
+                        <item.icon
+                          aria-hidden
+                          className={cn(
+                            "size-5 shrink-0 transition",
+                            active ? PAGE_TONE[item.key].icon : "text-zinc-500 group-hover:text-zinc-300",
+                          )}
+                        />
+                        <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium">{item.label}</span>
+                      </button>
+                    );
+                  })}
+                  {/* the "You" group — YouTube's rail splits the personal
+                      pages under their own divider */}
+                  <div aria-hidden className="my-2 h-px bg-zinc-800/70" />
+                  <p className="px-3 pb-1 pt-0.5 text-[10.5px] font-semibold uppercase tracking-wider text-zinc-600">You</p>
+                  {PAGE_YOU.map((item) => {
                     const active = page === item.key;
                     return (
                       <button
@@ -9457,75 +9759,22 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                       </div>
                     </section>
                   ) : page === "foryou" ? (
-                    /* ── For You — the main page: filter chips + card rows with shorts rails ── */
+                    /* ── For You — YouTube's home: the chip bar IS the
+                       header, then grid rows with the Shorts and
+                       Watch-it-again shelves interleaved between them ── */
                     <section aria-label="For you feed">
-                      <PageHeader
-                        icon={Sparkles}
-                        tone="foryou"
-                        title="For you"
-                        badge={fyAll.length > 0 ? `${fyAll.length} videos${fyHasMore ? "+" : ""}` : undefined}
-                        onReload={() => loadFeed(true)}
-                        reloading={feedLoading}
-                      />
-                      {/* filter chips — the YouTube-home row of feed slices.
-                          Sticky at the top of the scroll area on desktop. */}
                       {fyChipsVisible && (
-                        <div
-                          role="group"
-                          aria-label="Filter the For You feed"
-                          className="veil-scroll-slim -mx-1 mb-5 flex gap-2.5 overflow-x-auto px-1 pb-1 lg:sticky lg:-top-6 lg:z-10 lg:-mx-6 lg:border-b lg:border-zinc-800/70 lg:bg-zinc-950/90 lg:px-6 lg:py-2.5 lg:backdrop-blur-md"
-                        >
-                          {FY_CHIPS.map((chip) => {
-                            const active = fyFilter === chip.key;
-                            const count = fyChipCounts[chip.key];
-                            return (
-                              <button
-                                key={chip.key}
-                                type="button"
-                                onClick={() => setFyFilter(chip.key)}
-                                aria-pressed={active}
-                                title={count > 0 ? `${chip.label} — ${count} ${chip.key === "watched" ? "in your history" : "on screen"}` : chip.label}
-                                className={cn(
-                                  "veil-press veil-hover-glow flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[12.5px] font-medium transition active:scale-[0.97]",
-                                  active
-                                    ? "bg-zinc-100 text-zinc-900"
-                                    : "bg-zinc-800/70 text-zinc-300 ring-1 ring-zinc-700/50 hover:bg-zinc-800 hover:text-zinc-100",
-                                )}
-                              >
-                                {chip.label}
-                                {count > 0 && (
-                                  <span
-                                    aria-hidden
-                                    className={cn(
-                                      "rounded-full px-1.5 py-0.5 text-[10.5px] font-semibold tabular-nums",
-                                      active
-                                        ? "bg-zinc-900/10 text-zinc-600"
-                                        : "bg-zinc-950/70 text-zinc-400 ring-1 ring-zinc-700/40",
-                                    )}
-                                  >
-                                    {count}
-                                  </span>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-                      {/* watch again — the re-watch rail (history-backed;
-                          hidden while a chip slices the feed, since slices
-                          are for finding new things — the Watched slice IS
-                          the full list already) */}
-                      {fyFilter === "all" && (histEntries?.length ?? 0) > 0 && (
-                        <WatchAgainRail
-                          entries={histEntries ?? []}
-                          paused={histPaused}
-                          onWatch={(id, card) => watch(id, card)}
-                          onOpenHistory={() => setPage("history")}
+                        <FyChipBar
+                          chips={fyChipList}
+                          active={fyFilter}
+                          onPick={setFyFilter}
+                          onReload={() => loadFeed(true)}
+                          reloading={feedLoading}
                         />
                       )}
                       {feedLoading && !feedError ? (
-                        <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                          <CardSkeletons n={8} />
+                        <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                          <CardSkeletons n={12} />
                         </div>
                       ) : feedError ? (
                         <FeedEmptyState message={feedError} onRetry={loadFeed} retryLabel="Reload feed" />
@@ -9541,29 +9790,45 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                         />
                       ) : fyFilter === "all" ? (
                         <>
-                          <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                          {/* row 1 — the first eight, full-width cards */}
+                          <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {fyFiltered.slice(0, 8).map((c, i) => (
                               <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
                             ))}
                           </div>
+                          {/* the Shorts shelf — right after the first row,
+                              exactly where YouTube home puts it */}
                           {shortsLoading && !shortsError ? (
                             <ShortsRailSkeleton />
                           ) : shortsShown.length > 0 ? (
                             <ShortsRail shorts={shortsShown.slice(0, 8)} onWatch={(id, card) => openShorts(shorts ?? [], card, "Shorts", true)} />
                           ) : null}
-                          <div className="mt-1 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                          {/* row 2 */}
+                          <div className="mt-1 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {fyFiltered.slice(8, 20).map((c, i) => (
+                              <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
+                            ))}
+                          </div>
+                          {/* watch it again — the re-watch shelf (history-
+                              backed; YouTube's shelf lives mid-page, not
+                              pinned to the top) */}
+                          {(histEntries?.length ?? 0) > 0 && (
+                            <WatchAgainRail
+                              entries={histEntries ?? []}
+                              paused={histPaused}
+                              onWatch={(id, card) => watch(id, card)}
+                              onOpenHistory={() => setPage("history")}
+                            />
+                          )}
+                          {/* row 3+ — the rest of the river */}
+                          <div className="mt-1 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                            {fyFiltered.slice(20).map((c, i) => (
                               <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
                             ))}
                           </div>
                           {shortsShown.length > 8 ? (
                             <ShortsRail shorts={shortsShown.slice(8, 16)} onWatch={(id, card) => openShorts(shorts ?? [], card, "Shorts", true)} />
                           ) : null}
-                          <div className="mt-1 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                            {fyFiltered.slice(20).map((c, i) => (
-                              <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
-                            ))}
-                          </div>
                           {/* the river's tail — more skeletons while a deep
                               round is in flight, the end mark when the
                               river is dry */}
@@ -9571,7 +9836,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                             <div
                               ref={fySentinelRef}
                               aria-live="polite"
-                              className="mt-8 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+                              className="mt-8 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                             >
                               <CardSkeletons n={4} />
                               <p className="col-span-full text-center text-[11.5px] text-zinc-600">
@@ -9588,7 +9853,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                         </>
                       ) : fyFiltered.length === 0 ? (
                         <FeedEmptyState
-                          message={`nothing in “${FY_CHIPS.find((c) => c.key === fyFilter)?.label ?? fyFilter}” right now — the feed rotates, try again or browse everything`}
+                          message={`nothing in “${fyChipLabel(fyFilter)}” right now — the feed rotates, try again or browse everything`}
                           onRetry={() => setFyFilter("all")}
                           retryLabel="Show everything"
                         />
@@ -9607,7 +9872,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                               </button>
                             </p>
                           )}
-                          <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                          <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {fyFiltered.map((c, i) => (
                               <VideoCard
                                 key={`${c.id}-${i}`}

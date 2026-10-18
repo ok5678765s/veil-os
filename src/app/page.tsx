@@ -43,6 +43,7 @@ import {
 
 import { purgeFatCookiesOnBoot } from "@/lib/veil/cookie-hygiene";
 import { useFancyMotion } from "@/lib/veil/motion";
+import { useBootGuard } from "@/lib/veil/boot-guard";
 
 /* 431 firewall — sweep fat cookies (the legacy session mirror carried the
  * whole account incl. the base64 PFP; proxied pages used to drop their
@@ -129,6 +130,13 @@ export default function Home() {
 
   // ----- panic key + about:blank cloak (capture-phase, every mode) -----
   usePanicKeys();
+
+  // ----- stale-build self-heal -----
+  // A tab that outlives a dev-server restart keeps running a dead bundle
+  // (ghost tabs, removed UI, 404s). /api/session's `boot` stamp changes
+  // on every restart; this guard reloads the tab exactly once when that
+  // happens — sections restore from storage, so nothing is lost.
+  useBootGuard();
 
   // ----- tab disguise (Settings › Security — title + favicon) -----
   useTabCloak();

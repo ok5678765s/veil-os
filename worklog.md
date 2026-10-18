@@ -1650,3 +1650,111 @@ Unresolved / risks:
 - 4kwallpapers catalog API returns empty items for every category right now (upstream scrape) — offline + site wallpapers grids show empty states until it recovers.
 - The offline AI/music/stream talk to the origin at runtime (by design — single FILE, not offline-data); the chat/games have always worked this way.
 - Backlog from earlier rounds: chat scroll-to-bottom FAB, 44px tab-close hit area, motion blitz pass, comeback bonus for 0-coin players.
+
+---
+Task ID: 5
+Agent: main (Z.ai Code)
+Task: Owner: "make for you 100x more like youtube"
+
+Work Log:
+- src/components/veil/stream-section.tsx — the For You page is now structurally YouTube's home:
+  - TOPIC CHIP BAR (the big one): FyFilter extended to `topic:<key>`; new FY_TOPICS table (16 topics: Gaming, Music, Computer programming, AI, News, Sports, Science, Gadgets, Movies, Comedy, Cars, Cooking, Travel, Finance, Podcasts) with first-match-wins regexes over title+channel; classifyCard() is structurally typed ({title, author}) so the ranker's RankCard spreads classify too. fyTopicCounts memo (one pass over the live river, watched excluded) + fyChipList memo (All → topics with ≥2-3 cards by count, cap 10 → Live → Recently uploaded → From your subs → Liked → Watched). Chips are rounded-lg h-8 (YouTube's exact chip shape), active = zinc-100/zinc-900, NO count badges (YouTube shows none; counts ride the title attr). Stale-topic effect falls back to All when a re-dealt feed drops the active topic. Deleted the old fyChipCounts memo.
+  - FyChipBar component: sticky on desktop (pins flush under the stream header, frosted bg + border-b), ‹ › edge arrows when the row overflows (desktop only), and the feed's refresh control — desktop gets a divider + round ↺ button pinned at the bar's right edge, mobile gets a ↺ chip riding the swipeable row.
+  - NO PAGE HEADER on For You — YouTube home starts at the chip row. (Other pages keep PageHeader.)
+  - YouTube interleave order: row 1 (8 cards) → Shorts shelf → row 2 (12) → "Watch it again" shelf → row 3+ (rest) → second shorts shelf if >8 shorts → infinite sentinel. Watch-again moved from top-of-page to mid-page (where YouTube puts its shelves).
+  - ShortsRail restyle: YouTube's Shorts mark (white rounded play tile) + text-[20px] font-bold heading (was small uppercase), count label dropped. ShortCard: SHORT badge removed, why-line removed — pure title/channel/views like YouTube's shelf cards.
+  - WatchAgainRail → "Watch it again": 20px bold heading + ↺ icon, paused chip, History link right, thumb's watched-when badge removed (aria keeps it). WatchAgainCard otherwise unchanged.
+  - NEW ShelfRow + ShelfArrow: shared horizontal-shelf container with edge-aware ‹ › hover arrows (group-hover/shelf, md+, nudge by 80% of viewport). Used by both shelves. Value-guarded setEdges (same-reference bail-out) — the first version set a fresh object every render and LOOPED (Maximum update depth exceeded); fixed and re-verified clean.
+  - Grid density: xl:grid-cols-4 added everywhere on For You (4-col at desktop like YouTube); initial skeleton 8 → 12.
+  - VideoCard: why-line removed from the card body (rides the h3 title attribute); everything else (avatar, 2-line title, channel+verified, views·age, watched dim, hover preview, ⋮ feedback) unchanged.
+  - Sidebar: "Pages" list → YouTube grouping: main pages (For You/Shorts/Popular/Subscriptions) + divider + "You" section (History/Playlists). PAGE_YOU const added.
+  - Gaming regex tightened during QA: dropped bare `games?` and `100 ?%` (college-football channels named "... Games" were classifying as Gaming).
+- QA (agent-browser, fresh session, viewport 1440×900 + 390×844):
+  - Chip bar renders TOPIC CHIPS FROM THE LIVE WIRE: All, News, Gaming, Sports (first deal), Live, Recently uploaded, From your subs, Liked, Watched + refresh. VLM: "almost a 1:1 copy of YouTube's architecture". Final verdict 98/100 YouTube-likeness.
+  - Gaming chip slices correctly (FNCS/Fortnite/Roblox titles); after regex tightening Sports/News lead. Live chip → correct empty state (that deal had 0 live cards); Watched → empty state + "Show everything" (fresh browser, no history). All chip → 80 cards.
+  - Sticky chip bar verified by scrolling the REAL inner scroll container (.min-h-0.flex-1.overflow-y-auto) — pins at top with cards scrolling beneath. (Window-level scroll moves the whole shell; the aside's -top-6 pattern is the container's pt-6 compensation.)
+  - Shelf arrows: 2 in the DOM, measured at the shelf's right edge (36×36, left=1380 at 1440). They stay hidden in agent-browser because headless Chromium matches (hover: hover) = false — Tailwind 4 wraps every hover variant in that media query, so this affects ALL hover effects site-wide in headless only; real devices unaffected.
+  - Mobile 390px: chip row scrollable, single-column cards, zero horizontal overflow (scrollWidth 390), VLM 8/10 (title truncation is line-clamp by design).
+  - Errors: fixed the ShelfRow/FyChipBar render loop (value-guarded setState); fresh session after fix = ZERO page errors. dev.log clean (no new error lines). bunx eslint clean; tsc: no new errors (57 before → 57 after; earlier 2 new TS2345 fixed by the structural classifyCard param).
+  - Screenshots: tmp-qa/fy_desktop_top.png, fy_gaming_chip.png, fy_v2_top.png, fy_v2_scrolled.png, fy_v2_inner_scrolled.png, fy_v2_shorts_shelf.png, fy_v2_mobile.png, fy_v2_watched_empty.png, fy_final_desktop.png.
+
+Stage Summary:
+- For You is now YouTube home in structure AND detail: topic chip bar as the page header (derived from live content, sticky, arrows, refresh), headerless top, 4-column grid, Shorts shelf with the mark + 20px bold heading + hover arrows, Watch-it-again shelf mid-page, purified cards, sidebar "You" section.
+- VLM-rated 98/100 YouTube-likeness; all chip slices, sticky behavior, mobile layout, and error-free console verified live.
+
+Unresolved / risks:
+- Topic classification is heuristic (regex over title+channel) — good enough for chips, will misclassify edge cases (e.g. a football video under Gaming was fixed, but others will happen; YouTube misclassifies too).
+- Headless hover: (hover: hover) media query false in agent-browser — hover effects (shelf arrows, card overlays) can't be screenshot-verified there; verified structurally instead.
+- piped proxy 502s still darken some thumbnails (upstream, pre-existing).
+- Backlog: chat scroll-to-bottom FAB, 44px tab-close hit area, motion blitz pass, comeback bonus for 0-coin players.
+
+---
+Task ID: 1 (owner request: "replace apps in arcade with roblox, no iframe" → "not LIKE roblox, IS roblox")
+Agent: main (Z.ai Code)
+Task: Replace the Arcade's Apps tab with the REAL Roblox — a native React client for roblox.com (live charts, real search, real game pages, real play launch), zero iframes.
+
+Work Log:
+- PIVOT: first attempt (fake Roblox-style mini-games with generated thumbnails + game engines) was scrapped mid-flight when the owner clarified "not like roblox, IS roblox". Killed the thumbnail generation job, deleted public/roblox mocks, rewrote the whole approach around REAL Roblox data.
+- Probed Roblox's public web APIs from the box (curl): charts.roblox.com DEAD (DNS), but apis.roblox.com explore-api get-sort-content ✓, search-api omni-search ✓, games.roblox.com v1/games + votes + recommendations ✓, thumbnails.roblox.com icons/multiget-thumbnails/user headshots ✓ (batch 50 confirmed). now.gg/roblox redirects to Aptoide (Roblox pulled) → play fallback is roblox.com game page, not now.gg.
+- NEW src/app/api/roblox/route.ts — server-side Roblox client (browser-CORS-locked APIs must be proxied): kind=home (5 real home sorts: Top Playing Now / Top Trending / Up-and-Coming / Fun with Friends / Top Revisited, 24 games each + batched 256px icons), kind=search (omni-search, 30 results + icons), kind=detail (v1/games + votes + recommendations + 768x432 banner + creator headshot). In-memory cache (home 120s / search 300s / detail 600s) with in-flight dedupe; graceful degradation (dead sub-fetch never sinks the payload); 9s timeouts; browser UA.
+- REWROTE src/components/veil/roblox/shared.ts — response types mirrored by the route, client fetchers, roblox-player:// deep-link builder (same format roblox.com's launcher fires), roblox.com game-page URL, localStorage recent-games store (Continue row), compact formatters, maturity labels.
+- NEW src/components/veil/roblox/roblox-tab.tsx — the native Roblox tab, roblox.com dark theme (#191b1d/#232527/#00b06f): sticky toolbar (CSS tilted-square Roblox mark + search + LIVE chip), home rows as hover-arrow carousels (Continue from localStorage + the 5 real sorts), debounced real search with sponsored "Ad" chips, real detail pages (banner with 32vh clamp, overlapping icon, creator + verified badge, big green PLAY, 8-cell stat grid, like-ratio bar, expandable About, Recommended row), play dialog (fires roblox-player:// from the click gesture exactly like roblox.com, then shows Launch-again + real game-page fallback), Esc handling, skeletons, error cards, 90s live polling while active.
+- EDITED src/components/veil/arcade-section.tsx — Apps tab REMOVED (~650 lines: AppsTab, AppCard, SiteAppCard, EXT_ICONS, composer, owner-mode, launchApp, srcdoc player branch, RunningTitle.html) and replaced with the Roblox tab (Gamepad2 icon, id "roblox"); pruned 24 now-unused lucide imports; legacy veil:open-arcade-apps event repointed to the Roblox tab; header/meta copy updated; title player layer simplified back to remote-src-only.
+- QA (agent-browser, live): home loads 5 real rows / 120 real cards (Brookhaven 473K playing, Steal An Egg 1.8M — real numbers); VLM verified cards are 100% real artwork, 0 placeholders; search "brookhaven" → 30 real results; detail page full anatomy (stats/votes/About/12 recs) verified; Play dialog shows launching→fallback states and records the Continue row; back-nav preserves search; mobile 390px clean (no overflow); Continue row "0 players" bug FIXED (subtitle passthrough); detail banner clamped to 32vh (short-viewport fix); math/gn-math/stash tabs regression-checked OK; zero console/page errors; eslint clean on all 4 files; dev.log clean (home cached 60ms).
+- Dev-server note: a full restart + 32s recompile happened mid-QA (watchdog/memory cycle, not my change) — after reload everything re-verified green. The QA-browser click flakiness during that window was the stale HMR client, not app state.
+
+Stage Summary:
+- The Arcade's 4th tab is now the REAL Roblox: native React UI (no iframes anywhere), fed live from roblox.com's own APIs through /api/roblox, and Play launches the actual Roblox app via the roblox-player:// deep link with the real game page as fallback.
+- Artifacts: src/app/api/roblox/route.ts (new), src/components/veil/roblox/shared.ts (rewritten), src/components/veil/roblox/roblox-tab.tsx (new), src/components/veil/arcade-section.tsx (apps→roblox swap, 2253→~1500 lines).
+- The old /api/apps route still exists but has no UI consumer anymore (owner may want it deleted later).
+- Offline veil-offline.html still carries the old "AI Lab" apps tab — untouched (separate offline build).
+
+---
+Task ID: 2 (owner report: "robot doesn't open")
+Agent: main (Z.ai Code)
+Task: Fix the Roblox tab's Play flow — nothing opened when playing from the sandbox preview panel.
+
+Work Log:
+- Root-caused "robot doesn't open": the owner views Veil through the platform's Preview Panel (an iframe). From a subframe, browsers silently block BOTH custom-protocol navigation (roblox-player:// via window.location.href) AND popups (window.open without allow-popups) — so the old Play dialog's every action was a silent no-op in the preview. Verified the tab itself, home charts, search and detail pages all worked (dev.log showed the owner's own session loading /api/roblox home + detail fine) — only the LAUNCH was dead.
+- QA'd the original flow top-level with agent-browser first (tab opens, dialog opens, states cycle) to rule out a data/render bug, then built a preview-panel simulator: a throwaway page on :3999 embedding localhost:3000 in <iframe sandbox="allow-scripts allow-same-origin allow-forms"> (no allow-popups — same restrictions class as the platform preview). Test harness cleaned up afterwards.
+- shared.ts — new launch stack:
+  - isEmbeddedContext(): window.self !== window.top (try/catch → true when cross-origin).
+  - launchRobloxApp(): top-level = roblox-player:// as before; EMBEDDED = first try window.top.location.href handoff (works when the host page is same-origin — the OS still shows the "Open Roblox?" prompt), cross-origin throws → caught → subframe attempt stands in (blocked, harmless).
+  - openRobloxGamePageTab(): window.open with blocked-popup DETECTION. CRITICAL BUG FOUND DURING QA: window.open(url, "_blank", "noopener,noreferrer") returns null BY SPEC even on success — the noopener feature kills the return value, so blocked-detection false-negatived and every game-page click ALSO opened a phantom veil browser tab alongside the real tab (dev.log forensics + the veil-session row proved the double-open). Fixed: open plain (keep the return value), then null w.opener manually (permitted cross-origin write) for the same tabnabbing protection. Verified after the fix: exactly ONE real roblox.com tab opens, the veil app stays in the Arcade, no phantom tab.
+- roblox-tab.tsx — the play dialog is now context-aware:
+  - Top-level: unchanged behavior (spinner "Opening Roblox…" 1.6s → "Roblox didn't open?" with Launch Roblox retry + game-page button).
+  - Embedded: NO fake spinner (the handoff usually can't work) — straight to an honest panel: "This preview can't hand off to the Roblox app — open the game page to play." with (1) green OPEN GAME PAGE (window.open → falls back to the in-app browser when the sandbox blocks it), (2) Open in the Veil browser (onLaunch → the OS's own Quasar engine tab), (3) subdued "Try launching the app anyway" (the top-frame handoff retry), (4) tip line pointing at the ↗ "open in own tab" button for direct app launches.
+  - play()/retryLaunch factored; openGamePage() = one funnel: real tab first, in-app fallback; dialog closes only when something actually opened.
+- arcade-section.tsx — threaded the existing onLaunch escape-hatch prop (page.tsx's openUrl) into <RobloxTab>; it was previously unused by the Roblox tab.
+- QA (agent-browser, both contexts, live):
+  - Top-level: Play → spinner → fallback panel; game-page click opens a real https://www.roblox.com tab (proper "Steal An Egg | Play on Roblox" title), dialog closes, app stays in the Arcade, session untouched by phantom tabs.
+  - Embedded (sandboxed :3999 iframe): Play → embedded dialog variant (verified buttons); "Open in the Veil browser" → Arcade closes, the OS browser opens the real game page through Quasar INSIDE the sandboxed iframe; VLM-verified the full roblox.com page renders (nav, artwork, title, creator, maturity chip, Play button). Zero page errors; dev.log clean (only expected quasar proxy traffic).
+  - Regression: session restore across contexts, Continue row, detail nav all still fine; targeted eslint clean on all 3 touched files (full-project lint OOMs on this box — known environment issue, not code).
+
+Stage Summary:
+- "robot doesn't open" FIXED for every context: top-level (deep link like roblox.com), preview iframe (honest dialog + game page in the in-app Quasar browser, which fully renders roblox.com), and popup-allowed embeds (real new tab).
+- The noopener-spec false-negative is the subtle one to remember: NEVER gate fallback logic on window.open's return value while passing noopener/noreferrer features.
+- Artifacts: src/components/veil/roblox/shared.ts (isEmbeddedContext/launchRobloxApp/openRobloxGamePageTab), src/components/veil/roblox/roblox-tab.tsx (context-aware play dialog, onLaunch prop), src/components/veil/arcade-section.tsx (onLaunch threading).
+- Standing notes: the roblox.com page inside the Quasar browser still can't fire roblox-player:// from the page itself (subframe protocol block — target-side ceiling, unchanged); direct app launch requires Veil top-level (the dialog's tip says so). Full-project `bun run lint` OOMs on this box — lint touched files scoped instead.
+
+---
+Task ID: 3 (owner report: "why did you bring apps back where's roblox it's supposed to be apps replacement in a Arcade")
+Agent: main (Z.ai Code)
+Task: Roblox vanished from the Arcade (the old Apps UI appeared instead). Diagnose and restore the REAL Roblox tab.
+
+Work Log:
+- DIAGNOSIS (three stacked failures, none of them a code regression — the Roblox code from Tasks 1-2 was intact on disk):
+  1. THE 404: `GET /api/roblox?kind=home` returned 404 (fell through to the root [...slug] catch-all's Veil 404 page). dev.log forensics: at the 16:30 watchdog boot, watchpack logged `EACCES: permission denied, watch/scandir '/home/z/my-project/src/app/api/roblox'` (also app/eng, api/eng, api/updates) — a multi-instance restart race left the dev server's route scan incomplete, so api/roblox never registered in the route tree. Permissions on those dirs were fine (755 z:z, verified + fresh-process reads worked) — the process itself was cursed.
+  2. THE DB: `POST /api/veil-session` 500 "attempt to write a readonly database" — on the clean reboot this unmasked into the REAL error: P2021, the VeilSession table (plus ChatReaction, ChatFriendRequest, Note, CoderDoc) never existed in db/custom.db — `prisma db push` had not been run after those models were added. Session persistence had silently been broken all along.
+  3. THE GHOST: the owner's open preview tab was still executing the PRE-Roblox bundle (HMR dead after the restart churn) — dev.log showed their session fetching `/api/apps` (a route NO current code calls) right after boot. That's literally why they saw "Apps" again: a zombie tab from before Task 1.
+- FIXES:
+  - Killed every next-dev instance, `rm -rf .next`, let the platform watchdog respawn one clean server on port 3000 (first respawn raced my rm and corrupted its routes-manifest — killed + cleaned again; second boot clean). EACCES gone, route tree complete.
+  - `bun run db:push` → 5 missing tables created, no data loss (18ms, existing tables untouched). `POST /api/veil-session` → 200 {"ok":true}.
+  - NEW self-heal so the zombie-tab class of confusion can't recur: /api/session GET now carries `boot` (per-process start stamp, src/app/api/session/route.ts) and NEW src/lib/veil/boot-guard.ts (`useBootGuard()`, mounted in page.tsx next to usePanicKeys) polls it every 60s — when the stamp changes under a live tab (server restarted → bundle stale) it reloads exactly ONCE (loop-safe: new stamp is written before reload; private mode skips). E2E-verified in agent-browser: planted a stale stamp → within one poll cycle the tab auto-reloaded and restored the true stamp.
+  - CLEANUP (updates-section.tsx): the AI-operator's app-install toast still said "installed — live in Arcade › Apps" with an "Open in Arcade" button that jumped to the Roblox tab where the app ISN'T (dead-end since Task 1 removed the Apps tab). Toast now honestly says the app is bundled into the offline Veil AI Apps pack; removed the misleading button + the dead `veil:arcade-tab="apps"` sessionStorage write + orphaned Joystick import. (The `veil:open-arcade-apps` listener in arcade-section stays as a documented integration hook.)
+- QA (agent-browser, live): start page loads clean → Arcade opens → Roblox tab renders all real rows (Continue from localStorage, Top Playing Now, Top Trending, Up-and-Coming — Steal An Egg, Brookhaven 🏡RP, RIVALS, Blox Fruits, Murder Mystery 2, Adopt Me! …) → detail page (verified badge, PLAY, About, Recommended) → play dialog states cycle correctly (launching → didn't-open fallback). VLM-verified the screenshot: real artwork on every card, zero placeholders/glitches. Regression: gn-math (841 zones), Stash, math tabs all fine; 0 console/page errors; `GET /api/roblox?kind=home` 200 in 31ms (cached); eslint clean on all touched files; dev.log clean.
+
+Stage Summary:
+- Roblox is BACK as the Arcade's apps replacement — it never left the code; a cursed dev-server boot (EACCES route-scan failure → /api/roblox 404) plus the owner's zombie pre-Roblox tab made it look replaced by Apps. Server rebuilt, DB synced, and a boot-stamp self-heal now auto-refreshes any tab that outlives a server restart.
+- Artifacts: src/lib/veil/boot-guard.ts (new), src/app/api/session/route.ts (boot stamp), src/app/page.tsx (useBootGuard mount), src/components/veil/updates-section.tsx (honest app-install toast, dead code removed).
+- Ops notes for future agents: (1) if /api/roblox 404s again, check dev.log for watchpack EACCES — kill ALL next-dev PIDs, rm -rf .next, let the watchdog respawn ONE clean instance; (2) after adding Prisma models ALWAYS run `bun run db:push` — P2021/readonly errors on writes are the symptom; (3) the previous four 15-min webDevReview crons are all "Disabled due to exec limits exceeded" — a fresh one was created this session.

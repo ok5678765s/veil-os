@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Stash</title>
+    <style>
+        /* ================================================================
+           The Stash — custom Veil layout for the UGS single-file build.
+
+           The title list itself is populated by the UGS CDN scripts
+           (games.js + searchbut.js), which build:
+             #sidebar            → letter jump buttons (.sidebar-btn)
+             #sections-container → .letter-section > .letter-header +
+                                   .buttons-container > input[type=button]
+           We keep that exact DOM contract but restyle everything into
+           Veil's zinc/emerald look: a sticky header with live title count,
+           a floating search bar, a slim letter rail, and title buttons in
+           a responsive card GRID instead of the old vertical list.
+           ================================================================ */
+        :root { color-scheme: dark; }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font: 14px/1.45 ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #09090b;
+            color: #e4e4e7;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Ambient emerald orbs, Veil-style */
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            border-radius: 9999px;
+            filter: blur(90px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::before {
+            top: -160px; left: 12%;
+            width: 560px; height: 300px;
+            background: rgba(16, 185, 129, 0.09);
+        }
+        body::after {
+            bottom: -140px; right: -60px;
+            width: 380px; height: 260px;
+            background: rgba(20, 184, 166, 0.07);
+        }
+
+        /* ----- letter rail (CDN-owned children, our styling) ----- */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: 60px;
+            padding: 76px 8px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: rgba(9, 9, 11, 0.94);
+            border-right: 1px solid rgba(39, 39, 42, 0.9);
+            z-index: 50;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(63, 63, 70, 0.8);
+            border-radius: 3px;
+        }
+
+        .sidebar-btn {
+            background: #131316;
+            border: 1px solid #27272a;
+            padding: 0;
+            font: 700 13px/1 ui-sans-serif, system-ui, sans-serif;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #a1a1aa;
+            text-align: center;
+            min-height: 38px;
+            width: 100%;
+            transition: transform 0.15s ease, border-color 0.15s ease,
+                        background 0.15s ease, color 0.15s ease;
+        }
+        .sidebar-btn:hover {
+            background: #18181b;
+            border-color: rgba(16, 185, 129, 0.5);
+            color: #34d399;
+            transform: translateY(-1px);
+        }
+        .sidebar-btn.active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.55);
+            color: #6ee7b7;
+            box-shadow: 0 0 14px -6px rgba(16, 185, 129, 0.8);
+        }
+        .sidebar-btn.empty {
+            opacity: 0.32;
+            cursor: default;
+        }
+        .sidebar-btn.empty:hover {
+            transform: none;
+            background: #131316;
+            border-color: #27272a;
+            color: #a1a1aa;
+        }
+
+        /* ----- main column ----- */
+        .main-content {
+            margin-left: 60px;
+            flex: 1;
+            min-width: 0;
+            padding: 0 22px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stash-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            margin: 0 -22px 22px;
+            padding: 18px 22px 14px;
+            background: rgba(9, 9, 11, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(39, 39, 42, 0.85);
+        }
+
+        .stash-title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .stash-logo {
+            width: 34px; height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #34d399, #0d9488);
+            color: #09090b;
+            font-size: 16px;
+            box-shadow: 0 6px 18px -6px rgba(16, 185, 129, 0.6);
+        }
+
+        .stash-title {
+            color: #fafafa;
+            font-size: 21px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+        .stash-title .dot { color: #34d399; }
+
+        .stash-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .stash-sub {
+            margin: 4px 0 0;
+            color: #71717a;
+            font-size: 12.5px;
+        }
+
+        .stash-sub a { color: #34d399; text-decoration: none; }
+        .stash-sub a:hover { color: #6ee7b7; text-decoration: underline; }
+
+        /* ----- search + fallback loader ----- */
+        .stash-search-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .searchwrap {
+            position: relative;
+            flex: 1 1 300px;
+            min-width: 220px;
+        }
+        .searchwrap::before {
+            content: "\2315";
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: #52525b;
+            font-size: 15px;
+            pointer-events: none;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 16px 12px 38px;
+            border-radius: 14px;
+            background: #131316;
+            border: 1px solid #27272a;
+            color: #f4f4f5;
+            font: 500 13.5px ui-sans-serif, system-ui, sans-serif;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        #searchInput::placeholder { color: #52525b; }
+        #searchInput:focus {
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.14);
+        }
+
+        #lolbutton {
+            background: transparent;
+            border: 1px dashed rgba(63, 63, 70, 0.9);
+            padding: 11px 14px;
+            font-size: 12.5px;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            color: #71717a;
+            font-family: inherit;
+            transition: all 0.15s ease;
+        }
+        #lolbutton:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.06);
+        }
+
+        /* ----- letter sections → responsive card grid ----- */
+        .letter-section {
+            margin-bottom: 36px;
+            padding: 0;
+            max-width: 1180px;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: 90px;
+        }
+        .letter-section.empty { opacity: 0.45; }
+
+        .letter-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #a1a1aa;
+            font: 700 12px/1 ui-sans-serif, system-ui, sans-serif;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            padding-bottom: 0;
+            border-bottom: 1px solid rgba(39, 39, 42, 0.85);
+            padding-left: 2px;
+            text-shadow: none;
+        }
+        .letter-header::after {
+            content: "";
+            flex: 1;
+            height: 0;
+        }
+
+        .buttons-container {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 14px;
+            align-items: stretch;
+            flex-direction: row !important;
+        }
+
+        .empty-message {
+            color: #52525b;
+            font-style: italic;
+            text-align: center;
+            padding: 22px;
+            font-size: 13px;
+        }
+
+        /* Title buttons. The CDN builds plain input[type=button] elements;
+           the enhancement script swaps them for real <button class="title-btn">
+           elements (inputs can't wrap — buttons can show two full lines of
+           the title name). Both selectors stay identical so un-swapped
+           inputs (CDN re-injects) still look right. */
+        #sections-container input[type="button"],
+        #sections-container button.title-btn {
+            background: #131316 !important;
+            border: 1px solid #27272a !important;
+            padding: 13px 16px !important;
+            font: 500 13px/1.45 ui-sans-serif, system-ui, sans-serif !important;
+            border-radius: 12px !important;
+            cursor: pointer;
+            box-shadow: none !important;
+            transition: transform 0.16s ease, border-color 0.16s ease,
+                        background 0.16s ease, box-shadow 0.16s ease, color 0.16s ease;
+            width: 100% !important;
+            max-width: none !important;
+            height: auto !important;
+            color: #d4d4d8;
+            text-align: left;
+            min-height: 52px;
+            -webkit-appearance: none;
+            appearance: none;
+            display: block;
+            font-family: inherit;
+        }
+        /* Multi-line labels with a clean 2-line clamp — real spacing for
+           long title names instead of a cramped single ellipsized line */
+        #sections-container button.title-btn {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: normal;
+            word-break: break-word;
+            line-clamp: 2;
+            -webkit-line-clamp: 2;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+        }
+        #sections-container input[type="button"] {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        #sections-container input[type="button"]::before,
+        #sections-container button.title-btn::before {
+            /* leading glyph */
+            content: "\25B8";
+            color: #34d399;
+            margin-right: 8px;
+            font-size: 11px;
+        }
+        #sections-container input[type="button"]:hover,
+        #sections-container button.title-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.65) !important;
+            background: #18181b !important;
+            border-color: rgba(16, 185, 129, 0.55) !important;
+            color: #a7f3d0;
+        }
+        #sections-container input[type="button"]:active,
+        #sections-container button.title-btn:active {
+            transform: none;
+            box-shadow: 0 3px 8px -4px rgba(0, 0, 0, 0.5) !important;
+        }
+        #sections-container button.title-btn:focus-visible {
+            outline: 2px solid rgba(52, 211, 153, 0.7);
+            outline-offset: 1px;
+        }
+
+        /* Staggered entrance for late-arriving CDN content */
+        .stash-in { animation: stashIn 0.35s ease both; }
+        @keyframes stashIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        /* Back-to-top pill */
+        #stash-top {
+            position: fixed;
+            right: 18px; bottom: 18px;
+            z-index: 60;
+            display: none;
+            padding: 9px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(39, 39, 42, 0.95);
+            background: rgba(9, 9, 11, 0.9);
+            color: #a1a1aa;
+            font: 600 12.5px ui-sans-serif, system-ui, sans-serif;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.15s ease;
+        }
+        #stash-top:hover {
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+        }
+        #stash-top.show { display: block; }
+
+        /* Scrollbar (page) */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 6px;
+            border: 2px solid #09090b;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+        /* ----- responsive: letter rail becomes a top strip ----- */
+        @media (max-width: 768px) {
+            .sidebar {
+                top: 0; left: 0; right: 0; bottom: auto;
+                width: 100%;
+                height: 52px;
+                flex-direction: row;
+                padding: 8px 10px;
+                gap: 6px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                border-right: none;
+                border-bottom: 1px solid rgba(39, 39, 42, 0.9);
+            }
+            .sidebar-btn {
+                min-height: 34px;
+                min-width: 34px;
+                width: auto;
+                padding: 0 10px;
+            }
+            .main-content { margin-left: 0; margin-top: 0; padding: 0 14px 50px; }
+            .stash-header { margin: 0 -14px 18px; padding: 14px 14px 12px; }
+            .buttons-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            #sections-container input[type="button"],
+            #sections-container button.title-btn { padding: 10px 12px !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="main-content">
+        <header class="stash-header">
+            <div class="stash-title-row">
+                <span class="stash-logo" aria-hidden="true">&#9733;</span>
+                <h1 class="stash-title">The Stash<span class="dot">.</span></h1>
+                <span class="stash-count" id="stash-count" title="Titles loaded from the UGS list">
+                    <span id="stash-count-n">0</span> titles
+                </span>
+            </div>
+            <p class="stash-sub">
+                Your Ultimate Stash — custom Veil layout, 2,000+ titles, plays in-frame.
+            </p>
+            <div class="stash-search-row">
+                <div class="searchwrap">
+                    <input type="text" placeholder="Search the stash — try &quot;retro&quot;, &quot;moto&quot;, &quot;basket&quot;&hellip;" id="searchInput" aria-label="Search titles">
+                    <script src="https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/searchbut.js"></script>
+                </div>
+                <button id="lolbutton" type="button" title="Force-load the title list if the CDN is slow"
+                    onclick="const script = document.createElement('script');script.src = 'https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@latest/game.js';document.body.appendChild(script);">
+                    Force-load list
+                </button>
+            </div>
+        </header>
+
+        <div id="sections-container"></div>
+
+        <button id="stash-top" type="button" aria-label="Back to top">&#8593; Top</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/games.js"></script>
+    <!-- Title prettifier: real game spellings + proper word spacing
+         ("clstickmanduel" → "Stickman Duel"). Loaded before the Veil
+         integration so cleanLabel can call window.stashPretty. -->
+    <script src="/arcade/stash-pretty.js"></script>
+    <script>
+/* Veil arcade integration: UGS opens each title with
+   window.open("about:blank") + document.write, which pops a new top-level
+   tab. Inside Veil we want titles to run IN the arcade frame — so window.open
+   returns a fullscreen in-page iframe's window instead.
+
+   Veil player controls:
+   • Tiny close button (top-right) — back to the Stash list. Esc works too.
+   • Fullscreen button (bottom-right) — real OS fullscreen on the title when
+     the browser allows it; otherwise "fill" mode: the Stash expands over
+     the whole Veil arcade section (postMessage to the parent).
+   • Auto-fit — every title is measured and scaled + centered so the ENTIRE
+     title is always visible (re-measured while the title's late DOM lands).
+     The small "Fit" pill next to the fullscreen button toggles it, and
+     scaled titles get an offsetX/offsetY patch so clicks land correctly. */
+(function () {
+  var titleFrame = null;
+  var closeBtn = null;
+  var fsBtn = null;
+  var fitBtn = null;
+  var fitOn = true;
+  var fillOn = false;
+  var curScale = 1;
+  var fitTimer = null;
+  var fitObs = null;
+  var obsRoot = null;
+  var fitRO = null;
+  var fitBurst = null;
+  var patchedWin = null;
+
+  var ICON_X =
+    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  var ICON_MAX =
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+  var ICON_MIN =
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+
+  /* ---------------- fill mode (page-level expansion) ---------------- */
+
+  function notifyFill(on) {
+    fillOn = !!on;
+    try {
+      window.parent.postMessage({ type: "veil:ugs-fill", fill: fillOn }, "*");
+    } catch (e) {}
+  }
+
+  /* ---------------- auto-fit: the whole title, always visible ---------------- */
+
+  function scheduleFit() {
+    clearTimeout(fitTimer);
+    fitTimer = setTimeout(applyFit, 140);
+  }
+
+  function clearFitStyles(doc) {
+    var body = doc.body, de = doc.documentElement;
+    if (body) {
+      ["transform", "transform-origin", "position", "left", "top", "margin"].forEach(function (p) {
+        body.style.removeProperty(p);
+      });
+    }
+    if (de) de.style.removeProperty("overflow");
+  }
+
+  function applyFit() {
+    if (!titleFrame) return;
+    var doc = null;
+    try { doc = titleFrame.contentDocument; } catch (e) { return; }
+    if (!doc || !doc.documentElement || !doc.body) return;
+
+    ensureWatch(doc);
+    clearFitStyles(doc);
+
+    if (!fitOn) { curScale = 1; return; }
+
+    var de = doc.documentElement, body = doc.body;
+    body.style.setProperty("margin", "0", "important");
+
+    var w = Math.max(de.scrollWidth, body.scrollWidth);
+    var h = Math.max(de.scrollHeight, body.scrollHeight);
+    var vw = titleFrame.clientWidth;
+    var vh = titleFrame.clientHeight;
+    if (!w || !h || !vw || !vh || w < 8 || h < 8) return;
+
+    var s = Math.min(vw / w, vh / h);
+    if (!isFinite(s) || s <= 0) return;
+    if (s > 3) s = 3;              /* don't blow tiny retro titles up absurdly */
+    if (s < 0.2) { curScale = 1; return; } /* pathological 5x+ measurements stay 1:1 */
+    if (Math.abs(s - 1) < 0.01) { curScale = 1; return; }
+
+    de.style.setProperty("overflow", "hidden", "important");
+    body.style.setProperty("transform-origin", "top left", "important");
+    body.style.setProperty("transform", "scale(" + s + ")", "important");
+    body.style.setProperty("position", "absolute", "important");
+    body.style.setProperty("left", Math.max(0, (vw - w * s) / 2) + "px", "important");
+    body.style.setProperty("top", Math.max(0, (vh - h * s) / 2) + "px", "important");
+    curScale = s;
+    patchTitleEvents();
+  }
+
+  /* Titles build their DOM late (and document.write swaps the document
+     element under us) — keep the watcher attached to whatever document the
+     frame currently holds. */
+  function ensureWatch(doc) {
+    try {
+      if (!fitObs || !obsRoot || obsRoot !== doc.documentElement) {
+        if (fitObs) { try { fitObs.disconnect(); } catch (e) {} }
+        obsRoot = doc.documentElement;
+        fitObs = new MutationObserver(scheduleFit);
+        fitObs.observe(obsRoot, { childList: true, subtree: true });
+      }
+    } catch (e) {}
+  }
+
+  function stopWatch() {
+    clearTimeout(fitTimer);
+    if (fitBurst) { clearInterval(fitBurst); fitBurst = null; }
+    if (fitObs) { try { fitObs.disconnect(); } catch (e) {} fitObs = null; }
+    if (fitRO) { try { fitRO.disconnect(); } catch (e) {} fitRO = null; }
+    obsRoot = null;
+    patchedWin = null;
+  }
+
+  function startWatch() {
+    stopWatch();
+    /* real fullscreen / fill-mode resizes re-fit */
+    if (typeof ResizeObserver !== "undefined" && titleFrame) {
+      fitRO = new ResizeObserver(scheduleFit);
+      fitRO.observe(titleFrame);
+    }
+    /* burst: keep re-fitting while the title assembles itself (~18s) */
+    var n = 0;
+    fitBurst = setInterval(function () {
+      if (!titleFrame || ++n > 60) { clearInterval(fitBurst); fitBurst = null; return; }
+      scheduleFit();
+    }, 300);
+    scheduleFit();
+  }
+
+  /* ---------------- mouse-coordinate patch for scaled titles ----------------
+     transform:scale keeps getBoundingClientRect-based titles correct by
+     itself, but titles reading e.offsetX/offsetY directly see visual pixels
+     instead of their own layout pixels — patch them back. Window-level
+     listeners survive the document.write() that document ones don't. */
+  function patchTitleEvents() {
+    var win = null;
+    try { win = titleFrame && titleFrame.contentWindow; } catch (e) { return; }
+    if (!win || patchedWin === win) return;
+    patchedWin = win;
+    ["mousedown", "mouseup", "mousemove", "click", "dblclick"].forEach(function (t) {
+      win.addEventListener(
+        t,
+        function (e) {
+          if (curScale === 1) return;
+          if (Object.prototype.hasOwnProperty.call(e, "offsetX")) return;
+          var el = e.target;
+          if (!el || !el.getBoundingClientRect) return;
+          try {
+            var r = el.getBoundingClientRect();
+            if (!r.width && !r.height) return;
+            Object.defineProperties(e, {
+              offsetX: {
+                get: function () { return (e.clientX - r.left) / curScale; },
+                configurable: true
+              },
+              offsetY: {
+                get: function () { return (e.clientY - r.top) / curScale; },
+                configurable: true
+              }
+            });
+          } catch (err) {}
+        },
+        true
+      );
+    });
+  }
+
+  /* ---------------- fullscreen button (bottom-right corner) ---------------- */
+
+  function syncFsBtn() {
+    if (!fsBtn) return;
+    var fs = !!document.fullscreenElement;
+    fsBtn.innerHTML = fs ? ICON_MIN : ICON_MAX;
+    fsBtn.title = fs ? "Exit fullscreen (Esc)" : "Fullscreen — fit the title to your whole screen";
+  }
+
+  function toggleBig() {
+    if (document.fullscreenElement) {
+      try { document.exitFullscreen(); } catch (e) {}
+      return;
+    }
+    var p = null;
+    try {
+      p = titleFrame && titleFrame.requestFullscreen ? titleFrame.requestFullscreen() : null;
+    } catch (e) {}
+    if (p && typeof p.then === "function") {
+      p.then(function () { syncFsBtn(); notifyFill(false); }).catch(function () {
+        /* fullscreen denied (embedded previews) → page-level fill instead */
+        notifyFill(!fillOn);
+        scheduleFit();
+      });
+    } else {
+      notifyFill(!fillOn);
+      scheduleFit();
+    }
+  }
+
+  function makeFsButton() {
+    fsBtn = document.createElement("button");
+    fsBtn.type = "button";
+    fsBtn.setAttribute("aria-label", "Toggle fullscreen for the title");
+    fsBtn.title = "Fullscreen — fit the title to your whole screen";
+    fsBtn.innerHTML = ICON_MAX;
+    fsBtn.style.cssText =
+      "position:fixed;right:16px;bottom:16px;z-index:99999;width:52px;height:52px;" +
+      "border-radius:16px;border:1px solid rgba(16,185,129,0.5);cursor:pointer;" +
+      "background:linear-gradient(135deg,rgba(16,185,129,0.28),rgba(13,148,136,0.16));" +
+      "color:#6ee7b7;display:flex;align-items:center;justify-content:center;" +
+      "box-shadow:0 14px 34px -10px rgba(0,0,0,0.85);backdrop-filter:blur(10px);" +
+      "-webkit-backdrop-filter:blur(10px);" +
+      "transition:transform 0.15s ease,border-color 0.15s ease,box-shadow 0.15s ease;";
+    fsBtn.addEventListener("mouseenter", function () {
+      fsBtn.style.transform = "translateY(-3px)";
+      fsBtn.style.borderColor = "rgba(110,231,183,0.8)";
+      fsBtn.style.boxShadow = "0 18px 40px -12px rgba(16,185,129,0.55)";
+    });
+    fsBtn.addEventListener("mouseleave", function () {
+      fsBtn.style.transform = "none";
+      fsBtn.style.borderColor = "rgba(16,185,129,0.5)";
+      fsBtn.style.boxShadow = "0 14px 34px -10px rgba(0,0,0,0.85)";
+    });
+    fsBtn.addEventListener("click", toggleBig);
+    document.body.appendChild(fsBtn);
+  }
+
+  /* ---------------- tiny close button (top-right corner) ---------------- */
+
+  function makeCloseButton() {
+    closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.setAttribute("aria-label", "Close the title and go back to the Stash list");
+    closeBtn.title = "Back to the Stash (Esc)";
+    closeBtn.innerHTML = ICON_X;
+    closeBtn.style.cssText =
+      "position:fixed;top:12px;right:12px;z-index:99999;width:32px;height:32px;" +
+      "border-radius:10px;border:1px solid rgba(39,39,42,0.9);cursor:pointer;" +
+      "background:rgba(9,9,12,0.72);color:#a1a1aa;" +
+      "display:flex;align-items:center;justify-content:center;" +
+      "backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);" +
+      "box-shadow:0 8px 20px -10px rgba(0,0,0,0.8);" +
+      "transition:color 0.15s ease,border-color 0.15s ease,transform 0.15s ease;";
+    closeBtn.addEventListener("mouseenter", function () {
+      closeBtn.style.color = "#6ee7b7";
+      closeBtn.style.borderColor = "rgba(16,185,129,0.55)";
+      closeBtn.style.transform = "translateY(-1px)";
+    });
+    closeBtn.addEventListener("mouseleave", function () {
+      closeBtn.style.color = "#a1a1aa";
+      closeBtn.style.borderColor = "rgba(39,39,42,0.9)";
+      closeBtn.style.transform = "none";
+    });
+    closeBtn.addEventListener("click", closeTitle);
+    document.body.appendChild(closeBtn);
+  }
+
+  /* ---------------- fit toggle pill ---------------- */
+
+  function makeFitButton() {
+    fitBtn = document.createElement("button");
+    fitBtn.type = "button";
+    fitBtn.textContent = "Fit: on";
+    fitBtn.title = "Auto-fit keeps the whole title on screen — turn off for 1:1 pixels";
+    fitBtn.setAttribute("aria-label", "Toggle auto-fit scaling");
+    fitBtn.style.cssText =
+      "position:fixed;right:82px;bottom:26px;z-index:99999;height:32px;padding:0 12px;" +
+      "border-radius:999px;border:1px solid rgba(16,185,129,0.45);cursor:pointer;" +
+      "background:rgba(9,9,12,0.88);color:#6ee7b7;" +
+      "font:600 12px system-ui,-apple-system,sans-serif;letter-spacing:0.01em;" +
+      "backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);" +
+      "box-shadow:0 10px 26px -12px rgba(0,0,0,0.8);" +
+      "transition:color 0.15s ease,border-color 0.15s ease;";
+    fitBtn.addEventListener("click", function () {
+      fitOn = !fitOn;
+      fitBtn.textContent = "Fit: " + (fitOn ? "on" : "off");
+      fitBtn.style.color = fitOn ? "#6ee7b7" : "#a1a1aa";
+      fitBtn.style.borderColor = fitOn ? "rgba(16,185,129,0.45)" : "rgba(39,39,42,0.95)";
+      scheduleFit();
+    });
+    document.body.appendChild(fitBtn);
+  }
+
+  /* ---------------- title lifecycle ---------------- */
+
+  function closeTitle() {
+    try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+    notifyFill(false);
+    stopWatch();
+    if (titleFrame) { titleFrame.remove(); titleFrame = null; }
+    if (closeBtn) { closeBtn.remove(); closeBtn = null; }
+    if (fsBtn) { fsBtn.remove(); fsBtn = null; }
+    if (fitBtn) { fitBtn.remove(); fitBtn = null; }
+    curScale = 1;
+  }
+
+  window.open = function () {
+    if (!titleFrame) {
+      titleFrame = document.createElement("iframe");
+      titleFrame.id = "veil-ugs-title";
+      titleFrame.setAttribute("title", "Title");
+      titleFrame.setAttribute("allow", "autoplay; fullscreen; gamepad; clipboard-write");
+      titleFrame.style.cssText =
+        "position:fixed;inset:0;width:100%;height:100%;border:0;background:#0d0d12;z-index:99998;";
+      document.body.appendChild(titleFrame);
+
+      makeCloseButton();
+      makeFsButton();
+      makeFitButton();
+      startWatch();
+    }
+    return titleFrame.contentWindow;
+  };
+
+  document.addEventListener("fullscreenchange", syncFsBtn);
+
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && titleFrame) closeTitle();
+  });
+})();
+
+
+/* ---- Veil layout enhancements (progressive — all fail-soft) ---- */
+(function () {
+  var countEl = document.getElementById("stash-count-n");
+  var sections = document.getElementById("sections-container");
+  var sidebar = document.getElementById("sidebar");
+
+  /* Live title counter + staggered entrance for late content */
+  function refreshCount() {
+    if (!countEl || !sections) return;
+    countEl.textContent = String(titleNodes().length);
+  }
+
+  /* ---- display-name cleanup --------------------------------------
+     UGS file ids carry a "cl" (cloak) prefix and mush words together
+     ("clYoshisStrangeQuest"). We keep the id intact for launching (the
+     CDN's onclick closure captured the original string), but relabel
+     the buttons: strip "cl", split lower→Upper word boundaries, and
+     tidy version suffixes. Search reads the cleaned labels live, so
+     finding "yoshi" or "dark room" works exactly as displayed.
+
+     The "cl" strip needs the whole id list for context: a title whose OWN
+     name starts with "cl" (clusterrush) also has a cloaked twin in the
+     list (clclusterrush) — stripping blindly would show "usterrush".
+     Lazy-built id set → rules below. */
+  var stashIds = null;
+  function idSet() {
+    if (stashIds) return stashIds;
+    stashIds = new Set();
+    Array.prototype.forEach.call(titleNodes(), function (n) {
+      var v = n.value || n.getAttribute("data-raw") || "";
+      if (v) stashIds.add(String(v).toLowerCase());
+    });
+    return stashIds;
+  }
+
+  function cleanLabel(raw) {
+    var name = String(raw || "");
+    if (name.toLowerCase().indexOf("cl") === 0 && name.length > 2) {
+      var rest = name.slice(2).toLowerCase();
+      var cloaked = ("cl" + name).toLowerCase();
+      if (idSet().has(rest)) {
+        // cloak of an existing base id (clclusterrush → clusterrush)
+        name = name.slice(2);
+      } else if (idSet().has(cloaked)) {
+        // base name of a cloaked pair — genuinely starts with "cl"; keep
+      } else {
+        name = name.slice(2);
+      }
+    }
+    // Full prettifier pass (public/arcade/stash-pretty.js): actual game
+    // spellings for known titles ("stickmanduel" → "Stickman Duel"),
+    // camel/acronym/digit-seam splitting, and a dictionary word-break so
+    // mushed filenames regain their word spacing ("10minutestildawn" →
+    // "10 Minutes Till Dawn"). Fail-soft to the old camel-only cleanup
+    // when the module didn't load.
+    try {
+      if (typeof window.stashPretty === "function") {
+        var pretty = window.stashPretty(name);
+        if (pretty && pretty.trim()) return pretty;
+      }
+    } catch (e) { /* fall through */ }
+    // legacy fallback: split camelCase words
+    name = name.replace(/([a-z])([A-Z])/g, "$1 $2");
+    name = name.replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
+    name = name.replace(/(\d)([a-zA-Z])/g, function (m, d, l, off, s) {
+      var next = s ? s[off + 2] : "";
+      return /[0-9]/.test(next || "") ? m : d + " " + l;
+    });
+    name = name.replace(/\s+/g, " ").trim();
+    return name;
+  }
+
+  function relabel(btn) {
+    var cleaned = cleanLabel(btn.value);
+    if (cleaned && cleaned !== btn.value) btn.value = cleaned;
+    btn.setAttribute("title", cleaned || btn.value);
+    btn.setAttribute("aria-label", (cleaned || btn.value) + " — play title");
+  }
+
+  /* ---- input → real <button> upgrade --------------------------------
+     The CDN builds input[type=button] elements: inputs render their value
+     on ONE line only, so long title names get cramped. We swap them for
+     real buttons that wrap to two lines, transferring the CDN's click
+     closure (it captured the ORIGINAL file id, so launching is untouched).
+     Fail-soft everywhere — if anything throws the plain inputs stay. */
+  function launchFromRaw(raw) {
+    // mirrors the CDN's own onclick: fetch the title HTML and write it into
+    // the fullscreen title frame (our window.open override provides it)
+    var normalized = raw.indexOf(".") !== -1 && raw.lastIndexOf(".") > 0 ? raw : raw + ".html";
+    fetch(
+      "https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile/UGS-Files/" +
+        encodeURIComponent(normalized) + "?t=" + Date.now()
+    )
+      .then(function (r) { return r.text(); })
+      .then(function (text) {
+        var w = window.open("about:blank", "_blank");
+        if (w) {
+          w.document.open();
+          w.document.write(text);
+          w.document.close();
+        }
+      })
+      .catch(function () {});
+  }
+
+  function upgradeButton(input) {
+    if (!input || !input.parentNode) return;
+    var cleaned = cleanLabel(input.value);
+    var label = cleaned || String(input.value || "Play");
+    try {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className =
+        "title-btn stash-in" + (input.className ? " " + input.className : "");
+      btn.textContent = label;
+      btn.title = label;
+      btn.setAttribute("aria-label", label + " — play title");
+      // search haystack: pretty name AND the raw id, so both "stickman
+      // duel" and "stickmanduel" find the same title
+      btn.setAttribute(
+        "data-name",
+        (label + " " + String(input.value || "")).toLowerCase()
+      );
+      // keep the raw CDN file id on the node (cleanLabel's id set + any
+      // later rebuilds read it back)
+      btn.setAttribute("data-raw", String(input.value || ""));
+      if (typeof input.onclick === "function") {
+        btn.onclick = input.onclick; // CDN closure — original id inside
+      } else {
+        btn.addEventListener("click", function () { launchFromRaw(input.value); });
+      }
+      if (input.style.display === "none") btn.style.display = "none";
+      input.parentNode.replaceChild(btn, input);
+    } catch (e) {
+      // keep the plain input working if the swap ever fails
+      relabel(input);
+    }
+  }
+
+  function titleNodes() {
+    if (!sections) return [];
+    return sections.querySelectorAll("button.title-btn, input[type=button]");
+  }
+
+  /* ---- search (ours — the CDN's filter only knows inputs) ---- */
+  function setupSearch() {
+    var si = document.getElementById("searchInput");
+    if (!si || !si.parentNode || !sections) return;
+    var fresh;
+    try {
+      fresh = si.cloneNode(false); // drops the CDN's input listener
+      si.parentNode.replaceChild(fresh, si);
+    } catch (e) {
+      fresh = si;
+    }
+    fresh.addEventListener("input", function () {
+      var q = fresh.value.toLowerCase().trim();
+      Array.prototype.forEach.call(
+        sections.querySelectorAll(".letter-section"),
+        function (sec) {
+          var any = false;
+          Array.prototype.forEach.call(
+            sec.querySelectorAll("button.title-btn, input[type=button]"),
+            function (b) {
+              var label = (
+                b.getAttribute("data-name") ||
+                b.value ||
+                b.textContent ||
+                ""
+              ).toLowerCase();
+              var match = !q || label.indexOf(q) !== -1;
+              b.style.display = match ? "" : "none";
+              if (match) any = true;
+            }
+          );
+          sec.style.display = any ? "" : "none";
+        }
+      );
+    });
+  }
+
+  if (sections) {
+    var seen = 0;
+    var sweeping = false;
+    function sweep() {
+      if (sweeping) return;
+      sweeping = true;
+      try {
+        var nodes = titleNodes();
+        if (nodes.length > seen) {
+          for (var i = seen; i < nodes.length; i++) {
+            var n = nodes[i];
+            if (n.tagName === "INPUT") {
+              upgradeButton(n);
+            } else {
+              n.classList.add("stash-in");
+            }
+          }
+          seen = nodes.length;
+          refreshCount();
+        }
+      } finally {
+        sweeping = false;
+      }
+    }
+    var observer = new MutationObserver(function () {
+      sweep();
+    });
+    observer.observe(sections, { childList: true, subtree: true });
+    // The CDN builds its whole list synchronously BEFORE this script runs,
+    // so the observer alone would never see the initial batch — sweep the
+    // existing buttons now (late CDN loads, e.g. Force-load, still arrive
+    // as mutations).
+    sweep();
+  }
+
+  /* Scrollspy: highlight the letter you're scrolled to in the rail */
+  function setupScrollspy() {
+    if (!sections || !sidebar) return;
+    var railBtns = {};
+    Array.prototype.forEach.call(sidebar.querySelectorAll(".sidebar-btn"), function (b) {
+      var letter = (b.textContent || "").trim().toUpperCase();
+      railBtns[letter] = b;
+    });
+    var sectionEls = Array.prototype.slice.call(
+      sections.querySelectorAll(".letter-section")
+    );
+    if (!sectionEls.length || !Object.keys(railBtns).length) return;
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          var header = en.target.querySelector(".letter-header");
+          var letter = header ? (header.textContent || "").trim().toUpperCase() : "";
+          Array.prototype.forEach.call(
+            sidebar.querySelectorAll(".sidebar-btn.active"),
+            function (b) { b.classList.remove("active"); }
+          );
+          if (railBtns[letter]) railBtns[letter].classList.add("active");
+        });
+      },
+      { rootMargin: "-30% 0px -60% 0px" }
+    );
+    sectionEls.forEach(function (s) { io.observe(s); });
+  }
+
+  /* Keyboard: press a letter to jump to that section (only when not
+     typing in the search box and no title is open) */
+  function setupLetterKeys() {
+    document.addEventListener("keydown", function (e) {
+      if (document.getElementById("veil-ugs-title")) return;
+      var t = e.target;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
+      if (!/^[a-zA-Z]$/.test(e.key)) return;
+      var btn = sidebar && sidebar.querySelector(".sidebar-btn");
+      if (!btn) return;
+      var letterBtn = Array.prototype.filter.call(
+        sidebar.querySelectorAll(".sidebar-btn"),
+        function (b) {
+          return (b.textContent || "").trim().toUpperCase() === e.key.toUpperCase() &&
+                 !b.classList.contains("empty");
+        }
+      )[0];
+      if (letterBtn) letterBtn.click();
+    });
+  }
+
+  /* Back-to-top pill */
+  function setupTop() {
+    var top = document.getElementById("stash-top");
+    if (!top) return;
+    window.addEventListener(
+      "scroll",
+      function () {
+        top.classList.toggle("show", window.scrollY > 500);
+      },
+      { passive: true }
+    );
+    top.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  /* CDN scripts may build the DOM synchronously (before this runs) or
+     asynchronously — retry the scrollspy wiring until sections exist. */
+  setupSearch(); // replace the CDN's input-only filter right away
+  var tries = 0;
+  var wire = setInterval(function () {
+    tries++;
+    if (sections && sections.querySelector(".letter-section")) {
+      setupScrollspy();
+      setupLetterKeys();
+      setupTop();
+      refreshCount();
+      clearInterval(wire);
+    } else if (tries > 40) {
+      clearInterval(wire);
+      setupTop();
+      refreshCount();
+    }
+  }, 500);
+})();
+    </script>
+</body>
+</html>

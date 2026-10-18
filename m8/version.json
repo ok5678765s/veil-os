@@ -1,0 +1,42 @@
+{
+  "built": "2026-10-05T23:16:39Z",
+  "commit": "a2941a8",
+  "pages": [
+    "site/index.html",
+    "site/chat.html",
+    "site/arcade.html",
+    "site/ai.html",
+    "site/stream.html",
+    "site/wallpapers.html",
+    "site/music.html",
+    "site/links.html",
+    "site/history.html",
+    "site/updates.html",
+    "site/settings.html"
+  ],
+  "xhtmlPages": [
+    "site/index.xhtml",
+    "site/chat.xhtml",
+    "site/arcade.xhtml",
+    "site/ai.xhtml",
+    "site/stream.xhtml",
+    "site/wallpapers.xhtml",
+    "site/music.xhtml",
+    "site/links.xhtml",
+    "site/history.xhtml",
+    "site/updates.xhtml",
+    "site/settings.xhtml"
+  ],
+  "mirrors": [
+    "m1/index.xhtml",
+    "m2/index.xhtml",
+    "m3/index.xhtml",
+    "m4/index.xhtml",
+    "m5/index.xhtml",
+    "m6/index.xhtml",
+    "m7/index.xhtml",
+    "m8/index.xhtml",
+    "m9/index.xhtml",
+    "m10/index.xhtml"
+  ]
+}

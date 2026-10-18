@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" data-veil-build="2026-10-03T21:49:50Z">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status &amp; CDN links — Veil (mirror)</title>
+<meta name="description" content="Veil backup status and the full list of 10 jsDelivr CDN links powering the static mirror.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2'%3E%3Cpath d='M22 12h-4l-3 9L9 3l-3 9H2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/veil.css">
+</head>
+<body>
+<div class="shell">
+<nav class="topnav" aria-label="Main">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      Veil <span class="beta">MIRROR</span>
+    </a>
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="chat.html">Chat</a>
+      <a href="arcade.html">Arcade</a>
+      <a href="ai.html">AI</a>
+      <a href="stream.html">Stream</a>
+      <a href="wallpapers.html">Wallpapers</a>
+      <a href="status.html" class="active">Status</a>
+    </div>
+    <span class="nav-clock" data-veil-clock data-seconds aria-label="current time"></span>
+  </div>
+</nav>
+
+<main>
+  <section class="hero" style="padding-top:38px">
+    <span class="kicker">Status</span>
+    <h1 style="margin-top:8px">Backup pipeline health</h1>
+    <p class="tagline">The 30-second loop: snapshot → commit → push → CDN purge. Everything below reads <em>live</em> from the published backup files.</p>
+  </section>
+
+  <section class="panel" aria-label="Backup status">
+    <div class="stat-row"><span class="stat-led"></span><span class="stat-name">Chat backup snapshot</span><span class="stat-val" id="st-exported">…</span></div>
+    <div class="stat-row"><span class="stat-led"></span><span class="stat-name">Accounts backed up</span><span class="stat-val" id="st-accounts">…</span></div>
+    <div class="stat-row"><span class="stat-led"></span><span class="stat-name">Messages backed up</span><span class="stat-val" id="st-messages">…</span></div>
+    <div class="stat-row"><span class="stat-led"></span><span class="stat-name">DMs backed up</span><span class="stat-val" id="st-dms">…</span></div>
+    <div class="stat-row"><span class="stat-led"></span><span class="stat-name">Source repo</span><span class="stat-val"><a href="https://github.com/ok5678765s/veil-os" target="_blank" rel="noopener noreferrer" style="color:var(--amber);text-decoration:none">ok5678765s/veil-os</a></span></div>
+    <div class="stat-row"><span class="stat-led" style="background:var(--amber);box-shadow:0 0 10px rgba(245,158,11,.3)"></span><span class="stat-name">Backup cadence</span><span class="stat-val">every 30s · CDN purge on push</span></div>
+  </section>
+
+  <section style="margin-top:26px" aria-label="CDN links">
+    <span class="kicker">The 10 jsDelivr links</span>
+    <h2 style="margin:8px 0 14px">Every mirror surface, one copy-button away</h2>
+
+    <div class="linkrow"><span class="ln">🏠 Home</span><span class="lu" id="ln1">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">💬 Chat mirror</span><span class="lu" id="ln2">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">🕹️ Arcade</span><span class="lu" id="ln3">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">✨ Veil AI</span><span class="lu" id="ln4">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">📺 Stream</span><span class="lu" id="ln5">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">🖼️ Wallpapers</span><span class="lu" id="ln6">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">📡 Status</span><span class="lu" id="ln7">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">🧾 Chat backup JSON</span><span class="lu" id="ln8">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">🎨 Design system CSS</span><span class="lu" id="ln9">…</span><button class="copy-btn" data-copy="">copy</button></div>
+    <div class="linkrow"><span class="ln">⚙️ Runtime JS</span><span class="lu" id="ln10">…</span><button class="copy-btn" data-copy="">copy</button></div>
+
+    <p class="sub" style="margin-top:12px">All links point at <span class="mono">@main</span> — they always serve the latest pushed version, and the backup daemon purges the CDN cache after every push so updates appear within seconds.</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Veil Status mirror · <a href="https://github.com/ok5678765s/veil-os" target="_blank" rel="noopener noreferrer">ok5678765s/veil-os</a></span>
+    <span>backup data: <a href="../backups/chat/latest.json">latest.json</a></span>
+  </div>
+</footer>
+</div>
+<button id="refresh-pill" onclick="location.reload()" title="A newer version was pushed to GitHub">✨ Veil updated — tap to refresh</button>
+<script src="assets/veil.js"></script>
+<script>
+/* Fill the link rows from THIS page's host so copy buttons always
+   match whichever jsDelivr mirror the visitor landed on. */
+(function () {
+  var base = window.VEIL.repoFile("");
+  var links = [
+    "site/index.html", "site/chat.html", "site/arcade.html", "site/ai.html",
+    "site/stream.html", "site/wallpapers.html", "site/status.html",
+    "backups/chat/latest.json", "site/assets/veil.css", "site/assets/veil.js",
+  ];
+  links.forEach(function (p, i) {
+    var url = base + p;
+    var cell = document.getElementById("ln" + (i + 1));
+    var btn = cell.parentElement.querySelector("[data-copy]");
+    cell.textContent = url;
+    cell.title = url;
+    btn.setAttribute("data-copy", url);
+  });
+
+  /* live backup stats */
+  fetch(window.VEIL.latestJson(), { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d) return;
+      var ago = Math.round((Date.now() - new Date(d.exportedAt).getTime()) / 60000);
+      document.getElementById("st-exported").textContent = d.exportedAt + (ago < 60 ? " (" + ago + " min ago)" : "");
+      document.getElementById("st-accounts").textContent = d.counts.accounts;
+      document.getElementById("st-messages").textContent = d.counts.messages;
+      document.getElementById("st-dms").textContent = d.counts.dms;
+    })
+    .catch(function () {
+      document.getElementById("st-exported").textContent = "unavailable";
+    });
+})();
+</script>
+</body>
+</html>

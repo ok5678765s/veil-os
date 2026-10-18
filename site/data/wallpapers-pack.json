@@ -1,0 +1,229 @@
+{
+ "pack": [
+  {
+   "id": "backrooms",
+   "thumb": "/wp-thumbs/backrooms.jpg",
+   "kind": "image",
+   "name": "Backrooms",
+   "src": "/wp-thumbs/backrooms.jpg",
+   "tags": [
+    "live",
+    "dark",
+    "abstract"
+   ],
+   "desc": "Endless yellow hallways",
+   "fallback": true
+  },
+  {
+   "id": "cherry-blossom",
+   "thumb": "/wp-thumbs/cherry-blossom.jpg",
+   "kind": "video",
+   "name": "Cherry Blossom",
+   "src": "/wp-cherry-blossom.mp4",
+   "tags": [
+    "live",
+    "nature",
+    "aesthetic"
+   ],
+   "desc": "Petals on the wind"
+  },
+  {
+   "id": "trionda-ball",
+   "thumb": "/wp-thumbs/trionda-ball.jpg",
+   "kind": "video",
+   "name": "Trionda Ball",
+   "src": "/wp-trionda-ball.mp4",
+   "tags": [
+    "live",
+    "abstract"
+   ],
+   "desc": "Rolling geometry"
+  },
+  {
+   "id": "minecraft-earth",
+   "thumb": "/wp-thumbs/minecraft-earth.jpg",
+   "kind": "video",
+   "name": "Minecraft Earth",
+   "src": "/wp-minecraft-earth.mp4",
+   "tags": [
+    "live",
+    "minecraft",
+    "nature"
+   ],
+   "desc": "A whole world turning"
+  },
+  {
+   "id": "minecraft-fireplace",
+   "thumb": "/wp-thumbs/minecraft-fireplace.jpg",
+   "kind": "image",
+   "name": "Minecraft Fireplace",
+   "src": "/wp-thumbs/minecraft-fireplace.jpg",
+   "tags": [
+    "live",
+    "minecraft",
+    "aesthetic"
+   ],
+   "desc": "Cozy blocky embers",
+   "fallback": true
+  },
+  {
+   "id": "spiderman-gravity",
+   "thumb": "/wp-thumbs/spiderman-gravity.jpg",
+   "kind": "image",
+   "name": "Spider-Man \u2014 Gravity",
+   "src": "/wp-thumbs/spiderman-gravity.jpg",
+   "tags": [
+    "live",
+    "superhero"
+   ],
+   "desc": "Falling with style",
+   "fallback": true
+  },
+  {
+   "id": "mobile-video",
+   "thumb": "/wp-thumbs/mobile-video.jpg",
+   "kind": "video",
+   "name": "Motion Loop I",
+   "src": "/wp-mobile-video.mp4",
+   "tags": [
+    "live",
+    "aesthetic"
+   ],
+   "desc": "Ambient drift"
+  },
+  {
+   "id": "mobile-video2",
+   "thumb": "/wp-thumbs/mobile-video2.jpg",
+   "kind": "video",
+   "name": "Motion Loop II",
+   "src": "/wp-mobile-video2.mp4",
+   "tags": [
+    "live",
+    "aesthetic"
+   ],
+   "desc": "Ambient drift, again"
+  },
+  {
+   "id": "neon-aurora",
+   "thumb": "/wp-thumbs/neon-aurora.jpg",
+   "kind": "image",
+   "name": "Neon Aurora",
+   "src": "/wp-neon-aurora.png",
+   "tags": [
+    "static",
+    "aesthetic",
+    "abstract"
+   ],
+   "desc": "Electric skies"
+  },
+  {
+   "id": "cubes",
+   "thumb": "/wp-thumbs/cubes.jpg",
+   "kind": "image",
+   "name": "Cube Field",
+   "src": "/wp-cubes.jpg",
+   "tags": [
+    "static",
+    "abstract"
+   ],
+   "desc": "Isometric calm"
+  },
+  {
+   "id": "jellyfish",
+   "thumb": "/wp-thumbs/jellyfish.jpg",
+   "kind": "image",
+   "name": "Jellyfish Drift",
+   "src": "/wp-jellyfish.jpg",
+   "tags": [
+    "static",
+    "nature",
+    "aesthetic"
+   ],
+   "desc": "Deep-sea lanterns"
+  },
+  {
+   "id": "lake",
+   "thumb": "/wp-thumbs/lake.jpg",
+   "kind": "image",
+   "name": "Still Lake",
+   "src": "/wp-lake.jpg",
+   "tags": [
+    "static",
+    "nature"
+   ],
+   "desc": "Mirror water"
+  },
+  {
+   "id": "minecraft-bee",
+   "thumb": "/wp-thumbs/minecraft-bee.jpg",
+   "kind": "image",
+   "name": "Minecraft Bee",
+   "src": "/wp-minecraft-bee.png",
+   "tags": [
+    "static",
+    "minecraft"
+   ],
+   "desc": "The pollinator at rest"
+  },
+  {
+   "id": "minecraft-blocks",
+   "thumb": "/wp-thumbs/minecraft-blocks.jpg",
+   "kind": "image",
+   "name": "Minecraft Blocks",
+   "src": "/wp-minecraft-blocks.jpg",
+   "tags": [
+    "static",
+    "minecraft"
+   ],
+   "desc": "Terrain, cubed"
+  },
+  {
+   "id": "spiderman",
+   "thumb": "/wp-thumbs/spiderman.jpg",
+   "kind": "image",
+   "name": "Spider-Man Art",
+   "src": "/wp-spiderman.jpg",
+   "tags": [
+    "static",
+    "superhero"
+   ],
+   "desc": "Web-head, inked"
+  },
+  {
+   "id": "aluminium",
+   "thumb": "/wp-thumbs/aluminium.jpg",
+   "kind": "image",
+   "name": "Liquid Aluminium",
+   "src": "/wp-aluminium.jpg",
+   "tags": [
+    "static",
+    "abstract",
+    "aesthetic"
+   ],
+   "desc": "Molten chrome waves"
+  },
+  {
+   "id": "apocalyptic",
+   "thumb": "/wp-thumbs/apocalyptic.jpg",
+   "kind": "image",
+   "name": "Apocalyptic Skyline",
+   "src": "/wp-apocalyptic.png",
+   "tags": [
+    "static",
+    "dark",
+    "fantasy"
+   ],
+   "desc": "The last city"
+  }
+ ],
+ "themes": {
+  "sulfur": "from-amber-400/70 to-orange-600/60",
+  "emerald": "from-emerald-400/70 to-teal-600/60",
+  "aurora": "from-emerald-400/60 to-indigo-500/60",
+  "nebula": "from-violet-400/70 to-fuchsia-600/60",
+  "grid": "from-fuchsia-500/60 to-cyan-400/60",
+  "sunset": "from-orange-400/70 to-rose-600/60",
+  "ocean": "from-sky-400/70 to-teal-400/60"
+ },
+ "default": "neon-aurora"
+}

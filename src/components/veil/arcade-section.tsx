@@ -20,6 +20,10 @@
  *   with streaks, difficulty tiers and per-mode bests, fully local
  *   React, no third-party servers. Replaced the Blooks quiz
  *   platform at the owner's request (Bloxd before that).
+ * - The Roblox tab is the REAL Roblox, native (replaced the old Apps
+ *   tab at the owner's request — no iframes): live charts, search and
+ *   game pages streamed from roblox.com through /api/roblox, and Play
+ *   fires the same roblox-player:// deep link roblox.com uses.
  * - Swapping titles or reloading bumps a key so only the iframe remounts.
  * - Title URLs and thumbnails are routed through the veil (routeUrl).
  * - Title iframes register themselves in the arcade-frame
@@ -35,44 +39,21 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Archive,
   ArrowLeft,
-  Bot,
-  Bomb,
-  Brush,
   Calculator,
-  Dices,
   ExternalLink,
-  FileCode2,
   Flame,
-  Globe,
-  Image as ImageIcon,
+  Gamepad2,
   Joystick,
-  Key,
   LayoutGrid,
-  Loader2,
-  Lock,
   Maximize,
   Minimize,
-  Monitor,
-  Music,
-  Package,
-  Palette,
-  Pen,
   Play,
-  Plus,
   RotateCw,
   Search,
-  Sparkles,
   Square,
   Star,
-  Timer,
-  Trash2,
-  Trophy,
-  Unlock,
-  Users,
   WifiOff,
-  Worm,
   X,
-  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -81,6 +62,7 @@ import { Input } from "@/components/ui/input";
 import { KeyboardHelp } from "@/components/veil/keyboard-help";
 import { BackdropVideo } from "@/components/veil/backdrop-video";
 import { MathGame } from "@/components/veil/math-game";
+import { RobloxTab } from "@/components/veil/roblox/roblox-tab";
 import { routeUrl, setArcadeFrame } from "@/lib/veil/shared";
 import {
   THEME_GRADIENTS,
@@ -122,18 +104,15 @@ interface RunningTitle {
   key: number;
   /** Bumped on "Reload" — remounts the iframe with the same src. */
   reloads: number;
-  /** SiteApp HTML — set for Veil AI / owner-built apps: the player swaps
-   *  from a veiled remote src to a sandboxed srcdoc iframe. */
-  html?: string;
 }
 
-type TabId = "gnmath" | "math" | "stash" | "apps";
+type TabId = "gnmath" | "math" | "stash" | "roblox";
 
 const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: "gnmath", label: "GN-Math", icon: Joystick },
   { id: "math", label: "Math", icon: Calculator },
   { id: "stash", label: "The Stash", icon: Archive },
-  { id: "apps", label: "Apps", icon: LayoutGrid },
+  { id: "roblox", label: "Roblox", icon: Gamepad2 },
 ];
 
 const SEARCH_PLACEHOLDER = "search the arcade…";
@@ -597,649 +576,6 @@ function StashTab() {
 }
 
 /* ------------------------------------------------------------------ */
-/* The Apps tab — site apps built by Veil AI and the owner             */
-/* ------------------------------------------------------------------ */
-
-/** A trimmed SiteApp card (the /api/apps list never ships the HTML). */
-interface SiteAppCard {
-  id: string;
-  name: string;
-  desc: string;
-  icon: string;
-  createdBy: string;
-  createdAt: string;
-  /** Launch counter (new in this round; older rows simply lack it). */
-  plays?: number;
-  lastPlayedAt?: string | null;
-}
-
-const EXT_ICONS: Record<string, LucideIcon> = {
-  bot: Bot, joypad: Joystick, image: ImageIcon, globe: Globe, dices: Dices,
-  search: Globe, spark: Sparkles, calc: Calculator, trophy: Trophy, zap: Zap,
-  timer: Timer, brush: Brush, pen: Pen, filetext: FileCode2, monitor: Monitor,
-  key: Key, palette: Palette, worm: Worm, bomb: Bomb, music: Music, heart: Play,
-  desktop: Monitor, play: Play, archive: Archive, package: Package,
-};
-
-function appTimeAgo(iso: string): string {
-  const ms = Date.now() - new Date(iso).getTime();
-  const min = Math.floor(ms / 60_000);
-  if (min < 1) return "new";
-  if (min < 60) return `${min}m`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}h`;
-  const day = Math.floor(hr / 24);
-  if (day < 7) return `${day}d`;
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
-}
-
-/** One installed app — the xylora card silhouette (16:9 plate + one-line
- *  footer) with the app's glyph instead of a thumbnail, a corner badge for
- *  who built it, and the same hover play-glow the title cards use. */
-function AppCard({
-  app,
-  index,
-  onOpen,
-  opening,
-  manageMode,
-  deleting,
-  onDelete,
-}: {
-  app: SiteAppCard;
-  index: number;
-  onOpen: (app: SiteAppCard) => void;
-  opening: boolean;
-  manageMode: boolean;
-  deleting: boolean;
-  onDelete: (app: SiteAppCard) => void;
-}) {
-  const Icon = EXT_ICONS[app.icon] ?? Package;
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -48px 0px" }}
-      transition={{ duration: 0.35, delay: (index % 6) * 0.04 }}
-      className={cn(
-        "veil-cv group relative overflow-hidden rounded-[14px] border border-[#1a2822] bg-[#121f1a] text-left shadow-sm shadow-black/40 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-[3px] hover:border-[#3f7f63] hover:shadow-[0_10px_28px_rgba(63,127,99,0.2)]"
-      )}
-    >
-      <button
-        type="button"
-        onClick={() => onOpen(app)}
-        aria-label={`Open app: ${app.name}`}
-        title={app.desc || app.name}
-        className="block w-full text-left"
-      >
-        {/* icon plate — the app's glyph sits on a gradient cover like a thumbnail */}
-        <span className="relative flex aspect-video w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#1c3327] via-[#0d1612] to-[#15251d]">
-          <span className="veil-hover-wobble flex size-12 items-center justify-center rounded-2xl border border-[#3f7f63]/40 bg-[#0d1612]/70 text-[#5fae87] shadow-[0_10px_28px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-transform duration-200 group-hover:scale-110 sm:size-14">
-            {deleting ? (
-              <Loader2 aria-hidden className="size-5 animate-spin text-[#88a49a]" />
-            ) : (
-              <Icon aria-hidden className="size-5 sm:size-6" />
-            )}
-          </span>
-
-          {/* corner badge — who built it */}
-          {app.createdBy === "ai" ? (
-            <span
-              aria-hidden
-              className="veil-bounce-soft pointer-events-none absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full border border-violet-400/25 bg-black/55 px-1.5 py-[3px] text-[9px] font-bold uppercase tracking-wider text-violet-300 backdrop-blur-md"
-            >
-              <Sparkles aria-hidden className="size-2.5" />
-              veil ai
-            </span>
-          ) : app.createdBy === "community" ? (
-            <span
-              aria-hidden
-              className="pointer-events-none absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full border border-amber-400/25 bg-black/55 px-1.5 py-[3px] text-[9px] font-bold uppercase tracking-wider text-amber-300 backdrop-blur-md"
-            >
-              <Users aria-hidden className="size-2.5" />
-              community
-            </span>
-          ) : (
-            <span
-              aria-hidden
-              className="pointer-events-none absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full border border-emerald-400/25 bg-black/55 px-1.5 py-[3px] text-[9px] font-bold uppercase tracking-wider text-emerald-300 backdrop-blur-md"
-            >
-              <Lock aria-hidden className="size-2.5" />
-              owner
-            </span>
-          )}
-
-          {/* hover play glow — same language as the title cards */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-hover:bg-black/40"
-          >
-            <span className="veil-press veil-hover-glow flex size-11 scale-75 items-center justify-center rounded-full bg-[#3f7f63] shadow-[0_8px_24px_rgba(0,0,0,0.55)] ring-1 ring-white/25 transition-transform duration-200 group-hover:scale-100">
-              {opening ? (
-                <Loader2 aria-hidden className="size-4 animate-spin text-white" />
-              ) : (
-                <Play aria-hidden className="size-4 translate-x-[1px] fill-white text-white" />
-              )}
-            </span>
-          </span>
-
-          {/* subtle top scrim so the delete glyph reads */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/50 to-transparent"
-          />
-        </span>
-        <span className="flex items-center gap-1.5 border-t border-[#1a2822] bg-[#121f1a] px-2.5 py-2 pt-[9px]">
-          <span className="min-w-0 flex-1 truncate text-[11px] font-semibold lowercase text-[#e8f2ee] transition group-hover:text-[#5fae87]">
-            {app.name}
-          </span>
-          {(app.plays ?? 0) > 0 && (
-            <span
-              key={app.plays}
-              aria-label={`${app.plays} ${app.plays === 1 ? "launch" : "launches"}`}
-              title={`${app.plays} ${app.plays === 1 ? "launch" : "launches"}`}
-              className="veil-coin-flip flex shrink-0 items-center gap-0.5 rounded-full border border-[#3f7f63]/30 bg-[#1c3327]/60 px-1.5 py-px text-[9px] font-semibold tabular-nums text-[#5fae87]"
-            >
-              <Play aria-hidden className="size-2 fill-current" />
-              <span className="lowercase">{app.plays! > 999 ? "999+" : app.plays}</span>
-            </span>
-          )}
-          <span
-            className="shrink-0 text-[9.5px] lowercase tracking-wide text-[#526a60]"
-            title={app.lastPlayedAt ? `last played ${new Date(app.lastPlayedAt).toLocaleString()}` : `added ${new Date(app.createdAt).toLocaleString()}`}
-          >
-            {app.lastPlayedAt
-              ? `played ${appTimeAgo(app.lastPlayedAt) === "new" ? "just now" : appTimeAgo(app.lastPlayedAt)}${appTimeAgo(app.lastPlayedAt) === "new" ? "" : " ago"}`
-              : appTimeAgo(app.createdAt)}
-          </span>
-        </span>
-      </button>
-
-      {/* owner-mode delete — same cover-corner slot the favorite star uses */}
-      {manageMode && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(app);
-          }}
-          aria-label={`Delete app: ${app.name}`}
-          title="Delete this app"
-          className={cn(
-            "veil-press absolute right-1.5 top-1.5 z-10 flex size-7 items-center justify-center rounded-full border backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/70",
-            deleting
-              ? "border-red-400/50 bg-black/60 text-red-300 opacity-100"
-              : "border-white/15 bg-black/45 text-zinc-300 opacity-0 hover:border-red-400/40 hover:text-red-300 group-hover:opacity-100 group-focus-within:opacity-100"
-          )}
-        >
-          <Trash2 aria-hidden className="size-3.5" />
-        </button>
-      )}
-    </motion.div>
-  );
-}
-
-function AppsTab({ onLaunchApp }: { onLaunchApp: (app: SiteAppCard) => Promise<void> }) {
-  const [apps, setApps] = React.useState<SiteAppCard[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState("");
-
-  // The offline “Veil AI Apps” pack (bundled from these apps — download →
-  // Extensions, or straight from the chip below once downloads unlocked).
-  const [pack, setPack] = React.useState<{ file: string; apps: number; built: string | null } | null>(null);
-  const [packHint, setPackHint] = React.useState("");
-
-  // Owner mode (password-gated) — unlocks deletes.
-  const [password, setPassword] = React.useState("");
-  const [manageMode, setManageMode] = React.useState(false);
-  const [unlockError, setUnlockError] = React.useState("");
-  const [deletingId, setDeletingId] = React.useState<string | null>(null);
-  const [openingId, setOpeningId] = React.useState<string | null>(null);
-
-  // Create-app composer (open to everyone — no password needed).
-  const [creating, setCreating] = React.useState(false);
-  const [form, setForm] = React.useState({
-    name: "",
-    desc: "",
-    icon: "spark",
-    html: "",
-    password: "",
-  });
-  const [formError, setFormError] = React.useState("");
-  const [saving, setSaving] = React.useState(false);
-  const [savedName, setSavedName] = React.useState("");
-
-  const load = React.useCallback(async () => {
-    try {
-      const res = await fetch("/api/apps", { cache: "no-store", signal: AbortSignal.timeout(15_000) });
-      const data = (await res.json().catch(() => ({}))) as {
-        ok?: boolean;
-        apps?: SiteAppCard[];
-        pack?: { file: string; apps: number; built: string | null } | null;
-        error?: string;
-      };
-      if (!res.ok || data.ok === false) throw new Error(data.error || "Could not load apps.");
-      setApps(data.apps || []);
-      setPack(data.pack || null);
-      setError("");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load apps.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    void load();
-    const t = setInterval(() => void load().catch(() => {}), 60_000);
-    // Veil AI fires this the moment it installs a new app — the grid
-    // picks it up live.
-    const onChanged = () => void load();
-    window.addEventListener("veil:apps-changed", onChanged);
-    return () => {
-      clearInterval(t);
-      window.removeEventListener("veil:apps-changed", onChanged);
-    };
-  }, [load]);
-
-  /* One click → the pack file downloads (reuses the tab's unlocked
-     download password — same gate as every download). */
-  const downloadPack = () => {
-    setPackHint("");
-    const pw = (() => {
-      try { return sessionStorage.getItem("veil:dl:pw") || ""; } catch { return ""; }
-    })();
-    if (!pw || !pack) {
-      setPackHint("unlock downloads on the start page first — then this chip hands you the pack");
-      window.setTimeout(() => setPackHint(""), 5000);
-      return;
-    }
-    // Zone-prefix aware: when the app is served through a path-prefix CDN
-    // (…/z/<zone>/), the download path must carry the prefix or the
-    // navigation escapes to the CDN origin's root and 404s. The layout's
-    // bootstrap shim exposes __veilFixUrl for exactly this — it's a no-op
-    // passthrough on the normal origin.
-    const dlPath = `/api/offline?ext=${encodeURIComponent(pack.file)}&pw=${encodeURIComponent(pw)}`;
-    const zoneFix = (
-      window as unknown as { __veilFixUrl?: (u: string) => string }
-    ).__veilFixUrl;
-    window.location.href = zoneFix ? zoneFix(dlPath) : dlPath;
-  };
-
-  const unlockManage = async () => {
-    if (!password.trim()) {
-      setUnlockError("Enter the owner password first.");
-      return;
-    }
-    setUnlockError("");
-    try {
-      const res = await fetch("/api/apps", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ verify: true, password }),
-      });
-      if (res.status === 403) {
-        setUnlockError("Wrong password.");
-        return;
-      }
-      setManageMode(true);
-    } catch {
-      setUnlockError("Could not verify the password.");
-    }
-  };
-
-  const remove = async (app: SiteAppCard) => {
-    if (deletingId) return;
-    setDeletingId(app.id);
-    try {
-      const res = await fetch(
-        `/api/apps?id=${encodeURIComponent(app.id)}&password=${encodeURIComponent(password)}`,
-        { method: "DELETE" },
-      );
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
-      if (!res.ok || data.ok === false) throw new Error(data.error || "Could not delete.");
-      setApps((prev) => prev.filter((a) => a.id !== app.id));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not delete.");
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-  const open = async (app: SiteAppCard) => {
-    if (openingId) return;
-    setOpeningId(app.id);
-    // Optimistically bump the launch badge — the server-side counter is
-    // fired by launchApp; the next poll reconciles the real number.
-    setApps((prev) =>
-      prev.map((a) =>
-        a.id === app.id
-          ? { ...a, plays: (a.plays ?? 0) + 1, lastPlayedAt: new Date().toISOString() }
-          : a,
-      ),
-    );
-    try {
-      await onLaunchApp(app);
-    } finally {
-      setOpeningId(null);
-    }
-  };
-
-  const submitCreate = async () => {
-    if (saving) return;
-    const name = form.name.trim();
-    const html = form.html.trim();
-    if (!name) {
-      setFormError("Give the app a name.");
-      return;
-    }
-    if (html.length < 400) {
-      setFormError("The app page needs to be a complete HTML document (at least ~400 characters).");
-      return;
-    }
-    setFormError("");
-    setSaving(true);
-    try {
-      const res = await fetch("/api/apps", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          desc: form.desc.trim(),
-          icon: form.icon,
-          html,
-          // Optional: with the right password the app is tagged owner-built.
-          ...(form.password.trim() ? { password: form.password.trim() } : {}),
-        }),
-      });
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
-      if (!res.ok || data.ok === false) throw new Error(data.error || "Could not save the app.");
-      setCreating(false);
-      setSavedName(name);
-      setForm({ name: "", desc: "", icon: "spark", html: "", password: "" });
-      await load();
-      window.dispatchEvent(new CustomEvent("veil:apps-changed"));
-    } catch (e) {
-      setFormError(e instanceof Error ? e.message : "Could not save the app.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div className="mx-auto w-full max-w-[1200px]">
-      {/* controls — create (open to everyone) + owner mode (password) */}
-      <div className="mb-6 flex flex-wrap items-center gap-2.5">
-        <button
-          type="button"
-          onClick={() => {
-            setCreating((c) => !c);
-            setFormError("");
-          }}
-          className="veil-press flex h-9 items-center gap-1.5 rounded-xl border border-[#2b4a3a] bg-[#0d1612]/90 px-3 text-[12.5px] font-medium text-[#7fd0a8] shadow-sm shadow-black/30 backdrop-blur-md transition hover:border-[#3f7f63] hover:text-[#a3ecc9] focus-visible:outline-none focus-visible:border-[#3f7f63]"
-        >
-          <Plus aria-hidden className="h-3.5 w-3.5" />
-          create app
-        </button>
-        {savedName && !creating && (
-          <span className="veil-pop-in flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-1 text-[11px] text-emerald-300">
-            <Sparkles aria-hidden className="size-3" />
-            “{savedName}” installed — no password needed
-          </span>
-        )}
-        <span className="flex-1" aria-hidden />
-        <button
-          type="button"
-          onClick={() => (manageMode ? setManageMode(false) : void unlockManage())}
-          className="veil-press flex h-9 items-center gap-1.5 rounded-xl border border-[#253830] bg-[#0d1612]/90 px-3 text-[12.5px] font-medium text-[#88a49a] shadow-sm shadow-black/30 backdrop-blur-md transition hover:border-[#3f7f63] hover:text-[#5fae87] focus-visible:outline-none focus-visible:border-[#3f7f63]"
-        >
-          {manageMode ? (
-            <>
-              <Unlock aria-hidden className="h-3.5 w-3.5 text-[#5fae87]" />
-              owner mode on
-            </>
-          ) : (
-            <>
-              <Lock aria-hidden className="h-3.5 w-3.5" />
-              owner mode
-            </>
-          )}
-        </button>
-        {!manageMode && (
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") void unlockManage();
-            }}
-            placeholder="owner password"
-            aria-label="Owner password"
-            className="veil-focus-bloom h-9 w-40 rounded-xl border border-[#253830] bg-[#0d1612]/90 px-3 text-[12.5px] text-zinc-100 shadow-sm shadow-black/30 outline-none backdrop-blur-md transition placeholder:text-[#526a60] focus-visible:border-[#3f7f63]"
-          />
-        )}
-        {manageMode && (
-          <span className="text-[11px] lowercase tracking-[0.04em] text-[#526a60]">
-            delete anything — changes are live
-          </span>
-        )}
-      </div>
-
-      {/* create-app composer — client-side, no password required */}
-      <AnimatePresence initial={false}>
-        {creating && (
-          <motion.div
-            key="app-composer"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            className="mb-6 overflow-hidden"
-          >
-            <div className="veil-slide-up-pop rounded-2xl border border-[#1a2822] bg-[#0d1612]/80 p-4 shadow-lg shadow-black/30 backdrop-blur-md sm:p-5">
-              <div className="mb-3 flex items-center gap-2">
-                <FileCode2 aria-hidden className="size-4 text-[#5fae87]" />
-                <h3 className="text-[13.5px] font-bold lowercase tracking-tight text-[#e8f2ee]">
-                  new app — paste a complete html page
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setCreating(false)}
-                  aria-label="Close app composer"
-                  className="veil-press ml-auto flex size-7 items-center justify-center rounded-lg border border-[#253830] text-[#88a49a] transition hover:border-[#3f7f63] hover:text-[#5fae87]"
-                >
-                  <X aria-hidden className="size-3.5" />
-                </button>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block">
-                  <span className="mb-1 block text-[11px] font-medium lowercase tracking-wide text-[#88a49a]">
-                    name
-                  </span>
-                  <input
-                    value={form.name}
-                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    placeholder="my app"
-                    maxLength={60}
-                    className="veil-focus-bloom h-9 w-full rounded-xl border border-[#253830] bg-[#0d1612]/90 px-3 text-[12.5px] text-zinc-100 outline-none transition placeholder:text-[#526a60] focus-visible:border-[#3f7f63]"
-                  />
-                </label>
-                <label className="block">
-                  <span className="mb-1 block text-[11px] font-medium lowercase tracking-wide text-[#88a49a]">
-                    description <span className="text-[#526a60]">(optional)</span>
-                  </span>
-                  <input
-                    value={form.desc}
-                    onChange={(e) => setForm((f) => ({ ...f, desc: e.target.value }))}
-                    placeholder="one line about it"
-                    maxLength={140}
-                    className="veil-focus-bloom h-9 w-full rounded-xl border border-[#253830] bg-[#0d1612]/90 px-3 text-[12.5px] text-zinc-100 outline-none transition placeholder:text-[#526a60] focus-visible:border-[#3f7f63]"
-                  />
-                </label>
-              </div>
-              <div className="mt-3">
-                <span className="mb-1.5 block text-[11px] font-medium lowercase tracking-wide text-[#88a49a]">
-                  icon
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {Object.keys(EXT_ICONS).map((key) => {
-                    const Ic = EXT_ICONS[key];
-                    const active = form.icon === key;
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => setForm((f) => ({ ...f, icon: key }))}
-                        aria-label={`Icon: ${key}`}
-                        aria-pressed={active}
-                        className={cn(
-                          "veil-press flex size-8 items-center justify-center rounded-lg border transition",
-                          active
-                            ? "border-[#3f7f63] bg-[#1c3327] text-[#7fd0a8]"
-                            : "border-[#253830] bg-[#0d1612]/80 text-[#88a49a] hover:border-[#3f7f63]/60 hover:text-[#5fae87]",
-                        )}
-                      >
-                        <Ic aria-hidden className="size-4" />
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              <label className="mt-3 block">
-                <span className="mb-1 block text-[11px] font-medium lowercase tracking-wide text-[#88a49a]">
-                  html — a complete self-contained page (inline style + script, no external requests)
-                </span>
-                <textarea
-                  value={form.html}
-                  onChange={(e) => setForm((f) => ({ ...f, html: e.target.value }))}
-                  placeholder="<!doctype html>\n<html lang=“en”>\n…"
-                  rows={9}
-                  spellCheck={false}
-                  className="veil-focus-bloom veil-scroll-slim w-full resize-y rounded-xl border border-[#253830] bg-[#0a120e]/90 p-3 font-mono text-[11.5px] leading-relaxed text-zinc-100 outline-none transition placeholder:text-[#526a60] focus-visible:border-[#3f7f63]"
-                />
-              </label>
-              <div className="mt-3 flex flex-wrap items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => void submitCreate()}
-                  disabled={saving}
-                  className="veil-hover-glow veil-press flex h-9 items-center gap-1.5 rounded-xl border border-[#2b4a3a] bg-[#1c3327] px-4 text-[12.5px] font-semibold lowercase text-[#a3ecc9] shadow-sm shadow-black/30 transition hover:border-[#3f7f63] disabled:opacity-50"
-                >
-                  {saving ? (
-                    <Loader2 aria-hidden className="size-3.5 animate-spin" />
-                  ) : (
-                    <Plus aria-hidden className="size-3.5" />
-                  )}
-                  {saving ? "installing…" : "create app"}
-                </button>
-                <input
-                  type="password"
-                  value={form.password}
-                  onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-                  placeholder="owner password (optional — owner badge)"
-                  aria-label="Owner password, optional"
-                  className="veil-focus-bloom h-9 w-56 rounded-xl border border-[#253830] bg-[#0d1612]/90 px-3 text-[12.5px] text-zinc-100 outline-none transition placeholder:text-[#526a60] focus-visible:border-[#3f7f63]"
-                />
-                <span className="text-[11px] lowercase tracking-wide text-[#526a60]">
-                  no password needed — apps run sandboxed in-frame
-                </span>
-              </div>
-              {formError && (
-                <p className="mt-2.5 text-[12px] text-red-300/90" role="alert">
-                  {formError}
-                </p>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {unlockError && (
-        <p className="mb-4 text-[12px] text-red-300/90" role="alert">
-          {unlockError}
-        </p>
-      )}
-      {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-xl border border-amber-500/25 bg-amber-500/10 px-3 py-2">
-          <WifiOff aria-hidden className="size-3.5 shrink-0 text-amber-400" />
-          <p className="text-[12px] text-amber-200">{error}</p>
-          <button
-            type="button"
-            onClick={() => void load()}
-            className="veil-press ml-auto shrink-0 text-[11px] font-semibold lowercase text-amber-300 hover:text-amber-200"
-          >
-            retry
-          </button>
-        </div>
-      )}
-
-      {loading ? (
-        <SkeletonGrid count={6} />
-      ) : apps.length === 0 ? (
-        <div className="py-16 text-center">
-          <Package aria-hidden className="mx-auto block size-6 text-[#526a60] opacity-40" />
-          <p className="mt-3 text-[13px] text-[#526a60]">No apps installed yet.</p>
-          <p className="mt-1 text-[12px] text-[#526a60]/70">
-            Hit <span className="text-[#5fae87]">create app</span> above to paste your own — or
-            open <span className="text-[#5fae87]">Veil AI</span> and ask for one.
-          </p>
-        </div>
-      ) : (
-        <section aria-label="Installed apps">
-          <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <h2 className="shrink-0 text-[15px] font-bold lowercase tracking-tight text-[#e8f2ee]">
-              installed apps <span className="font-semibold text-[#526a60]">({apps.length})</span>
-            </h2>
-            {apps.some((a) => a.lastPlayedAt) && (
-              <span
-                title="Apps you launched recently move to the front"
-                className="veil-text-breathe flex shrink-0 items-center gap-1 rounded-full border border-[#3f7f63]/30 bg-[#15251d]/60 px-2 py-0.5 text-[9.5px] font-medium lowercase tracking-wide text-[#5fae87]"
-              >
-                <Play aria-hidden className="size-2.5 fill-current" />
-                recently played first
-              </span>
-            )}
-            {pack && pack.apps > 0 && (
-              <button
-                type="button"
-                onClick={downloadPack}
-                title={`The “Veil AI Apps” offline pack — ${pack.apps} of these apps bundled for the offline version (built ${pack.built ?? "today"}). One click downloads it; drop it into veil-offline.html → Arcade → AI Lab.`}
-                className="veil-press flex shrink-0 items-center gap-1 rounded-full border border-[#6d5bb5]/35 bg-[#1d1830]/60 px-2 py-0.5 text-[9.5px] font-medium lowercase tracking-wide text-[#a99ae0] transition-colors hover:border-[#8b79d6]/50 hover:text-[#c4b8f0]"
-              >
-                <Package aria-hidden className="size-2.5" />
-                offline pack · {pack.apps} app{pack.apps === 1 ? "" : "s"}
-              </button>
-            )}
-            {packHint && (
-              <span role="status" className="text-[10px] lowercase tracking-wide text-[#c9a86a]">
-                {packHint}
-              </span>
-            )}
-            <span aria-hidden className="h-px min-w-6 flex-1 bg-gradient-to-r from-[#1a2822] to-transparent" />
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {apps.map((a, i) => (
-              <AppCard
-                key={a.id}
-                app={a}
-                index={i}
-                onOpen={(app) => void open(app)}
-                opening={openingId === a.id}
-                manageMode={manageMode}
-                deleting={deletingId === a.id}
-                onDelete={(app) => void remove(app)}
-              />
-            ))}
-          </div>
-          <p className="mt-10 text-center text-[11px] tracking-[0.04em] text-[#526a60]">
-            — apps run sandboxed in-frame · from veil ai, the owner, or anyone — create one above —
-          </p>
-        </section>
-      )}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /* ArcadeSection                                                      */
 /* ------------------------------------------------------------------ */
 
@@ -1512,50 +848,6 @@ export function ArcadeSection({
     setArcadeVisible(true);
   }, []);
 
-  // ----- site app controls -----
-  // Apps (Veil AI / owner builds) run in the SAME player layer as titles:
-  // the html is fetched by id, then mounted as a sandboxed srcdoc iframe
-  // — Back / Reload / Fullscreen / the resume pill all work unchanged.
-  const launchApp = React.useCallback(async (app: SiteAppCard) => {
-    // Count the launch (fire-and-forget — never blocks the player).
-    void fetch("/api/apps", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ play: true, id: app.id }),
-      keepalive: true,
-    }).catch(() => {});
-    let html: string;
-    try {
-      const res = await fetch(`/api/apps?id=${encodeURIComponent(app.id)}`, {
-        cache: "no-store",
-        signal: AbortSignal.timeout(20_000),
-      });
-      const data = (await res.json().catch(() => ({}))) as {
-        ok?: boolean;
-        app?: { html?: string };
-        error?: string;
-      };
-      if (!res.ok || data.ok === false || !data.app?.html) {
-        throw new Error(data.error || "Could not open the app.");
-      }
-      html = data.app.html;
-    } catch (e) {
-      const msg = (e instanceof Error ? e.message : "Could not open the app.")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/"/g, "&quot;");
-      html =
-        `<!doctype html><html><head><meta charset="utf-8"><title>App</title></head>` +
-        `<body style="margin:0;background:#0d1612;color:#88a49a;font-family:ui-monospace,monospace;display:flex;align-items:center;justify-content:center;height:100vh"><p>${msg}</p></body></html>`;
-    }
-    setTitle((prev) =>
-      prev
-        ? { url: "", name: app.name, key: prev.key + 1, reloads: 0, html }
-        : { url: "", name: app.name, key: 0, reloads: 0, html }
-    );
-    setArcadeVisible(true);
-  }, []);
-
   const launchTitle = React.useCallback(
     (g: TitleItem) => {
       if (g.external) {
@@ -1607,26 +899,13 @@ export function ArcadeSection({
     setArcadeVisible(false);
   }, []);
 
-  // Cross-section jump: Updates → Veil AI fires this when the owner clicks
-  // "open it in the Arcade" on a freshly installed app — swap straight to
-  // the Apps tab (opening the arcade overlay itself is page.tsx's job).
+  // Cross-section jump: the legacy "open the apps tab" signal (the Apps
+  // tab is now Roblox) lands on the Roblox tab.
   React.useEffect(() => {
-    const onJump = () => selectTab("apps");
+    const onJump = () => selectTab("roblox");
     window.addEventListener("veil:open-arcade-apps", onJump);
     return () => window.removeEventListener("veil:open-arcade-apps", onJump);
   }, [selectTab]);
-
-  // A jump that fired BEFORE the arcade mounted left a pending-tab note in
-  // sessionStorage — apply it once, then clear it.
-  React.useEffect(() => {
-    try {
-      const pending = sessionStorage.getItem("veil:arcade-tab");
-      if (pending === "apps") setTab("apps");
-      if (pending) sessionStorage.removeItem("veil:arcade-tab");
-    } catch {
-      /* private mode */
-    }
-  }, []);
 
   // Search + Enter launches the first matching title straight into the player.
   const submitSearch = async (e?: React.FormEvent) => {
@@ -1766,7 +1045,7 @@ export function ArcadeSection({
               veil <em className="not-italic text-[#5fae87]">arcade</em>
             </h1>
             <p className="mt-2 text-[11px] lowercase tracking-[0.1em] text-[#88a49a] [text-shadow:0_1px_10px_rgba(0,0,0,0.6)]">
-              the game library — titles, math, the stash &amp; apps, play instantly
+              the game library — titles, math, the stash &amp; roblox, play instantly
             </p>
           </div>
           <div className="absolute right-4 top-5">
@@ -1879,10 +1158,10 @@ export function ArcadeSection({
                 veil math — the number rush · sprint / survival / zen ·{" "}
                 <span className="font-semibold text-[#5fae87]">streaks, levels, bests</span>
               </>
-            ) : tab === "apps" ? (
+            ) : tab === "roblox" ? (
               <>
-                site apps · built by <span className="font-semibold text-[#5fae87]">veil ai</span> ·
-                run sandboxed in-frame
+                the real <span className="font-semibold text-[#5fae87]">roblox</span> — live
+                charts, search &amp; game pages · play launches the roblox app
               </>
             ) : (
               "the collection — 2,000+ single-file titles, plays in-frame"
@@ -2069,18 +1348,17 @@ export function ArcadeSection({
           <StashTab />
         </div>
 
-        {/* Apps — Veil AI / owner-built site apps. Launching one fetches its
-            html and plays it in the shared title player layer below. */}
+        {/* Roblox — the REAL platform, native (no iframes): live charts,
+            search and game pages streamed from roblox.com; Play fires the
+            same roblox-player:// deep link roblox.com uses, and embedded
+            previews fall back to the real game page (new tab → in-app). */}
         <div
           role="tabpanel"
-          id="arcade-panel-apps"
-          aria-labelledby="arcade-tab-apps"
-          className={cn(
-            "veil-scroll-slim absolute inset-0 overflow-y-auto px-4 pb-20 pt-4 sm:px-6",
-            tab === "apps" ? "block" : "hidden"
-          )}
+          id="arcade-panel-roblox"
+          aria-labelledby="arcade-tab-roblox"
+          className={cn("absolute inset-0 p-3 sm:p-4", tab === "roblox" ? "block" : "hidden")}
         >
-          <AppsTab onLaunchApp={launchApp} />
+          <RobloxTab active={tab === "roblox"} onLaunch={onLaunch} />
         </div>
 
         {/* ---------------- title player layer (below the top bar) ---------------- */}
@@ -2108,15 +1386,8 @@ export function ArcadeSection({
                 <span className="max-w-[28vw] truncate text-[13px] font-semibold text-zinc-100 sm:max-w-[240px]">
                   {title.name}
                 </span>
-                <Badge
-                  className={cn(
-                    "veil-text-breathe shrink-0 rounded-full px-2 text-[10.5px] font-medium uppercase tracking-wider",
-                    title.html
-                      ? "border-violet-500/30 bg-violet-500/15 text-violet-300"
-                      : "border-emerald-500/30 bg-emerald-500/15 text-emerald-300"
-                  )}
-                >
-                  {title.html ? "App" : "Playing"}
+                <Badge className="veil-text-breathe shrink-0 rounded-full border-emerald-500/30 bg-emerald-500/15 px-2 text-[10.5px] font-medium uppercase tracking-wider text-emerald-300">
+                  Playing
                 </Badge>
                 <div className="ml-auto flex flex-wrap items-center gap-1.5">
                   <Button
@@ -2152,20 +1423,17 @@ export function ArcadeSection({
                     )}
                     Fullscreen
                   </Button>
-                  {/* Browser-tab escape hatch — only for remote titles; a
-                      sandboxed srcdoc app has no URL to open. */}
-                  {!title.html && (
-                    <Button
-                      size="sm"
-                      onClick={() => onLaunch(title.url, title.name)}
-                      aria-label="Open in a full browser tab"
-                      className="veil-press h-8 gap-1.5 rounded-lg border-zinc-800 bg-zinc-900/70 px-2.5 text-[12px] font-medium text-zinc-300 hover:border-emerald-500/40 hover:bg-zinc-900 hover:text-emerald-200 sm:px-3"
-                    >
-                      <ExternalLink aria-hidden className="h-3.5 w-3.5" />
-                      <span className="hidden md:inline">Open in a full browser tab</span>
-                      <span className="md:hidden">Browser tab</span>
-                    </Button>
-                  )}
+                  {/* Browser-tab escape hatch for the running title. */}
+                  <Button
+                    size="sm"
+                    onClick={() => onLaunch(title.url, title.name)}
+                    aria-label="Open in a full browser tab"
+                    className="veil-press h-8 gap-1.5 rounded-lg border-zinc-800 bg-zinc-900/70 px-2.5 text-[12px] font-medium text-zinc-300 hover:border-emerald-500/40 hover:bg-zinc-900 hover:text-emerald-200 sm:px-3"
+                  >
+                    <ExternalLink aria-hidden className="h-3.5 w-3.5" />
+                    <span className="hidden md:inline">Open in a full browser tab</span>
+                    <span className="md:hidden">Browser tab</span>
+                  </Button>
                   <Button
                     size="sm"
                     onClick={stopTitle}
@@ -2178,30 +1446,17 @@ export function ArcadeSection({
                 </div>
               </div>
 
-              {/* Title viewport — the wrapper is the OS-fullscreen target (F key).
-                  Site apps render as sandboxed srcdoc iframes (allow-scripts
-                  only, like the offline extension runner); titles keep the
-                  veiled remote src. */}
+              {/* Title viewport — the wrapper is the OS-fullscreen target (F key). */}
               <div ref={arcadeAreaRef} className="relative min-h-0 flex-1 overflow-hidden bg-black">
-                {title.html ? (
-                  <iframe
-                    key={`app-${title.key}-${title.reloads}`}
-                    srcDoc={title.html}
-                    title={title.name}
-                    sandbox="allow-scripts"
-                    className="absolute inset-0 h-full w-full border-0 bg-black"
-                  />
-                ) : (
-                  <iframe
-                    key={`${title.key}-${title.reloads}`}
-                    ref={arcadeFrameRef}
-                    src={routeUrl(title.url)}
-                    title={title.name}
-                    className="absolute inset-0 h-full w-full border-0 bg-black"
-                    allow="fullscreen; autoplay; clipboard-read; clipboard-write; gamepad"
-                    referrerPolicy="no-referrer"
-                  />
-                )}
+                <iframe
+                  key={`${title.key}-${title.reloads}`}
+                  ref={arcadeFrameRef}
+                  src={routeUrl(title.url)}
+                  title={title.name}
+                  className="absolute inset-0 h-full w-full border-0 bg-black"
+                  allow="fullscreen; autoplay; clipboard-read; clipboard-write; gamepad"
+                  referrerPolicy="no-referrer"
+                />
               </div>
             </motion.div>
           )}

@@ -1,0 +1,14 @@
+{
+  "name": "veil-wisp-relay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Veil wisp relay — the Scramjet engine's tunnel server (fixed port 3312). The Scramjet boot page connects through the gateway (?XTransformPort=3312) and speaks the wisp protocol; this server dials the real TCP hosts. Plain HTTP GETs answer 'wisp-server-alive' so the boot page can probe which transport reaches us.",
+  "scripts": {
+    "dev": "node --watch index.mjs"
+  },
+  "dependencies": {
+    "@mercuryworkshop/wisp-js": "0.4.1",
+    "ws": "^8.18.0"
+  }
+}
