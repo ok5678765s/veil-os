@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-18T18:11:15.549Z",
+  "exportedAt": "2026-10-18T18:12:09.243Z",
   "counts": {
     "accounts": 67,
     "messages": 114,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 56173,
+      "coins": 54674,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": "puppy",
+      "pfpAccessory": "sprout",
       "pfpOverlay": null,
       "dailyRewardStreak": 3,
       "lastRewardClaim": "2026-10-17T04:23:42.483Z",
