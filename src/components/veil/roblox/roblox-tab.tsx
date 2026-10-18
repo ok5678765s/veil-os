@@ -46,6 +46,7 @@ import {
   launchRobloxApp,
   loadRecent,
   maturityLabel,
+  normGameName,
   openExternalTab,
   openRobloxGamePageTab,
   ratingPct,
@@ -611,11 +612,17 @@ function HomeView({
   onPlay: (g: RobloxGameCard) => void;
   onPlayCloud: (cg: CloudGame) => void;
 }) {
-  if (error && !home) return <ErrorCard message={error} onRetry={retry} />;
-
+  /* The CloudRow is evergreen — the now.gg catalog is static, so cloud
+   * play must survive even a full roblox.com outage (the live rows show
+   * the error card below it, but the browser-playable games stay up). */
   return (
     <>
       <CloudRow onPlayCloud={onPlayCloud} />
+      {error && !home && (
+        <div className="mb-7">
+          <ErrorCard message={error} onRetry={retry} />
+        </div>
+      )}
       {recent.length > 0 && (
         <GameRow
           title="Continue"
@@ -658,6 +665,7 @@ function SearchView({
   retry,
   onOpen,
   onPlay,
+  onPlayCloud,
 }: {
   query: string;
   results: RobloxGameCard[] | null;
@@ -666,10 +674,22 @@ function SearchView({
   retry: () => void;
   onOpen: (g: RobloxGameCard) => void;
   onPlay: (g: RobloxGameCard) => void;
+  onPlayCloud: (cg: CloudGame) => void;
 }) {
-  if (error) return <ErrorCard message={error} onRetry={retry} />;
+  /* Cloud twins matching the query — searching "brookhaven" surfaces the
+   * now.gg cloud card too, so the browser-playable path is always visible. */
+  const q = normGameName(query);
+  const cloudHits = q
+    ? CLOUD_GAMES.filter(
+        (cg) =>
+          cg.aliases.some((a) => a.includes(q) || q.includes(a)) ||
+          normGameName(cg.name).includes(q)
+      )
+    : [];
 
-  if (searching && !results) {
+  if (error && cloudHits.length === 0) return <ErrorCard message={error} onRetry={retry} />;
+
+  if (searching && !results && cloudHits.length === 0) {
     return (
       <div className="flex flex-wrap gap-3">
         <SkeletonCards count={10} wide />
@@ -677,7 +697,7 @@ function SearchView({
     );
   }
 
-  if (results && results.length === 0) {
+  if (results && results.length === 0 && cloudHits.length === 0) {
     return (
       <p className="py-16 text-center text-[14px]" style={{ color: R.sub }}>
         No experiences found for “{query}”.
@@ -687,15 +707,39 @@ function SearchView({
 
   return (
     <>
-      <p className="mb-4 text-[13px]" style={{ color: R.sub }}>
-        {results?.length ?? 0} result{results?.length === 1 ? "" : "s"} for{" "}
-        <span className="font-semibold text-white">“{query}”</span>
-      </p>
-      <div className="flex flex-wrap gap-3">
-        {results?.map((g, i) => (
-          <GameCard key={g.universeId} game={g} index={i} onOpen={onOpen} onPlay={onPlay} />
-        ))}
-      </div>
+      {cloudHits.length > 0 && (
+        <div className="mb-5">
+          <div className="mb-2.5 flex flex-wrap items-center gap-2.5">
+            <h2 className="flex items-center gap-1.5 text-[16px] font-bold text-white">
+              <Cloud aria-hidden className="size-4" style={{ color: R.cloud }} />
+              Cloud play
+            </h2>
+            <span className="truncate text-[11.5px]" style={{ color: R.dim }}>
+              plays right in your browser — no download
+            </span>
+          </div>
+          <div className="veil-scroll-slim flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {cloudHits.map((cg, i) => (
+              <CloudCard key={cg.key} game={cg} index={i} onPlayCloud={onPlayCloud} />
+            ))}
+          </div>
+        </div>
+      )}
+      {error ? (
+        <ErrorCard message={error} onRetry={retry} />
+      ) : (
+        <>
+          <p className="mb-4 text-[13px]" style={{ color: R.sub }}>
+            {results?.length ?? 0} result{results?.length === 1 ? "" : "s"} for{" "}
+            <span className="font-semibold text-white">“{query}”</span>
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {results?.map((g, i) => (
+              <GameCard key={g.universeId} game={g} index={i} onOpen={onOpen} onPlay={onPlay} />
+            ))}
+          </div>
+        </>
+      )}
     </>
   );
 }
@@ -1220,6 +1264,10 @@ export function RobloxTab({
 
   const inSearch = view.kind === "search";
 
+  /* Cloud twin of the game in the play dialog — when now.gg streams this
+   * exact game, the dialog leads with the browser-playable option. */
+  const playCloudTwin = playTarget ? cloudMatchFor(playTarget.name) : null;
+
   return (
     <div
       role="region"
@@ -1326,6 +1374,7 @@ export function RobloxTab({
               }}
               onOpen={openGame}
               onPlay={play}
+              onPlayCloud={openCloud}
             />
           )}
           {view.kind === "detail" && (
@@ -1402,12 +1451,42 @@ export function RobloxTab({
                   </>
                 ) : embedded ? (
                   <>
-                    {/* QR hero — the one path that goes from the preview
-                     * straight INTO the game: scan with a phone that has the
-                     * Roblox app, tap Play there. */}
+                    {/* Cloud twin hero — the one true "play here" path: now.gg streams this exact game in a browser */}
+                    {playCloudTwin && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const cg = playCloudTwin;
+                          setPlayTarget(null);
+                          setCloudTarget(cg);
+                          setCloudBlocked(false);
+                        }}
+                        className="flex w-full items-center gap-3 rounded-xl border p-3 text-left transition hover:brightness-110 active:scale-[0.98]"
+                        style={{ borderColor: `${R.cloud}66`, background: `${R.cloud}1a` }}
+                      >
+                        <span
+                          aria-hidden
+                          className="flex size-10 shrink-0 items-center justify-center rounded-full text-white shadow-[0_4px_14px_rgba(255,66,165,0.4)]"
+                          style={{ background: R.cloud }}
+                        >
+                          <Cloud className="size-4.5" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[13.5px] font-bold text-white">
+                            Play in your browser — no download
+                          </span>
+                          <span className="mt-0.5 block text-[11px] leading-snug" style={{ color: R.cloudHover }}>
+                            now.gg streams the real game to this browser
+                          </span>
+                        </span>
+                        <ChevronRight aria-hidden className="size-4 shrink-0" style={{ color: R.cloud }} />
+                      </button>
+                    )}
+                    {/* QR hero — the phone path: scan with a device that has the Roblox app, tap Play there */}
                     <p className="text-center text-[12.5px] leading-snug" style={{ color: R.sub }}>
-                      Browsers can&apos;t run Roblox games — not even roblox.com.
-                      The game runs in the Roblox app on your device:
+                      {playCloudTwin
+                        ? "Prefer the app? The game runs on your device:"
+                        : "Browsers can\u2019t run Roblox games — not even roblox.com. The game runs in the Roblox app on your device:"}
                     </p>
                     <div className="my-1 flex items-center gap-4 self-stretch rounded-xl p-3" style={{ background: R.panel }}>
                       <div className="rounded-lg bg-white p-2 shadow-inner">
@@ -1540,8 +1619,186 @@ export function RobloxTab({
                         </button>
                       </div>
                     </div>
+                    {/* Cloud twin row — the browser-playable shortcut */}
+                    {playCloudTwin && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const cg = playCloudTwin;
+                          setPlayTarget(null);
+                          setCloudTarget(cg);
+                          setCloudBlocked(false);
+                        }}
+                        className="mt-1 flex w-full items-center gap-2.5 rounded-xl border p-2.5 text-left transition hover:brightness-110 active:scale-[0.98]"
+                        style={{ borderColor: `${R.cloud}66`, background: `${R.cloud}1a` }}
+                      >
+                        <span
+                          aria-hidden
+                          className="flex size-8 shrink-0 items-center justify-center rounded-full text-white"
+                          style={{ background: R.cloud }}
+                        >
+                          <Cloud className="size-3.5" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[12.5px] font-bold text-white">
+                            Or play {playTarget.name} in this browser
+                          </span>
+                          <span className="block text-[10.5px]" style={{ color: R.cloudHover }}>
+                            no download — now.gg cloud
+                          </span>
+                        </span>
+                        <ChevronRight aria-hidden className="size-3.5 shrink-0" style={{ color: R.cloud }} />
+                      </button>
+                    )}
                   </>
                 )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* cloud play dialog — now.gg streams the real game in a browser tab */}
+      <AnimatePresence>
+        {cloudTarget && (
+          <motion.div
+            key="roblox-cloud"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="absolute inset-0 z-40 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+            onClick={() => setCloudTarget(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Cloud play ${cloudTarget.name}`}
+          >
+            <motion.div
+              initial={{ scale: 0.92, y: 12 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 8 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              className="w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl"
+              style={{ background: R.panel }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* banner — the now.gg wide tile */}
+              <div className="relative h-28 w-full overflow-hidden" style={{ background: R.page }}>
+                <img
+                  src={cloudTarget.tile}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
+                  className="absolute inset-0 size-full object-cover"
+                />
+                <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#232527] via-black/30 to-transparent" />
+                <button
+                  type="button"
+                  onClick={() => setCloudTarget(null)}
+                  aria-label="Close"
+                  className="absolute right-2.5 top-2.5 flex size-8 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:brightness-125"
+                >
+                  <X aria-hidden className="size-4" />
+                </button>
+                <div className="absolute bottom-2.5 left-4 right-4 flex items-center gap-2">
+                  <span
+                    aria-hidden
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-white shadow-lg"
+                    style={{ background: R.cloud }}
+                  >
+                    <Cloud className="size-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="truncate text-[15.5px] font-bold text-white">{cloudTarget.name}</h3>
+                    <p className="text-[11px] font-medium" style={{ color: R.cloudHover }}>
+                      streams from now.gg&apos;s cloud
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center gap-2.5 px-5 py-4">
+                {cloudBlocked ? (
+                  <>
+                    <p className="text-center text-[12.5px] leading-snug" style={{ color: R.sub }}>
+                      This preview blocked the new tab — open the cloud game
+                      inside Veil instead:
+                    </p>
+                    {onLaunch ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onLaunch(cloudTarget.url, cloudTarget.name);
+                          setCloudTarget(null);
+                        }}
+                        className="flex h-10 w-full items-center justify-center gap-2 rounded-lg text-[14px] font-bold uppercase tracking-wide text-white shadow-[0_6px_20px_rgba(255,66,165,0.35)] transition hover:brightness-110 active:scale-95"
+                        style={{ background: R.cloud }}
+                      >
+                        <Globe aria-hidden className="size-4" />
+                        Open in the Veil browser
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={launchCloud}
+                        className="flex h-10 w-full items-center justify-center gap-2 rounded-lg text-[14px] font-bold uppercase tracking-wide text-white transition hover:brightness-110 active:scale-95"
+                        style={{ background: R.cloud }}
+                      >
+                        <Cloud aria-hidden className="size-4" />
+                        Try again
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <p className="text-center text-[12.5px] leading-snug" style={{ color: R.sub }}>
+                      The real game runs on now.gg&apos;s cloud and streams to
+                      any browser — no download, no install, nothing to launch.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={launchCloud}
+                      className="flex h-11 w-full items-center justify-center gap-2 rounded-lg text-[15px] font-bold uppercase tracking-wide text-white shadow-[0_6px_20px_rgba(255,66,165,0.35)] transition hover:brightness-110 active:scale-95"
+                      style={{ background: R.cloud }}
+                    >
+                      <Cloud aria-hidden className="size-4.5" />
+                      Play in my browser
+                    </button>
+                    {onLaunch && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onLaunch(cloudTarget.url, cloudTarget.name);
+                          setCloudTarget(null);
+                        }}
+                        className="flex h-9 w-full items-center justify-center gap-1.5 rounded-lg text-[13px] font-semibold transition hover:brightness-125 active:scale-95"
+                        style={{ background: R.panelHover, color: R.sub }}
+                      >
+                        <Globe aria-hidden className="size-3.5" />
+                        Open in the Veil browser
+                      </button>
+                    )}
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={copyCloudLink}
+                  className="flex h-8 items-center gap-1.5 rounded-lg px-3 text-[12px] font-semibold transition hover:brightness-125 active:scale-95"
+                  style={{ background: cloudCopied ? R.cloud : R.panelHover, color: cloudCopied ? "#fff" : R.sub }}
+                >
+                  {cloudCopied ? (
+                    <Check aria-hidden className="size-3.5" />
+                  ) : (
+                    <Copy aria-hidden className="size-3.5" />
+                  )}
+                  {cloudCopied ? "Copied!" : "Copy link"}
+                </button>
+                <p className="max-w-[34ch] text-center text-[10.5px] leading-relaxed" style={{ color: R.dim }}>
+                  now.gg (BlueStacks cloud) runs the real Roblox app on their
+                  servers and streams it — the same game, in a browser tab.
+                </p>
               </div>
             </motion.div>
           </motion.div>
