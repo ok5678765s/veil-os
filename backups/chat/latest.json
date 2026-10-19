@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:10:45.610Z",
+  "exportedAt": "2026-10-19T22:12:19.470Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 1,
+      "coins": 8587,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 69195,
+      "coins": 60000,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1544,17 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuqz8dii0007qzul9vx9qwz1",
-      "channelId": "main",
-      "accountId": "cmuqz88rx0005qzul28sr31hl",
-      "content": "burrito",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T13:06:18.090Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuqzqr15000gqzulfdqqo9je",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -2828,6 +2817,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:10:20.417Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvft7tvc008jq9kfci4v84wf",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "coin It sent me to the homescreen and kept my money after I won",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:12:09.336Z",
       "editedAt": null
     }
   ],
