@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:12:19.470Z",
+  "exportedAt": "2026-10-19T22:12:53.417Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 8587,
+      "coins": 7977,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 60000,
+      "coins": 60302,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1544,28 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuqzqr15000gqzulfdqqo9je",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "hi",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T13:20:35.417Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmur476c00011qzul2feginvz",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "🎰",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T15:25:20.208Z",
-      "editedAt": null
-    },
-    {
       "id": "cmurl8pz9000eqzule8g3ghlp",
       "channelId": "links",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -2828,6 +2806,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:12:09.336Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvft8i7d0095q9kfddytocgv",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "will fix",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:12:40.873Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvft8qwj009dq9kfybd7sz50",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "nextjs please don't crash",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:12:52.148Z",
       "editedAt": null
     }
   ],
