@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T18:14:29.116Z",
+  "exportedAt": "2026-10-19T18:16:33.872Z",
   "counts": {
     "accounts": 71,
     "messages": 117,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 32687,
+      "coins": 32688,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -2778,14 +2778,14 @@
       "editedAt": null
     },
     {
-      "id": "cmvfkpmgz000crh6l8hj0ajd4",
+      "id": "cmvfkshjz0001rh9jfewdwzxb",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
       "content": "hi",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T18:14:03.011Z",
+      "replyTo": "cmvfkkf5c0004rh6lc8b9hvkp",
+      "replyToContent": "hi",
+      "replyToUsername": "claefklawd",
+      "createdAt": "2026-10-19T18:16:16.607Z",
       "editedAt": null
     }
   ],
