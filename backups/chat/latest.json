@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:03:41.251Z",
+  "exportedAt": "2026-10-19T22:04:14.736Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 11,
+      "coins": 0,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 82005,
+      "coins": 82006,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1544,17 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuq8mkg00002orwp8uy5psam",
-      "channelId": "main",
-      "accountId": "cmuq8mcnv0000orwpt14u4zd3",
-      "content": "yoo",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T00:41:30.624Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuqexyzw0006r0kqvu6vyxiu",
       "channelId": "main",
       "accountId": "cmuqexgcx0004r0kq9vcatsgi",
@@ -2828,6 +2817,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:03:11.066Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfsxfbh0035q9kf2j6mn3di",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "sent",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:04:03.918Z",
       "editedAt": null
     }
   ],
