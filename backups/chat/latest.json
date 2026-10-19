@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:05:22.777Z",
+  "exportedAt": "2026-10-19T22:05:56.631Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 2,
+      "coins": 1210,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 82008,
+      "coins": 80801,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1544,17 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuqh8xo90001r06zpsrr2i9n",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "added quaser search engine scramjet was buggin",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T04:42:51.129Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuqxpxf80002qzty5aa07mti",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -2828,6 +2817,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:05:06.095Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfszhhw003rq9kf01rm3bys",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "sent",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:05:40.052Z",
       "editedAt": null
     }
   ],
