@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:02:34.351Z",
+  "exportedAt": "2026-10-19T22:03:07.713Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 9,
+      "coins": 20,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 82003,
+      "coins": 82005,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1544,39 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuirobj60001nmiqacn1nk4m",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "???",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-09-26T19:12:35.682Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuisotsr0001nm0b988zwic3",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "wut",
-      "replyTo": "cmuhpye1s0006o3u9k1cuv878",
-      "replyToContent": "HOO LEE SHI",
-      "replyToUsername": "joitfr",
-      "createdAt": "2026-09-26T19:40:58.971Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuly9ftg000bn5hdt4ycxdpc",
-      "channelId": "main",
-      "accountId": "cmuly8ro30009n5hd0e50a5c4",
-      "content": "hiiii",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-09-29T00:40:17.236Z",
-      "editedAt": null
-    },
-    {
       "id": "cmum2xnuv0014pnubk1ojz8ir",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -2828,6 +2795,39 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:02:33.255Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfsvop7002dq9kfscg0ix2v",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "na Im at 9",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:02:42.763Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfsw1gc002lq9kf9uj2n3xc",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "lol",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:02:59.293Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfsw4lv002pq9kf6mr8zfat",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "here u go",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:03:03.380Z",
       "editedAt": null
     }
   ],
