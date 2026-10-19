@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:13:27.053Z",
+  "exportedAt": "2026-10-19T22:14:00.406Z",
   "counts": {
     "accounts": 73,
-    "messages": 117,
+    "messages": 115,
     "dms": 3
   },
   "accounts": [
@@ -2806,28 +2806,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:12:40.873Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft8qwj009dq9kfybd7sz50",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "nextjs please don't crash",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:12:52.148Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft8wpv009hq9kflyrh7e99",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "its so laggy",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:12:59.684Z",
       "editedAt": null
     }
   ],
