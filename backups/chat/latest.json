@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:14:34.119Z",
+  "exportedAt": "2026-10-19T22:15:08.464Z",
   "counts": {
     "accounts": 73,
-    "messages": 116,
+    "messages": 115,
     "dms": 3
   },
   "accounts": [
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 9807,
+      "coins": 1377,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -2806,17 +2806,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:12:40.873Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvftan6i009pq9kfym6mxs6z",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "I just realized you gain coin so quickly",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:14:20.634Z",
       "editedAt": null
     }
   ],
