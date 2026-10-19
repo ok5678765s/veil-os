@@ -20,10 +20,10 @@
  *   with streaks, difficulty tiers and per-mode bests, fully local
  *   React, no third-party servers. Replaced the Blooks quiz
  *   platform at the owner's request (Bloxd before that).
- * - The Roblox tab is the REAL Roblox, native (replaced the old Apps
- *   tab at the owner's request — no iframes): live charts, search and
- *   game pages streamed from roblox.com through /api/roblox, and Play
- *   fires the same roblox-player:// deep link roblox.com uses.
+ * - The Builds tab ("My Builds") is the home of the owner's AI Coder
+ *   builds — every game/app Veil AI wrote lives in localStorage and
+ *   plays in an embedded in-tab player (owner ask 2026-10-19: "remove
+ *   roblox from arcade" — the old live roblox.com tab is gone).
  * - Swapping titles or reloading bumps a key so only the iframe remounts.
  * - Title URLs and thumbnails are routed through the veil (routeUrl).
  * - Title iframes register themselves in the arcade-frame
@@ -42,7 +42,6 @@ import {
   Calculator,
   ExternalLink,
   Flame,
-  Gamepad2,
   Joystick,
   LayoutGrid,
   Maximize,
@@ -50,6 +49,7 @@ import {
   Play,
   RotateCw,
   Search,
+  Sparkles,
   Square,
   Star,
   WifiOff,
@@ -62,7 +62,7 @@ import { Input } from "@/components/ui/input";
 import { KeyboardHelp } from "@/components/veil/keyboard-help";
 import { BackdropVideo } from "@/components/veil/backdrop-video";
 import { MathGame } from "@/components/veil/math-game";
-import { RobloxTab } from "@/components/veil/roblox/roblox-tab";
+import { BuildsTab } from "@/components/veil/arcade/builds-tab";
 import { routeUrl, setArcadeFrame } from "@/lib/veil/shared";
 import { takePendingRobloxJump } from "@/lib/veil/cloud-games";
 import {
@@ -107,13 +107,13 @@ interface RunningTitle {
   reloads: number;
 }
 
-type TabId = "gnmath" | "math" | "stash" | "roblox";
+type TabId = "gnmath" | "math" | "stash" | "builds";
 
 const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: "gnmath", label: "GN-Math", icon: Joystick },
   { id: "math", label: "Math", icon: Calculator },
   { id: "stash", label: "The Stash", icon: Archive },
-  { id: "roblox", label: "Roblox", icon: Gamepad2 },
+  { id: "builds", label: "My Builds", icon: Sparkles },
 ];
 
 const SEARCH_PLACEHOLDER = "search the arcade…";
@@ -900,23 +900,23 @@ export function ArcadeSection({
     setArcadeVisible(false);
   }, []);
 
-  // Cross-section jump: the legacy "open the apps tab" signal (the Apps
-  // tab is now Roblox) lands on the Roblox tab.
+  // Cross-section jump: the legacy "open the apps tab" signal lands on
+  // the Builds tab (the AI Coder home — the old Apps/Roblox tab is gone).
   React.useEffect(() => {
-    const onJump = () => selectTab("roblox");
+    const onJump = () => selectTab("builds");
     window.addEventListener("veil:open-arcade-apps", onJump);
     return () => window.removeEventListener("veil:open-arcade-apps", onJump);
   }, [selectTab]);
 
   // "Play in the Arcade" from the AI section's AI Coder: the
-  // made build starts in the Roblox tab's embedded player (RobloxTab
+  // made build starts in the Builds tab's embedded player (BuildsTab
   // listens for the same event / consumes the pending slot itself).
   // The jump slot covers the post-reload first-open race — the event
   // fired before this section ever mounted.
   React.useEffect(() => {
-    const onPlay = () => selectTab("roblox");
+    const onPlay = () => selectTab("builds");
     window.addEventListener("veil:play-made-game", onPlay);
-    if (takePendingRobloxJump()) selectTab("roblox");
+    if (takePendingRobloxJump()) selectTab("builds");
     return () => window.removeEventListener("veil:play-made-game", onPlay);
   }, [selectTab]);
 
@@ -1058,7 +1058,7 @@ export function ArcadeSection({
               veil <em className="not-italic text-[#5fae87]">arcade</em>
             </h1>
             <p className="mt-2 text-[11px] lowercase tracking-[0.1em] text-[#88a49a] [text-shadow:0_1px_10px_rgba(0,0,0,0.6)]">
-              the game library — titles, math, the stash &amp; roblox, play instantly
+              the game library — titles, math, the stash &amp; your builds, play instantly
             </p>
           </div>
           <div className="absolute right-4 top-5">
@@ -1171,10 +1171,10 @@ export function ArcadeSection({
                 veil math — the number rush · sprint / survival / zen ·{" "}
                 <span className="font-semibold text-[#5fae87]">streaks, levels, bests</span>
               </>
-            ) : tab === "roblox" ? (
+            ) : tab === "builds" ? (
               <>
-                the real <span className="font-semibold text-[#5fae87]">roblox</span> — live
-                charts, search &amp; game pages · play launches the roblox app
+                <span className="font-semibold text-[#5fae87]">my builds</span> — games &amp; apps
+                the AI Coder wrote · replay any time, right here
               </>
             ) : (
               "the collection — 2,000+ single-file titles, plays in-frame"
@@ -1361,17 +1361,15 @@ export function ArcadeSection({
           <StashTab />
         </div>
 
-        {/* Roblox — the REAL platform, native (no iframes): live charts,
-            search and game pages streamed from roblox.com; Play fires the
-            same roblox-player:// deep link roblox.com uses, and embedded
-            previews fall back to the real game page (new tab → in-app). */}
+        {/* My Builds — the AI Coder home: every build Veil AI ever wrote
+            for this browser, replayable in the embedded in-tab player. */}
         <div
           role="tabpanel"
-          id="arcade-panel-roblox"
-          aria-labelledby="arcade-tab-roblox"
-          className={cn("absolute inset-0 p-3 sm:p-4", tab === "roblox" ? "block" : "hidden")}
+          id="arcade-panel-builds"
+          aria-labelledby="arcade-tab-builds"
+          className={cn("absolute inset-0 p-3 sm:p-4", tab === "builds" ? "block" : "hidden")}
         >
-          <RobloxTab active={tab === "roblox"} onLaunch={onLaunch} />
+          <BuildsTab active={tab === "builds"} />
         </div>
 
         {/* ---------------- title player layer (below the top bar) ---------------- */}

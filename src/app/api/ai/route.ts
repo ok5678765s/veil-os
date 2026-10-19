@@ -68,6 +68,14 @@ const bodySchema = z.object({
    *  payload. Builds preview inline and play embedded in the Arcade —
    *  never a browser tab. */
   make: z.enum(["ext", "code", "game"]).optional(),
+  /** Power mode (owner ask 2026-10-19: "find a better more powerful model").
+   * The gateway serves one backend (glm-4-plus) for every model name —
+   * the REAL power lever is its thinking mode. power:true on a maker
+   * request enables deep reasoning before the code: smarter, richer
+   * builds at the cost of a slower start. Chat stays fast always;
+   * repair rounds (nudge/continuation) stay thinking-disabled (the
+   * main build already reasoned; repairs must be quick). */
+  power: z.boolean().optional(),
   /** stream: true → Server-Sent Events instead of one JSON blob. Long
    *  builds (Extension Maker) can take 30-90s; a silent connection gets
    *  cut by outer proxies which answer with an HTML error page the
@@ -208,6 +216,13 @@ async function consumeStream(
     lastDelta = Date.now();
     onDelta(d);
   };
+  /* Reasoning tokens (power mode) stream as delta.reasoning_content —
+   * not code, but PROOF the model is alive. Touching lastDelta on them
+   * keeps the silence watchdog from killing a legitimately long
+   * thinking phase. */
+  const touch = () => {
+    lastDelta = Date.now();
+  };
   for (;;) {
     const nextP = it.next();
     const budget = Math.max(
@@ -240,21 +255,25 @@ async function consumeStream(
     while ((nl = carry.indexOf("\n")) >= 0) {
       const line = carry.slice(0, nl);
       carry = carry.slice(nl + 1);
-      emitDelta(line, push, onFinish);
+      emitDelta(line, push, onFinish, touch);
     }
   }
-  if (carry) emitDelta(carry, push, onFinish);
+  if (carry) emitDelta(carry, push, onFinish, touch);
   return full;
 }
 
 /** Feed one SSE `data:` line from the SDK's raw byte stream to the client.
  * Payloads look like: {"choices":[{"delta":{"content":"…"}}]}. The final
  * chunk carries finish_reason — "length" means the output cap truncated
- * the build, which the caller treats as "must continue". */
+ * the build, which the caller treats as "must continue". Power mode's
+ * thinking phase streams delta.reasoning_content — not forwarded to the
+ * client, but reported through onProgress so the silence watchdog knows
+ * the model is alive. */
 function emitDelta(
   line: string,
   onDelta: (d: string) => void,
-  onFinish?: (reason: string | null) => void
+  onFinish?: (reason: string | null) => void,
+  onProgress?: () => void
 ): void {
   if (!line.startsWith("data:")) return;
   const payload = line.slice(5).trim();
@@ -262,13 +281,17 @@ function emitDelta(
   try {
     const j = JSON.parse(payload) as {
       choices?: {
-        delta?: { content?: unknown };
+        delta?: { content?: unknown; reasoning_content?: unknown };
         message?: { content?: unknown };
         finish_reason?: unknown;
       }[];
     };
-    const d = j.choices?.[0]?.delta?.content ?? j.choices?.[0]?.message?.content;
+    const delta = j.choices?.[0]?.delta;
+    const d = delta?.content ?? j.choices?.[0]?.message?.content;
     if (typeof d === "string" && d) onDelta(d);
+    if (typeof delta?.reasoning_content === "string" && delta.reasoning_content) {
+      onProgress?.();
+    }
     const fin = j.choices?.[0]?.finish_reason;
     if (typeof fin === "string" && fin) onFinish?.(fin);
   } catch {
@@ -462,6 +485,8 @@ export async function POST(req: Request): Promise<Response> {
   /* AI Coder's prompt builds any self-contained web app; the legacy ext
    * flow keeps its own. "game" (retired spelling) maps to AI Coder. */
   const makerPrompt = parsed.data.make === "ext" ? EXT_SYSTEM_PROMPT : CODE_SYSTEM_PROMPT;
+  /* Power mode — deep reasoning for maker builds only. */
+  const power = parsed.data.power === true && maker;
   const wantStream = parsed.data.stream === true;
   // Images on the last user message → the multimodal (vision) endpoint.
   const hasImages = (() => {
@@ -485,15 +510,17 @@ export async function POST(req: Request): Promise<Response> {
      * the old code surfaced those as instant 502s. */
     if (wantStream) {
       const enc = new TextEncoder();
-      /* thinking disabled — the maker must START WRITING CODE immediately
-       * (a thinking model burns 20-60s reasoning before the first line,
-       * which is exactly the "coder takes too long" complaint). Same for
-       * plain chat: short answers never need chain-of-thought. */
+      /* thinking: DISABLED for fast chat + fast maker builds (the maker
+       * must START WRITING CODE immediately — a thinking model burns
+       * 20-60s reasoning before the first line, which is exactly the
+       * "coder takes too long" complaint). ENABLED for power builds:
+       * the model reasons the architecture through first, then writes
+       * richer, smarter code — the owner opt-in for hard builds. */
       const stream = await create<AsyncIterable<unknown>>(
         {
           messages: toLlmMessages(history, maker ? makerPrompt : SYSTEM_PROMPT),
           stream: true,
-          thinking: { type: "disabled" },
+          thinking: { type: power ? "enabled" : "disabled" },
           ...(maker ? { max_tokens: 16384 } : {}),
         },
         { createTimeoutMs: CREATE_TIMEOUT_MS }
@@ -692,7 +719,7 @@ export async function POST(req: Request): Promise<Response> {
       usage?: unknown;
     }>({
       messages: toLlmMessages(history, maker ? makerPrompt : SYSTEM_PROMPT),
-      thinking: { type: "disabled" },
+      thinking: { type: power ? "enabled" : "disabled" },
       ...(maker ? { max_tokens: 16384 } : {}),
     })) as { choices?: { message?: { content?: string }; delta?: { content?: string } }[]; usage?: unknown };
 

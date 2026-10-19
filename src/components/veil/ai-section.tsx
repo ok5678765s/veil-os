@@ -546,7 +546,7 @@ function ExtCard({ ext }: { ext: AiExt }) {
   const gameId = React.useRef<string | null>(null);
   const kb = Math.round(ext.html.length / 1024);
   /* Save into “My AI builds” and hand off to the Arcade — the build
-   * plays embedded in the Roblox tab, never a browser tab. */
+   * plays embedded in the My Builds tab, never a browser tab. */
   const playInArcade = () => {
     const stored = saveMadeGame({
       ...(gameId.current ? { id: gameId.current } : {}),
@@ -666,12 +666,15 @@ function BuildConsole({ codeTail }: { codeTail: string }) {
 function Bubble({
   msg,
   maker,
+  power,
   onRetry,
   onOpenUrl,
 }: {
   msg: Msg;
   /** Maker mode — a streaming reply hides the code being written. */
   maker: boolean;
+  /** Power mode — the thinking-phase text reflects deep reasoning. */
+  power?: boolean;
   onRetry: () => void;
   onOpenUrl: (url: string) => void;
 }) {
@@ -779,7 +782,11 @@ function Bubble({
           {msg.content.trim() === "" ? (
             <div className="flex items-center gap-2.5">
               <TypingDots />
-              <span className="veil-text-shine text-[12.5px] text-zinc-500">Veil AI is thinking…</span>
+              <span className="veil-text-shine text-[12.5px] text-zinc-500">
+                {power
+                  ? "Power mode — Veil AI is thinking the architecture through…"
+                  : "Veil AI is thinking…"}
+              </span>
             </div>
           ) : live && live.building ? (
             <>
@@ -1037,6 +1044,11 @@ export function AiSection({
   const [loading, setLoading] = React.useState(false);
   /** Extension Maker mode — the next message becomes a build request. */
   const [maker, setMaker] = React.useState(false);
+  /** Power mode — deep-reasoning builds (the gateway's thinking mode):
+   * the model plans the architecture before writing, for smarter,
+   * richer apps. Costs a slower start. Persisted; maker builds only. */
+  const [power, setPower] = React.useState(false);
+  const powerRef = React.useRef(false);
   /** Generation mode — Image / Video (mutually exclusive with maker). */
   const [genMode, setGenMode] = React.useState<null | "image" | "video">(null);
   /* image options */
@@ -1090,7 +1102,7 @@ export function AiSection({
     }
   }, []);
 
-  /* Cross-section jump: "veil:open-ai-games" (e.g. the Roblox tab's
+  /* Cross-section jump: "veil:open-ai-games" (e.g. the Builds tab's
    * My AI builds row) opens this section in AI Coder mode.
    * The pending slot covers the first-ever-open race (the event fires
    * before this section's listener attaches). */
@@ -1141,6 +1153,26 @@ export function AiSection({
       window.removeEventListener("pagehide", snapshot);
     };
   }, [messages, maker]);
+
+  /* Power-mode persistence: restore once on mount (an effect, NOT an
+   * initializer — this component is server-rendered and localStorage
+   * doesn't exist during SSR), then keep the ref + storage in sync so
+   * the memoized post() callback always sees the live value. */
+  React.useEffect(() => {
+    try {
+      if (localStorage.getItem("veil:ai-power") === "1") setPower(true);
+    } catch {
+      /* private mode — default fast */
+    }
+  }, []);
+  React.useEffect(() => {
+    powerRef.current = power;
+    try {
+      localStorage.setItem("veil:ai-power", power ? "1" : "0");
+    } catch {
+      /* best effort */
+    }
+  }, [power]);
 
   React.useEffect(() => {
     const t = setTimeout(() => taRef.current?.focus(), 80);
@@ -1221,6 +1253,7 @@ export function AiSection({
             body: JSON.stringify({
               stream: true,
               ...(makeExt ? { make: "code" } : {}),
+              ...(makeExt && powerRef.current ? { power: true } : {}),
               messages: (() => {
               const clean = history.filter((m) => !m.error && !m.streaming);
               // The LAST user message is the only one that carries
@@ -1355,7 +1388,13 @@ export function AiSection({
          *      minutes; 75s matches the server's silence watchdog so a
          *      wedged build turns into an auto-retry, not a freeze. */
         const QUIET_MS = 45_000;
-        const NO_DELTA_MS = 75_000;
+        /* Power builds: the model REASONS before writing — no content
+         * deltas for possibly minutes. The server's heartbeats keep the
+         * pipe alive (QUIET never trips) and its silence watchdog is fed
+         * by the reasoning tokens, so the client's no-delta budget
+         * stretches to 3 minutes; the server's own hard deadline still
+         * bounds the whole request. */
+        const NO_DELTA_MS = makeExt && powerRef.current ? 180_000 : 75_000;
         let lastProgress = Date.now();
         const touch = () => {
           lastProgress = Date.now();
@@ -1934,7 +1973,7 @@ export function AiSection({
         ) : (
           <div className="mx-auto w-full max-w-2xl space-y-4 px-4 py-6 sm:px-6">
             {messages.map((m) => (
-              <Bubble key={m.id} msg={m} maker={maker} onRetry={retry} onOpenUrl={onOpenUrl} />
+              <Bubble key={m.id} msg={m} maker={maker} power={power} onRetry={retry} onOpenUrl={onOpenUrl} />
             ))}
           </div>
         )}
@@ -1954,6 +1993,42 @@ export function AiSection({
               AI Coder armed — describe what to build (a full web app) or ask for code in
               any language. Big and complete, streamed live.
             </p>
+            {/* Speed: fast (default) vs power (deep reasoning). The gateway
+                serves one model; thinking mode is the real power lever —
+                the toggle rides the armed strip like the image/video
+                option chips. */}
+            <div className="flex shrink-0 items-center gap-1" role="group" aria-label="Build speed">
+              <button
+                type="button"
+                onClick={() => setPower(false)}
+                aria-pressed={!power}
+                title="Fast — starts writing code immediately"
+                className={cn(
+                  "veil-press flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition",
+                  !power
+                    ? "border-violet-400/60 bg-violet-500/20 text-violet-100"
+                    : "border-violet-500/25 text-violet-200/70 hover:border-violet-400/40 hover:text-violet-100"
+                )}
+              >
+                <Zap aria-hidden className="h-3 w-3" />
+                fast
+              </button>
+              <button
+                type="button"
+                onClick={() => setPower(true)}
+                aria-pressed={power}
+                title="Power — the model thinks the architecture through first (slower start, smarter builds)"
+                className={cn(
+                  "veil-press flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition",
+                  power
+                    ? "border-fuchsia-400/60 bg-fuchsia-500/20 text-fuchsia-100"
+                    : "border-violet-500/25 text-violet-200/70 hover:border-fuchsia-400/40 hover:text-fuchsia-100"
+                )}
+              >
+                <BrainCircuit aria-hidden className="h-3 w-3" />
+                power
+              </button>
+            </div>
             <button
               type="button"
               onClick={() => setMaker(false)}
