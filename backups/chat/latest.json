@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T20:48:34.745Z",
+  "exportedAt": "2026-10-19T20:49:38.937Z",
   "counts": {
-    "accounts": 72,
+    "accounts": 73,
     "messages": 117,
     "dms": 3
   },
@@ -1519,6 +1519,27 @@
       "legacy": false,
       "createdAt": "2026-10-19T20:48:17.792Z",
       "passwordHash": "$2b$10$NVzDBgr2guT0Em2MpnQUp.Obcne8CPtjqR/VcFtCesrIUVYLhhDeK"
+    },
+    {
+      "id": "cmvfq971w0003rhheo7oz1mnn",
+      "username": "qalocker1",
+      "displayName": "QA Locker",
+      "avatarColor": "#9b59b6",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 25000,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": "sprout",
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-19T20:49:14.229Z",
+      "passwordHash": "$2b$10$PTQIHVrWqhoHYZm5DJRrQ.6ql.A15lR.lmtwTvfWNP8x2v.ZWNI7y"
     }
   ],
   "messages": [
