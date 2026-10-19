@@ -1,10 +1,10 @@
 {
-  "latestWrittenAt": "2026-10-19T07:14:41.395Z",
-  "sha256": "7454d96d2c22a853d93f49fff3542338b39cb85474babbd10532606c5934eec3",
+  "latestWrittenAt": "2026-10-19T10:03:53.233Z",
+  "sha256": "1cfd0d66e463ad3513e75548dcd063bb3097a27300bebc6f6c05abdf1273fc7c",
   "counts": {
-    "accounts": 67,
-    "messages": 114,
-    "dms": 3
+    "accounts": 0,
+    "messages": 0,
+    "dms": 0
   },
   "jsdelivr": "https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/backups/chat/latest.json"
 }
