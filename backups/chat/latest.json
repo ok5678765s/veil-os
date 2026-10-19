@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T21:59:21.777Z",
+  "exportedAt": "2026-10-19T22:00:56.266Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 3,
+      "coins": 4,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1544,17 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuhlfuy1000bq5gift24glmq",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "bet u can smell me now",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-09-17T22:57:00.000Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuhlfuy2000dq5gijsjefaxx",
       "channelId": "main",
       "accountId": "cmuhlfo8p0002q5fglptihia9",
@@ -2828,6 +2817,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T21:59:06.254Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfssvpa001dq9kfmoiuwnik",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "na I need 8 more to play black jack",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:00:31.870Z",
       "editedAt": null
     }
   ],
