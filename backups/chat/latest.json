@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T21:20:20.003Z",
+  "exportedAt": "2026-10-19T21:43:58.733Z",
   "counts": {
-    "accounts": 73,
+    "accounts": 74,
     "messages": 117,
     "dms": 3
   },
@@ -1540,6 +1540,27 @@
       "legacy": false,
       "createdAt": "2026-10-19T20:49:14.229Z",
       "passwordHash": "$2b$10$PTQIHVrWqhoHYZm5DJRrQ.6ql.A15lR.lmtwTvfWNP8x2v.ZWNI7y"
+    },
+    {
+      "id": "cmvfs72z90000q9z50drrhq50",
+      "username": "qa_gambler2",
+      "displayName": "QA Gambler",
+      "avatarColor": "#1abc9c",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 98,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-19T21:43:34.870Z",
+      "passwordHash": "$2b$10$COsLfSFVbZSphqKZCIJp4uFpUqRjPVAI/Wn7xZKBypYdoO/7PKACy"
     }
   ],
   "messages": [
