@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T21:58:17.828Z",
+  "exportedAt": "2026-10-19T21:59:21.777Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 2,
+      "coins": 3,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1544,17 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuhlfuy00009q5gi8ot2875s",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "yo wtf",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-09-17T22:56:00.000Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuhlfuy1000bq5gift24glmq",
       "channelId": "main",
       "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
@@ -2828,6 +2817,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T21:58:13.557Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfsr1n20013q9kf2b3vxjb5",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "thank u for 2 I gochu",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T21:59:06.254Z",
       "editedAt": null
     }
   ],
