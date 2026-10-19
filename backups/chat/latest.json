@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T21:55:42.062Z",
+  "exportedAt": "2026-10-19T21:58:17.828Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,13 +39,13 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 2,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-19T21:56:10.235Z",
       "legacy": false,
       "createdAt": "2026-09-10T16:00:00.000Z",
       "passwordHash": "$2b$10$zF9AIcjWC9no/Ht9cLY2LumVI/Th5b8MjVe4lxrir7HjElha5SWa."
@@ -1544,28 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuhlfuxv0005q5gixr0jg8rc",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "holy grammar",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-09-17T22:24:00.000Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuhlfuxx0007q5gi8mxtsyp9",
-      "channelId": "main",
-      "accountId": "cmuhlfo4o0000q5fg1rxadq76",
-      "content": "gobler of glizzys",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-09-17T22:29:00.000Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuhlfuy00009q5gi8ot2875s",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -2828,6 +2806,28 @@
       "replyToContent": "hi",
       "replyToUsername": "claefklawd",
       "createdAt": "2026-10-19T18:16:16.607Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfspm91000vq9kfn1fvdjif",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "can some one send me some veil coins I will pay 20k later I am a gambling legend",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T21:57:59.654Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfspwz8000zq9kfdrh796f8",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "that is how I got mythic title",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T21:58:13.557Z",
       "editedAt": null
     }
   ],
