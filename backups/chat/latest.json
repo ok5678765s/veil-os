@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T13:32:44.478Z",
+  "exportedAt": "2026-10-19T16:44:54.489Z",
   "counts": {
-    "accounts": 68,
+    "accounts": 69,
     "messages": 117,
     "dms": 3
   },
@@ -1425,7 +1425,28 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 102,
+      "coins": 116,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-19T13:34:23.329Z",
+      "legacy": false,
+      "createdAt": "2026-10-19T13:31:04.394Z",
+      "passwordHash": "$2b$10$KdO56shs82cyuytPd26iceifQmLdXa1At7G7vSaqoy1ebzYP9APMe"
+    },
+    {
+      "id": "cmvfhinam0000rh6leivqeqhx",
+      "username": "TobY",
+      "displayName": "TobY",
+      "avatarColor": "#c0392b",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1433,8 +1454,8 @@
       "dailyRewardStreak": 0,
       "lastRewardClaim": null,
       "legacy": false,
-      "createdAt": "2026-10-19T13:31:04.394Z",
-      "passwordHash": "$2b$10$KdO56shs82cyuytPd26iceifQmLdXa1At7G7vSaqoy1ebzYP9APMe"
+      "createdAt": "2026-10-19T16:44:38.638Z",
+      "passwordHash": "$2b$10$ct8qcs1/D9O/Ty1Aw6M9N.rxX0XqIPqDqeskvtLFdh0ni5nSI.tSS"
     }
   ],
   "messages": [
