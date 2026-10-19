@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T13:31:10.579Z",
+  "exportedAt": "2026-10-19T13:32:44.478Z",
   "counts": {
     "accounts": 68,
-    "messages": 115,
+    "messages": 117,
     "dms": 3
   },
   "accounts": [
@@ -1425,7 +1425,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 102,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -2701,6 +2701,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T12:35:55.067Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfanleq002orh3vgss92ln2",
+      "channelId": "main",
+      "accountId": "cmvfalpop002mrh3vrr713wol",
+      "content": "how do i gamble,",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T13:32:32.163Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfanojd002srh3vlyqwul0l",
+      "channelId": "main",
+      "accountId": "cmvfalpop002mrh3vrr713wol",
+      "content": "is it added?",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T13:32:36.218Z",
       "editedAt": null
     }
   ],
