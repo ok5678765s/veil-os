@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:04:48.823Z",
+  "exportedAt": "2026-10-19T22:05:22.777Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 1,
+      "coins": 2,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 82006,
+      "coins": 82008,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1544,39 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuqez0cy000er0kqc0dninrn",
-      "channelId": "main",
-      "accountId": "cmuqexgcx0004r0kq9vcatsgi",
-      "content": "do y'all want the best poxy",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T03:39:08.819Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuqezcub000ir0kqum2q64x6",
-      "channelId": "main",
-      "accountId": "cmuqexgcx0004r0kq9vcatsgi",
-      "content": "here",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T03:39:24.996Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuqezels000mr0kqvxbkp9uw",
-      "channelId": "main",
-      "accountId": "cmuqexgcx0004r0kq9vcatsgi",
-      "content": "https://collect.oneworldcollections.com/",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T03:39:27.280Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuqh8xo90001r06zpsrr2i9n",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -2828,6 +2795,39 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:04:20.036Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfsyj7n003dq9kf1wbc180j",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "Bro I hit 1 mill but lost it all",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:04:55.620Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfsyp1z003hq9kfmvktkwgv",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "what",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:05:03.191Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfsyram003lq9kfkxg4g0lx",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "thats crazy",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:05:06.095Z",
       "editedAt": null
     }
   ],
