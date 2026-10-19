@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T18:10:22.540Z",
+  "exportedAt": "2026-10-19T18:14:29.116Z",
   "counts": {
     "accounts": 71,
     "messages": 117,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 32685,
+      "coins": 32687,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1502,28 +1502,6 @@
   ],
   "messages": [
     {
-      "id": "cmuhlfoeu0009q5fgbrl9chhb",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "https://media2.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bTJpODZoenUxb2o2YWJob3Bya2F1NzJ3cmZiYmNkajE4cGpybXpkNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ASd0Ukj0y3qMM/giphy.gif",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-09-16T22:13:00.000Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuhlfuxt0001q5gi7r5dc1yi",
-      "channelId": "main",
-      "accountId": "cmuhlfo4o0000q5fg1rxadq76",
-      "content": "ollo",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-09-17T18:45:00.000Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuhlfuxv0005q5gixr0jg8rc",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -2786,6 +2764,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T18:10:00.240Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfkpjqb0008rh6lccidrcbm",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "yeah you click 2 dice button on top",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T18:13:59.460Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvfkpmgz000crh6l8hj0ajd4",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "hi",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T18:14:03.011Z",
       "editedAt": null
     }
   ],
