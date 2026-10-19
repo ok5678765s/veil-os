@@ -1,8 +1,8 @@
 {
-  "latestWrittenAt": "2026-10-19T21:43:58.733Z",
-  "sha256": "22775b64e48d12e9e529287e1240af66c2c134a9cb74d32bb1015faf61d2ecb4",
+  "latestWrittenAt": "2026-10-19T21:55:42.062Z",
+  "sha256": "90b94e83e51a8b97e464ecad3d2394176ee2df2695eff93bf069d2d31938d7b9",
   "counts": {
-    "accounts": 74,
+    "accounts": 73,
     "messages": 117,
     "dms": 3
   },
