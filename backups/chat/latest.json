@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T12:35:55.874Z",
+  "exportedAt": "2026-10-19T13:31:10.579Z",
   "counts": {
-    "accounts": 67,
+    "accounts": 68,
     "messages": 115,
     "dms": 3
   },
@@ -147,7 +147,7 @@
       "coins": 32685,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": "fight",
+      "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-10-19T11:51:05.198Z",
@@ -1414,6 +1414,27 @@
       "legacy": false,
       "createdAt": "2026-10-17T19:22:54.611Z",
       "passwordHash": "$2b$10$nGPStsv5bB8zDAimwpnFluHOW286UUhq1jnEPZ1ykezRpUiQkRmJe"
+    },
+    {
+      "id": "cmvfalpop002mrh3vrr713wol",
+      "username": "claefklawd",
+      "displayName": "claefklawd",
+      "avatarColor": "#f39c12",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-19T13:31:04.394Z",
+      "passwordHash": "$2b$10$KdO56shs82cyuytPd26iceifQmLdXa1At7G7vSaqoy1ebzYP9APMe"
     }
   ],
   "messages": [
