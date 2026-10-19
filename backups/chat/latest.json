@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T16:45:59.379Z",
+  "exportedAt": "2026-10-19T17:00:35.790Z",
   "counts": {
-    "accounts": 70,
+    "accounts": 71,
     "messages": 117,
     "dms": 3
   },
@@ -1477,6 +1477,27 @@
       "legacy": false,
       "createdAt": "2026-10-19T16:45:32.969Z",
       "passwordHash": "$2b$10$Ltzx96K4GeoYbvoJHwrnnu3trnhMS7DcensCs2VW3obP.EBDjxBm2"
+    },
+    {
+      "id": "cmvfi2w5d0002rh6lc44g9toz",
+      "username": "king67",
+      "displayName": "king67",
+      "avatarColor": "#c0392b",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-19T17:00:23.234Z",
+      "passwordHash": "$2b$10$dQJjLYpKKoGIkxxtmkPlPec4xiDo/Gy5pf4oeXWJO.PhVxKlFtJF."
     }
   ],
   "messages": [
