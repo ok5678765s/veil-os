@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:08:38.231Z",
+  "exportedAt": "2026-10-19T22:09:42.247Z",
   "counts": {
     "accounts": 73,
-    "messages": 116,
+    "messages": 117,
     "dms": 3
   },
   "accounts": [
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 6191,
+      "coins": 1,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -2817,6 +2817,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:08:10.282Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvft4nhu007xq9kfrfy5ylto",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "It glitched and took my money without any rewards",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:09:41.106Z",
       "editedAt": null
     }
   ],
