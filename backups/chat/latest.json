@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:09:42.247Z",
+  "exportedAt": "2026-10-19T22:10:45.610Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 70003,
+      "coins": 69195,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1544,28 +1544,6 @@
   ],
   "messages": [
     {
-      "id": "cmuqy0vnj000jqztyzygtsnza",
-      "channelId": "main",
-      "accountId": "cmuqxzpk6000bqztyvz00igvy",
-      "content": "ellow",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T12:32:28.735Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuqz6xhl0002qzulykzoymwa",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "wsp",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T13:05:10.665Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuqz8dii0007qzul9vx9qwz1",
       "channelId": "main",
       "accountId": "cmuqz88rx0005qzul28sr31hl",
@@ -2828,6 +2806,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:09:41.106Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvft5ede0089q9kfyzmgayw6",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "which game",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:10:15.938Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvft5hts008dq9kfbo7hs8q2",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "I'll send you more",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:10:20.417Z",
       "editedAt": null
     }
   ],
