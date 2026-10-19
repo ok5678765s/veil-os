@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:15:42.021Z",
+  "exportedAt": "2026-10-19T22:22:17.846Z",
   "counts": {
-    "accounts": 73,
+    "accounts": 74,
     "messages": 116,
     "dms": 3
   },
@@ -1540,6 +1540,27 @@
       "legacy": false,
       "createdAt": "2026-10-19T20:49:14.229Z",
       "passwordHash": "$2b$10$PTQIHVrWqhoHYZm5DJRrQ.6ql.A15lR.lmtwTvfWNP8x2v.ZWNI7y"
+    },
+    {
+      "id": "cmvftkkhq0000q9it1lgtnnfb",
+      "username": "qatest99",
+      "displayName": "qatest99",
+      "avatarColor": "#16a085",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-19T22:22:03.710Z",
+      "passwordHash": "$2b$10$sr.9P2ZMuKOWZroUigHGu.h8fSblDklIQDG4pd.Avat/eaDGK.bvS"
     }
   ],
   "messages": [
