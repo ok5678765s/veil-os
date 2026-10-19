@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T16:44:54.489Z",
+  "exportedAt": "2026-10-19T16:45:59.379Z",
   "counts": {
-    "accounts": 69,
+    "accounts": 70,
     "messages": 117,
     "dms": 3
   },
@@ -1456,6 +1456,27 @@
       "legacy": false,
       "createdAt": "2026-10-19T16:44:38.638Z",
       "passwordHash": "$2b$10$ct8qcs1/D9O/Ty1Aw6M9N.rxX0XqIPqDqeskvtLFdh0ni5nSI.tSS"
+    },
+    {
+      "id": "cmvfhjt7s0001rh6l7ywvqhy1",
+      "username": "TobY123",
+      "displayName": "TobY123",
+      "avatarColor": "#e67e22",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-19T16:45:32.969Z",
+      "passwordHash": "$2b$10$Ltzx96K4GeoYbvoJHwrnnu3trnhMS7DcensCs2VW3obP.EBDjxBm2"
     }
   ],
   "messages": [
