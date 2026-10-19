@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:14:00.406Z",
+  "exportedAt": "2026-10-19T22:14:34.119Z",
   "counts": {
     "accounts": 73,
-    "messages": 115,
+    "messages": 116,
     "dms": 3
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 60303,
+      "coins": 60304,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -2806,6 +2806,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:12:40.873Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvftan6i009pq9kfym6mxs6z",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "I just realized you gain coin so quickly",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:14:20.634Z",
       "editedAt": null
     }
   ],
