@@ -97,6 +97,13 @@ import {
   loadWallpaperSelection,
   type WallpaperSelection,
 } from "@/lib/veil/wallpapers"
+import {
+  ROULETTE_ORDER,
+  ROULETTE_RED,
+  SLOT_SYMBOLS,
+  SLOT_TRIPLE_PAY,
+  type SlotSymbol,
+} from "@/lib/roulette"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -9203,6 +9210,1023 @@ function BlackjackGame({
   )
 }
 
+/* ------------------------------------------------------------------ */
+/* Roulette — the owner's wheel (roulette.html), betting real coins.  */
+/* The pocket is drawn SERVER-side; this wheel only chases the       */
+/* result the API returns.                                            */
+/* ------------------------------------------------------------------ */
+
+const RL_STEP = 360 / ROULETTE_ORDER.length
+const RL_SPIN_MS = 4400
+const RL_CHIPS = [1, 5, 25, 100]
+
+function rlPolar(r: number, deg: number): [number, number] {
+  const rad = (deg * Math.PI) / 180
+  return [210 + r * Math.sin(rad), 210 - r * Math.cos(rad)]
+}
+
+function rlWedgePath(rOut: number, rIn: number, a0: number, a1: number): string {
+  const p1 = rlPolar(rOut, a0)
+  const p2 = rlPolar(rOut, a1)
+  const p3 = rlPolar(rIn, a1)
+  const p4 = rlPolar(rIn, a0)
+  return (
+    `M ${p1[0]} ${p1[1]} A ${rOut} ${rOut} 0 0 1 ${p2[0]} ${p2[1]} ` +
+    `L ${p3[0]} ${p3[1]} A ${rIn} ${rIn} 0 0 0 ${p4[0]} ${p4[1]} Z`
+  )
+}
+
+type RouletteCell = {
+  id: string
+  label: string
+  kind: "zero" | "num" | "outside"
+  red?: boolean
+  span?: number
+  title?: string
+}
+
+/** The classic table: 0 spanning the left edge, 3-6-…-36 across the top,
+ *  2-5-…-35 and 1-4-…-34 below, then dozens + even-money row. */
+const RL_CELLS: RouletteCell[] = (() => {
+  const cells: RouletteCell[] = [
+    { id: "n-0", label: "0", kind: "zero", title: "Straight up — pays 36×" },
+  ]
+  for (let row = 0; row < 3; row++) {
+    for (let col = 1; col <= 12; col++) {
+      const num = 3 * col - row
+      cells.push({
+        id: `n-${num}`,
+        label: String(num),
+        kind: "num",
+        red: ROULETTE_RED.has(num),
+        title: `Straight up ${num} — pays 36×`,
+      })
+    }
+  }
+  const dozen = (id: string, label: string, title: string): RouletteCell => ({
+    id, label, kind: "outside", span: 4, title,
+  })
+  cells.push(
+    dozen("d1", "1st 12", "1–12 — pays 3×"),
+    dozen("d2", "2nd 12", "13–24 — pays 3×"),
+    dozen("d3", "3rd 12", "25–36 — pays 3×"),
+  )
+  const outside = (id: string, label: string, red?: boolean, title?: string): RouletteCell => ({
+    id, label, kind: "outside", span: 2, red, title: title ?? `Pays 2×`,
+  })
+  cells.push(
+    outside("low", "1–18"),
+    outside("even", "EVEN"),
+    outside("red", "RED", true),
+    outside("black", "BLACK"),
+    outside("odd", "ODD"),
+    outside("high", "19–36"),
+  )
+  return cells
+})()
+
+function RouletteGame({
+  account,
+  token,
+  onAccount,
+  toast,
+}: {
+  account: ChatAccount
+  token: string
+  onAccount: (a: ChatAccount) => void
+  toast: (msg: string, kind?: "ok" | "err") => void
+}) {
+  const [phase, setPhase] = useState<"betting" | "spinning" | "result">("betting")
+  const [chip, setChip] = useState(5)
+  const [bets, setBets] = useState<Record<string, number>>({})
+  const [undoStack, setUndoStack] = useState<string[]>([])
+  const [wheelRot, setWheelRot] = useState(0)
+  const [ballRot, setBallRot] = useState(0)
+  const [ballIn, setBallIn] = useState(false)
+  const [flashIdx, setFlashIdx] = useState<number | null>(null)
+  const [flashKey, setFlashKey] = useState(0)
+  const [winCells, setWinCells] = useState<string[]>([])
+  const [outcome, setOutcome] = useState<{
+    number: number
+    color: "red" | "black" | "green"
+    net: number
+    staked: number
+  } | null>(null)
+  const [history, setHistory] = useState<{ number: number; color: string }[]>([])
+  const timers = useRef<number[]>([])
+  const pendingAccount = useRef<ChatAccount | null>(null)
+
+  const totalBet = useMemo(
+    () => Object.values(bets).reduce((a, b) => a + b, 0),
+    [bets],
+  )
+
+  /* The wheel face — built once per mount. */
+  const wheelFace = useMemo(
+    () => (
+      <>
+        <defs>
+          <radialGradient id="veil-roulette-hub" cx="38%" cy="32%" r="75%">
+            <stop offset="0%" stopColor="#f4dc9a" />
+            <stop offset="55%" stopColor="#c99b3f" />
+            <stop offset="100%" stopColor="#7c5a14" />
+          </radialGradient>
+        </defs>
+        <circle cx={210} cy={210} r={200} fill="#191309" />
+        {ROULETTE_ORDER.map((num, i) => (
+          <path
+            key={`w${i}`}
+            d={rlWedgePath(178, 104, i * RL_STEP - RL_STEP / 2, i * RL_STEP + RL_STEP / 2)}
+            fill={num === 0 ? "#137a5b" : ROULETTE_RED.has(num) ? "#a5303c" : "#211e26"}
+            stroke="#c9a227"
+            strokeOpacity={0.35}
+            strokeWidth={1}
+          />
+        ))}
+        {ROULETTE_ORDER.map((num, i) => (
+          <text
+            key={`t${i}`}
+            x={210}
+            y={76}
+            textAnchor="middle"
+            fontSize={num > 9 ? 11.5 : 13}
+            fontWeight={700}
+            fill="#f5ead1"
+            transform={`rotate(${i * RL_STEP} 210 210)`}
+          >
+            {num}
+          </text>
+        ))}
+        <circle cx={210} cy={210} r={98} fill="url(#veil-roulette-hub)" />
+        <circle cx={210} cy={210} r={98} fill="none" stroke="#5d430e" strokeWidth={3} />
+        {[0, 90, 180, 270].map((a) => (
+          <line
+            key={a}
+            x1={210}
+            y1={210}
+            x2={210}
+            y2={120}
+            stroke="#8a6215"
+            strokeWidth={7}
+            strokeLinecap="round"
+            transform={`rotate(${a + 45} 210 210)`}
+          />
+        ))}
+        <circle cx={210} cy={210} r={26} fill="#f4dc9a" stroke="#8a6215" strokeWidth={4} />
+      </>
+    ),
+    [],
+  )
+
+  /* Clear pending timers + flush a mid-spin balance update if the modal
+   * gets closed while the ball is still rolling. */
+  useEffect(() => {
+    return () => {
+      timers.current.forEach((t) => window.clearTimeout(t))
+      if (pendingAccount.current) onAccount(pendingAccount.current)
+    }
+  }, [])
+
+  const placeBet = (id: string) => {
+    if (phase !== "betting") return
+    if (totalBet + chip > account.coins) {
+      toast("Not enough coins on the table for that chip.", "err")
+      return
+    }
+    setBets((b) => ({ ...b, [id]: (b[id] || 0) + chip }))
+    setUndoStack((s) => [...s, id])
+  }
+
+  const undo = () => {
+    if (phase !== "betting" || undoStack.length === 0) return
+    const id = undoStack[undoStack.length - 1]
+    setUndoStack((s) => s.slice(0, -1))
+    setBets((b) => {
+      const amt = (b[id] || 0) - chip
+      const next = { ...b }
+      if (amt > 0) next[id] = amt
+      else delete next[id]
+      return next
+    })
+  }
+
+  const clearBets = () => {
+    if (phase !== "betting" || totalBet === 0) return
+    setBets({})
+    setUndoStack([])
+  }
+
+  const spin = async () => {
+    if (phase !== "betting" || totalBet === 0 || totalBet > account.coins) return
+    setPhase("spinning")
+    setOutcome(null)
+    setWinCells([])
+    setFlashIdx(null)
+    try {
+      const data = await apiFetch<{
+        number: number
+        color: "red" | "black" | "green"
+        winIndex: number
+        returned: number
+        net: number
+        staked: number
+        account: ChatAccount
+      }>("/api/chat-roulette", {
+        method: "POST",
+        body: JSON.stringify({ token, bets }),
+      })
+      pendingAccount.current = data.account
+
+      /* Rotate the wheel so the server's pocket lands at the top, with a
+       * little jitter so the ball settles anywhere inside the wedge. */
+      const jitter = (Math.random() - 0.5) * 6
+      const targetMod = ((-data.winIndex * RL_STEP + jitter) % 360 + 360) % 360
+      const cur = ((wheelRot % 360) + 360) % 360
+      const delta = ((targetMod - cur) % 360 + 360) % 360
+      setWheelRot(wheelRot + 5 * 360 + delta)
+      /* Ball counter-rotates and spirals down into the pocket band. */
+      const bDelta = ((-ballRot % 360) + 360) % 360 + 7 * 360
+      setBallRot(ballRot - bDelta)
+      setBallIn(true)
+
+      timers.current.push(
+        window.setTimeout(() => {
+          const n = data.number
+          const label =
+            `${n} ${data.color === "red" ? "Red" : data.color === "green" ? "Green" : "Black"}`
+          setOutcome({ number: n, color: data.color, net: data.net, staked: data.staked })
+          setHistory((h) => [{ number: n, color: data.color }, ...h].slice(0, 10))
+          setWinCells(
+            n === 0
+              ? ["n-0"]
+              : [
+                  `n-${n}`,
+                  n <= 12 ? "d1" : n <= 24 ? "d2" : "d3",
+                  data.color === "red" ? "red" : "black",
+                  n % 2 === 0 ? "even" : "odd",
+                  n <= 18 ? "low" : "high",
+                ],
+          )
+          setFlashIdx(data.winIndex)
+          setFlashKey((k) => k + 1)
+          setBets({})
+          setUndoStack([])
+          setPhase("result")
+          onAccount(data.account)
+          pendingAccount.current = null
+          toast(
+            data.net > 0
+              ? `${label} — you win +${data.net} 🪙`
+              : data.net === 0
+                ? `${n} — even`
+                : `${label} — you lose ${data.staked} 🪙`,
+            data.net >= 0 ? "ok" : "err",
+          )
+        }, RL_SPIN_MS),
+      )
+    } catch (e) {
+      setPhase("betting")
+      toast(e instanceof Error ? e.message : "The wheel didn't spin.", "err")
+    }
+  }
+
+  const newRound = () => {
+    setPhase("betting")
+    setBallIn(false)
+    setFlashIdx(null)
+    setWinCells([])
+    setOutcome(null)
+  }
+
+  const chipColors: Record<number, string> = {
+    1: "rgba(161,161,170,0.6)",
+    5: "rgba(251,113,133,0.7)",
+    25: "rgba(52,211,153,0.7)",
+    100: "rgba(252,211,77,0.7)",
+  }
+  const chipText: Record<number, string> = {
+    1: "#e4e4e7",
+    5: "#fda4af",
+    25: "#6ee7b7",
+    100: "#fde68a",
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* The wheel */}
+      <div
+        className="relative mx-auto"
+        style={{ width: "min(72vw, 280px)", aspectRatio: "1" }}
+      >
+        <svg
+          viewBox="0 0 420 420"
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full"
+          style={{
+            transform: `rotate(${wheelRot}deg)`,
+            transition: `transform ${RL_SPIN_MS}ms cubic-bezier(0.12, 0.55, 0.12, 1)`,
+            willChange: "transform",
+          }}
+        >
+          {wheelFace}
+          {flashIdx !== null && (
+            <path
+              key={flashKey}
+              className="veil-winflash veil-winflash-on"
+              fill="#ffffff"
+              stroke="#ffd76a"
+              strokeWidth={2}
+              d={rlWedgePath(
+                178,
+                104,
+                flashIdx * RL_STEP - RL_STEP / 2,
+                flashIdx * RL_STEP + RL_STEP / 2,
+              )}
+            />
+          )}
+        </svg>
+        <svg
+          viewBox="0 0 420 420"
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 h-full w-full"
+        >
+          <circle cx={210} cy={210} r={200} fill="none" stroke="#8a6215" strokeWidth={12} />
+          <circle cx={210} cy={210} r={200} fill="none" stroke="#e9c764" strokeWidth={5} />
+          <circle cx={210} cy={210} r={184} fill="none" stroke="rgba(245,197,66,0.35)" strokeWidth={1.5} />
+          <circle cx={210} cy={210} r={190} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={14} />
+        </svg>
+        <div
+          className="absolute inset-0"
+          style={{
+            transform: `rotate(${ballRot}deg)`,
+            transition: `transform ${RL_SPIN_MS}ms cubic-bezier(0.12, 0.55, 0.12, 1)`,
+            willChange: "transform",
+          }}
+        >
+          <div
+            className="absolute left-1/2 h-[13px] w-[13px] -translate-x-1/2 rounded-full"
+            style={{
+              top: ballIn ? "9.7%" : "2.6%",
+              transition: `top ${RL_SPIN_MS}ms cubic-bezier(0.12, 0.55, 0.12, 1)`,
+              background:
+                "radial-gradient(circle at 35% 30%, #ffffff, #cfd2d8 60%, #8f949c)",
+              boxShadow: "0 2px 6px rgba(0,0,0,.65)",
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Result */}
+      <div className="grid h-9 place-items-center" aria-live="polite">
+        {outcome ? (
+          <motion.span
+            key={`${outcome.number}-${outcome.net}-${flashKey}`}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 520, damping: 20 }}
+            className={`rounded-full border px-3.5 py-1 text-sm font-extrabold tracking-widest ${
+              outcome.net > 0
+                ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                : outcome.net === 0
+                  ? "border-zinc-400/30 bg-zinc-400/10 text-zinc-300"
+                  : "border-rose-400/30 bg-rose-400/10 text-rose-300"
+            }`}
+          >
+            {outcome.number}
+            {outcome.color === "red" ? " · RED" : outcome.color === "green" ? " · GREEN" : " · BLACK"}
+            {outcome.net > 0
+              ? ` · WIN +${outcome.net}`
+              : outcome.net === 0
+                ? " · EVEN"
+                : ` · LOSE −${outcome.staked}`}
+          </motion.span>
+        ) : phase === "spinning" ? (
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-200/50">
+            no more bets…
+          </span>
+        ) : null}
+      </div>
+
+      {/* Recent numbers */}
+      {history.length > 0 && (
+        <div className="flex min-h-6 flex-wrap justify-center gap-1.5">
+          {history.map((h, i) => (
+            <span
+              key={`${h.number}-${i}`}
+              className="grid h-6 w-6 place-items-center rounded-full text-[0.62rem] font-bold text-white"
+              style={{
+                background:
+                  h.color === "green" ? "#0f5c45" : h.color === "red" ? "#76242c" : "#2b2930",
+              }}
+            >
+              {h.number}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* The table */}
+      <div className="w-full overflow-x-auto pb-1">
+        <div
+          className="mx-auto grid min-w-[540px] max-w-[620px] gap-1"
+          style={{ gridTemplateColumns: "2.9rem repeat(12, 1fr)" }}
+          role="group"
+          aria-label="Roulette betting table"
+        >
+          {RL_CELLS.map((cell) => {
+            const amt = bets[cell.id] || 0
+            const isWin = winCells.includes(cell.id)
+            const bg =
+              cell.kind === "zero"
+                ? "#137a5b"
+                : cell.kind === "num"
+                  ? cell.red
+                    ? "#a5303c"
+                    : "#181820"
+                  : cell.red
+                    ? "rgba(165,48,60,0.7)"
+                    : "rgba(255,255,255,0.03)"
+            const fg =
+              cell.kind === "outside" ? "rgba(254,243,199,0.85)" : "#fff"
+            return (
+              <button
+                key={cell.id}
+                onClick={() => placeBet(cell.id)}
+                disabled={phase !== "betting"}
+                title={cell.title}
+                className={`relative flex items-center justify-center rounded-md border font-bold transition-[filter,box-shadow] duration-100 enabled:hover:brightness-125 disabled:cursor-default ${
+                  cell.kind === "outside" ? "tracking-[0.08em]" : ""
+                }`}
+                style={{
+                  height: cell.kind === "zero" ? undefined : "2.7rem",
+                  gridRow: cell.kind === "zero" ? "span 3" : undefined,
+                  gridColumn: cell.span && cell.span > 1 ? `span ${cell.span}` : undefined,
+                  background: bg,
+                  color: fg,
+                  borderColor: "rgba(245,197,66,0.14)",
+                  fontSize: cell.kind === "num" ? "0.72rem" : cell.kind === "zero" ? "0.85rem" : "0.64rem",
+                  borderRadius: cell.kind === "zero" ? "0.5rem 0 0 0.5rem" : undefined,
+                  boxShadow: isWin
+                    ? "0 0 0 2px #ffd76a, 0 0 16px rgba(255,215,106,0.6)"
+                    : undefined,
+                }}
+              >
+                {cell.label}
+                {amt > 0 && (
+                  <span
+                    className="absolute -bottom-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-amber-100 px-1 text-[0.62rem] font-extrabold text-[#451a03]"
+                    style={{ background: "linear-gradient(#fcd34d, #f59e0b)" }}
+                  >
+                    {amt}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex gap-2.5">
+          {RL_CHIPS.map((v) => (
+            <button
+              key={v}
+              onClick={() => setChip(v)}
+              disabled={phase !== "betting"}
+              aria-label={`Select ${v} coin chip`}
+              className={`veil-press h-11 w-11 rounded-full border-2 bg-white/[0.03] text-xs font-extrabold transition disabled:opacity-50 ${
+                chip === v ? "scale-110" : "opacity-60 hover:bg-white/[0.07]"
+              }`}
+              style={{
+                borderColor: chipColors[v],
+                color: chipText[v],
+                boxShadow: chip === v ? "0 0 0 2px #fcd34d, 0 0 0 4px #0c0a07" : undefined,
+              }}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-amber-100/60">
+          <span>
+            Total bet:{" "}
+            <b className="text-amber-200 tabular-nums">🪙 {totalBet.toLocaleString()}</b>
+          </span>
+          <button
+            onClick={undo}
+            disabled={phase !== "betting" || undoStack.length === 0}
+            className="veil-press rounded-full border border-amber-200/20 bg-white/[0.03] px-4 py-1 text-xs font-bold text-amber-100/70 transition hover:bg-white/[0.06] hover:text-amber-50 disabled:opacity-30"
+          >
+            Undo
+          </button>
+          <button
+            onClick={clearBets}
+            disabled={phase !== "betting" || totalBet === 0}
+            className="veil-press rounded-full border border-amber-200/20 bg-white/[0.03] px-4 py-1 text-xs font-bold text-amber-100/70 transition hover:bg-white/[0.06] hover:text-amber-50 disabled:opacity-30"
+          >
+            Clear
+          </button>
+        </div>
+
+        {phase === "result" ? (
+          <button
+            onClick={newRound}
+            className="veil-press veil-hover-glow flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-extrabold text-[#451a03]"
+            style={{
+              background: "linear-gradient(#fcd34d, #d97706)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,.5)",
+            }}
+          >
+            New spin
+          </button>
+        ) : (
+          <button
+            onClick={() => void spin()}
+            disabled={phase === "spinning" || totalBet === 0 || totalBet > account.coins}
+            className="veil-press veil-hover-glow flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-extrabold text-[#451a03] disabled:opacity-40"
+            style={{
+              background: "linear-gradient(#fcd34d, #d97706)",
+              boxShadow:
+                "0 12px 32px -10px rgba(245,197,66,.55), inset 0 1px 0 rgba(255,255,255,.5)",
+            }}
+          >
+            {phase === "spinning" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {phase === "spinning"
+              ? "Spinning…"
+              : totalBet > 0
+                ? `Spin for ${totalBet.toLocaleString()} 🪙`
+                : "Place a bet to spin"}
+          </button>
+        )}
+        <p className="text-center text-[10px] leading-relaxed text-white/35">
+          Straight 36× · dozens 3× · red/black/odd/even/1–18/19–36 2× · single zero · the pocket
+          is drawn server-side.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Slots — Golden Sevens (slots.html), betting real coins. The       */
+/* reels are choreography; the SERVER picks what lands.               */
+/* ------------------------------------------------------------------ */
+
+const SL_SEQ_LEN = 25
+const SL_REPEATS = 6
+const SL_LOOPS = 3
+const SL_DUR = [1400, 1900, 2400]
+const SL_BETS = [5, 10, 25, 50]
+const SLOT_WEIGHTS: Record<SlotSymbol, number> = {
+  cherry: 6, lemon: 5, horseshoe: 4, bell: 4, bar: 3, diamond: 2, seven: 1,
+}
+
+function buildSlotSequence(): SlotSymbol[] {
+  const bag: SlotSymbol[] = []
+  for (const s of SLOT_SYMBOLS) {
+    for (let i = 0; i < SLOT_WEIGHTS[s]; i++) bag.push(s)
+  }
+  for (let i = bag.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const t = bag[i]
+    bag[i] = bag[j]
+    bag[j] = t
+  }
+  return bag
+}
+
+function SlotSymbolSvg({ sym, size }: { sym: SlotSymbol; size: number }) {
+  return (
+    <svg viewBox="0 0 64 64" width={size} height={size} aria-hidden="true">
+      <use href={`#veil-slot-${sym}`} />
+    </svg>
+  )
+}
+
+/** The owner's seven reel symbols, verbatim (cherry → seven). */
+function SlotSymbolDefs() {
+  return (
+    <svg width="0" height="0" className="absolute" aria-hidden="true">
+      <defs>
+        <symbol id="veil-slot-cherry" viewBox="0 0 64 64">
+          <path d="M34 9 C 28 21, 24 31, 22 43" fill="none" stroke="#3f8f3f" strokeWidth="3.5" strokeLinecap="round" />
+          <path d="M34 9 C 40 21, 44 29, 45 41" fill="none" stroke="#3f8f3f" strokeWidth="3.5" strokeLinecap="round" />
+          <path d="M34 9 C 40 2 52 3 55 9 C 49 16 38 16 34 9 Z" fill="#4caf50" />
+          <circle cx="22" cy="48" r="11" fill="#d32f3c" />
+          <circle cx="45" cy="46" r="10" fill="#b71c2c" />
+          <circle cx="18" cy="44" r="3.4" fill="#ff9d94" opacity="0.85" />
+          <circle cx="41.5" cy="42.5" r="2.8" fill="#ff9d94" opacity="0.6" />
+        </symbol>
+        <symbol id="veil-slot-lemon" viewBox="0 0 64 64">
+          <g transform="rotate(-16 32 36)">
+            <ellipse cx="32" cy="36" rx="21" ry="14" fill="#f2ce3e" />
+            <circle cx="11" cy="36" r="4.6" fill="#e0b92c" />
+            <circle cx="53" cy="36" r="4.6" fill="#e0b92c" />
+            <ellipse cx="24" cy="30" rx="7" ry="3.4" fill="#fff" opacity="0.35" />
+          </g>
+        </symbol>
+        <symbol id="veil-slot-horseshoe" viewBox="0 0 64 64">
+          <path d="M17 15 C 9 32, 17 51, 32 54 C 47 51, 55 32, 47 15" fill="none" stroke="#c8ccd4" strokeWidth="11" strokeLinecap="round" />
+          <g fill="#6d727d">
+            <circle cx="17" cy="15" r="2.1" /><circle cx="13.5" cy="27" r="2.1" /><circle cx="19" cy="44" r="2.1" />
+            <circle cx="32" cy="53.5" r="2.1" /><circle cx="45" cy="44" r="2.1" /><circle cx="50.5" cy="27" r="2.1" /><circle cx="47" cy="15" r="2.1" />
+          </g>
+        </symbol>
+        <symbol id="veil-slot-bell" viewBox="0 0 64 64">
+          <path d="M32 7 C 21 7, 15 17, 15 29 L 15 38 C 15 43, 11 45, 10 50 L 54 50 C 53 45, 49 43, 49 38 L 49 29 C 49 17, 43 7, 32 7 Z" fill="#f3b52c" />
+          <rect x="8" y="50" width="48" height="5" rx="2.5" fill="#d99a17" />
+          <circle cx="32" cy="58.5" r="4.5" fill="#8a5c0d" />
+          <circle cx="32" cy="7" r="4" fill="#d99a17" />
+          <path d="M22 17 C 18.5 22, 17.5 28, 17.5 33" fill="none" stroke="#ffd97a" strokeWidth="3" strokeLinecap="round" />
+        </symbol>
+        <symbol id="veil-slot-bar" viewBox="0 0 64 64">
+          <rect x="5" y="20" width="54" height="24" rx="7" fill="#221a0d" stroke="#f3b52c" strokeWidth="3" />
+          <rect x="10.5" y="25" width="43" height="14" rx="4" fill="none" stroke="#f3b52c" strokeWidth="1.4" opacity="0.55" />
+          <text x="32" y="37" textAnchor="middle" fontSize="13" fontWeight="900" letterSpacing="2.5" fill="#f3b52c">BAR</text>
+        </symbol>
+        <symbol id="veil-slot-diamond" viewBox="0 0 64 64">
+          <path d="M32 7 L51 24 L13 24 Z" fill="#62d9c0" />
+          <path d="M13 24 L51 24 L32 57 Z" fill="#2aa389" />
+          <path d="M23 24 L32 7 M41 24 L32 7 M23 24 L32 57 M41 24 L32 57" stroke="#d7fff4" strokeWidth="1.4" opacity="0.5" fill="none" />
+        </symbol>
+        <symbol id="veil-slot-seven" viewBox="0 0 64 64">
+          <path d="M13 9 L51 9 L51 19 L38 55 L24 55 L37 19 L13 19 Z" fill="#e33b3b" stroke="#8f1d1d" strokeWidth="2.5" strokeLinejoin="round" />
+          <path d="M18 13 L30 13" stroke="#ff9d9d" strokeWidth="3" strokeLinecap="round" />
+        </symbol>
+      </defs>
+    </svg>
+  )
+}
+
+function SlotsGame({
+  account,
+  token,
+  onAccount,
+  toast,
+}: {
+  account: ChatAccount
+  token: string
+  onAccount: (a: ChatAccount) => void
+  toast: (msg: string, kind?: "ok" | "err") => void
+}) {
+  const [bet, setBet] = useState(10)
+  const [spinning, setSpinning] = useState(false)
+  const [pulled, setPulled] = useState(false)
+  const [outcome, setOutcome] = useState<{
+    reels: SlotSymbol[]
+    mult: number
+    label: string
+    net: number
+    bet: number
+  } | null>(null)
+  const stripRefs = useRef<(HTMLDivElement | null)[]>([null, null, null])
+  const cellsRef = useRef<number[]>([0, 8, 15])
+  const timers = useRef<number[]>([])
+  const pendingAccount = useRef<ChatAccount | null>(null)
+
+  const H = useMemo(
+    () => (typeof window !== "undefined" && window.innerWidth < 420 ? 64 : 80),
+    [],
+  )
+
+  const seqs = useMemo(
+    () => [buildSlotSequence(), buildSlotSequence(), buildSlotSequence()],
+    [],
+  )
+
+  const reelCells = useMemo(() => {
+    return seqs.map((seq) => {
+      const cells: SlotSymbol[] = []
+      for (let r = 0; r < SL_REPEATS; r++) {
+        for (let j = 0; j < SL_SEQ_LEN; j++) cells.push(seq[j])
+      }
+      return cells
+    })
+  }, [seqs])
+
+  /* Park the strips at their saved cells on mount. */
+  useEffect(() => {
+    for (let i = 0; i < 3; i++) {
+      const s = stripRefs.current[i]
+      if (s) s.style.transform = `translateY(${-cellsRef.current[i] * H}px)`
+    }
+  }, [H])
+
+  /* Clear pending timers + flush a mid-spin balance update. */
+  useEffect(() => {
+    return () => {
+      timers.current.forEach((t) => window.clearTimeout(t))
+      if (pendingAccount.current) onAccount(pendingAccount.current)
+    }
+  }, [])
+
+  const occurrence = (seq: SlotSymbol[], sym: SlotSymbol): number => {
+    const idxs: number[] = []
+    seq.forEach((s, i) => {
+      if (s === sym) idxs.push(i)
+    })
+    return idxs[Math.floor(Math.random() * idxs.length)]
+  }
+
+  const spin = async () => {
+    if (spinning) return
+    if (bet < 1) {
+      toast("Bet at least 1 coin.", "err")
+      return
+    }
+    if (bet > account.coins) {
+      toast("Not enough coins for that bet.", "err")
+      return
+    }
+    setSpinning(true)
+    setOutcome(null)
+    setPulled(true)
+    try {
+      const data = await apiFetch<{
+        reels: SlotSymbol[]
+        mult: number
+        label: string
+        returned: number
+        net: number
+        account: ChatAccount
+      }>("/api/chat-slots", {
+        method: "POST",
+        body: JSON.stringify({ token, bet }),
+      })
+      pendingAccount.current = data.account
+
+      for (let i = 0; i < 3; i++) {
+        const strip = stripRefs.current[i]
+        if (!strip) continue
+        const rebased = cellsRef.current[i] % SL_SEQ_LEN
+        strip.style.transition = "none"
+        strip.style.transform = `translateY(${-rebased * H}px)`
+        void strip.offsetHeight /* commit the rebase before animating */
+        const idx = occurrence(seqs[i], data.reels[i])
+        const step = (idx - (rebased % SL_SEQ_LEN) + SL_SEQ_LEN) % SL_SEQ_LEN
+        const target = rebased + SL_LOOPS * SL_SEQ_LEN + step
+        strip.style.transition = `transform ${SL_DUR[i]}ms cubic-bezier(0.16, 0.55, 0.26, 1)`
+        strip.style.filter = "blur(2.5px)"
+        strip.style.transform = `translateY(${-target * H}px)`
+        cellsRef.current[i] = target
+        const stripEl = strip
+        timers.current.push(
+          window.setTimeout(() => {
+            stripEl.style.filter = "none"
+          }, SL_DUR[i]),
+        )
+      }
+
+      timers.current.push(
+        window.setTimeout(() => {
+          setOutcome({
+            reels: data.reels,
+            mult: data.mult,
+            label: data.label,
+            net: data.net,
+            bet,
+          })
+          onAccount(data.account)
+          pendingAccount.current = null
+          setPulled(false)
+          setSpinning(false)
+          toast(
+            data.mult > 0
+              ? `${data.label} — you win +${data.net} 🪙`
+              : `${data.label} — you lose ${bet} 🪙`,
+            data.mult > 0 ? "ok" : "err",
+          )
+        }, SL_DUR[2] + 120),
+      )
+    } catch (e) {
+      setSpinning(false)
+      setPulled(false)
+      toast(e instanceof Error ? e.message : "The lever jammed.", "err")
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <SlotSymbolDefs />
+
+      {/* The machine */}
+      <div
+        className="relative mx-auto w-full max-w-[30rem] rounded-[1.75rem] border border-amber-200/15 p-4 pb-5 sm:pr-16"
+        style={{
+          background: "linear-gradient(#241b0e, #171208)",
+          boxShadow: "0 24px 60px -24px rgba(0,0,0,.8)",
+        }}
+      >
+        {/* Lever — desktop only, mounted on the cabinet's right side */}
+        <button
+          onClick={() => void spin()}
+          disabled={spinning || bet > account.coins}
+          aria-label="Pull lever to spin"
+          className="absolute right-3 top-14 hidden h-36 w-7 cursor-pointer border-0 bg-transparent disabled:cursor-default sm:block"
+        >
+          <span
+            className="absolute bottom-1 left-1/2 h-16 w-3 -translate-x-1/2 rounded-full"
+            style={{ background: "linear-gradient(#a1a1aa, #52525b)" }}
+          />
+          <span
+            className="absolute bottom-14 left-1/2 h-24 w-2.5 -translate-x-1/2 rounded-full transition-transform duration-300"
+            style={{
+              background: "linear-gradient(#fb7185, #e11d48)",
+              transformOrigin: "bottom center",
+              transform: pulled ? "rotate(24deg)" : "rotate(0deg)",
+            }}
+          >
+            <span
+              className="absolute -top-3 left-1/2 h-7 w-7 -translate-x-1/2 rounded-full"
+              style={{
+                background: "radial-gradient(circle at 35% 30%, #fda4af, #be123c)",
+                boxShadow: "0 4px 10px rgba(0,0,0,.5)",
+              }}
+            />
+          </span>
+        </button>
+
+        {/* Marquee */}
+        <div className="mb-3 flex flex-col items-center gap-1.5">
+          <div className="flex gap-1.5" aria-hidden="true">
+            {Array.from({ length: 9 }, (_, i) => (
+              <i
+                key={i}
+                className="veil-bulb h-1.5 w-1.5 rounded-full bg-amber-300/80"
+                style={i % 2 === 1 ? { animationDelay: "0.7s" } : undefined}
+              />
+            ))}
+          </div>
+          <h2
+            className="text-base font-extrabold"
+            style={{
+              letterSpacing: "0.3em",
+              textIndent: "0.3em",
+              backgroundImage: "linear-gradient(#fef9c3, #f59e0b)",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            GOLDEN SEVENS
+          </h2>
+        </div>
+
+        {/* Reels */}
+        <div
+          className="relative grid grid-cols-3 gap-2 rounded-2xl border p-2"
+          style={{
+            borderColor: "rgba(120,87,20,0.6)",
+            background: "#0d0a05",
+            boxShadow: "inset 0 6px 24px rgba(0,0,0,.9)",
+          }}
+        >
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="relative overflow-hidden rounded-xl"
+              style={{
+                height: H * 3,
+                background: "linear-gradient(#f7f3e6, #efe8d4 50%, #e4dbc2)",
+                boxShadow: "inset 0 4px 14px rgba(0,0,0,.35)",
+              }}
+            >
+              <div
+                ref={(el) => {
+                  stripRefs.current[i] = el
+                }}
+                style={{ willChange: "transform" }}
+              >
+                {reelCells[i].map((sym, j) => (
+                  <div
+                    key={j}
+                    className="flex items-center justify-center"
+                    style={{ height: H }}
+                  >
+                    <SlotSymbolSvg sym={sym} size={Math.round(H * 0.68)} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          {/* Payline */}
+          <div
+            id="veil-slot-payline"
+            className="pointer-events-none absolute left-2 right-2"
+            style={{ top: 8 + H * 1.5 }}
+            aria-hidden="true"
+          >
+            <div className="h-px" style={{ background: "rgba(244,63,94,0.25)" }} />
+            <div
+              className="absolute -top-[5px] left-[-2px] h-2.5 w-2.5 rotate-45"
+              style={{ background: "#fbbf24", boxShadow: "0 0 6px rgba(0,0,0,.6)" }}
+            />
+            <div
+              className="absolute -top-[5px] right-[-2px] h-2.5 w-2.5 rotate-45"
+              style={{ background: "#fbbf24", boxShadow: "0 0 6px rgba(0,0,0,.6)" }}
+            />
+          </div>
+        </div>
+
+        {/* Result */}
+        <div className="grid h-9 place-items-center" aria-live="polite">
+          {outcome ? (
+            <motion.span
+              key={`${outcome.label}-${outcome.net}-${outcome.bet}`}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 520, damping: 20 }}
+              className={`rounded-full border px-3.5 py-1 text-sm font-extrabold tracking-widest ${
+                outcome.mult > 0
+                  ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                  : "border-rose-400/30 bg-rose-400/10 text-rose-300"
+              }`}
+            >
+              {outcome.label.toUpperCase()}
+              {outcome.mult > 0
+                ? ` · WIN +${outcome.net}`
+                : ` · LOSE −${outcome.bet}`}
+            </motion.span>
+          ) : spinning ? (
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-200/50">
+              rolling…
+            </span>
+          ) : null}
+        </div>
+
+        {/* Controls */}
+        <div className="mt-1 flex flex-wrap items-center justify-center gap-3">
+          <div className="flex gap-1 rounded-full border border-amber-200/15 bg-amber-50/[0.04] p-1">
+            {SL_BETS.map((v) => (
+              <button
+                key={v}
+                onClick={() => setBet(v)}
+                disabled={spinning}
+                className={`rounded-full px-3 py-1 text-xs font-extrabold transition disabled:opacity-50 ${
+                  bet === v ? "text-[#451a03]" : "text-amber-50/55 hover:text-amber-50"
+                }`}
+                style={
+                  bet === v
+                    ? { background: "linear-gradient(#fcd34d, #f59e0b)" }
+                    : undefined
+                }
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => void spin()}
+            disabled={spinning || bet > account.coins}
+            className="veil-press veil-hover-glow flex items-center gap-2 rounded-full px-10 py-2.5 text-sm font-extrabold text-[#451a03] disabled:opacity-40"
+            style={{
+              background: "linear-gradient(#fcd34d, #d97706)",
+              boxShadow:
+                "0 12px 32px -10px rgba(245,197,66,.55), inset 0 1px 0 rgba(255,255,255,.5)",
+            }}
+          >
+            {spinning ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {spinning ? "Spinning…" : `Spin · 🪙 ${bet.toLocaleString()}`}
+          </button>
+        </div>
+      </div>
+
+      {/* Paytable */}
+      <div className="mx-auto w-full max-w-[30rem] rounded-2xl border border-amber-200/10 bg-white/[0.02] px-4 py-3">
+        <p className="mb-2 text-[0.6rem] font-bold uppercase tracking-[0.3em] text-amber-100/40">
+          Paytable — line bet
+        </p>
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+          {SLOT_SYMBOLS.map((s) => (
+            <div key={s} className="flex items-center justify-between gap-1">
+              <span className="flex">
+                {[0, 1, 2].map((k) => (
+                  <SlotSymbolSvg key={k} sym={s} size={16} />
+                ))}
+              </span>
+              <b className="text-xs font-extrabold text-amber-50/75">
+                ×{SLOT_TRIPLE_PAY[s]}
+              </b>
+            </div>
+          ))}
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-amber-50/50">
+              Any pair
+            </span>
+            <b className="text-xs font-extrabold text-amber-50/75">×2</b>
+          </div>
+        </div>
+      </div>
+      <p className="text-center text-[10px] leading-relaxed text-white/35">
+        Triples pay the paytable, any pair pays 2× — the reels are drawn server-side, what
+        lands is what counts.
+      </p>
+    </div>
+  )
+}
+
 /** The Games modal — one header dice button, the tables, the shop, one coin balance. */
 function GamesModal({
   account,
@@ -9217,7 +10241,7 @@ function GamesModal({
   onClose: () => void
   toast: (msg: string, kind?: "ok" | "err") => void
 }) {
-  const [tab, setTab] = useState<"flip" | "blackjack" | "shop">("flip")
+  const [tab, setTab] = useState<"flip" | "roulette" | "slots" | "blackjack" | "shop">("flip")
   return (
     <ModalShell
       title="Games"
@@ -9225,16 +10249,24 @@ function GamesModal({
       onClose={onClose}
     >
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <div className="flex rounded-full bg-white/5 p-0.5">
-          {(["flip", "blackjack", "shop"] as const).map((t) => (
+        <div className="flex flex-wrap rounded-full bg-white/5 p-0.5">
+          {(["flip", "roulette", "slots", "blackjack", "shop"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`veil-press rounded-full px-3 py-1 text-xs font-bold transition ${
+              className={`veil-press rounded-full px-2.5 py-1 text-xs font-bold transition sm:px-3 ${
                 tab === t ? "bg-amber-400/15 text-amber-200" : "text-white/55 hover:text-white"
               }`}
             >
-              {t === "flip" ? "🪙 Coin Flip" : t === "blackjack" ? "♠ Blackjack" : "🛍 Shop"}
+              {t === "flip"
+                ? "🪙 Coin Flip"
+                : t === "roulette"
+                  ? "🎡 Roulette"
+                  : t === "slots"
+                    ? "🎰 Slots"
+                    : t === "blackjack"
+                      ? "♠ Blackjack"
+                      : "🛍 Shop"}
             </button>
           ))}
         </div>
@@ -9248,6 +10280,10 @@ function GamesModal({
       </div>
       {tab === "flip" ? (
         <CoinFlipGame account={account} token={token} onAccount={onAccount} toast={toast} />
+      ) : tab === "roulette" ? (
+        <RouletteGame account={account} token={token} onAccount={onAccount} toast={toast} />
+      ) : tab === "slots" ? (
+        <SlotsGame account={account} token={token} onAccount={onAccount} toast={toast} />
       ) : tab === "blackjack" ? (
         <BlackjackGame account={account} token={token} onAccount={onAccount} toast={toast} />
       ) : (

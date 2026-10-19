@@ -1970,3 +1970,102 @@ Unresolved / risks:
 - The dev box's boot-guard auto-reload can still interrupt a build (dev-infra artifact, not app logic) — the amber Retry notice recovers it; production builds are unaffected.
 - A genuinely slow (but healthy) model that pauses >75s between tokens would now be retried — acceptable trade: no observed pauses that long on live streams (deltas flow continuously).
 - Next candidates: "rebuild with changes" (remix an existing build), made-builds in the arcade search, syntax highlighting in View code.
+
+---
+Task ID: 1 (owner request: "2 more for gambling games in chat" + uploaded roulette.html / slots.html)
+Agent: main (Z.ai Code)
+Task: Port the owner's roulette.html and slots.html into the chat Games modal as two new
+server-authoritative coin-economy games (alongside Coin Flip + Blackjack + Shop).
+
+Work Log:
+- Read the owner's two uploaded files (upload/roulette.html, upload/slots.html): European
+  single-zero wheel (37 pockets, physical ORDER + RED set), chip betting with undo/clear,
+  history dots, SVG wheel + counter-rotating ball; slots = Golden Sevens, 7 hand-drawn SVG
+  symbols, weighted reels (cherry 6 / lemon 5 / horseshoe 4 / bell 4 / bar 3 / diamond 2 /
+  seven 1), triple paytable (×100…×6) + any-pair ×2, lever + marquee bulbs + paytable.
+- NEW src/lib/roulette.ts — shared engine: ROULETTE_ORDER, ROULETTE_RED, isRouletteSpot,
+  roulettePayoutFor (straight 36×, dozens 3×, even-money 2×), rouletteColor, plus the
+  slots engine (SLOT_SYMBOLS/WEIGHTS/TRIPLE_PAY/TRIPLE_NAME, pickSlotSymbol,
+  resolveSlotSpin). Pure constants/functions — imported by BOTH server routes and the
+  client component.
+- NEW /api/chat-roulette (POST { token, bets: {spot: amount} }): validates every spot id
+  against the real table, per-bet >= 1, total <= 10,000 house limit; atomic $transaction
+  (fresh balance re-check -> decrement total -> roulette_loss tx -> payout increment +
+  roulette_win tx); pocket drawn from crypto.randomUUID over the wheel order; returns
+  { number, color, winIndex, returned, net, staked, hits, balance, account } so the client
+  wheel can CHASE the server's result.
+- NEW /api/chat-slots (POST { token, bet }): same atomic pattern; each reel drawn
+  server-side with crypto randomness through the owner's weight table; resolves triple /
+  any-pair / nothing; records slots_loss + slots_win; returns { reels, mult, label,
+  returned, net, balance, account }.
+- src/lib/coins.ts: added roulette_win / roulette_loss / slots_win / slots_loss to
+  CoinReason + KNOWN_REASONS.
+- chat-app.tsx (frontend):
+  - RouletteGame — faithful React port of roulette.html: 37-wedge SVG wheel (gold rim,
+    hub gradient, spokes), number labels, static rim overlay, ball as a rotating wrapper
+    (orbits the outer track at 2.6% top, spirals into the pocket band at 9.7% while
+    decelerating — same 4.4s cubic-bezier as the original); classic table grid (0 spanning
+    3 rows, 12x3 numbers, dozens, outside row) with overflow-x scroll; chips 1/5/25/100
+    with the owner's colors; per-cell bet badges; Undo/Clear; client-side escrow against
+    the live balance; spin -> POST -> wheel rotates the server's winIndex to the top with
+    ±3deg jitter; settle shows result pill, prepends a history dot, glows every winning
+    cell (number + dozen + color + parity + half), flashes the winning wedge
+    (veil-winflash keyframes), "New spin" resets. Mid-spin modal close still flushes the
+    account balance (pendingAccount ref + unmount cleanup).
+  - SlotsGame — faithful React port of slots.html: cabinet gradient + border, 9 blinking
+    marquee bulbs (veil-bulb keyframes, alternating delays), GOLDEN SEVENS gold-gradient
+    title, 3 cream reel windows with 3x25-symbol strips (client choreography only — the
+    server picks the outcome), staggered spin durations 1400/1900/2400ms with motion blur,
+    rebase-before-animate via offsetHeight, payline with gold diamond nubs, side-mounted
+    lever (desktop, pulls on spin), bet pills 5/10/25/50, paytable card (7 triples + any
+    pair ×2) using <use href="#veil-slot-*"> symbol defs ported verbatim from the owner's
+    SVG artwork.
+  - GamesModal now has 5 tabs: 🪙 Coin Flip | 🎡 Roulette | 🎰 Slots | ♠ Blackjack | 🛍 Shop
+    (tab row wraps on mobile; balance pill unchanged).
+- globals.css: added veil-winflash (wheel pocket flash) + veil-bulb (marquee blink)
+  keyframes, gated on data-veil-fancy like every other animation, with
+  prefers-reduced-motion opt-outs.
+
+QA (curl + agent-browser + VLM + dev.log):
+- curl: roulette rejects unknown spot (n-99), empty bets, house limit 10k; 7 live spins
+  verified payout math (red 10 -> 20; d2 5 -> 15 on 14; n-0 loses on non-zero; balances
+  step exactly 95->98->116->114->117->100->83). Slots rejects bet 0 + 99999; 6 live pulls
+  produced pairs paying ×2 (bet 5 -> +5 net) and losses; coin history shows
+  slots_loss/slots_win/roulette_loss/roulette_win rows.
+- agent-browser (logged in as a throwaway QA account, since deleted from the DB): Games
+  modal renders all 5 tabs; Roulette wheel + board verified by VLM (green 0 spans left,
+  12x3 classic layout, dozens + outside row, chips with 5 selected); placed 3,3,RED,17
+  (25 escrowed -> "Spin for 25 🪙"); a real spin settled on 26 BLACK — VLM confirmed the
+  BALL RESTING IN THE 26 POCKET at the top of the wheel, result pill "26 · BLACK · LOSE
+  −15", history dot 26, and the DOM showed exactly the right glowing win cells
+  (26, 3rd 12, EVEN, BLACK, 19–36); balance 73 -> 58 everywhere. Slots: VLM verified the
+  full machine (bulbs, gold title, symbols, payline + nubs, red lever with knob, bet
+  pills, paytable ×100…×2); two real pulls settled "A PAIR · WIN +10" (58 -> 68 -> 78) —
+  server transactions mirrored both. Regression: Blackjack Deal button, Coin Flip
+  Heads/Tails, Shop tab all still render. Mobile 390px: wheel fits, tabs wrap, table
+  scrolls horizontally, no overflow (VLM verified).
+- bunx eslint clean on all 5 touched files; tsc: the only chat-app errors are the 4
+  pre-existing ones at ~line 404 (verified identical on the pre-change tree via git
+  stash). dev.log: zero new error frames; the mid-test page reloads were the box's known
+  dev-server restart churn (watchdog corroborated-restart), not game bugs — every spin
+  that fired settled correctly server-side even when the client reloaded mid-animation.
+
+Stage Summary:
+- The chat casino now has FOUR coin-economy games: Coin Flip, Roulette, Slots, Blackjack
+  (+ Shop), all server-authoritative with atomic bets and full transaction history.
+- Both new games are visual ports of the owner's own files (same wheel, same table, same
+  symbols, same paytable) — the only change: the server owns the randomness and the
+  wallet, exactly like Coin Flip/Blackjack before.
+- Design note (logged for future tuning): slots RTP with the owner's exact paytable +
+  any-pair rule is ~115% (player edge). Kept verbatim for fidelity — coins are cosmetic
+  (shop/gifting) and daily rewards already mint. If the economy ever needs balancing,
+  tighten SLOT_WEIGHTS in src/lib/roulette.ts (one line, no UI change).
+
+Unresolved / risks:
+- The dev box still restarts every few minutes under memory pressure (fixed watchdog
+  makes it rarer + corroborated, but it persists) — boot-guard reloads clients on each
+  restart, which interrupts long animations (4.4s roulette spin). Mid-reload the coins
+  are ALWAYS already settled server-side, so no money is ever lost; on reopen the balance
+  is correct (verified: spins that straddled a reload settled cleanly in the DB).
+- Roulette table is 540px min-width by design (owner's file) — scrolls horizontally on
+  narrow phones instead of shrinking; can compress if the owner prefers fit-over-scroll.
