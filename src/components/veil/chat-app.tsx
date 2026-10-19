@@ -4730,6 +4730,9 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  /** Last wall-clock ms we emitted "typing" — the throttle gate for
+   * onInputChange (see the 2026-10-19 freeze fix there). */
+  const lastTypingEmitRef = useRef(0)
 
   // ---------------------------------------------------------------------------
   // Toast helper
@@ -5952,11 +5955,23 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value)
     if (!socketRef.current || !account) return
-    socketRef.current.emit("typing", { channelId })
+    /* THROTTLED typing emit (2026-10-19 "whenever i type it freeze"):
+     * this used to fire a socket event on EVERY keystroke — with a few
+     * users chatting that was a keystroke-rate broadcast storm through
+     * the single-port gateway, and under box load the queued packets
+     * made the whole chat feel frozen. The receiver prunes typing
+     * indicators at 5s, so one emit per 1.2s keeps every indicator
+     * alive while cutting traffic ~10-30×. */
+    const now = Date.now()
+    if (now - lastTypingEmitRef.current > 1200) {
+      lastTypingEmitRef.current = now
+      socketRef.current.emit("typing", { channelId })
+    }
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
     typingTimerRef.current = setTimeout(() => {
+      lastTypingEmitRef.current = 0
       socketRef.current?.emit("stop_typing", { channelId })
-    }, 1500)
+    }, 1600)
   }
 
   const onKey = (e: ReactKeyboardEvent<HTMLInputElement>) => {

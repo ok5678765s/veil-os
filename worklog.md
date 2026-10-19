@@ -2069,3 +2069,33 @@ Unresolved / risks:
   is correct (verified: spins that straddled a reload settled cleanly in the DB).
 - Roulette table is 540px min-width by design (owner's file) — scrolls horizontally on
   narrow phones instead of shrinking; can compress if the owner prefers fit-over-scroll.
+
+---
+
+Task ID: 1 (single-agent session)
+Agent: Z.ai Code (main)
+Task: User report: "still restarts and sometimes an error shows up whenever I type, it freezes — not even when I type sometimes. You finished previous tasks."
+
+Work Log:
+- Read worklog tail, dev.log, dev-watchdog.log, /home/z/veil-heap.log forensics
+- Confirmed prior tasks done: chat gambling games = CoinFlip + Blackjack + Roulette + Slots (4 games live in the Games modal)
+- ROOT CAUSE 1 (restarts): kernel OOM-killing next-server every ~3 min. Chain: heap cap 2048MB → warm RSS 2.1-2.4GB → MemAvail 167-322MB (4GB box, zero swap) → kernel kills next-server → watchdog relaunches → new boot stamp → boot-guard reloads all clients to restored sections (users mid-game see "sent to homescreen"). User chat DB quote: "coin It sent me to the homescreen and kept my money after I won"
+- ROOT CAUSE 2 (freeze on typing): onInputChange emitted a socket.io "typing" event on EVERY KEYSTROKE (no throttle) → relayed to every client in channel → keystroke-rate broadcast storm through the single-port gateway under load
+- Killed 730MB of leftover agent-browser Chrome processes from a stale QA session (immediate +570MB)
+- package.json: heap cap 2048 → 1664MB (live heap peaks ~1.25GB, keeps 33% GC headroom; RSS plateau now ~1.6-1.8GB)
+- scripts/dev-watchdog.sh v6.1: RSS_WARN 1.76GB, RSS_LIMIT 2450000KB (warm-compile transients legitimately hit 2.2GB — compiler external memory is off-heap), MemAvail corroboration still gates every restart; single instance re-armed
+- src/components/veil/chat-app.tsx: typing emit throttled to 1 per 1200ms (lastTypingEmitRef), stop_typing timer 1600ms; receiver prunes at 5s so indicator stays alive; ~10-30x traffic cut
+- mini-services/chat-service/index.ts: server-side typing broadcast throttle (800ms per socket+channel, typingThrottle map, cleaned on disconnect) — protects against stale clients
+- Killed 6 orphaned `bun run dev` chains from 21:19 that confused the watchdog's revive logic; one clean chain + watchdog now
+- lint: chat-app.tsx clean (full-project eslint OOMs the box — avoid running it while server is warm; lint specific files instead)
+- agent-browser QA: home renders, Chat opens, registered qatest99, typed full sentence in composer (NO freeze, no console errors), POST /api/chat-data 200 (message lost only because server was OOM-killed in that exact window by my QA Chrome's 700MB — user sessions have no QA Chrome)
+- Verified section restore works after reload (chat overlay aria-hidden=false, z-50, content rendered); the reload loop seen during QA was purely the OOM death cycle + boot-guard correctly reloading on real restarts
+- Final state: server 24106 stable 5+ min (past the 3-min death cycle), MemAvailable 1661MB (was 167MB), chat-data API 200 in 20ms, no 5xx
+
+Stage Summary:
+- BOTH user-reported bugs root-caused and fixed: (1) restarts = kernel OOM kill loop → fixed by heap cap 1664MB + watchdog v6.1 retune + stale-process cleanup; (2) freeze-on-typing = keystroke-rate typing broadcast storm → fixed by client (1.2s) + server (0.8s) throttles
+- Memory budget now: warm next-server ~1.8-2.0GB + mini-services ~0.4GB + OS ~0.5GB → ~1.1-1.6GB headroom (was: 167-320MB)
+- Section-restore-after-restart verified working (chat reopens from veil:section in sessionStorage/localStorage)
+- KNOWN RISK: full-project `bun run lint` / heavy builds during warm state can still tip the box (it caused one planned restart at 22:19) — lint individual files or accept a single 15-min-cooldown restart
+- KNOWN RISK: if the true heap live set ever grows past ~1.4GB (new features), the 1664MB cap risks Next's internal 80%-of-limit watchdog restarts — watch veil-heap.log WARN lines
+- User's coin-game complaint ("kept my money after I won" — bet lost mid-restart): the restarts that caused it are fixed; if it recurs, the coin-game bet flow needs an idempotent settle-on-reload mechanism (candidate next feature)

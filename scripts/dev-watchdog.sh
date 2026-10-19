@@ -63,8 +63,8 @@ done
 sleep 0.3
 
 CYCLE=10               # seconds between checks (v4: faster reaction, zero extra restarts)
-RSS_WARN_KB=2000000    # 1.95GiB — log-only: big server, gardener compacts, NO restart
-RSS_LIMIT_KB=2750000   # 2.7GB  — restart CANDIDATE, but only with real box pressure (v5, 2026-10-17: heap cap raised 1792→2048MB + quasar caches cut 256/160→48MB — the 80% restart line moved to ~1.8GB heap, so the corroborated line follows it up; MemAvail corroboration still gates every restart)
+RSS_WARN_KB=1800000    # 1.76GiB — log-only: big server, gardener compacts, NO restart
+RSS_LIMIT_KB=2450000   # 2.34GB — restart CANDIDATE, but only with real box pressure (v6.1, 2026-10-19: warm-compile transients legitimately push RSS to ~2.2GB even with the 1664MB heap cap — the compiler's external memory is off-heap. 2450MB leaves the warmup path alone; MemAvail corroboration still gates every restart)
 PRESSURE_MIN_KB=600000 # 600MB — MemAvail below this + RSS over limit = true pressure (v4.1, 2026-10-13: was 700MB — borderline 677-683MB dips restarted the server and dumped live user sessions; the gardener already double-gcs below 600)
 MEMAVAIL_MIN_KB=320000 # 320MB — whole-box emergency threshold (last resort)
 COOLDOWN_S=900         # min seconds between FORCED restarts (15 min — a restart storm is worse than transient pressure)
@@ -151,7 +151,7 @@ server_age() {
 }
 
 # ---- main loop -----------------------------------------------------------
-log "v4.1 armed: RSS>1950MB → warn-only (gardener compacts) | RSS>2300MB + MemAvail<600MB → planned restart | MemAvail<320MB → emergency | cycle=${CYCLE}s cooldown=${COOLDOWN}s"
+log "v6.1 armed: heap cap 1664MB | RSS>1760MB → warn-only (gardener compacts) | RSS>2340MB + MemAvail<600MB → planned restart | MemAvail<320MB → emergency | cycle=${CYCLE}s cooldown=${COOLDOWN}s"
 
 TICKS=0
 while true; do

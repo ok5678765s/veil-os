@@ -161,6 +161,25 @@ const socketChannels = new Map<string, Set<string>>()
 // channelId -> Map<socket.id, AccountSession>
 const channelPresence = new Map<string, ChannelPresence>()
 
+/* Typing-broadcast throttle (2026-10-19 "whenever i type it freeze"):
+ * older chat clients emitted "typing" on EVERY keystroke, and each one
+ * was relayed to every other socket in the channel — a keystroke-rate
+ * broadcast storm under load. The web client now self-throttles to one
+ * emit / 1.2s, and the relay enforces the same floor here (800ms) so
+ * stale builds can never re-open the storm. Indicator lifetime on the
+ * receiving side is 5s, so an 800ms floor is invisible to users. */
+// `${socket.id}:${channelId}` -> last broadcast ms
+const typingThrottle = new Map<string, number>()
+const TYPING_MIN_INTERVAL_MS = 800
+
+function typingAllowed(key: string): boolean {
+  const now = Date.now()
+  const last = typingThrottle.get(key) || 0
+  if (now - last < TYPING_MIN_INTERVAL_MS) return false
+  typingThrottle.set(key, now)
+  return true
+}
+
 function resolveChannel(payload: { channel?: string; channelId?: string }): string | null {
   const c = payload.channel || payload.channelId
   if (!c || typeof c !== "string") return null
@@ -433,6 +452,7 @@ io.on("connection", (socket: Socket) => {
       if (!channelId) return
       const set = socketChannels.get(socket.id)
       if (!set || !set.has(channelId)) return
+      if (!typingAllowed(`${socket.id}:${channelId}`)) return
       socket.to(channelId).emit("typing", {
         channelId,
         account: {
@@ -557,6 +577,11 @@ io.on("connection", (socket: Socket) => {
         }
       }
       socketChannels.delete(socket.id)
+      // Drop this socket's typing-throttle entries — socket ids are
+      // ephemeral (new one per reconnect) and would otherwise leak.
+      for (const key of typingThrottle.keys()) {
+        if (key.startsWith(`${socket.id}:`)) typingThrottle.delete(key)
+      }
       console.log(`[veil-chat] disconnected: ${socket.id}`)
     } catch (err) {
       console.error("[veil-chat] disconnect error", err)
