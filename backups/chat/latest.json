@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:12:53.417Z",
+  "exportedAt": "2026-10-19T22:13:27.053Z",
   "counts": {
     "accounts": 73,
     "messages": 117,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 7977,
+      "coins": 9807,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 60302,
+      "coins": 60303,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1599,17 +1599,6 @@
       "editedAt": null
     },
     {
-      "id": "cmurm1lzh000yqzul7lrctm3a",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "added new channels",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-02T23:44:53.645Z",
-      "editedAt": null
-    },
-    {
       "id": "cmusxdh3i0009ojyz6ey45iy9",
       "channelId": "main",
       "accountId": "cmusxcw4k0007ojyz7wsmceva",
@@ -2828,6 +2817,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:12:52.148Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvft8wpv009hq9kflyrh7e99",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "its so laggy",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:12:59.684Z",
       "editedAt": null
     }
   ],
