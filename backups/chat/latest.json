@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-19T22:22:17.846Z",
+  "exportedAt": "2026-10-19T22:22:52.676Z",
   "counts": {
     "accounts": 74,
-    "messages": 116,
+    "messages": 117,
     "dms": 3
   },
   "accounts": [
@@ -1551,7 +1551,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 101,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -2838,6 +2838,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:15:20.564Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvftl6dp0002q9itei0ecspl",
+      "channelId": "main",
+      "accountId": "cmvftkkhq0000q9it1lgtnnfb",
+      "content": "hello testing typing freeze fix - no storm now",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-19T22:22:32.077Z",
       "editedAt": null
     }
   ],
