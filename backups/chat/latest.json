@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:56:02.197Z",
+  "exportedAt": "2026-10-20T18:57:06.671Z",
   "counts": {
-    "accounts": 81,
+    "accounts": 82,
     "messages": 483,
     "dms": 4
   },
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 365,
+      "coins": 475,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1194,7 +1194,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 20,
+      "coins": 15,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1708,6 +1708,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T17:02:45.568Z",
       "passwordHash": "$2b$10$eSq4NAWwsHZalVfiLueACOzPRlGJ3Yair4dQHvnUUi64jFw5TcPi2"
+    },
+    {
+      "id": "cmvh1oilb019aonytzqy24vft",
+      "username": "The Canadian Spy",
+      "displayName": "The Canadian Spy",
+      "avatarColor": "#16a085",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 110,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-20T18:56:56.647Z",
+      "legacy": false,
+      "createdAt": "2026-10-20T18:56:50.975Z",
+      "passwordHash": "$2b$10$aj9p3qsfOdqkGwkr4VHQX.Nwo7EAEPg3YIO6TdvZH070en5CdL.G."
     }
   ],
   "messages": [
@@ -7006,12 +7027,12 @@
       "id": "cmvh1iy0c016bonyt9gqs8und",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "seb i snet to you coins no spam",
+      "content": "Canadian i snet to you coins no spam",
       "replyTo": null,
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:52:31.020Z",
-      "editedAt": null
+      "editedAt": "2026-10-20T18:56:11.408Z"
     },
     {
       "id": "cmvh1mykk018fonytg1bizydk",
