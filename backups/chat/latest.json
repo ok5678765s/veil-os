@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T19:06:53.328Z",
+  "exportedAt": "2026-10-20T19:07:27.002Z",
   "counts": {
     "accounts": 84,
     "messages": 483,
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 3,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1761,7 +1761,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 110,
+      "coins": 220,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -5988,39 +5988,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1ht4800vponytk8d9x5pa",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:38.024Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1ht7x00vtonyt2zn52ben",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:38.158Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1htve00vxonyt97v8vvir",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:39.003Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hu2n00w1onytkhjs9x3v",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7086,6 +7053,39 @@
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:58:50.116Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvh21o680035onw7u1e0mqcr",
+      "channelId": "main",
+      "accountId": "cmvh1oilb019aonytzqy24vft",
+      "content": "gmabling",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T19:07:04.736Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh21qtm003donw750wdrmgp",
+      "channelId": "main",
+      "accountId": "cmvh1oilb019aonytzqy24vft",
+      "content": "mmhh",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T19:07:08.170Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh21sou003honw7wh09o8uw",
+      "channelId": "main",
+      "accountId": "cmvh1oilb019aonytzqy24vft",
+      "content": "hmm",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T19:07:10.591Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -7146,6 +7146,16 @@
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
       "friendId": "cmuhlfo6p0001q5fg3ljxk2lc",
       "createdAt": "2026-10-20T17:47:47.191Z"
+    },
+    {
+      "accountId": "cmvh1oilb019aonytzqy24vft",
+      "friendId": "cmuhj14uk0000q5o4uzvh329c",
+      "createdAt": "2026-10-20T19:06:57.419Z"
+    },
+    {
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "friendId": "cmvh1oilb019aonytzqy24vft",
+      "createdAt": "2026-10-20T19:06:57.420Z"
     }
   ],
   "reactions": []
