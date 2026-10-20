@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:38:02.403Z",
+  "exportedAt": "2026-10-20T18:38:35.897Z",
   "counts": {
     "accounts": 81,
     "messages": 483,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 634,
+      "coins": 584,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 435,
+      "coins": 436,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 4,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1896,28 +1896,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T14:10:19.348Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft7tvc008jq9kfci4v84wf",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "coin It sent me to the homescreen and kept my money after I won",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:12:09.336Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft8i7d0095q9kfddytocgv",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "will fix",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:12:40.873Z",
       "editedAt": null
     },
     {
@@ -7022,6 +7000,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:37:52.972Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh10iek00rzonyt6878j82h",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "I need to type one more cuz I need credit",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:38:10.989Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh10vnq00s7onyt0jczhgb3",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "ok",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:38:28.166Z",
       "editedAt": null
     }
   ],
