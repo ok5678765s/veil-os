@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T23:32:06.393Z",
+  "exportedAt": "2026-10-20T23:32:34.781Z",
   "counts": {
     "accounts": 86,
-    "messages": 458,
+    "messages": 484,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 400356,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -6030,6 +6030,83 @@
       "editedAt": null
     },
     {
+      "id": "cmvh1hu2n00w1onytkhjs9x3v",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.264Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hu6z00w5onyt4hxpo1np",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.419Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hug200w9onyter5c2gxx",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.747Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hunr00wdonytfcek1kwo",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:40.024Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1husr00whonytyacegl97",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:40.204Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1huxr00wlonytc17fx2y5",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:40.383Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hv4m00wponyt2xs9mn1p",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:40.631Z",
+      "editedAt": null
+    },
+    {
       "id": "cmvh1hvb500wtonyth9hq8b3r",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -6038,6 +6115,182 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:51:40.865Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hvg200wxonyth1pelf0r",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:41.043Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hvm400x1onyti1hjz9aj",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:41.261Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hwr100x5onyt1wd8brm1",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:42.733Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hwr200x7onyt1h1hhulg",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "aa",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:42.735Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hwr300x9onytgq4kfiyu",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:42.735Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hwr300xbonyt16w8v9md",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:42.736Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hwr400xdonyt4wyf16oo",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:42.736Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hwzo00xponyto2w7c457",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:43.044Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hx1k00xtonytaqumi33m",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:43.113Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hx9z00xxonytklh29r52",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:43.415Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hxhm00y1onytpfztguz8",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:43.691Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hxnv00y5onyt727k2z5q",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:43.915Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hxvj00y9onyta180bt9h",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:44.191Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hy2w00ydonytgibov1ha",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:44.456Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hy9n00yhonyt7yt53u04",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:44.699Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hyoa00ylonyt0ipv848e",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:45.227Z",
       "editedAt": null
     },
     {
@@ -6118,6 +6371,17 @@
       "editedAt": null
     },
     {
+      "id": "cmvh1i0hh00zhonyte9n6rhkd",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:47.573Z",
+      "editedAt": null
+    },
+    {
       "id": "cmvh1i0ra00zlonytlcil0iee",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -6129,6 +6393,17 @@
       "editedAt": null
     },
     {
+      "id": "cmvh1i0wn00zponytm81oim16",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:48.119Z",
+      "editedAt": null
+    },
+    {
       "id": "cmvh1i1m500ztonytqsheidv2",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -6137,6 +6412,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:51:49.037Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1i1oq00zxonytwxcijk06",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:49.130Z",
       "editedAt": null
     },
     {
@@ -7238,6 +7524,14 @@
       "amount": 400356,
       "reason": "blackjack_win",
       "createdAt": "2026-10-20T23:32:00.421Z"
+    },
+    {
+      "id": "cmvhbioj8000drjxlyirhjnpx",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 400356,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T23:32:14.900Z"
     }
   ]
 }
