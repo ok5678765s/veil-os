@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T21:27:11.828Z",
+  "exportedAt": "2026-10-20T21:40:49.647Z",
   "counts": {
-    "accounts": 85,
+    "accounts": 86,
     "messages": 483,
     "dms": 4
   },
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 100095,
+      "coins": 100085,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1792,6 +1792,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T19:08:07.619Z",
       "passwordHash": "$2b$10$DumIsQof5Fq11iqrqyKNXO6AojYBwBnvPaWxDpjDaw2A/SudbGRoO"
+    },
+    {
+      "id": "cmvh7jbat0000rjqdku7gd4hf",
+      "username": "qarefundx1",
+      "displayName": "qarefundx1",
+      "avatarColor": "#e84393",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-20T21:40:45.942Z",
+      "passwordHash": "$2b$10$tQK0mP82DocKlmy0xlHRwuSsB5yZIAd.CboDXiR3FLgV30Ap.VV8C"
     }
   ],
   "messages": [
