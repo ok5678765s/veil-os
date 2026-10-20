@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T12:36:22.447Z",
+  "exportedAt": "2026-10-20T12:44:57.148Z",
   "counts": {
     "accounts": 74,
-    "messages": 118,
+    "messages": 117,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 110822,
+      "coins": 1422,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -2849,17 +2849,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T12:27:52.154Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgo36fd004itiysmf6zjqmw",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "100k",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T12:36:20.425Z",
       "editedAt": null
     }
   ],
