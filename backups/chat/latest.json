@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T23:09:31.503Z",
+  "exportedAt": "2026-10-20T23:10:05.456Z",
   "counts": {
     "accounts": 85,
-    "messages": 483,
+    "messages": 473,
     "dms": 4
   },
   "accounts": [
@@ -6031,50 +6031,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hunr00wdonytfcek1kwo",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.024Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1husr00whonytyacegl97",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.204Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1huxr00wlonytc17fx2y5",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.383Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hv4m00wponyt2xs9mn1p",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.631Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hvb500wtonyth9hq8b3r",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -6083,17 +6039,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:51:40.865Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hvg200wxonyth1pelf0r",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:41.043Z",
       "editedAt": null
     },
     {
@@ -6119,17 +6064,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwr200x7onyt1h1hhulg",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "aa",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.735Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwr300x9onytgq4kfiyu",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -6138,50 +6072,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:51:42.735Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hwr300xbonyt16w8v9md",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.736Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hwr400xdonyt4wyf16oo",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.736Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hwzo00xponyto2w7c457",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:43.044Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hx1k00xtonytaqumi33m",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:43.113Z",
       "editedAt": null
     },
     {
