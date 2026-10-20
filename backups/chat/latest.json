@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:38:35.897Z",
+  "exportedAt": "2026-10-20T18:39:39.392Z",
   "counts": {
     "accounts": 81,
     "messages": 483,
@@ -15,9 +15,9 @@
       "avatarColor": "#16a085",
       "avatarImage": null,
       "bio": "",
-      "role": "moderator",
+      "role": "member",
       "muted": false,
-      "banned": false,
+      "banned": true,
       "coins": 100,
       "tag": null,
       "tagColor": null,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 584,
+      "coins": 224,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 5,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1899,17 +1899,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvftbxf700a3q9kffhmu6tkr",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "/api/gif-file/WqFa6icbSpSeD6FO8A",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:15:20.564Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvgns39g002mtiysb32afx3w",
       "channelId": "cmvgnrw0l002htiyssp56781z",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -1929,50 +1918,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T12:27:52.154Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgpixpi007ttiys72ipppsq",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "wsp",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:16:35.238Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqbo7a00b9tiyshv8hlta2",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "someone send me veil coins IM broke",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:38:55.942Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqbrdf00bftiysuklnbq8b",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "PLS",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:39:00.051Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqca0800bjtiysud58xhdk",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "Im broke",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:39:24.200Z",
       "editedAt": null
     },
     {
@@ -7022,6 +6967,61 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:38:28.166Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12chk00sponytdglth6js",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "i",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:36.633Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12ct700stonyt2k4p7cf3",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "d",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:37.051Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12d6i00sxonyt0datdi3q",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "di",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:37.530Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12doy00t1onyts4qir4ad",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "di",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:38.194Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12edg00t5onytriyjs3t7",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "di",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:39.076Z",
       "editedAt": null
     }
   ],
