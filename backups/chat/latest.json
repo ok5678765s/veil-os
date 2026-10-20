@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:36:58.806Z",
+  "exportedAt": "2026-10-20T18:38:02.403Z",
   "counts": {
     "accounts": 81,
     "messages": 483,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 644,
+      "coins": 634,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 3,
+      "coins": 4,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1896,50 +1896,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T14:10:19.348Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft2pey006nq9kfh2szdmp8",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "and added more gambling games",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:08:10.282Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft4nhu007xq9kfrfy5ylto",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "It glitched and took my money without any rewards",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:09:41.106Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft5ede0089q9kfyzmgayw6",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "which game",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:10:15.938Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft5hts008dq9kfbo7hs8q2",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "I'll send you more",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:10:20.417Z",
       "editedAt": null
     },
     {
@@ -7022,6 +6978,50 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:36:56.099Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh100yu00r9onytdc7oohcs",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "i",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:37:48.391Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1023600rdonyt3reaswhf",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "need",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:37:49.842Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh103i300rhonyt708wugcp",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "gambling",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:37:51.676Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh104i300rlonytpw9klw8h",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "money",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:37:52.972Z",
       "editedAt": null
     }
   ],
