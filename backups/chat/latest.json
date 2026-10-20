@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T21:23:35.544Z",
+  "exportedAt": "2026-10-20T21:27:11.828Z",
   "counts": {
-    "accounts": 86,
+    "accounts": 85,
     "messages": 483,
     "dms": 4
   },
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 100000,
+      "coins": 100095,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1792,27 +1792,6 @@
       "legacy": false,
       "createdAt": "2026-10-20T19:08:07.619Z",
       "passwordHash": "$2b$10$DumIsQof5Fq11iqrqyKNXO6AojYBwBnvPaWxDpjDaw2A/SudbGRoO"
-    },
-    {
-      "id": "cmvh6wodc0000rj33nq6kebem",
-      "username": "qamodluck1",
-      "displayName": "QA Mod Luck",
-      "avatarColor": "#27ae60",
-      "avatarImage": null,
-      "bio": "",
-      "role": "moderator",
-      "muted": false,
-      "banned": false,
-      "coins": 500,
-      "tag": null,
-      "tagColor": null,
-      "pfpAccessory": null,
-      "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
-      "legacy": false,
-      "createdAt": "2026-10-20T21:23:09.792Z",
-      "passwordHash": "not-a-real-hash-browser-login-uses-api"
     }
   ],
   "messages": [
