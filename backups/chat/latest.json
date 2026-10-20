@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:57:06.671Z",
+  "exportedAt": "2026-10-20T18:58:41.183Z",
   "counts": {
     "accounts": 82,
     "messages": 483,
@@ -1719,7 +1719,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 110,
+      "coins": 1,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -5946,17 +5946,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh12hm300txonyt1s8x3ezg",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "did",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:39:43.275Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh12huw00u1onytb5cf64oq",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7043,6 +7032,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:55:38.372Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1qs3b000bonw712qmiy3y",
+      "channelId": "main",
+      "accountId": "cmvh1oilb019aonytzqy24vft",
+      "content": "this kid",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:58:36.599Z",
       "editedAt": null
     }
   ],
