@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T23:04:51.854Z",
+  "exportedAt": "2026-10-20T23:05:46.333Z",
   "counts": {
     "accounts": 85,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 100089,
+      "coins": 200178,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -7364,6 +7364,22 @@
       "amount": 1600,
       "reason": "shop_purchase:acc-fight",
       "createdAt": "2026-10-20T22:09:34.325Z"
+    },
+    {
+      "id": "cmvhak0bj0003rjrhnz8wggns",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 100089,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T23:05:17.215Z"
+    },
+    {
+      "id": "cmvhak7or0005rjrhcj9uarzy",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200178,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-20T23:05:26.763Z"
     }
   ]
 }
