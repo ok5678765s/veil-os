@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T22:08:43.530Z",
+  "exportedAt": "2026-10-20T22:09:48.025Z",
   "counts": {
     "accounts": 86,
     "messages": 483,
@@ -147,7 +147,7 @@
       "coins": 100089,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": null,
+      "pfpAccessory": "fight",
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
       "lastRewardClaim": "2026-10-20T12:25:03.726Z",
@@ -7393,6 +7393,14 @@
       "amount": 1500,
       "reason": "shop_purchase:acc-sprout",
       "createdAt": "2026-10-20T22:08:42.474Z"
+    },
+    {
+      "id": "cmvh8kcxg0001rjlmjvrs51pu",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1600,
+      "reason": "shop_purchase:acc-fight",
+      "createdAt": "2026-10-20T22:09:34.325Z"
     }
   ]
 }
