@@ -2202,3 +2202,27 @@ Unresolved / risks:
 - The stake rows at deal time are still labeled "blackjack_loss" (cosmetic ledger semantics; kept for continuity with existing rows and the backup format).
 - Pre-v1.3 purchases that were unequipped at rollback time remain unrecoverable (documented last session).
 - If the box's memory pressure recurs under concurrent QA + user load, planned restarts will still fire (v6.2 policy) — stranded-hand stakes now auto-refund on next deal, so no coins are lost to them anymore.
+
+---
+Task ID: 4 (single-agent session)
+Agent: Z.ai Code (main)
+Task: Owner report — "give me back my 200k please my il bro took it all and went gambling AND LOST IT T-T"
+
+Work Log:
+- Forensics (ledger + blackjack games, read-only): reconstructed the post-restore spree exactly. After the 23:19:32 glitch_refund (+200,178), the owner's little brother went all-in at 23:31:57 with the full 200,178 → WON (payout 400,356) → 17 seconds later went all-in again with 400,356 → busted (hand [.,.]=24-style bust, payout 0) → balance 0. All gambling on Veil's own account; zero transfer txs to other accounts. The two-tap all-in guard shipped last session did its job — both all-ins required deliberate confirming taps; no bug, no race, no glitch this time.
+- Restoration: scripts/restore-veil-200k-bro.ts (idempotent) granted back exactly the pre-spree balance 200,178 as a `staff_grant` (deliberate owner grant — semantically distinct from last time's glitch_refund). Idempotency guard: skips if a post-23:32:14 staff_grant of 200,178 already exists — verified by re-running (skip confirmed, no double-pay).
+- Post-restore verification: Veil coins=200178 ✓; ledger row `+200178 staff_grant @ 23:34:46` ✓; backup loop auto-committed at 23:35 (7bfb363) and latest.json carries Veil coins=200178 + the staff_grant row (txCount 41) → rollback-proof ✓; dev server 200, dev.log clean, live traffic flowing (no errors) ✓.
+- No app code changed (data-only operation) → browser QA intentionally skipped: worklog documents QA browsers as the box's top memory hog (twice triggered planned restarts while the owner was live); nothing in the UI changed to verify.
+- eslint: full `bun run lint` got SIGKILLed by the box's memory pressure (known transient, not a code error); targeted `eslint scripts/restore-veil-200k-bro.ts scripts/probe-veil.ts` → exit 0, clean.
+- Added scripts/probe-veil.ts (read-only forensics: account state + last 40 txs + last 15 blackjack games) — kept as a tool since balance/ledger forensics has now been needed three sessions in a row.
+- 15-min webDevReview cron: NOT recreated — jobs 469681 + 469624 already exist with the exact required description (both currently platform-disabled "exec limits exceeded"); a third would risk triplicate concurrent review agents on this memory-fragile box if the platform re-enables them.
+
+Stage Summary:
+- Owner made whole (second time): Veil = 200,178 coins via idempotent staff_grant, backup-committed within one 30s loop cycle.
+- Root cause this round: account access by a family member + two deliberate all-in bets — the all-in two-tap guard worked as designed; no code defect was involved, so no code was changed (per the owner's standing "only what needs to be done" rule).
+- Suggested (NOT implemented, owner did not ask): keep the brother off the account — log out of shared devices / change the chat password.
+
+Unresolved / risks:
+- Third restore in a row would set a bad precedent — if the "brother" pattern recurs, consider whether the owner wants an actual guard (e.g. bet cap, password change prompt) — needs an explicit owner request first.
+- Both 15-min review crons remain platform-disabled (exec limits); nothing actionable on our side.
+- Pre-v1.3 unequipped purchases remain unrecoverable (documented in earlier tasks).
