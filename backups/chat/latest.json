@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T12:27:43.225Z",
+  "exportedAt": "2026-10-20T12:28:17.493Z",
   "counts": {
     "accounts": 74,
-    "messages": 116,
+    "messages": 117,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 60320,
+      "coins": 60321,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -2838,6 +2838,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T12:27:43.108Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgnsa8q002qtiysvwcujx6w",
+      "channelId": "cmvgnrw0l002htiyssp56781z",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "Its ;aggy as fuck and I don't know why",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T12:27:52.154Z",
       "editedAt": null
     }
   ],
