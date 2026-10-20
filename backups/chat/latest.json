@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:36:25.668Z",
+  "exportedAt": "2026-10-20T18:36:58.806Z",
   "counts": {
     "accounts": 81,
     "messages": 483,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 212,
+      "coins": 644,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 434,
+      "coins": 435,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 1,
+      "coins": 3,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1896,39 +1896,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T14:10:19.348Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvfsyp1z003hq9kfmvktkwgv",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "what",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:05:03.191Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvfszhhw003rq9kf01rm3bys",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "sent",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:05:40.052Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvft11n50055q9kfrla3vxqe",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "12k",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-19T22:06:52.818Z",
       "editedAt": null
     },
     {
@@ -7022,6 +6989,39 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:36:18.234Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0ydcl00qjonyt4xau2qai",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "wait add a incivsible character",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:36:31.125Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0yjwa00qronytmvd3kyiu",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "can u kick old account",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:36:39.610Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0ywmb00qzonytp0tzf6b7",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "please",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:36:56.099Z",
       "editedAt": null
     }
   ],
