@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:29:28.962Z",
+  "exportedAt": "2026-10-20T18:30:03.403Z",
   "counts": {
     "accounts": 81,
     "messages": 301,
@@ -1698,13 +1698,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 102,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-20T18:29:32.987Z",
       "legacy": false,
       "createdAt": "2026-10-20T17:02:45.568Z",
       "passwordHash": "$2b$10$eSq4NAWwsHZalVfiLueACOzPRlGJ3Yair4dQHvnUUi64jFw5TcPi2"
@@ -1841,17 +1841,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-11T05:45:24.639Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv86089q000zqiigtm8fohm0",
-      "channelId": "main",
-      "accountId": "cmv6sznc20000r7zbbcxqj2ju",
-      "content": "was goodie",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-14T13:48:00.350Z",
       "editedAt": null
     },
     {
@@ -5020,6 +5009,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:29:25.718Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0pcce0005onytb5jtvhua",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "also can i get mod",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:29:29.918Z",
       "editedAt": null
     }
   ],
