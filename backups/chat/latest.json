@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:30:37.403Z",
+  "exportedAt": "2026-10-20T18:31:11.133Z",
   "counts": {
     "accounts": 81,
     "messages": 301,
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 1,
+      "coins": 5,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1844,39 +1844,6 @@
       "editedAt": null
     },
     {
-      "id": "cmv8chi8l0002qiruyu3hlxkz",
-      "channelId": "main",
-      "accountId": "cmv8cffdk0000qiruvohllabc",
-      "content": "can  I pls get access to the doc???",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-14T16:49:24.118Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv8evdwe0005qi37ho6ceraj",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "hi",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-14T17:56:10.910Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv8evopg0009qi37za8tjrge",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "go to #sharelinks for links",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-14T17:56:24.916Z",
-      "editedAt": null
-    },
-    {
       "id": "cmv8fl3q7000dqi37nsw1ch4a",
       "channelId": "sharelinks",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -1885,17 +1852,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-14T18:16:10.783Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv9m0z3h001an2d3o0mu3ofj",
-      "channelId": "main",
-      "accountId": "cmv9m0bqn0014n2d300crywqb",
-      "content": "like genuine I need my mommy",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-15T14:04:15.149Z",
       "editedAt": null
     },
     {
@@ -5020,6 +4976,50 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:30:30.706Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0qzyp000jonyttz6464vy",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "lowk",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:30:47.185Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0r13e000nonytm4465l2p",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "can",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:30:48.650Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0r248000ronytgfu9kv22",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "i",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:30:49.977Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0r31x000vonythw5dbd8m",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "please",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:30:51.189Z",
       "editedAt": null
     }
   ],
