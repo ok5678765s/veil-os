@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T19:07:27.002Z",
+  "exportedAt": "2026-10-20T19:08:30.652Z",
   "counts": {
-    "accounts": 84,
+    "accounts": 85,
     "messages": 483,
     "dms": 4
   },
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 3,
+      "coins": 195,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1761,7 +1761,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 220,
+      "coins": 20,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1771,6 +1771,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T19:06:44.622Z",
       "passwordHash": "$2b$10$.bNKlRdzmXSZuTPgwxBBDutVXBFkbMQdPibjl//4nZY7dptIIxN82"
+    },
+    {
+      "id": "cmvh230oy003oonw7iadsi9p6",
+      "username": "qwertyuio",
+      "displayName": "qwertyuio",
+      "avatarColor": "#e67e22",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-20T19:08:07.619Z",
+      "passwordHash": "$2b$10$DumIsQof5Fq11iqrqyKNXO6AojYBwBnvPaWxDpjDaw2A/SudbGRoO"
     }
   ],
   "messages": [
