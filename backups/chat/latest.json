@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T16:56:02.613Z",
+  "exportedAt": "2026-10-20T16:58:37.136Z",
   "counts": {
     "accounts": 80,
     "messages": 301,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 34,
+      "coins": 39,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 430,
+      "coins": 431,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1820,17 +1820,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-11T05:45:24.639Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv828itb0039qixuj17ro2gr",
-      "channelId": "main",
-      "accountId": "cmv82712t0033qixuo24kd9a1",
-      "content": "hi",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-14T12:02:28.799Z",
       "editedAt": null
     },
     {
@@ -4999,6 +4988,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T16:55:45.082Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgxg9he00a9u5yt2r62qnt6",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "just do it in our dms",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T16:58:27.459Z",
       "editedAt": null
     }
   ],
