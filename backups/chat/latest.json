@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T13:16:41.214Z",
+  "exportedAt": "2026-10-20T13:37:49.487Z",
   "counts": {
-    "accounts": 75,
+    "accounts": 76,
     "messages": 118,
     "dms": 4
   },
@@ -1582,6 +1582,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T13:15:56.793Z",
       "passwordHash": "$2b$10$DaiJPeRCF5gNyAtpQMTIMeG1d2ajpNkambjdbnIuEfkPq0UGyMIwi"
+    },
+    {
+      "id": "cmvgq9t1m00b5tiys9bjj6ic7",
+      "username": "qqqqqggsgsgs",
+      "displayName": "qqqqqggsgsgs",
+      "avatarColor": "#e84393",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 110,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-20T13:37:35.345Z",
+      "legacy": false,
+      "createdAt": "2026-10-20T13:37:28.906Z",
+      "passwordHash": "$2b$10$hpgpGV4EtJV34PVUkaFIZubC0Z3ORE7ssbqgeJ.h6GTTeFv7rBOpq"
     }
   ],
   "messages": [
