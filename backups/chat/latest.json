@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T13:39:24.412Z",
+  "exportedAt": "2026-10-20T13:39:58.197Z",
   "counts": {
     "accounts": 76,
     "messages": 119,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 117,
+      "coins": 120,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1717,28 +1717,6 @@
       "editedAt": null
     },
     {
-      "id": "cmuwnhysv0007n0xx8m4ya11c",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "u can be mod",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-06T12:24:27.248Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuwno7qq0001n0wqv7ge80yc",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "as soon as I fix mod panel",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-06T12:29:18.770Z",
-      "editedAt": null
-    },
-    {
       "id": "cmuwopbtl0005n0wqyt8oow5x",
       "channelId": "links",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -1747,17 +1725,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-06T12:58:10.330Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmuwqfnas0009n0bjj664q6pp",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "but you have to log in first",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-06T13:46:37.877Z",
       "editedAt": null
     },
     {
@@ -2913,6 +2880,39 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T13:39:24.200Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgqckq300bntiyszl5qpr6h",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "to",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T13:39:38.091Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgqcsm000brtiystdl546lg",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "😭😭",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T13:39:48.313Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgqcy6j00bvtiys8abhonuw",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "here u go",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T13:39:55.531Z",
       "editedAt": null
     }
   ],
