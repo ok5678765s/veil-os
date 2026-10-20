@@ -1,11 +1,11 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T12:22:38.763Z",
+  "exportedAt": "2026-10-20T12:27:43.225Z",
   "counts": {
     "accounts": 74,
-    "messages": 115,
-    "dms": 3
+    "messages": 116,
+    "dms": 4
   },
   "accounts": [
     {
@@ -39,13 +39,13 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 1377,
+      "coins": 0,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 1,
-      "lastRewardClaim": "2026-10-19T21:56:10.235Z",
+      "dailyRewardStreak": 2,
+      "lastRewardClaim": "2026-10-20T12:24:28.059Z",
       "legacy": false,
       "createdAt": "2026-09-10T16:00:00.000Z",
       "passwordHash": "$2b$10$zF9AIcjWC9no/Ht9cLY2LumVI/Th5b8MjVe4lxrir7HjElha5SWa."
@@ -144,13 +144,13 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 60307,
+      "coins": 60320,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
       "pfpOverlay": null,
-      "dailyRewardStreak": 1,
-      "lastRewardClaim": "2026-10-19T11:51:05.198Z",
+      "dailyRewardStreak": 2,
+      "lastRewardClaim": "2026-10-20T12:25:03.726Z",
       "legacy": false,
       "createdAt": "2026-09-25T22:22:50.829Z",
       "passwordHash": "$2b$10$wgZdfrvRghwA3SNf/R1ZwOe0EBEZiT/fJ9AA2lKmaOIX51V9DKNMC"
@@ -2828,6 +2828,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-19T22:15:20.564Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvgns39g002mtiysb32afx3w",
+      "channelId": "cmvgnrw0l002htiyssp56781z",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "Wsp",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T12:27:43.108Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -2851,6 +2862,13 @@
       "isGroup": false,
       "ownerId": null,
       "createdAt": "2026-10-17T01:20:10.694Z"
+    },
+    {
+      "id": "cmvgnrw0l002htiyssp56781z",
+      "name": null,
+      "isGroup": false,
+      "ownerId": "cmuhj14uk0000q5o4uzvh329c",
+      "createdAt": "2026-10-20T12:27:33.717Z"
     }
   ],
   "dmMembers": [
@@ -2865,8 +2883,27 @@
     {
       "dmId": "cmvbn5oa80005ltg2y1fpoa8u",
       "accountId": "cmv7j4j6u000dr7bux9lflbkd"
+    },
+    {
+      "dmId": "cmvgnrw0l002htiyssp56781z",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c"
+    },
+    {
+      "dmId": "cmvgnrw0l002htiyssp56781z",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc"
     }
   ],
-  "friends": [],
+  "friends": [
+    {
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "friendId": "cmuhj14uk0000q5o4uzvh329c",
+      "createdAt": "2026-10-20T12:27:12.893Z"
+    },
+    {
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "friendId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "createdAt": "2026-10-20T12:27:12.894Z"
+    }
+  ],
   "reactions": []
 }
