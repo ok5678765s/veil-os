@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T13:50:01.375Z",
+  "exportedAt": "2026-10-20T13:51:35.781Z",
   "counts": {
-    "accounts": 76,
+    "accounts": 77,
     "messages": 283,
     "dms": 4
   },
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 52,
+      "coins": 0,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 46,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1603,6 +1603,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T13:37:28.906Z",
       "passwordHash": "$2b$10$hpgpGV4EtJV34PVUkaFIZubC0Z3ORE7ssbqgeJ.h6GTTeFv7rBOpq"
+    },
+    {
+      "id": "cmvgqrngd013etiystglq9i0i",
+      "username": "d75srxyfcguvid",
+      "displayName": "d75srxyfcguvid",
+      "avatarColor": "#16a085",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 110,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-20T13:51:26.367Z",
+      "legacy": false,
+      "createdAt": "2026-10-20T13:51:21.470Z",
+      "passwordHash": "$2b$10$M2Im0CEIguJioL.lAQzYZ.I5W9yAopI0APV1wFj2E5k6HDsowa9q2"
     }
   ],
   "messages": [
