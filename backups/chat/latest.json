@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:52:57.636Z",
+  "exportedAt": "2026-10-20T18:56:02.197Z",
   "counts": {
     "accounts": 81,
     "messages": 483,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 34,
+      "coins": 365,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 337,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1194,13 +1194,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 104,
+      "coins": 20,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-20T18:53:31.338Z",
       "legacy": false,
       "createdAt": "2026-10-15T14:03:44.880Z",
       "passwordHash": "$2b$10$WU.nmuc3WHWYpE2qWDEspOzUasVRd/Zu2Kdupjw4bsaAsd6On9pwa"
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 46,
+      "coins": 2,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -5925,17 +5925,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh12h2800ttonytll3xqy3y",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "di",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:39:42.561Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh12hm300txonyt1s8x3ezg",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7022,6 +7011,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:52:31.020Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1mykk018fonytg1bizydk",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "ok mb",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:55:38.372Z",
       "editedAt": null
     }
   ],
