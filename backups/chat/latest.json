@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T13:52:43.791Z",
+  "exportedAt": "2026-10-20T13:53:48.926Z",
   "counts": {
-    "accounts": 79,
+    "accounts": 80,
     "messages": 284,
     "dms": 4
   },
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 210,
+      "coins": 430,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1656,6 +1656,27 @@
       "role": "member",
       "muted": false,
       "banned": false,
+      "coins": 0,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-20T13:52:48.327Z",
+      "legacy": false,
+      "createdAt": "2026-10-20T13:52:42.422Z",
+      "passwordHash": "$2b$10$iyG9PYsJGaGNG3RTBI9Bbe0IMcTMWiQM55yIgQIvgGpwHVvBkxXHi"
+    },
+    {
+      "id": "cmvgquizd0147tiyscymcz1a4",
+      "username": "huvefwkjgyk",
+      "displayName": "huvefwkjgyk",
+      "avatarColor": "#e84393",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
       "coins": 100,
       "tag": null,
       "tagColor": null,
@@ -1664,8 +1685,8 @@
       "dailyRewardStreak": 0,
       "lastRewardClaim": null,
       "legacy": false,
-      "createdAt": "2026-10-20T13:52:42.422Z",
-      "passwordHash": "$2b$10$iyG9PYsJGaGNG3RTBI9Bbe0IMcTMWiQM55yIgQIvgGpwHVvBkxXHi"
+      "createdAt": "2026-10-20T13:53:35.642Z",
+      "passwordHash": "$2b$10$F0MzapeLj2yuAAp5csrWOuQIvw0kxfzhXE2bKsNKjxruzrPSdhFOy"
     }
   ],
   "messages": [
