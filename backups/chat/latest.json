@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T16:58:37.136Z",
+  "exportedAt": "2026-10-20T17:03:11.939Z",
   "counts": {
-    "accounts": 80,
+    "accounts": 81,
     "messages": 301,
     "dms": 4
   },
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 39,
+      "coins": 2,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1687,6 +1687,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T13:53:35.642Z",
       "passwordHash": "$2b$10$F0MzapeLj2yuAAp5csrWOuQIvw0kxfzhXE2bKsNKjxruzrPSdhFOy"
+    },
+    {
+      "id": "cmvgxlsn30000u50vpttnf5vh",
+      "username": "Canadian Spy",
+      "displayName": "Canadian Spy",
+      "avatarColor": "#2c3e50",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-20T17:02:45.568Z",
+      "passwordHash": "$2b$10$eSq4NAWwsHZalVfiLueACOzPRlGJ3Yair4dQHvnUUi64jFw5TcPi2"
     }
   ],
   "messages": [
