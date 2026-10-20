@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T12:44:57.148Z",
+  "exportedAt": "2026-10-20T13:16:06.768Z",
   "counts": {
-    "accounts": 74,
+    "accounts": 75,
     "messages": 117,
     "dms": 4
   },
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1422,
+      "coins": 5,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1561,6 +1561,27 @@
       "legacy": false,
       "createdAt": "2026-10-19T22:22:03.710Z",
       "passwordHash": "$2b$10$sr.9P2ZMuKOWZroUigHGu.h8fSblDklIQDG4pd.Avat/eaDGK.bvS"
+    },
+    {
+      "id": "cmvgpi41l007rtiys9w6i4vkh",
+      "username": "ayla",
+      "displayName": "ayla",
+      "avatarColor": "#2980b9",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-20T13:15:56.793Z",
+      "passwordHash": "$2b$10$DaiJPeRCF5gNyAtpQMTIMeG1d2ajpNkambjdbnIuEfkPq0UGyMIwi"
     }
   ],
   "messages": [
