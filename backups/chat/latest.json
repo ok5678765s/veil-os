@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:31:11.133Z",
+  "exportedAt": "2026-10-20T18:33:44.643Z",
   "counts": {
     "accounts": 81,
     "messages": 301,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 431,
+      "coins": 432,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 5,
+      "coins": 9,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1855,83 +1855,6 @@
       "editedAt": null
     },
     {
-      "id": "cmv9m2a0t001in2d3813d8v6s",
-      "channelId": "main",
-      "accountId": "cmv9m0bqn0014n2d300crywqb",
-      "content": "I have a science test on Monday and its getting scary and I have to get my NHD done",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-15T14:05:15.966Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv9v5kpg0001n20ke5tqrv7m",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "The owner should add a update request section under the upgrades tab in the homepage",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-15T18:19:46.324Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv9v5sf00005n20k0vixxn5e",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "And DMs would be nice",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-15T18:19:56.317Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv9xygbu0001n20bkrao89y5",
-      "channelId": "main",
-      "accountId": "cmv7j4j6u000dr7bux9lflbkd",
-      "content": "and group chats",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-15T19:38:12.906Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv9xzfvr0005n20b10nwgcx2",
-      "channelId": "main",
-      "accountId": "cmv7j4j6u000dr7bux9lflbkd",
-      "content": "also add the actual roblox plss",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-15T19:38:58.983Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvakd4lg0001n2o99rdsf4qb",
-      "channelId": "main",
-      "accountId": "cmvakby700000n2ocds74rzdx",
-      "content": "I NEED SOME LINKS TO TIKTOK",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-16T06:05:29.092Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvakdfsy0009n2o9556ra0vm",
-      "channelId": "main",
-      "accountId": "cmvakby700000n2ocds74rzdx",
-      "content": "acctuLLLL",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-16T06:05:43.618Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvb1m2630002lti9xauc8p5m",
       "channelId": "sharelinks",
       "accountId": "cmvb1l8l00000lti9o7sfmcge",
@@ -1973,39 +1896,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-16T14:10:19.348Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvb2nlkf000plti9as2s8k6b",
-      "channelId": "main",
-      "accountId": "cmvb2mr34000nlti90u0thftd",
-      "content": "blocked",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-16T14:37:30.735Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvb545ci0002ltdb72yndu1x",
-      "channelId": "main",
-      "accountId": "cmvb51qeu0000ltdbvqhiqk43",
-      "content": "y'all's who got more proxies",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-16T15:46:22.098Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvblck260001ltsbay1u3jy3",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "yall they are group chats and dms and updates just click the #general",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-16T23:20:48.270Z",
       "editedAt": null
     },
     {
@@ -5020,6 +4910,116 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:30:51.189Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0ugn0001lonyti509c80d",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "I need",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:28.764Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0ui0b001ponyty9sgy68q",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "credits",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:30.539Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0uj1z001tonyt5nog9hyi",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "for",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:31.895Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0uk2t001xonytc91628ni",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "g",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:33.222Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0ukwq0021onytebdz64un",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "am",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:34.298Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0ulm80025onytiac9aorz",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "ok",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:35.216Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0um4l0029onyt5o9vu7qb",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "p",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:35.877Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0umgo002donytudxm9z0u",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "l",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:36.313Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0un3n002honytcmri0cl8",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "i",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:37.140Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0unq6002lonythjdyen75",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "ng",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:33:37.951Z",
       "editedAt": null
     }
   ],
