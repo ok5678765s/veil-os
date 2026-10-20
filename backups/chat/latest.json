@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T14:39:31.333Z",
+  "exportedAt": "2026-10-20T16:00:18.768Z",
   "counts": {
     "accounts": 80,
-    "messages": 286,
+    "messages": 290,
     "dms": 4
   },
   "accounts": [
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 101,
+      "coins": 165,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -4834,6 +4834,50 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T13:54:04.531Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgvcvjs0005u5ytol9mdhto",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "dfs",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T15:59:50.200Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgvcy4z0009u5ytf438jdz6",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "wadawdadad",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T15:59:53.555Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgvcywi000du5ytzulm682m",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "adada",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T15:59:54.546Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgvczx7000hu5yt5cd456o9",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "dada",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T15:59:55.867Z",
       "editedAt": null
     }
   ],
