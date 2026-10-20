@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T22:01:04.009Z",
+  "exportedAt": "2026-10-20T22:07:39.274Z",
   "counts": {
     "accounts": 86,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 100085,
+      "coins": 100089,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1803,10 +1803,10 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
-      "tag": null,
-      "tagColor": null,
-      "pfpAccessory": null,
+      "coins": 2800,
+      "tag": "Gold Member",
+      "tagColor": "#d4a017",
+      "pfpAccessory": "earL",
       "pfpOverlay": null,
       "dailyRewardStreak": 0,
       "lastRewardClaim": null,
@@ -7200,5 +7200,167 @@
       "createdAt": "2026-10-20T21:14:58.743Z"
     }
   ],
-  "reactions": []
+  "reactions": [],
+  "coinTxs": [
+    {
+      "id": "cmvh6nejx0001rjz345uj9cy6",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-20T21:15:57.165Z"
+    },
+    {
+      "id": "cmvh6uba30001rjp1txmej45j",
+      "fromId": "cmuhlfo4o0000q5fg1rxadq76",
+      "toId": "cmuhlfo4o0000q5fg1rxadq76",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-20T21:21:19.516Z"
+    },
+    {
+      "id": "cmvh6uba90003rjp1v5a2noch",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-20T21:21:19.521Z"
+    },
+    {
+      "id": "cmvh6ubab0005rjp19dk7ixob",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-20T21:21:19.524Z"
+    },
+    {
+      "id": "cmvh6ubae0007rjp1bq9eajps",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-20T21:21:19.526Z"
+    },
+    {
+      "id": "cmvh6ubah0009rjp1vqiiv6ap",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-20T21:21:19.530Z"
+    },
+    {
+      "id": "cmvh7197h0003rjijo7pinmr4",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 110,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-20T21:26:43.421Z"
+    },
+    {
+      "id": "cmvh7197n0005rjijazj2zd99",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 220,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-20T21:26:43.428Z"
+    },
+    {
+      "id": "cmvh71hvu0007rjijsdu8h4t6",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-20T21:26:54.667Z"
+    },
+    {
+      "id": "cmvh71ppu0009rjij7wx8ob4w",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-20T21:27:04.818Z"
+    },
+    {
+      "id": "cmvh71wgy000drjij1ke9ewk6",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T21:27:13.570Z"
+    },
+    {
+      "id": "cmvh87nit0001rjqaqz6vh5jj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1200,
+      "reason": "shop_purchase:acc-ear-l",
+      "createdAt": "2026-10-20T21:59:41.525Z"
+    },
+    {
+      "id": "cmvh87tqf0003rjqa3hwvb41i",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 840,
+      "reason": "shop_refund:acc-ear-l",
+      "createdAt": "2026-10-20T21:59:49.575Z"
+    },
+    {
+      "id": "cmvh88ahr0007rjqau1qxkhbh",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 360,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T22:00:11.295Z"
+    },
+    {
+      "id": "cmvh88ijf000brjqan9t62oah",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 360,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T22:00:21.723Z"
+    },
+    {
+      "id": "cmvh88lcn000drjqapb7qegot",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 360,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T22:00:25.367Z"
+    },
+    {
+      "id": "cmvh88lcr000frjqaxa5wjsnr",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1440,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-20T22:00:25.371Z"
+    },
+    {
+      "id": "cmvh8a11w000irjqajn88vok6",
+      "fromId": "cmvh88yzc000grjqal4vxjnfp",
+      "toId": "cmvh88yzc000grjqal4vxjnfp",
+      "amount": 1000,
+      "reason": "shop_purchase:tag-gold",
+      "createdAt": "2026-10-20T22:01:32.373Z"
+    },
+    {
+      "id": "cmvh8a12u000krjqayuouozqz",
+      "fromId": "cmvh88yzc000grjqal4vxjnfp",
+      "toId": "cmvh88yzc000grjqal4vxjnfp",
+      "amount": 1200,
+      "reason": "shop_purchase:acc-ear-l",
+      "createdAt": "2026-10-20T22:01:32.407Z"
+    },
+    {
+      "id": "cmvh8gl4k000mrjqah99cppwt",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-20T22:06:38.323Z"
+    }
+  ]
 }
