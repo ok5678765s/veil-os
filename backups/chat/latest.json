@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T22:07:39.274Z",
+  "exportedAt": "2026-10-20T22:08:43.530Z",
   "counts": {
     "accounts": 86,
     "messages": 483,
@@ -7361,6 +7361,38 @@
       "amount": 4,
       "reason": "proxy_earn",
       "createdAt": "2026-10-20T22:06:38.323Z"
+    },
+    {
+      "id": "cmvh8j8x10001rje9vlf2e0b8",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "shop_purchase:tag-mythic",
+      "createdAt": "2026-10-20T22:08:42.469Z"
+    },
+    {
+      "id": "cmvh8j8x30003rje95hr5uryw",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 10000,
+      "reason": "shop_purchase:tag-mythic",
+      "createdAt": "2026-10-20T22:08:42.471Z"
+    },
+    {
+      "id": "cmvh8j8x40005rje9osm5e4k9",
+      "fromId": "cmvfq7zi80000rhhe7fctnbi1",
+      "toId": "cmvfq7zi80000rhhe7fctnbi1",
+      "amount": 1600,
+      "reason": "shop_purchase:acc-fight",
+      "createdAt": "2026-10-20T22:08:42.473Z"
+    },
+    {
+      "id": "cmvh8j8x60007rje9iww0v6jn",
+      "fromId": "cmvfq971w0003rhheo7oz1mnn",
+      "toId": "cmvfq971w0003rhheo7oz1mnn",
+      "amount": 1500,
+      "reason": "shop_purchase:acc-sprout",
+      "createdAt": "2026-10-20T22:08:42.474Z"
     }
   ]
 }
