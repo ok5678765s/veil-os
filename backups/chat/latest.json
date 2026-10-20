@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:39:39.392Z",
+  "exportedAt": "2026-10-20T18:40:13.164Z",
   "counts": {
     "accounts": 81,
     "messages": 483,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 224,
+      "coins": 164,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 5,
+      "coins": 23,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1918,39 +1918,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T12:27:52.154Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqckq300bntiyszl5qpr6h",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "to",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:39:38.091Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqcsm000brtiystdl546lg",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "😭😭",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:39:48.313Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqcy6j00bvtiys8abhonuw",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "here u go",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:39:55.531Z",
       "editedAt": null
     },
     {
@@ -3953,61 +3920,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T13:46:08.234Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqpwo5012ftiysrlftgl5j",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "i lost 100k in like 10 minuites",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:50:00.101Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqs44y013ktiysez5furqv",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "Im broke again give me more",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:51:43.090Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgquvmm0149tiysue7u87to",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "Can anyone give me some veil coins",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:53:52.030Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgqv59v014ftiysrd32ss6a",
-      "channelId": "main",
-      "accountId": "cmvgquizd0147tiyscymcz1a4",
-      "content": "ok",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T13:54:04.531Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvgvcvjs0005u5ytol9mdhto",
-      "channelId": "main",
-      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "content": "dfs",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T15:59:50.200Z",
       "editedAt": null
     },
     {
@@ -7022,6 +6934,94 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:39:39.076Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12erc00t9onyto2bj6575",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "di",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:39.576Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12gkr00tdonytpjbz37d3",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "did",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:41.931Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12gkx00tfonyt7icekirc",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "did",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:41.937Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12glr00thonytv0wzrfvz",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "did",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:41.967Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12gt800tponythio0zdmf",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "did",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:42.236Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12h2800ttonytll3xqy3y",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "di",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:42.561Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12hm300txonyt1s8x3ezg",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "did",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:43.275Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh12huw00u1onytb5cf64oq",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "did",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:39:43.593Z",
       "editedAt": null
     }
   ],
