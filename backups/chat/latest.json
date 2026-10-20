@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T18:30:03.403Z",
+  "exportedAt": "2026-10-20T18:30:37.403Z",
   "counts": {
     "accounts": 81,
     "messages": 301,
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 1,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1841,17 +1841,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-11T05:45:24.639Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv860xrn0013qiigqsxsdzyc",
-      "channelId": "main",
-      "accountId": "cmv6sznc20000r7zbbcxqj2ju",
-      "content": "wsg",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-14T13:48:33.395Z",
       "editedAt": null
     },
     {
@@ -5020,6 +5009,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:29:29.918Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0qn8y000fonyts07t90sq",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "also I'm typing cuz I lost a black jack",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:30:30.706Z",
       "editedAt": null
     }
   ],
