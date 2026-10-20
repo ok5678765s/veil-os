@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T13:37:49.487Z",
+  "exportedAt": "2026-10-20T13:39:24.412Z",
   "counts": {
     "accounts": 76,
-    "messages": 118,
+    "messages": 119,
     "dms": 4
   },
   "accounts": [
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 2,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 6,
+      "coins": 117,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1593,7 +1593,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 110,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1662,17 +1662,6 @@
       "editedAt": null
     },
     {
-      "id": "cmusxdh3i0009ojyz6ey45iy9",
-      "channelId": "main",
-      "accountId": "cmusxcw4k0007ojyz7wsmceva",
-      "content": "sup yall",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-03T21:49:49.134Z",
-      "editedAt": null
-    },
-    {
       "id": "cmut4prva0005ll9zo0f01h7y",
       "channelId": "links",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -1703,17 +1692,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-04T02:19:02.599Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmutz4o760002jkxe591rq77l",
-      "channelId": "main",
-      "accountId": "cmutz4ibx0000jkxecl2b490e",
-      "content": "dd",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-04T15:26:43.843Z",
       "editedAt": null
     },
     {
@@ -2902,6 +2880,39 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T13:16:35.238Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgqbo7a00b9tiyshv8hlta2",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "someone send me veil coins IM broke",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T13:38:55.942Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgqbrdf00bftiysuklnbq8b",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "PLS",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T13:39:00.051Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgqca0800bjtiysud58xhdk",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "Im broke",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T13:39:24.200Z",
       "editedAt": null
     }
   ],
