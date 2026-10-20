@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T23:19:56.759Z",
+  "exportedAt": "2026-10-20T23:20:31.376Z",
   "counts": {
-    "accounts": 85,
+    "accounts": 86,
     "messages": 458,
     "dms": 4
   },
@@ -1792,6 +1792,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T19:08:07.619Z",
       "passwordHash": "$2b$10$DumIsQof5Fq11iqrqyKNXO6AojYBwBnvPaWxDpjDaw2A/SudbGRoO"
+    },
+    {
+      "id": "cmvhb36990010rjrh1wjp2tw5",
+      "username": "qarace_368299",
+      "displayName": "QA Race",
+      "avatarColor": "#1abc9c",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 9900,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-20T23:20:11.374Z",
+      "passwordHash": "$2b$10$YeEfZNUtppHglmNNhJSI1u82w7KknM2sPHG6zWNNYF48JF4wRrki2"
     }
   ],
   "messages": [
@@ -7153,6 +7174,46 @@
       "amount": 200178,
       "reason": "glitch_refund",
       "createdAt": "2026-10-20T23:19:32.647Z"
+    },
+    {
+      "id": "cmvhb375k0014rjrh5s5sy9pe",
+      "fromId": "cmvhb36990010rjrh1wjp2tw5",
+      "toId": "cmvhb36990010rjrh1wjp2tw5",
+      "amount": 100,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T23:20:12.536Z"
+    },
+    {
+      "id": "cmvhb37b20016rjrhwjfwe5lz",
+      "fromId": "cmvhb36990010rjrh1wjp2tw5",
+      "toId": "cmvhb36990010rjrh1wjp2tw5",
+      "amount": 200,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-20T23:20:12.734Z"
+    },
+    {
+      "id": "cmvhb3802001arjrh0g2cqhcc",
+      "fromId": "cmvhb36990010rjrh1wjp2tw5",
+      "toId": "cmvhb36990010rjrh1wjp2tw5",
+      "amount": 500,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T23:20:13.634Z"
+    },
+    {
+      "id": "cmvhb380j001crjrh6acydsqs",
+      "fromId": "cmvhb36990010rjrh1wjp2tw5",
+      "toId": "cmvhb36990010rjrh1wjp2tw5",
+      "amount": 500,
+      "reason": "blackjack_refund",
+      "createdAt": "2026-10-20T23:20:13.651Z"
+    },
+    {
+      "id": "cmvhb380m001grjrh1z3sgx3j",
+      "fromId": "cmvhb36990010rjrh1wjp2tw5",
+      "toId": "cmvhb36990010rjrh1wjp2tw5",
+      "amount": 200,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-20T23:20:13.654Z"
     }
   ]
 }
