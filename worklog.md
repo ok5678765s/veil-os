@@ -2099,3 +2099,49 @@ Stage Summary:
 - KNOWN RISK: full-project `bun run lint` / heavy builds during warm state can still tip the box (it caused one planned restart at 22:19) — lint individual files or accept a single 15-min-cooldown restart
 - KNOWN RISK: if the true heap live set ever grows past ~1.4GB (new features), the 1664MB cap risks Next's internal 80%-of-limit watchdog restarts — watch veil-heap.log WARN lines
 - User's coin-game complaint ("kept my money after I won" — bet lost mid-restart): the restarts that caused it are fixed; if it recurs, the coin-game bet flow needs an idempotent settle-on-reload mechanism (candidate next feature)
+
+---
+Task ID: 1 (single-agent session, continued)
+Agent: Z.ai Code (main)
+Task: Owner directives — (a) mods/owner get 8% higher win chance in ALL gambling games, (b) grant every mod + owner 100k coins, (c) "dev died never should happen" (restart resilience), then follow-up: (d) remove the House Luck TEXT (keep the feature), (e) shop refunds at 70%, (f) fix lag when other players join chat, (g) still-restarting mitigation.
+
+Work Log:
+- House Luck (8% staff perk, SERVER-SIDE ONLY):
+  - NEW src/lib/staff-luck.ts — isStaffRole (moderator|admin) + staffLuckTrigger (8% crypto roll).
+  - chat-coinflip: losing call → coin tips to staff side.
+  - chat-roulette: spin misses every chip → ball hops to a covered pocket (re-settles).
+  - chat-slots: empty pull → last reel re-spins to match reel 1 or 2 (any pair ×2).
+  - chat-blackjack: hit/double would bust → house burns the card, deals the next (deck.length guard).
+  - All 4 routes return lucky:true; coins.ts gained "staff_grant" reason.
+- 100k staff grant: scripts/staff-grant-100k.ts (idempotent — skips accounts with an existing staff_grant tx). RAN: canadianspy, spiffyboss5111, Veil, 123qwe, The Canadian Spy each +100,000 (re-run skips all 5).
+- QA (curl script, since deleted): member 198/400 = 49.5% wins, 0 lucky rescues (players unaffected ✓); mod 231/400 = 57.8% with 9 rescues ✓; roulette/slots/blackjack smoke OK.
+- House Luck TEXT removal (owner follow-up "remove the 8% house luck the text not the feature"): badge removed from GamesModal header; all 4 lucky-branch toasts reverted to plain win/lose messages; blackjack lucky toast removed. Feature (server logic) untouched.
+- Shop refunds at 70% (owner directive):
+  - chat-shop/route.ts: REFUND_RATE=0.7, refundFor(); netOwnedIds(client, accountId) — ownership = purchases − refunds > 0 (works with db root or tx client); POST action "refund": validates net ownership in-tx, auto-unequips if worn, +70% coins, shop_refund:<id> ledger row, all atomic.
+  - GET/equip/buy now all use net ownership (refunded items leave the locker; re-buy charges full price).
+  - coins.ts: `shop_refund:${string}` reason added to CoinReason + parseReason.
+  - ShopPanel (chat-app.tsx): refund() handler; every locker row (worn AND stored) shows a "refund N 🪙" link (N = floor(price×0.7)); hint text "switch free · refund for 70%"; toast on success.
+  - QA curl script (since deleted): buy 1200 → 3800; locker [acc-ear-l]; refund → +840, balance 4640, accessory unequipped, locker []; double refund rejected; re-buy full price 3440; re-equip free 3440. agent-browser E2E: wore Gold Tag, refund 700 button → balance 2800→3500, locker 2→1, toast "Refunded Gold Tag — +700 🪙 (70%)", tag came off account row. Zero console errors.
+- Join-lag fix (chat-service/index.ts):
+  - publicPresence() no longer includes avatarImage (multi-KB base64 per user broadcast to every client on every join/leave/identify — the lag).
+  - broadcastPresence() coalesced: max ONE broadcast per channel per 300ms (burst of joins = single update).
+  - Per-message broadcast no longer includes the author's avatarImage (was re-sent on EVERY message).
+  - chat-app.tsx: socket message handler rehydrates avatarImage from the members list (known?.avatarImage ?? data.account.avatarImage ?? null — same pattern already used for role/tag); PresenceUser.avatarImage and the socket message account type made optional.
+  - Verified via gateway curl: /presence?XTransformPort=3006 returns slim payload; main page 200.
+- Restart mitigation:
+  - dev-watchdog.sh v6.2: log_top_hogs() — every planned/emergency restart now logs the top RSS processes (first live fire: named next-server 2668MB + MemAvail 219MB as legit pressure,QA browser contributed).
+  - Watchdog is kept alive by the veil-keeper's 90s revive loop (session-reaped spawns self-heal).
+- Fixed 2 self-inflicted breakages found via dev.log: duplicate REFUND_RATE block (500 on every page) and — importantly — a bogus `}` I added after the CoinReason type union (type aliases take NO closing brace; the original file was always valid — bun/SWC just parse it leniently). Both fixed, page 200, register/login/API all green.
+- Final state: server healthy, MemAvail ~2.6-3.3GB after QA browser closed, dev.log clean, eslint clean on all touched files (coins.ts, staff-luck.ts, 4 game routes, chat-shop route, chat-app.tsx).
+- Created 15-min webDevReview cron (job 469624, 0 */15 * * * ? America/New_York).
+
+Stage Summary:
+- Mods + owner: +8% rescue luck in all 4 casino games (invisible — no UI text), 100k coins each (5 accounts granted).
+- Shop: full refund system at 70%, atomic, net-ownership ledger, auto-unequip, UI in the locker + hint.
+- Chat join lag: presence + message broadcasts slimmed (no more base64 avatars on the wire), presence broadcasts coalesced per 300ms window.
+- Watchdog v6.2 with top-hog forensics on every restart; keeper revive loop confirmed working.
+
+Unresolved / risks:
+- The box still planned-restarts under REAL memory pressure (RSS>2.34GB AND MemAvail<600MB) — warm-compile transients + heavy concurrent sessions can trigger it; v6.2 now names the culprit processes in dev-watchdog.log for instant triage. No swap available (no sudo).
+- Slots RTP remains ~115% (player edge) per the owner's original paytable — cosmetic economy, left verbatim.
+- Roulette table still 540px min-width by design (scrolls on narrow phones).

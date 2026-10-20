@@ -12,6 +12,7 @@ import {
   type Card,
 } from "@/lib/blackjack"
 import { awardCoins } from "@/lib/coins"
+import { staffLuckTrigger } from "@/lib/staff-luck"
 
 export const runtime = "nodejs"
 
@@ -227,7 +228,20 @@ export async function POST(req: NextRequest) {
             { status: 400 },
           )
         }
-        playerHand.push(deck.shift()!)
+        /* House Luck (staff perk): if the next card would bust the
+         * player, 8% chance the house BURNS it (removed from the deck)
+         * and deals the following one instead. Members unaffected. */
+        let lucky = false
+        let card = deck.shift()!
+        if (
+          isBust([...playerHand, card]) &&
+          deck.length > 0 &&
+          staffLuckTrigger(account.role)
+        ) {
+          card = deck.shift()!
+          lucky = true
+        }
+        playerHand.push(card)
         const v = handValue(playerHand)
 
         let status: "playing" | "done" = "playing"
@@ -278,6 +292,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
           ok: true,
           game: serializeGame(updated_game),
+          lucky,
           account: updated ? toPublicAccount(updated) : null,
         })
       }
@@ -331,14 +346,25 @@ export async function POST(req: NextRequest) {
           )
         }
 
-        /* One card, then the dealer settles it. */
+        /* One card, then the dealer settles it — with House Luck: a
+         * busting card is burned (8%, staff only) and the next dealt. */
         if (deck.length === 0) {
           return NextResponse.json(
             { ok: false, error: "Deck is empty." },
             { status: 400 },
           )
         }
-        playerHand.push(deck.shift()!)
+        let lucky = false
+        let card = deck.shift()!
+        if (
+          isBust([...playerHand, card]) &&
+          deck.length > 0 &&
+          staffLuckTrigger(account.role)
+        ) {
+          card = deck.shift()!
+          lucky = true
+        }
+        playerHand.push(card)
         const pv = handValue(playerHand)
 
         let dealerHand = parseCards(game.dealerHand)
@@ -386,6 +412,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
           ok: true,
           game: serializeGame(updated_game),
+          lucky,
           account: updated ? toPublicAccount(updated) : null,
         })
       }

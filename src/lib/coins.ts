@@ -27,7 +27,9 @@ export type CoinReason =
   | "proxy_reward"
   | "proxy_earn"
   | "daily_reward"
+  | "staff_grant"
   | `shop_purchase:${string}`
+  | `shop_refund:${string}`
 
 const KNOWN_REASONS = new Set([
   "gift",
@@ -44,11 +46,13 @@ const KNOWN_REASONS = new Set([
   "proxy_reward",
   "proxy_earn",
   "daily_reward",
+  "staff_grant",
 ])
 
 export function parseReason(reason: string | undefined | null): CoinReason {
   const r = (reason || "").trim()
   if (r.startsWith("shop_purchase:")) return r as CoinReason
+  if (r.startsWith("shop_refund:")) return r as CoinReason
   if (KNOWN_REASONS.has(r)) return r as CoinReason
   return "gift"
 }

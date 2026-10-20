@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getAccountFromToken, toPublicAccount } from "@/lib/chat-auth"
 import { cors, corsOptions } from "@/lib/veil/cors"
+import { staffLuckTrigger } from "@/lib/staff-luck"
 
 export const runtime = "nodejs"
 
@@ -72,8 +73,17 @@ async function handlePost(req: NextRequest): Promise<Response> {
 
       // Server-side flip — crypto random when available.
       const heads = crypto.randomUUID().charCodeAt(0) % 2 === 0
-      const landed = heads ? "heads" : "tails"
-      const won = landed === side
+      let landed = heads ? "heads" : "tails"
+      let won = landed === side
+      /* House Luck (staff perk): a losing call gets an 8% rescue — the
+       * coin tips to the staff member's side after all. Members are
+       * completely unaffected. */
+      let lucky = false
+      if (!won && staffLuckTrigger(account.role)) {
+        landed = side
+        won = true
+        lucky = true
+      }
       const payout = won ? bet * 2 : 0
 
       await tx.chatAccount.update({
@@ -103,7 +113,7 @@ async function handlePost(req: NextRequest): Promise<Response> {
         })
       }
 
-      return { landed, won, payout }
+      return { landed, won, payout, lucky }
     }).catch((e: Error) => e)
 
     if (result instanceof Error) {
@@ -121,6 +131,7 @@ async function handlePost(req: NextRequest): Promise<Response> {
       landed: result.landed,
       won: result.won,
       payout: result.payout,
+      lucky: result.lucky,
       balance: updated?.coins ?? 0,
       account: updated ? toPublicAccount(updated) : null,
     })

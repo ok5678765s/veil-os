@@ -176,7 +176,10 @@ type PresenceUser = {
   username: string
   displayName: string
   avatarColor: string
-  avatarImage: string | null
+  /* Optional since the 2026-10-20 lag fix — the relay's presence +
+   * message broadcasts no longer carry the multi-KB base64 avatar;
+   * avatars render from the members list (already loaded). */
+  avatarImage?: string | null
 }
 
 type DM = {
@@ -1785,6 +1788,34 @@ function ShopPanel({
     }
   }
 
+  /* Sell an owned item back to the shop — 70% of the price comes back
+   * (owner directive 2026-10-20). The item leaves the locker; if it was
+   * worn it comes off automatically. */
+  const refund = async (item: ShopItem) => {
+    setBuying(`refund:${item.id}`)
+    try {
+      const data = await apiFetch<{ account: ChatAccount; refunded: number }>(
+        "/api/chat-shop",
+        {
+          method: "POST",
+          body: JSON.stringify({ token, action: "refund", itemId: item.id }),
+        },
+      )
+      onAccount(data.account)
+      onProfileUpdated?.()
+      setOwned((prev) => {
+        const next = new Set(prev)
+        next.delete(item.id)
+        return next
+      })
+      toast(`Refunded ${item.label} — +${data.refunded.toLocaleString()} 🪙 (70%)`, "ok")
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Refund failed.", "err")
+    } finally {
+      setBuying(null)
+    }
+  }
+
   const tags = items.filter((i) => i.type === "tag")
   const accessories = items.filter((i) => i.type === "accessory")
   const equippedTag = account.tag
@@ -1819,7 +1850,7 @@ function ShopPanel({
                   {ownedItems.length}
                 </span>
               </h4>
-              <span className="text-[11px] text-white/35">yours forever · switch free</span>
+              <span className="text-[11px] text-white/35">switch free · refund for 70%</span>
             </div>
             {ownedItems.length === 0 ? (
               <p className="rounded-lg border border-dashed border-white/10 px-3 py-4 text-center text-xs leading-relaxed text-white/40">
@@ -1876,15 +1907,33 @@ function ShopPanel({
                           >
                             take off
                           </button>
+                          <button
+                            onClick={() => void refund(it)}
+                            disabled={buying === `refund:${it.id}`}
+                            title={`Sell back to the shop for ${Math.floor(it.price * 0.7).toLocaleString()} 🪙 (70%)`}
+                            className="rounded-md px-2 py-1 text-[11px] text-red-300/50 underline-offset-2 hover:text-red-300 hover:underline disabled:opacity-40"
+                          >
+                            {buying === `refund:${it.id}` ? "…" : `refund ${Math.floor(it.price * 0.7).toLocaleString()} 🪙`}
+                          </button>
                         </div>
                       ) : (
-                        <button
-                          disabled={buying === it.id}
-                          onClick={() => void equip(it)}
-                          className="veil-press veil-hover-glow shrink-0 rounded-md bg-orange-400 px-3 py-1 text-xs font-semibold text-black disabled:opacity-40"
-                        >
-                          {buying === it.id ? "…" : "Wear"}
-                        </button>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <button
+                            disabled={buying === it.id}
+                            onClick={() => void equip(it)}
+                            className="veil-press veil-hover-glow shrink-0 rounded-md bg-orange-400 px-3 py-1 text-xs font-semibold text-black disabled:opacity-40"
+                          >
+                            {buying === it.id ? "…" : "Wear"}
+                          </button>
+                          <button
+                            onClick={() => void refund(it)}
+                            disabled={buying === `refund:${it.id}`}
+                            title={`Sell back to the shop for ${Math.floor(it.price * 0.7).toLocaleString()} 🪙 (70%)`}
+                            className="rounded-md px-2 py-1 text-[11px] text-red-300/50 underline-offset-2 hover:text-red-300 hover:underline disabled:opacity-40"
+                          >
+                            {buying === `refund:${it.id}` ? "…" : `refund ${Math.floor(it.price * 0.7).toLocaleString()} 🪙`}
+                          </button>
+                        </div>
                       )}
                     </div>
                   )
@@ -4951,7 +5000,8 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
         username: string
         displayName: string
         avatarColor: string
-        avatarImage: string | null
+        /* optional since the relay stopped broadcasting avatars */
+        avatarImage?: string | null
       } | null
       ts: number
     }) => {
@@ -5023,7 +5073,9 @@ export function ChatApp({ url, onBack }: { url?: string; onBack?: () => void }) 
           username: data.account.username,
           displayName: data.account.displayName,
           avatarColor: data.account.avatarColor,
-          avatarImage: data.account.avatarImage,
+          /* The relay stopped broadcasting avatars (lag fix) — prefer
+           * the members-list copy, fall back to whatever arrived. */
+          avatarImage: known?.avatarImage ?? data.account.avatarImage ?? null,
           role: known?.role ?? "member",
           coins: known?.coins ?? 0,
           tag: known?.tag ?? null,
@@ -8773,6 +8825,7 @@ function CoinFlipGame({
         landed: "heads" | "tails"
         won: boolean
         payout: number
+        lucky?: boolean
         account: ChatAccount
       }>("/api/chat-coinflip", {
         method: "POST",
@@ -8992,6 +9045,7 @@ function BlackjackGame({
     try {
       const data = await apiFetch<{
         game: BlackjackState
+        lucky?: boolean
         account: ChatAccount
       }>("/api/chat-blackjack", {
         method: "POST",
@@ -9445,6 +9499,7 @@ function RouletteGame({
         returned: number
         net: number
         staked: number
+        lucky?: boolean
         account: ChatAccount
       }>("/api/chat-roulette", {
         method: "POST",
@@ -9965,6 +10020,7 @@ function SlotsGame({
         label: string
         returned: number
         net: number
+        lucky?: boolean
         account: ChatAccount
       }>("/api/chat-slots", {
         method: "POST",

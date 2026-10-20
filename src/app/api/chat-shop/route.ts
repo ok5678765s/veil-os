@@ -4,6 +4,15 @@ import { getAccountFromToken, toPublicAccount } from "@/lib/chat-auth"
 
 export const runtime = "nodejs"
 
+/** Refunds return 70% of the item's shop price (owner directive
+ * 2026-10-20: "add shop refunds but you only get 70% of the money you
+ * spent"). */
+export const REFUND_RATE = 0.7
+
+export function refundFor(price: number): number {
+  return Math.floor(price * REFUND_RATE)
+}
+
 type ShopItem =
   | {
       id: string
@@ -351,6 +360,34 @@ const SHOP_CATALOG: ShopItem[] = [
   ...ACCESSORY_ITEMS,
 ]
 
+/* Net ownership: an item is owned while purchases − refunds > 0. The
+ * ledger is append-only (a refund writes a `shop_refund:<id>` row), so
+ * refunded items correctly disappear from the locker and re-buying
+ * charges full price again. Works with the root client or a tx client. */
+async function netOwnedIds(
+  client: Pick<typeof db, "coinTransaction">,
+  accountId: string,
+): Promise<Set<string>> {
+  const rows = await client.coinTransaction.findMany({
+    where: {
+      fromId: accountId,
+      toId: accountId,
+      OR: [
+        { reason: { startsWith: "shop_purchase:" } },
+        { reason: { startsWith: "shop_refund:" } },
+      ],
+    },
+    select: { reason: true },
+  })
+  const counts = new Map<string, number>()
+  for (const r of rows) {
+    const purchase = r.reason.startsWith("shop_purchase:")
+    const id = r.reason.slice(purchase ? "shop_purchase:".length : "shop_refund:".length)
+    counts.set(id, (counts.get(id) ?? 0) + (purchase ? 1 : -1))
+  }
+  return new Set([...counts.entries()].filter(([, n]) => n > 0).map(([id]) => id))
+}
+
 export async function GET(req: NextRequest) {
   /* Catalog is public. With a ?token= the response additionally carries
    * the buyer's OWNED item ids (every shop_purchase:<id> transaction) so
@@ -367,14 +404,17 @@ export async function GET(req: NextRequest) {
       { status: 401 },
     )
   }
-  const purchaseRows = await db.coinTransaction.findMany({
-    where: { fromId: account.id, toId: account.id, reason: { startsWith: "shop_purchase:" } },
-    select: { reason: true },
+  /* Net ownership (post-refund): a refunded item leaves the locker. */
+  const netOwned = await netOwnedIds(db, account.id)
+  const ownedVisible = [...netOwned].filter((id) =>
+    SHOP_CATALOG.some((i) => i.id === id),
+  )
+  return NextResponse.json({
+    ok: true,
+    items: SHOP_CATALOG,
+    owned: ownedVisible,
+    refundRate: REFUND_RATE,
   })
-  const owned = [
-    ...new Set(purchaseRows.map((r) => r.reason.slice("shop_purchase:".length))),
-  ].filter((id) => SHOP_CATALOG.some((i) => i.id === id))
-  return NextResponse.json({ ok: true, items: SHOP_CATALOG, owned })
 }
 
 export async function POST(req: NextRequest) {
@@ -436,11 +476,8 @@ export async function POST(req: NextRequest) {
           { status: 404 },
         )
       }
-      const owned = await db.coinTransaction.findFirst({
-        where: { fromId: account.id, toId: account.id, reason: `shop_purchase:${item.id}` },
-        select: { id: true },
-      })
-      if (!owned) {
+      const ownedNow = await netOwnedIds(db, account.id)
+      if (!ownedNow.has(item.id)) {
         return NextResponse.json(
           { ok: false, error: "You don't own that item yet — buy it first." },
           { status: 400 },
@@ -457,6 +494,83 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, account: toPublicAccount(updated), item })
     }
 
+    /* Refund — sell an owned item back to the shop for 70% of its price
+     * (owner directive 2026-10-20). The item leaves the locker (net
+     * ownership), anything it was wearing comes off, and the payout is
+     * atomic with the ledger write. */
+    if (body.action === "refund") {
+      const refundItemId = (body.itemId || "").trim()
+      const refundItem = SHOP_CATALOG.find((i) => i.id === refundItemId)
+      if (!refundItem) {
+        return NextResponse.json(
+          { ok: false, error: "That item does not exist in the shop." },
+          { status: 404 },
+        )
+      }
+      const refundAmount = refundFor(refundItem.price)
+
+      const refundResult = await db
+        .$transaction(async (tx) => {
+          const ownedNow = await netOwnedIds(tx, account.id)
+          if (!ownedNow.has(refundItem.id)) {
+            throw new Error("You don't own that item — nothing to refund.")
+          }
+
+          /* If the item is currently worn, take it off as part of the
+           * same atomic refund. */
+          const fresh = await tx.chatAccount.findUnique({
+            where: { id: account.id },
+          })
+          if (!fresh) throw new Error("Account not found.")
+          const unequip: {
+            tag?: string | null
+            tagColor?: string | null
+            pfpAccessory?: string | null
+          } = {}
+          if (refundItem.type === "tag" && fresh.tag === refundItem.tagText) {
+            unequip.tag = null
+            unequip.tagColor = null
+          }
+          if (
+            refundItem.type === "accessory" &&
+            fresh.pfpAccessory === refundItem.accessory
+          ) {
+            unequip.pfpAccessory = null
+          }
+
+          const updated = await tx.chatAccount.update({
+            where: { id: account.id },
+            data: {
+              ...unequip,
+              coins: { increment: refundAmount },
+            },
+          })
+          await tx.coinTransaction.create({
+            data: {
+              fromId: account.id,
+              toId: account.id,
+              amount: refundAmount,
+              reason: `shop_refund:${refundItem.id}`,
+            },
+          })
+          return updated
+        })
+        .catch((e: Error) => e)
+
+      if (refundResult instanceof Error) {
+        return NextResponse.json(
+          { ok: false, error: refundResult.message },
+          { status: 400 },
+        )
+      }
+      return NextResponse.json({
+        ok: true,
+        account: toPublicAccount(refundResult),
+        refunded: refundAmount,
+        item: refundItem,
+      })
+    }
+
     const itemId = (body.itemId || "").trim()
 
     const item = SHOP_CATALOG.find((i) => i.id === itemId)
@@ -468,19 +582,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Atomic purchase: re-check balance inside the transaction. Buying an
-    // item you ALREADY own (any past shop_purchase:<id> transaction) just
-    // re-equips it for free — purchases are permanent.
+    // item you ALREADY own (net of refunds) just re-equips it for free.
     const result = await db.$transaction(async (tx) => {
       const fresh = await tx.chatAccount.findUnique({
         where: { id: account.id },
       })
       if (!fresh) throw new Error("Account not found.")
 
-      const owned = await tx.coinTransaction.findFirst({
-        where: { fromId: account.id, toId: account.id, reason: `shop_purchase:${item.id}` },
-        select: { id: true },
-      })
-      if (!owned && fresh.coins < item.price) {
+      const owned = await netOwnedIds(tx, account.id)
+      if (!owned.has(item.id) && fresh.coins < item.price) {
         throw new Error(
           `Insufficient balance. This item costs ${item.price} coins.`,
         )
@@ -501,12 +611,12 @@ export async function POST(req: NextRequest) {
       const updated = await tx.chatAccount.update({
         where: { id: account.id },
         data: {
-          ...(owned ? {} : { coins: { decrement: item.price } }),
+          ...(owned.has(item.id) ? {} : { coins: { decrement: item.price } }),
           ...updateData,
         },
       })
 
-      if (!owned) {
+      if (!owned.has(item.id)) {
         await tx.coinTransaction.create({
           data: {
             fromId: account.id,

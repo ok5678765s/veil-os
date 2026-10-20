@@ -117,6 +117,13 @@ cooldown_active() {
 
 arm_cooldown() { mkdir -p .next/dev; date +%s > "$COOLDOWN_FILE"; }
 
+# v6.2: on any restart, snapshot the top-5 RSS processes into the log —
+# when an external hog (QA Chrome, a stray build) caused the pressure,
+# the very next log line names it instead of needing live forensics.
+log_top_hogs() {
+  log "top RSS at restart: $(ps -eo rss,comm --sort=-rss | awk 'NR>1 && $1>50000 {printf "%sMB:%s ", int($1/1024), $2}' | head -c 400)"
+}
+
 # Tear down the dev tree bottom-up by PID: next-server(s), the `next dev`
 # node wrapper, and the sh -c pipeline wrapper. When `next dev` dies, tee
 # sees EOF and the whole bun-run-dev chain exits on its own — no name-
@@ -151,7 +158,7 @@ server_age() {
 }
 
 # ---- main loop -----------------------------------------------------------
-log "v6.1 armed: heap cap 1664MB | RSS>1760MB → warn-only (gardener compacts) | RSS>2340MB + MemAvail<600MB → planned restart | MemAvail<320MB → emergency | cycle=${CYCLE}s cooldown=${COOLDOWN}s"
+log "v6.2 armed: heap cap 1664MB | RSS>1760MB → warn-only (gardener compacts) | RSS>2340MB + MemAvail<600MB → planned restart (+top-hog snapshot) | MemAvail<320MB → emergency | cycle=${CYCLE}s cooldown=${COOLDOWN}s"
 
 TICKS=0
 while true; do
@@ -180,12 +187,14 @@ while true; do
     TICKS=$((TICKS + 1))
     if [ "$RSS" -gt "$RSS_LIMIT_KB" ] && [ "$MEMAV" -lt "$PRESSURE_MIN_KB" ] && ! cooldown_active; then
       log "next-server pid=$MAINPID RSS=$((RSS/1024))MB > limit AND MemAvail=$((MEMAV/1024))MB < pressure line — PLANNED restart (real box pressure)"
+      log_top_hogs
       arm_cooldown
       kill_dev_tree
       relaunch_dev
       sleep 25   # let it boot before next evaluation
     elif [ "$MEMAV" -lt "$MEMAVAIL_MIN_KB" ] && ! cooldown_active; then
       log "box MemAvailable=$((MEMAV/1024))MB < emergency limit — restarting next-server to free memory"
+      log_top_hogs
       arm_cooldown
       kill_dev_tree
       relaunch_dev

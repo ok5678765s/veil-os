@@ -194,15 +194,37 @@ function publicPresence(channelId: string) {
     username: s.username,
     displayName: s.displayName,
     avatarColor: s.avatarColor,
-    avatarImage: s.avatarImage,
+    /* avatarImage deliberately DROPPED (2026-10-20 "laggy when other
+     * players join"): it is a multi-KB base64 data URI per user, and the
+     * broadcast goes to every client on every join/leave/identify. The
+     * client only ever reads accountId from socket presence — avatars
+     * render from the members API. */
   }))
 }
 
+/* Presence broadcast coalescing (2026-10-20 join-lag fix): a burst of
+ * joins/leaves (players arriving together, connect-time identify +
+ * subscribe + watch storms) triggers at most ONE presence broadcast per
+ * channel per window. Previously every single membership change pushed
+ * the full user list to every client immediately. */
+const PRESENCE_COALESCE_MS = 300
+const presenceDirtyChannels = new Set<string>()
+let presenceFlushTimer: ReturnType<typeof setTimeout> | null = null
+
 function broadcastPresence(channelId: string) {
-  io.to(channelId).emit("presence", {
-    channelId,
-    users: publicPresence(channelId),
-  })
+  presenceDirtyChannels.add(channelId)
+  if (presenceFlushTimer) return
+  presenceFlushTimer = setTimeout(() => {
+    presenceFlushTimer = null
+    const dirty = [...presenceDirtyChannels]
+    presenceDirtyChannels.clear()
+    for (const cid of dirty) {
+      io.to(cid).emit("presence", {
+        channelId: cid,
+        users: publicPresence(cid),
+      })
+    }
+  }, PRESENCE_COALESCE_MS)
 }
 
 function joinChannel(socket: Socket, channelId: string, account?: AccountSession) {
@@ -431,7 +453,11 @@ io.on("connection", (socket: Socket) => {
           username: account.username,
           displayName: account.displayName,
           avatarColor: account.avatarColor,
-          avatarImage: account.avatarImage,
+          /* avatarImage dropped from the per-message broadcast
+           * (2026-10-20 lag fix) — it re-sent the author's multi-KB
+           * base64 avatar to every client on EVERY message. The client
+           * rehydrates it from its members list (same pattern it
+           * already used for role/tag/accessory). */
         },
         ts: Date.now(),
         // NOTE: socket.id is deliberately NOT broadcast — internal session

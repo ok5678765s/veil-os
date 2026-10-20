@@ -9,6 +9,7 @@ import {
   rouletteColor,
   type RouletteSpot,
 } from "@/lib/roulette"
+import { staffLuckTrigger } from "@/lib/staff-luck"
 
 export const runtime = "nodejs"
 
@@ -103,16 +104,45 @@ async function handlePost(req: NextRequest): Promise<Response> {
 
       // The pocket — crypto random over the physical wheel order.
       const hex = crypto.randomUUID().replace(/-/g, "").slice(0, 8)
-      const winIndex = Number.parseInt(hex, 16) % ROULETTE_ORDER.length
-      const number = ROULETTE_ORDER[winIndex]
+      let winIndex = Number.parseInt(hex, 16) % ROULETTE_ORDER.length
+      let number = ROULETTE_ORDER[winIndex]
 
       let returned = 0
-      const hits: { id: RouletteSpot; amount: number; payout: number }[] = []
-      for (const [id, amt] of entries) {
-        const payout = amt * roulettePayoutFor(id, number)
-        if (payout > 0) {
-          returned += payout
-          hits.push({ id, amount: amt, payout })
+      let hits: { id: RouletteSpot; amount: number; payout: number }[] = []
+      const settle = () => {
+        returned = 0
+        hits = []
+        for (const [id, amt] of entries) {
+          const payout = amt * roulettePayoutFor(id, number)
+          if (payout > 0) {
+            returned += payout
+            hits.push({ id, amount: amt, payout })
+          }
+        }
+      }
+      settle()
+
+      /* House Luck (staff perk): the spin missed every chip on the
+       * table — 8% chance the ball hops into a pocket their bets DO
+       * cover. Members are completely unaffected. */
+      let lucky = false
+      if (
+        returned === 0 &&
+        staffLuckTrigger(account.role)
+      ) {
+        const covered: number[] = []
+        for (let i = 0; i < ROULETTE_ORDER.length; i++) {
+          const n = ROULETTE_ORDER[i]
+          if (entries.some(([id]) => roulettePayoutFor(id, n) > 0)) {
+            covered.push(i)
+          }
+        }
+        if (covered.length > 0) {
+          const pick = crypto.randomUUID().replace(/-/g, "").slice(0, 8)
+          winIndex = covered[Number.parseInt(pick, 16) % covered.length]
+          number = ROULETTE_ORDER[winIndex]
+          settle()
+          lucky = true
         }
       }
 
@@ -143,7 +173,7 @@ async function handlePost(req: NextRequest): Promise<Response> {
         })
       }
 
-      return { number, winIndex, returned, hits }
+      return { number, winIndex, returned, hits, lucky }
     }).catch((e: Error) => e)
 
     if (result instanceof Error) {
@@ -165,6 +195,7 @@ async function handlePost(req: NextRequest): Promise<Response> {
       net: result.returned - total,
       staked: total,
       hits: result.hits,
+      lucky: result.lucky,
       balance: updated?.coins ?? 0,
       account: updated ? toPublicAccount(updated) : null,
     })

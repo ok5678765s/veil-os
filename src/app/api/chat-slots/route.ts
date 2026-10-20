@@ -7,6 +7,7 @@ import {
   resolveSlotSpin,
   type SlotSymbol,
 } from "@/lib/roulette"
+import { staffLuckTrigger } from "@/lib/staff-luck"
 
 export const runtime = "nodejs"
 
@@ -90,7 +91,18 @@ async function handlePost(req: NextRequest): Promise<Response> {
         pickSlotSymbol(cryptoRand),
         pickSlotSymbol(cryptoRand),
       ]
-      const { mult, label } = resolveSlotSpin(reels)
+      let { mult, label } = resolveSlotSpin(reels)
+
+      /* House Luck (staff perk): the pull came up empty — 8% chance the
+       * last reel re-spins to match one of the first two (any pair pays
+       * ×2). Members are completely unaffected. */
+      let lucky = false
+      if (mult === 0 && staffLuckTrigger(account.role)) {
+        const match = cryptoRand() < 0.5 ? reels[0] : reels[1]
+        reels[2] = match
+        ;({ mult, label } = resolveSlotSpin(reels))
+        lucky = true
+      }
       const returned = bet * mult
 
       await tx.chatAccount.update({
@@ -120,7 +132,7 @@ async function handlePost(req: NextRequest): Promise<Response> {
         })
       }
 
-      return { reels, mult, label, returned }
+      return { reels, mult, label, returned, lucky }
     }).catch((e: Error) => e)
 
     if (result instanceof Error) {
@@ -140,6 +152,7 @@ async function handlePost(req: NextRequest): Promise<Response> {
       label: result.label,
       returned: result.returned,
       net: result.returned - bet,
+      lucky: result.lucky,
       balance: updated?.coins ?? 0,
       account: updated ? toPublicAccount(updated) : null,
     })
