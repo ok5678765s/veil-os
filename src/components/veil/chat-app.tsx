@@ -9017,6 +9017,22 @@ function BlackjackGame({
   const [game, setGame] = useState<BlackjackState | null>(null)
   const [bet, setBet] = useState(10)
   const [busy, setBusy] = useState(false)
+  /* All-in guard: dealing the ENTIRE balance takes a second confirming
+   * tap, so a stray MAX click can never instantly wipe the wallet. */
+  const [confirmAllIn, setConfirmAllIn] = useState(false)
+  const allInTimer = useRef<number | null>(null)
+  const allIn = bet >= 1 && bet >= account.coins
+
+  useEffect(() => {
+    setConfirmAllIn(false)
+  }, [bet, account.coins])
+
+  useEffect(
+    () => () => {
+      if (allInTimer.current) window.clearTimeout(allInTimer.current)
+    },
+    [],
+  )
 
   /* Resume an in-flight hand when the modal opens. */
   useEffect(() => {
@@ -9055,9 +9071,37 @@ function BlackjackGame({
       onAccount(data.account)
     } catch (e) {
       toast(e instanceof Error ? e.message : "The table hiccuped.", "err")
+      /* A settle race (double-tap / second device) rejects the action —
+       * re-sync so the felt shows the hand's true state. */
+      try {
+        const s = await apiFetch<{ game: BlackjackState | null }>(
+          "/api/chat-blackjack",
+          {
+            method: "POST",
+            body: JSON.stringify({ token, action: "status" }),
+          },
+        )
+        if (s.game) setGame(s.game)
+      } catch {
+        /* keep whatever local state we have */
+      }
     } finally {
       setBusy(false)
     }
+  }
+
+  const deal = () => {
+    if (allIn && !confirmAllIn) {
+      setConfirmAllIn(true)
+      if (allInTimer.current) window.clearTimeout(allInTimer.current)
+      allInTimer.current = window.setTimeout(
+        () => setConfirmAllIn(false),
+        5000,
+      )
+      return
+    }
+    setConfirmAllIn(false)
+    void act("start", bet)
   }
 
   const phase =
@@ -9215,16 +9259,29 @@ function BlackjackGame({
             )}
           </div>
           <button
-            onClick={() => void act("start", bet)}
+            onClick={deal}
             disabled={busy || bet < 1 || bet > account.coins}
-            className="veil-press veil-hover-glow flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-extrabold text-[#451a03] disabled:opacity-40"
-            style={{
-              background: "linear-gradient(#fcd34d, #d97706)",
-              boxShadow: "0 12px 32px -10px rgba(245,197,66,.55), inset 0 1px 0 rgba(255,255,255,.5)",
-            }}
+            className={`veil-press veil-hover-glow flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-extrabold disabled:opacity-40 ${
+              confirmAllIn ? "text-[#3f0d0d]" : "text-[#451a03]"
+            }`}
+            style={
+              confirmAllIn
+                ? {
+                    background: "linear-gradient(#fb7185, #be123c)",
+                    boxShadow:
+                      "0 12px 32px -10px rgba(244,63,94,.55), inset 0 1px 0 rgba(255,255,255,.4)",
+                  }
+                : {
+                    background: "linear-gradient(#fcd34d, #d97706)",
+                    boxShadow:
+                      "0 12px 32px -10px rgba(245,197,66,.55), inset 0 1px 0 rgba(255,255,255,.5)",
+                  }
+            }
           >
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            Deal
+            {confirmAllIn
+              ? `Bet ALL ${bet.toLocaleString()} 🪙? tap again`
+              : "Deal"}
           </button>
         </div>
       )}

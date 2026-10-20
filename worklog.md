@@ -2174,3 +2174,31 @@ Unresolved / risks:
 - The equipped⇒owned guard means refunding a worn item whose purchase row was lost to a pre-v1.3 rollback pays 70% of a price that (per the current ledger) was never charged — accepted trade-off (single refund per item, net-ownership math still holds; re-buy charges full price).
 - Rollback auto-heal relies on git fetch of origin/main every 30s loop cycle; if GitHub is unreachable, detection silently skips (no heal, no crash) until connectivity returns.
 - Watch backups/chat loop logs for "ROLLBACK-HEALED" lines — each one is a real platform rollback that would previously have erased purchases.
+
+---
+Task ID: 3 (single-agent session)
+Agent: Z.ai Code (main)
+Task: Owner report — "i had 200k and it glitched and made me loos it all plz fix"
+
+Work Log:
+- Forensics (ledger + games + watchdog): Veil's 2026-10-20 23:05–23:06 sequence reconstructed exactly: balance 100,089 → all-in blackjack WON (19 vs 17, paid 200,178) → 47s later all-in 200,178 → busted (hand [3,8,3,Q]=24 vs dealer 18) → 0 coins. Server-side settle was mathematically consistent (stake rows labeled "blackjack_loss" at deal time + "blackjack_win" payout rows).
+- Aggravating factors that made it FEEL like a glitch: planned watchdog restart at 23:04:06 force-reloaded the client (boot-guard) seconds before the session; Blackjack UI bet persists across rounds with a MAX button one tap from Deal — accidental full-wallet bets have zero friction; hit/stand/double settle had NO atomic status claim (double-tap/two-device race could double-pay); a hand stranded "playing" by a restart is unreachable (all actions target the newest game) — its stake frozen forever.
+- FIX 1 — restoration: scripts/restore-veil-200k.ts (idempotent) granted Veil exactly the pre-loss peak 200,178 as a new `glitch_refund` ledger reason (coins.ts: CoinReason + KNOWN_REASONS gained "glitch_refund" and "blackjack_refund"). Verified post-restart: Veil coins=200178, ledger row present, backup commits at 23:19+ carry it (rollback-safe).
+- FIX 2 — settle-race killed: chat-blackjack route hit/stand/double/forfeit now claim the hand atomically — updateMany WHERE {id, status:"playing", playerHand:<as-read>, deck:<as-read>} (optimistic CAS), payout + ledger rows written in the SAME $transaction only when the claim lands; loser gets 409 "This hand was already settled." + current game state. `double` restructured into ONE interactive transaction (extra stake deduction can no longer be taken without the hand updating — raced doubles roll back entirely). Unused awardCoins import removed.
+- FIX 3 — stranded stakes unfrozen: `start` now refunds any existing "playing" hand's stake inside the deal transaction (marked done/push, coins +bet, `blackjack_refund` ledger row) before creating the new game — restart-interrupted hands self-heal on the next deal.
+- FIX 4 — all-in guard (client, chat-app.tsx BlackjackGame): betting the ENTIRE balance (bet >= account.coins) requires a second confirming tap — Deal turns red "Bet ALL N 🪙? tap again", auto-dismisses after 5s or on any bet/coins change; act() errors now re-sync via status so a raced action shows the hand's true state.
+- E2E via curl (fresh qarace account, seeded 10k): concurrent double-stand → exactly ONE settle + ONE blackjack_win row (loser 409) ✓; stranded 500-bet hand → next start auto-refunded 500, ledger shows blackjack_refund 500, coins correct ✓.
+- Browser QA (closed immediately after — my QA Chrome had itself triggered the 23:20:57 planned restart, MemAvail 271MB, reproducing the owner's exact 23:04 experience): login → Games → Blackjack → MAX → Deal tap1 ARMS ("Bet ALL 9,900 🪙? tap again", no bet placed) → tap2 deals (coins 9,900→0, random loss) ✓. Zero console/page errors. MemAvail back to 1325MB after close.
+- eslint clean on all 3 touched files (route, coins.ts, chat-app.tsx). dev.log clean.
+
+Stage Summary:
+- Owner made whole: Veil = 200,178 coins (glitch_refund, idempotent script, backup-protected).
+- The three real coin-eating hazards are fixed: double-settle race (atomic CAS + single-tx payout), restart-stranded stake freeze (auto-refund on next deal), accidental all-in (two-tap confirm on full-balance bets).
+- 409 race responses carry the current game state; client self-heals via status re-sync.
+- Watchdog forensics confirm QA browsers are a top memory hog — QA passes must stay short and always close the browser.
+
+Unresolved / risks:
+- All-in remains POSSIBLE by design (owner's casino) — it just takes a deliberate second tap now.
+- The stake rows at deal time are still labeled "blackjack_loss" (cosmetic ledger semantics; kept for continuity with existing rows and the backup format).
+- Pre-v1.3 purchases that were unequipped at rollback time remain unrecoverable (documented last session).
+- If the box's memory pressure recurs under concurrent QA + user load, planned restarts will still fire (v6.2 policy) — stranded-hand stakes now auto-refund on next deal, so no coins are lost to them anymore.

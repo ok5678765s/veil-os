@@ -11,10 +11,17 @@ import {
   stringifyCards,
   type Card,
 } from "@/lib/blackjack"
-import { awardCoins } from "@/lib/coins"
 import { staffLuckTrigger } from "@/lib/staff-luck"
 
 export const runtime = "nodejs"
+
+/* Error thrown inside settle transactions when another request (double-tap
+ * or a second device) claimed the hand first — mapped to a friendly 409. */
+class HandSettledElsewhere extends Error {
+  constructor() {
+    super("This hand was already settled.")
+  }
+}
 
 // Dealer stands on all 17s (including soft 17).
 const DEALER_STAND = 17
@@ -115,6 +122,32 @@ export async function POST(req: NextRequest) {
 
         // Atomic bet deduction — re-check balance inside the transaction.
         const startResult = await db.$transaction(async (tx) => {
+          /* A hand stranded mid-play by a restart/reload is unreachable:
+           * every action targets the NEWEST game, so its stake would sit
+           * frozen forever. Return it before dealing the new hand. */
+          const stranded = await tx.blackjackGame.findFirst({
+            where: { playerId: account.id, status: "playing" },
+            orderBy: { createdAt: "desc" },
+          })
+          if (stranded) {
+            await tx.blackjackGame.update({
+              where: { id: stranded.id },
+              data: { status: "done", result: "push", payout: stranded.bet },
+            })
+            await tx.chatAccount.update({
+              where: { id: account.id },
+              data: { coins: { increment: stranded.bet } },
+            })
+            await tx.coinTransaction.create({
+              data: {
+                fromId: account.id,
+                toId: account.id,
+                amount: stranded.bet,
+                reason: "blackjack_refund",
+              },
+            })
+          }
+
           const fresh = await tx.chatAccount.findUnique({
             where: { id: account.id },
           })
@@ -271,60 +304,154 @@ export async function POST(req: NextRequest) {
           deck.push(...dealer.deck)
         }
 
-        const updated_game = await db.blackjackGame.update({
-          where: { id: game.id },
-          data: {
-            playerHand: stringifyCards(playerHand),
-            deck: stringifyCards(deck),
-            status,
-            result,
-            payout,
-          },
-        })
-
-        if (payout > 0) {
-          await awardCoins(account.id, payout, "blackjack_win")
+        /* Atomic claim: the write only lands if the hand is still EXACTLY
+         * as we read it (same cards, same deck, still playing). A racing
+         * double-tap or second device gets count 0 — no double payout. */
+        const settled = await db.$transaction(async (tx) => {
+          const claim = await tx.blackjackGame.updateMany({
+            where: {
+              id: game.id,
+              status: "playing",
+              playerHand: game.playerHand,
+              deck: game.deck,
+            },
+            data: {
+              playerHand: stringifyCards(playerHand),
+              deck: stringifyCards(deck),
+              status,
+              result,
+              payout,
+            },
+          })
+          if (claim.count === 0) throw new HandSettledElsewhere()
+          if (payout > 0) {
+            await tx.chatAccount.update({
+              where: { id: account.id },
+              data: { coins: { increment: payout } },
+            })
+            await tx.coinTransaction.create({
+              data: {
+                fromId: account.id,
+                toId: account.id,
+                amount: payout,
+                reason: "blackjack_win",
+              },
+            })
+          }
+          return true
+        }).catch((e: Error) => e)
+        if (settled instanceof Error) {
+          const status2 = settled instanceof HandSettledElsewhere ? 409 : 400
+          const fresh = await db.blackjackGame.findUnique({
+            where: { id: game.id },
+          })
+          return NextResponse.json(
+            {
+              ok: false,
+              error: settled.message,
+              game: fresh ? serializeGame(fresh) : null,
+            },
+            { status: status2 },
+          )
         }
 
+        const finalGame = await db.blackjackGame.findUnique({
+          where: { id: game.id },
+        })
         const updated = await db.chatAccount.findUnique({
           where: { id: account.id },
         })
         return NextResponse.json({
           ok: true,
-          game: serializeGame(updated_game),
+          game: finalGame ? serializeGame(finalGame) : null,
           lucky,
           account: updated ? toPublicAccount(updated) : null,
         })
       }
 
       case "double": {
-        const game = await db.blackjackGame.findFirst({
-          where: { playerId: account.id, status: "playing" },
-          orderBy: { createdAt: "desc" },
-        })
-        if (!game) {
-          return NextResponse.json(
-            { ok: false, error: "No active game to double." },
-            { status: 404 },
-          )
-        }
+        /* The whole double — extra stake, one card, dealer settle, payout —
+         * runs in ONE transaction with an atomic claim on the hand. A racing
+         * double-tap or second device either doubles once or not at all;
+         * the extra stake can never be taken without the hand updating. */
+        const dblResult = await db.$transaction(async (tx) => {
+          const game = await tx.blackjackGame.findFirst({
+            where: { playerId: account.id, status: "playing" },
+            orderBy: { createdAt: "desc" },
+          })
+          if (!game) throw new Error("No active game to double.")
 
-        const deck = parseCards(game.deck)
-        const playerHand = parseCards(game.playerHand)
-        if (playerHand.length !== 2) {
-          return NextResponse.json(
-            { ok: false, error: "You can only double on your first two cards." },
-            { status: 400 },
-          )
-        }
+          const deck = parseCards(game.deck)
+          const playerHand = parseCards(game.playerHand)
+          if (playerHand.length !== 2) {
+            throw new Error("You can only double on your first two cards.")
+          }
+          if (deck.length === 0) throw new Error("Deck is empty.")
 
-        /* The extra bet: atomic deduct with a fresh balance check. */
-        const canDouble = await db.$transaction(async (tx) => {
           const fresh = await tx.chatAccount.findUnique({
             where: { id: account.id },
           })
           if (!fresh) throw new Error("Account not found.")
-          if (fresh.coins < game.bet) throw new Error("Not enough coins to double.")
+          if (fresh.coins < game.bet) {
+            throw new Error("Not enough coins to double.")
+          }
+
+          /* One card, then the dealer settles it — with House Luck: a
+           * busting card is burned (8%, staff only) and the next dealt. */
+          let lucky = false
+          let card = deck.shift()!
+          if (
+            isBust([...playerHand, card]) &&
+            deck.length > 0 &&
+            staffLuckTrigger(account.role)
+          ) {
+            card = deck.shift()!
+            lucky = true
+          }
+          playerHand.push(card)
+          const pv = handValue(playerHand)
+
+          let dealerHand = parseCards(game.dealerHand)
+          let result: "win" | "lose" | "push" | "blackjack"
+          let payout: number
+          if (isBust(playerHand)) {
+            result = "lose"
+            payout = 0
+          } else {
+            const dealer = dealerPlay(deck, dealerHand)
+            dealerHand = dealer.hand
+            const dv = handValue(dealerHand)
+            if (isBust(dealerHand) || dv.total < pv.total) {
+              result = "win"
+              payout = payoutFor("win", game.bet * 2)
+            } else if (dv.total > pv.total) {
+              result = "lose"
+              payout = 0
+            } else {
+              result = "push"
+              payout = game.bet * 2
+            }
+          }
+
+          const claim = await tx.blackjackGame.updateMany({
+            where: {
+              id: game.id,
+              status: "playing",
+              playerHand: game.playerHand,
+              deck: game.deck,
+            },
+            data: {
+              bet: game.bet * 2,
+              playerHand: stringifyCards(playerHand),
+              dealerHand: stringifyCards(dealerHand),
+              deck: stringifyCards(deck),
+              status: "done",
+              result,
+              payout,
+            },
+          })
+          if (claim.count === 0) throw new HandSettledElsewhere()
+
           await tx.chatAccount.update({
             where: { id: account.id },
             data: { coins: { decrement: game.bet } },
@@ -337,82 +464,49 @@ export async function POST(req: NextRequest) {
               reason: "blackjack_loss",
             },
           })
-          return true
-        }).catch((e: Error) => e)
-        if (canDouble instanceof Error) {
-          return NextResponse.json(
-            { ok: false, error: canDouble.message },
-            { status: 400 },
-          )
-        }
-
-        /* One card, then the dealer settles it — with House Luck: a
-         * busting card is burned (8%, staff only) and the next dealt. */
-        if (deck.length === 0) {
-          return NextResponse.json(
-            { ok: false, error: "Deck is empty." },
-            { status: 400 },
-          )
-        }
-        let lucky = false
-        let card = deck.shift()!
-        if (
-          isBust([...playerHand, card]) &&
-          deck.length > 0 &&
-          staffLuckTrigger(account.role)
-        ) {
-          card = deck.shift()!
-          lucky = true
-        }
-        playerHand.push(card)
-        const pv = handValue(playerHand)
-
-        let dealerHand = parseCards(game.dealerHand)
-        let result: "win" | "lose" | "push" | "blackjack"
-        let payout: number
-        if (isBust(playerHand)) {
-          result = "lose"
-          payout = 0
-        } else {
-          const dealer = dealerPlay(deck, dealerHand)
-          dealerHand = dealer.hand
-          const dv = handValue(dealerHand)
-          if (isBust(dealerHand) || dv.total < pv.total) {
-            result = "win"
-            payout = payoutFor("win", game.bet * 2)
-          } else if (dv.total > pv.total) {
-            result = "lose"
-            payout = 0
-          } else {
-            result = "push"
-            payout = game.bet * 2
+          if (payout > 0) {
+            await tx.chatAccount.update({
+              where: { id: account.id },
+              data: { coins: { increment: payout } },
+            })
+            await tx.coinTransaction.create({
+              data: {
+                fromId: account.id,
+                toId: account.id,
+                amount: payout,
+                reason: "blackjack_win",
+              },
+            })
           }
+          return { gameId: game.id, lucky }
+        }).catch((e: Error) => e)
+
+        if (dblResult instanceof Error) {
+          const status2 = dblResult instanceof HandSettledElsewhere ? 409 : 400
+          let freshGame = null
+          if (dblResult instanceof HandSettledElsewhere) {
+            const latest = await db.blackjackGame.findFirst({
+              where: { playerId: account.id },
+              orderBy: { createdAt: "desc" },
+            })
+            freshGame = latest ? serializeGame(latest) : null
+          }
+          return NextResponse.json(
+            { ok: false, error: dblResult.message, game: freshGame },
+            { status: status2 },
+          )
         }
 
-        const updated_game = await db.blackjackGame.update({
-          where: { id: game.id },
-          data: {
-            bet: game.bet * 2,
-            playerHand: stringifyCards(playerHand),
-            dealerHand: stringifyCards(dealerHand),
-            deck: stringifyCards(deck),
-            status: "done",
-            result,
-            payout,
-          },
+        const finalGame = await db.blackjackGame.findUnique({
+          where: { id: dblResult.gameId },
         })
-
-        if (payout > 0) {
-          await awardCoins(account.id, payout, "blackjack_win")
-        }
-
         const updated = await db.chatAccount.findUnique({
           where: { id: account.id },
         })
         return NextResponse.json({
           ok: true,
-          game: serializeGame(updated_game),
-          lucky,
+          game: finalGame ? serializeGame(finalGame) : null,
+          lucky: dblResult.lucky,
           account: updated ? toPublicAccount(updated) : null,
         })
       }
@@ -448,27 +542,64 @@ export async function POST(req: NextRequest) {
           payout = game.bet
         }
 
-        const updated_game = await db.blackjackGame.update({
-          where: { id: game.id },
-          data: {
-            dealerHand: stringifyCards(dealer.hand),
-            deck: stringifyCards(dealer.deck),
-            status: "done",
-            result,
-            payout,
-          },
-        })
-
-        if (payout > 0) {
-          await awardCoins(account.id, payout, "blackjack_win")
+        /* Atomic claim (see hit) — no double payout on races. */
+        const settled = await db.$transaction(async (tx) => {
+          const claim = await tx.blackjackGame.updateMany({
+            where: {
+              id: game.id,
+              status: "playing",
+              playerHand: game.playerHand,
+              deck: game.deck,
+            },
+            data: {
+              dealerHand: stringifyCards(dealer.hand),
+              deck: stringifyCards(dealer.deck),
+              status: "done",
+              result,
+              payout,
+            },
+          })
+          if (claim.count === 0) throw new HandSettledElsewhere()
+          if (payout > 0) {
+            await tx.chatAccount.update({
+              where: { id: account.id },
+              data: { coins: { increment: payout } },
+            })
+            await tx.coinTransaction.create({
+              data: {
+                fromId: account.id,
+                toId: account.id,
+                amount: payout,
+                reason: "blackjack_win",
+              },
+            })
+          }
+          return true
+        }).catch((e: Error) => e)
+        if (settled instanceof Error) {
+          const status2 = settled instanceof HandSettledElsewhere ? 409 : 400
+          const fresh = await db.blackjackGame.findUnique({
+            where: { id: game.id },
+          })
+          return NextResponse.json(
+            {
+              ok: false,
+              error: settled.message,
+              game: fresh ? serializeGame(fresh) : null,
+            },
+            { status: status2 },
+          )
         }
 
+        const finalGame = await db.blackjackGame.findUnique({
+          where: { id: game.id },
+        })
         const updated = await db.chatAccount.findUnique({
           where: { id: account.id },
         })
         return NextResponse.json({
           ok: true,
-          game: serializeGame(updated_game),
+          game: finalGame ? serializeGame(finalGame) : null,
           account: updated ? toPublicAccount(updated) : null,
         })
       }
@@ -485,31 +616,52 @@ export async function POST(req: NextRequest) {
           )
         }
 
-        // Bet was already deducted at start; just mark as lost.
-        await db.coinTransaction.create({
-          data: {
-            fromId: account.id,
-            toId: account.id,
-            amount: game.bet,
-            reason: "blackjack_forfeit",
-          },
-        })
+        // Bet was already deducted at start; just mark as lost — atomically.
+        const settled = await db.$transaction(async (tx) => {
+          const claim = await tx.blackjackGame.updateMany({
+            where: {
+              id: game.id,
+              status: "playing",
+              playerHand: game.playerHand,
+              deck: game.deck,
+            },
+            data: { status: "done", result: "lose", payout: 0 },
+          })
+          if (claim.count === 0) throw new HandSettledElsewhere()
+          await tx.coinTransaction.create({
+            data: {
+              fromId: account.id,
+              toId: account.id,
+              amount: game.bet,
+              reason: "blackjack_forfeit",
+            },
+          })
+          return true
+        }).catch((e: Error) => e)
+        if (settled instanceof Error) {
+          const status2 = settled instanceof HandSettledElsewhere ? 409 : 400
+          const fresh = await db.blackjackGame.findUnique({
+            where: { id: game.id },
+          })
+          return NextResponse.json(
+            {
+              ok: false,
+              error: settled.message,
+              game: fresh ? serializeGame(fresh) : null,
+            },
+            { status: status2 },
+          )
+        }
 
-        const updated_game = await db.blackjackGame.update({
+        const finalGame = await db.blackjackGame.findUnique({
           where: { id: game.id },
-          data: {
-            status: "done",
-            result: "lose",
-            payout: 0,
-          },
         })
-
         const updated = await db.chatAccount.findUnique({
           where: { id: account.id },
         })
         return NextResponse.json({
           ok: true,
-          game: serializeGame(updated_game),
+          game: finalGame ? serializeGame(finalGame) : null,
           account: updated ? toPublicAccount(updated) : null,
         })
       }

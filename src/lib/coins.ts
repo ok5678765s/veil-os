@@ -28,6 +28,8 @@ export type CoinReason =
   | "proxy_earn"
   | "daily_reward"
   | "staff_grant"
+  | "glitch_refund"
+  | "blackjack_refund"
   | `shop_purchase:${string}`
   | `shop_refund:${string}`
 
@@ -47,6 +49,8 @@ const KNOWN_REASONS = new Set([
   "proxy_earn",
   "daily_reward",
   "staff_grant",
+  "glitch_refund",
+  "blackjack_refund",
 ])
 
 export function parseReason(reason: string | undefined | null): CoinReason {
