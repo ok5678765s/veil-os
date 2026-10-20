@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T22:09:48.025Z",
+  "exportedAt": "2026-10-20T22:10:53.154Z",
   "counts": {
-    "accounts": 86,
+    "accounts": 85,
     "messages": 483,
     "dms": 4
   },
@@ -1792,27 +1792,6 @@
       "legacy": false,
       "createdAt": "2026-10-20T19:08:07.619Z",
       "passwordHash": "$2b$10$DumIsQof5Fq11iqrqyKNXO6AojYBwBnvPaWxDpjDaw2A/SudbGRoO"
-    },
-    {
-      "id": "cmvh88yzc000grjqal4vxjnfp",
-      "username": "buytest17691",
-      "displayName": "BuyTest",
-      "avatarColor": "#9b59b6",
-      "avatarImage": null,
-      "bio": "",
-      "role": "member",
-      "muted": false,
-      "banned": false,
-      "coins": 2800,
-      "tag": "Gold Member",
-      "tagColor": "#d4a017",
-      "pfpAccessory": "earL",
-      "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
-      "legacy": false,
-      "createdAt": "2026-10-20T22:00:43.032Z",
-      "passwordHash": "$2b$10$LkDY8XgMMaxxBRzkk5ofjOAj7MR1EZhqpzRqvp63Z0Z3hKbdlV72O"
     }
   ],
   "messages": [
@@ -7337,22 +7316,6 @@
       "amount": 1440,
       "reason": "blackjack_win",
       "createdAt": "2026-10-20T22:00:25.371Z"
-    },
-    {
-      "id": "cmvh8a11w000irjqajn88vok6",
-      "fromId": "cmvh88yzc000grjqal4vxjnfp",
-      "toId": "cmvh88yzc000grjqal4vxjnfp",
-      "amount": 1000,
-      "reason": "shop_purchase:tag-gold",
-      "createdAt": "2026-10-20T22:01:32.373Z"
-    },
-    {
-      "id": "cmvh8a12u000krjqayuouozqz",
-      "fromId": "cmvh88yzc000grjqal4vxjnfp",
-      "toId": "cmvh88yzc000grjqal4vxjnfp",
-      "amount": 1200,
-      "reason": "shop_purchase:acc-ear-l",
-      "createdAt": "2026-10-20T22:01:32.407Z"
     },
     {
       "id": "cmvh8gl4k000mrjqah99cppwt",
