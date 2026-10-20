@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T13:46:26.474Z",
+  "exportedAt": "2026-10-20T13:50:01.375Z",
   "counts": {
     "accounts": 76,
-    "messages": 282,
+    "messages": 283,
     "dms": 4
   },
   "accounts": [
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 42,
+      "coins": 52,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 245,
+      "coins": 46,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -4706,6 +4706,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T13:46:08.234Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvgqpwo5012ftiysrlftgl5j",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "i lost 100k in like 10 minuites",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T13:50:00.101Z",
       "editedAt": null
     }
   ],
