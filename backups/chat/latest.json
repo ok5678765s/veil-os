@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T17:48:18.405Z",
+  "exportedAt": "2026-10-20T18:29:28.962Z",
   "counts": {
     "accounts": 81,
     "messages": 301,
@@ -1698,7 +1698,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 101,
+      "coins": 102,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1841,17 +1841,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-11T05:45:24.639Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmv85zy17000vqiig747xcy7c",
-      "channelId": "main",
-      "accountId": "cmv6sznc20000r7zbbcxqj2ju",
-      "content": "hi",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-14T13:47:47.084Z",
       "editedAt": null
     },
     {
@@ -5020,6 +5009,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T17:04:07.797Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh0p93p0001onyti02fmb86",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "i need coins please",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:29:25.718Z",
       "editedAt": null
     }
   ],
