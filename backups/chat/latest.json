@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-20T21:45:27.019Z",
+  "exportedAt": "2026-10-20T22:01:04.009Z",
   "counts": {
-    "accounts": 85,
+    "accounts": 86,
     "messages": 483,
     "dms": 4
   },
@@ -147,7 +147,7 @@
       "coins": 100085,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": "fight",
+      "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
       "lastRewardClaim": "2026-10-20T12:25:03.726Z",
@@ -1792,6 +1792,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T19:08:07.619Z",
       "passwordHash": "$2b$10$DumIsQof5Fq11iqrqyKNXO6AojYBwBnvPaWxDpjDaw2A/SudbGRoO"
+    },
+    {
+      "id": "cmvh88yzc000grjqal4vxjnfp",
+      "username": "buytest17691",
+      "displayName": "BuyTest",
+      "avatarColor": "#9b59b6",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-20T22:00:43.032Z",
+      "passwordHash": "$2b$10$LkDY8XgMMaxxBRzkk5ofjOAj7MR1EZhqpzRqvp63Z0Z3hKbdlV72O"
     }
   ],
   "messages": [
