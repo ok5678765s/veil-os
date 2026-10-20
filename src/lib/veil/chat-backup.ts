@@ -180,6 +180,22 @@ export type ChatBackupMessage = {
   editedAt?: string | null
 }
 
+/* v1.3 (2026-10-20) — the coin-transaction ledger. Until now the backup
+ * carried accounts/messages/DMs but NOT transactions, so every platform
+ * rollback permanently erased the shop purchase ledger even though the
+ * equipped items on each account were restored fine — the "My Items"
+ * locker then read as empty on every device ("it keeps erasing my
+ * items"). The ledger rides along now; the restore pass re-imports it
+ * idempotently by row id. */
+export type ChatBackupTx = {
+  id: string
+  fromId: string
+  toId: string
+  amount: number
+  reason: string
+  createdAt: string
+}
+
 export type ChatBackupV1 = {
   veil: "chat-backup"
   version: 1
@@ -193,6 +209,9 @@ export type ChatBackupV1 = {
   friends: { accountId: string; friendId: string; createdAt: string }[]
   /* v1.1 — emoji reactions (optional so pre-reaction backups still parse) */
   reactions?: { messageId: string; accountId: string; emoji: string }[]
+  /* v1.3 — the coin-transaction ledger (optional so older backups still
+   * parse; see ChatBackupTx above) */
+  coinTxs?: ChatBackupTx[]
 }
 
 export function isChatBackup(data: unknown): data is ChatBackupV1 {
@@ -209,13 +228,19 @@ export function isChatBackup(data: unknown): data is ChatBackupV1 {
 // ---------------------------------------------------------------------------
 
 export async function collectChatBackup(): Promise<ChatBackupV1> {
-  const [accounts, messages, dms, dmMembers, friends, reactions] = await Promise.all([
+  const [accounts, messages, dms, dmMembers, friends, reactions, coinTxs] = await Promise.all([
     db.chatAccount.findMany({ orderBy: { createdAt: "asc" } }),
     db.chatMessage.findMany({ orderBy: { createdAt: "asc" } }),
     db.chatDM.findMany({ orderBy: { createdAt: "asc" } }),
     db.dMMember.findMany(),
     db.chatFriend.findMany(),
     db.chatReaction.findMany(),
+    /* newest 10k ledger rows (plenty for this community) — flipped back
+     * to ascending so the file reads chronologically like every other
+     * section */
+    db.coinTransaction
+      .findMany({ orderBy: { createdAt: "desc" }, take: 10000 })
+      .then((rows) => rows.reverse()),
   ])
   return {
     veil: "chat-backup",
@@ -272,19 +297,41 @@ export async function collectChatBackup(): Promise<ChatBackupV1> {
       accountId: r.accountId,
       emoji: r.emoji,
     })),
+    coinTxs: coinTxs.map((t) => ({
+      id: t.id,
+      fromId: t.fromId,
+      toId: t.toId,
+      amount: t.amount,
+      reason: t.reason,
+      createdAt: t.createdAt.toISOString(),
+    })),
   }
 }
 
-/** Cheap change fingerprint — used by the backup loop to skip no-op runs. */
+/** Cheap change fingerprint — used by the backup loop to skip no-op runs.
+ * v1.3: includes the ledger (count + newest row id) so a purchase with
+ * no chat activity still triggers a snapshot+commit — otherwise buys
+ * sat uncommitted until the next message and a rollback in between
+ * silently reverted them. */
 export async function backupSignature(): Promise<string> {
-  const [msgCount, accCount, dmCount, reactCount, lastMsg] = await Promise.all([
+  const [msgCount, accCount, dmCount, reactCount, txCount, lastMsg, lastTx] = await Promise.all([
     db.chatMessage.count(),
     db.chatAccount.count(),
     db.chatDM.count(),
     db.chatReaction.count(),
+    db.coinTransaction.count(),
     db.chatMessage.findFirst({ orderBy: { createdAt: "desc" }, select: { id: true, createdAt: true } }),
+    db.coinTransaction.findFirst({ orderBy: { createdAt: "desc" }, select: { id: true } }),
   ])
-  return [msgCount, accCount, dmCount, reactCount, lastMsg ? `${lastMsg.id}@${lastMsg.createdAt.getTime()}` : "-"].join("|")
+  return [
+    msgCount,
+    accCount,
+    dmCount,
+    reactCount,
+    txCount,
+    lastMsg ? `${lastMsg.id}@${lastMsg.createdAt.getTime()}` : "-",
+    lastTx ? lastTx.id : "-",
+  ].join("|")
 }
 
 // ---------------------------------------------------------------------------
@@ -336,6 +383,7 @@ export type RestoreResult = {
   dmsRestored: number
   friendsRestored: number
   reactionsRestored: number
+  coinTxsRestored: number
   restoredFrom?: string
 }
 
@@ -352,6 +400,7 @@ export async function restoreChatBackup(
     dmsRestored: 0,
     friendsRestored: 0,
     reactionsRestored: 0,
+    coinTxsRestored: 0,
     restoredFrom: opts.restoredFrom,
   }
   if (!isChatBackup(data)) {
@@ -528,6 +577,46 @@ export async function restoreChatBackup(
         /* unique (message, account, emoji) — already restored */
       })
     res.reactionsRestored++
+  }
+
+  // ---- pass 5: coin transactions, v1.3 (skip ids that already exist) ----
+  // This is the ledger that shop ownership, refund history and gambling
+  // history live in. Rows are skipped when their id already exists, so
+  // re-running a restore never double-counts a purchase. fromId/toId are
+  // mapped through the account id map (same-box restores map 1:1); rows
+  // referencing accounts that exist nowhere are dropped (FK safety).
+  if (Array.isArray(data.coinTxs) && data.coinTxs.length > 0) {
+    const existingTxIds = new Set(
+      (
+        await db.coinTransaction.findMany({
+          select: { id: true },
+          take: 100000,
+        })
+      ).map((t) => t.id),
+    )
+    for (const t of data.coinTxs) {
+      if (!t || typeof t.id !== "string" || existingTxIds.has(t.id)) continue
+      const fromId =
+        idMap.get(t.fromId) ?? (byId.has(t.fromId) ? t.fromId : null)
+      const toId = idMap.get(t.toId) ?? (byId.has(t.toId) ? t.toId : null)
+      if (!fromId || !toId) continue
+      await db.coinTransaction
+        .create({
+          data: {
+            id: t.id,
+            fromId,
+            toId,
+            amount: Number.isFinite(t.amount) ? Math.trunc(t.amount) : 0,
+            reason: typeof t.reason === "string" ? t.reason.slice(0, 100) : "gift",
+            createdAt: safeDate(t.createdAt) ?? new Date(),
+          },
+        })
+        .catch(() => {
+          /* id clash on a concurrent import — treat as skipped */
+        })
+      existingTxIds.add(t.id)
+      res.coinTxsRestored++
+    }
   }
 
   res.ok = true

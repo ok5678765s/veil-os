@@ -2145,3 +2145,32 @@ Unresolved / risks:
 - The box still planned-restarts under REAL memory pressure (RSS>2.34GB AND MemAvail<600MB) — warm-compile transients + heavy concurrent sessions can trigger it; v6.2 now names the culprit processes in dev-watchdog.log for instant triage. No swap available (no sudo).
 - Slots RTP remains ~115% (player edge) per the owner's original paytable — cosmetic economy, left verbatim.
 - Roulette table still 540px min-width by design (scrolls on narrow phones).
+
+---
+Task ID: 2 (single-agent session)
+Agent: Z.ai Code (main)
+Task: Owner report — "i cant buy things it also keeps erasing my items across devices" (ONLY these two; nothing else).
+
+Work Log:
+- Diagnosis (data forensics, no code changes):
+  - Server-side buy flow was 100% functional (live E2E via curl: register → buy → deduct → equip → ledger row → owned list; insufficient-balance 400 path correct).
+  - ROOT CAUSE of "erasing my items": the coinTransaction (shop purchase) ledger was EMPTY (0 shop_ rows) while accounts kept equipped items (Veil: acc "fight", spiffyboss5111/weee: Mythic tag). The platform's recurring snapshot rollbacks revert the live SQLite file, and the chat backup format (pre-v1.3) NEVER carried coinTransaction rows — so every rollback permanently erased purchase history while the account fields got re-imported from backup. With the ledger-based ownership introduced for refunds, the "My Items" locker read empty on every device.
+  - The 2026-10-20 rollback landed between 21:27 and 22:00 (my earlier E2E purchases vanished; QA rows ≤21:27 survived). User was LIVE testing at 21:59 (bought + refunded acc-ear-l as Veil — both worked server-side, confirming "can't buy" = "purchases don't stick", not a hard failure).
+  - chat-cleanup route only deletes test-pattern accounts — NOT the culprit. No WAL issues (journal_mode=delete). db/custom.db is untracked by git (git resets don't touch it).
+- Fix 1 — "equipped ⇒ owned" runtime guard: NEW src/lib/veil/shop.ts (shared catalog + ownership rules; extracted from the route so backup/repair scripts share ONE definition). netOwnedIds(client, accountId, equipped?) unions items matching the account's currently worn tag/pfpAccessory into ledger ownership. All 4 route call sites (GET/equip/refund/buy) now pass the equipped fields. A worn item can never vanish from the locker, even with a wiped ledger.
+- Fix 2 — backup format v1.3 carries the ledger: ChatBackupTx type + coinTxs? on ChatBackupV1; collectChatBackup exports newest 10k transactions; backupSignature now includes txCount + lastTx id (a purchase with no chat activity triggers a snapshot+commit — previously buys sat uncommitted until the next message); restoreChatBackup pass 5 re-imports coinTxs idempotently by row id (idMap-mapped, FK-safe) — RestoreResult.coinTxsRestored.
+- Fix 3 — rollback auto-heal in the backup loop (scripts/chat-backup.ts): healRollback() runs before every cycle. Detectors: (a) big backward drop (accounts ≤90% AND messages ≤60% of lastCounts), or (b) origin/main's latest.json newest coinTx is >2min newer than the live DB's newest row (tx-only rollback — the exact case that hit). On detection: gitShowOriginBackup() (the only copy a directory rollback can't revert) → restoreChatBackup. Idempotent; false positives no-op.
+- Fix 4 — one-time repair: scripts/repair-shop-ledger.ts (idempotent) backfilled shop_purchase rows for equipped-but-unledgered items: spiffyboss5111 Mythic, weee Mythic, lockerqa_893996 fight, qalocker1 sprout. Veil's "fight" was separately restored (ledger row + re-equip) — the user had taken it off during the ledger-empty confusion (~22:04).
+- Forced v1.3 backup: latest.json now carries 25 coinTxs, committed + PUSHED to origin/main (pushOk true) — the ledger is now rollback-proof. Loop already auto-commits on tx changes (git log: 22:07/22:08/22:09 backup commits).
+- Verification: full API E2E (buy/unequip/equip-free/refund/owned lists); simulated rollback (wearing wolf with no ledger row → wolf appears in owned + re-buy is FREE); restore test (deleted tag-gold row → restore → coinTxsRestored:1 → row back); page 200 renders; chat app renders login; dev.log clean; eslint clean on all 5 touched files; agent-browser pass done and browser CLOSED immediately (MemAvail back to ~970MB — user was live on the site).
+
+Stage Summary:
+- "Can't buy things": buys always worked server-side; the perceived failure was purchases not sticking (ledger wiped by rollbacks). Fixed by making ownership durable.
+- "Items erased across devices": three-layer fix — equipped⇒owned runtime guard (instant), ledger backfill repair (permanent for worn items), backup v1.3 + rollback auto-heal (future rollbacks now self-recover within one 30s loop cycle, ledger included).
+- The 15-min webDevReview cron exists (job 469624, 0 */15 * * * ?, America/New_York; currently "Disabled due to exec limits exceeded" — platform-side, not recreated to avoid duplicates).
+
+Unresolved / risks:
+- Items that were PURCHASED but NOT equipped at rollback time are unrecoverable (no pre-v1.3 backup ever carried them). Affected players can ask the owner for a coin grant; going forward nothing is lost.
+- The equipped⇒owned guard means refunding a worn item whose purchase row was lost to a pre-v1.3 rollback pays 70% of a price that (per the current ledger) was never charged — accepted trade-off (single refund per item, net-ownership math still holds; re-buy charges full price).
+- Rollback auto-heal relies on git fetch of origin/main every 30s loop cycle; if GitHub is unreachable, detection silently skips (no heal, no crash) until connectivity returns.
+- Watch backups/chat loop logs for "ROLLBACK-HEALED" lines — each one is a real platform rollback that would previously have erased purchases.

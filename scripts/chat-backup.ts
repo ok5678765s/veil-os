@@ -1,11 +1,14 @@
 import { spawnSync } from "child_process"
 import fs from "node:fs"
+import { db } from "../src/lib/db"
 import {
   collectChatBackup,
   writeBackupFiles,
   backupSignature,
   readBackupState,
   writeBackupState,
+  readLocalBackup,
+  restoreChatBackup,
   purgeJSDelivrData,
 } from "../src/lib/veil/chat-backup"
 
@@ -51,6 +54,116 @@ function gitOut(args: string[]): string {
   }
 }
 
+/** The backup JSON as it exists on origin/main — the only copy that a
+ * platform directory rollback CANNOT revert. Returns the parsed object,
+ * or null when the remote has no backup yet. */
+function gitShowOriginBackup(): Record<string, unknown> | null {
+  git(["fetch", "origin", "main", "--quiet"])
+  try {
+    const r = spawnSync(
+      "git",
+      ["show", "origin/main:backups/chat/latest.json"],
+      {
+        cwd: ROOT,
+        encoding: "utf-8",
+        maxBuffer: 64 * 1024 * 1024,
+        env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
+      },
+    )
+    if (r.status !== 0 || !r.stdout) return null
+    const data = JSON.parse(r.stdout) as Record<string, unknown>
+    if (data.veil !== "chat-backup") return null
+    return data
+  } catch {
+    return null
+  }
+}
+
+/** Rollback detection + auto-heal (2026-10-20 "it keeps erasing my items"
+ * fix). The platform snapshot-restores this box from time to time,
+ * reverting the live SQLite file to an older moment while the PUSHED
+ * backup is newer. Until now nothing noticed — the loop just snapshotted
+ * the older DB and moved on, permanently losing every purchase made
+ * after the rollback point (accounts could be re-imported by hand, but
+ * the ledger was never in the backup format, so lockers emptied on every
+ * device).
+ *
+ * Two detectors, either fires the re-import:
+ *   (a) a big BACKWARD drop in accounts AND messages vs lastCounts
+ *       (a full community revert);
+ *   (b) the pushed backup's newest ledger row is >2min newer than the
+ *       live DB's newest row (a tx-only rollback — the exact case that
+ *       hit on 2026-10-20: message counts were flat, but the transaction
+ *       table silently reverted).
+ *
+ * The re-import is the same idempotent restoreChatBackup the owner's
+ * Backup panel uses, so a false positive just no-ops. */
+async function healRollback(): Promise<void> {
+  try {
+    const state = readBackupState()
+    if (!state?.lastCounts) return
+    const [accCount, msgCount, lastTx] = await Promise.all([
+      db.chatAccount.count(),
+      db.chatMessage.count(),
+      db.coinTransaction.findFirst({
+        orderBy: { createdAt: "desc" },
+        select: { createdAt: true },
+      }),
+    ])
+    const lc = state.lastCounts
+    const countDrop =
+      lc.accounts > 0 &&
+      accCount <= Math.floor(lc.accounts * 0.9) &&
+      lc.messages > 0 &&
+      msgCount <= Math.floor(lc.messages * 0.6)
+
+    let source: Record<string, unknown> | null = null
+    let restoredFrom = ""
+    if (countDrop) {
+      source = gitShowOriginBackup()
+      restoredFrom = "rollback-auto-heal:origin/main"
+      if (!source) {
+        const local = readLocalBackup("latest.json")
+        if (!("error" in local)) {
+          source = local.data as Record<string, unknown>
+          restoredFrom = "rollback-auto-heal:local"
+        }
+      }
+    } else {
+      const remote = gitShowOriginBackup()
+      const remoteTxs = (remote?.coinTxs as { createdAt?: string }[] | undefined) ?? []
+      if (remoteTxs.length === 0 || !remote) return
+      let remoteLast = 0
+      for (const t of remoteTxs) {
+        const ms = t.createdAt ? new Date(t.createdAt).getTime() : 0
+        if (Number.isFinite(ms) && ms > remoteLast) remoteLast = ms
+      }
+      const liveLast = lastTx ? lastTx.createdAt.getTime() : 0
+      if (remoteLast - liveLast <= 120_000) return
+      source = remote
+      restoredFrom = "rollback-auto-heal:origin/main"
+    }
+    if (!source) return
+
+    const res = await restoreChatBackup(source, { restoredFrom })
+    console.error(
+      "ROLLBACK-HEALED " +
+        JSON.stringify({
+          detector: countDrop ? "count-drop" : "ledger-gap",
+          live: { accounts: accCount, messages: msgCount },
+          lastCounts: lc,
+          ok: res.ok,
+          accountsCreated: res.accountsCreated,
+          messagesImported: res.messagesImported,
+          coinTxsRestored: res.coinTxsRestored,
+        }),
+    )
+  } catch (e) {
+    /* the heal must never take the backup loop down */
+    console.error("ROLLBACK-HEAL-FAIL " + (e instanceof Error ? e.message : e))
+  }
+}
+
 /** 2026-10-07 PERMANENT revert fix, part 2: before a snapshot commit is
  * stacked, verify this box is not sitting on a STALE lineage (a platform
  * snapshot-restore rolls the repo back while origin/main keeps every
@@ -81,6 +194,11 @@ function healStaleLineage(rewrite: () => void): boolean {
 }
 
 async function main(): Promise<void> {
+  // Platform rollback? Re-import the newest pushed community state (and,
+  // since backup v1.3, the transaction ledger) BEFORE anything else, so
+  // the snapshot below records the healed DB instead of the reverted one.
+  await healRollback()
+
   const sig = await backupSignature()
   const state = readBackupState()
 
