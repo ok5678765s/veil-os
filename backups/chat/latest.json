@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T20:43:09.743Z",
+  "exportedAt": "2026-10-21T20:43:43.510Z",
   "counts": {
     "accounts": 92,
     "messages": 482,
@@ -8012,6 +8012,62 @@
       "amount": 10010,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-21T20:43:08.646Z"
+    },
+    {
+      "id": "cmvikx55u0026sj5va4b5c1zq",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 10010,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-21T20:43:12.355Z"
+    },
+    {
+      "id": "cmvikx8y2002asj5v5wrhifxs",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 10010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T20:43:17.258Z"
+    },
+    {
+      "id": "cmvikxbcx002csj5v8t7fibh7",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 10010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T20:43:20.385Z"
+    },
+    {
+      "id": "cmvikxfir002gsj5v1ijk4beo",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 10010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T20:43:25.779Z"
+    },
+    {
+      "id": "cmvikxj8c002isj5vt61124kb",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 10010,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-21T20:43:30.589Z"
+    },
+    {
+      "id": "cmvikxmvx002msj5vbpi7nfou",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 10010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T20:43:35.326Z"
+    },
+    {
+      "id": "cmvikxpn3002osj5vny6cwbiq",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 20020,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-21T20:43:38.896Z"
     }
   ]
 }
