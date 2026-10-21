@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T00:56:18.788Z",
+  "exportedAt": "2026-10-21T00:57:55.026Z",
   "counts": {
     "accounts": 86,
     "messages": 484,
@@ -1719,9 +1719,9 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 100145,
-      "tag": null,
-      "tagColor": null,
+      "coins": 92145,
+      "tag": "Legend",
+      "tagColor": "#c0392b",
       "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
@@ -7775,6 +7775,14 @@
       "amount": 50,
       "reason": "slots_loss",
       "createdAt": "2026-10-21T00:55:51.693Z"
+    },
+    {
+      "id": "cmvheka76003hrjxl2zze8baz",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 8000,
+      "reason": "shop_purchase:tag-legend",
+      "createdAt": "2026-10-21T00:57:28.483Z"
     }
   ]
 }
