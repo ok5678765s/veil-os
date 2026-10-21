@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T00:43:54.015Z",
+  "exportedAt": "2026-10-21T00:44:58.771Z",
   "counts": {
     "accounts": 86,
-    "messages": 486,
+    "messages": 484,
     "dms": 5
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 40180,
+      "coins": 40181,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -6030,28 +6030,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hu2n00w1onytkhjs9x3v",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:39.264Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hu6z00w5onyt4hxpo1np",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:39.419Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hug200w9onyter5c2gxx",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7130,17 +7108,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvhao8jq000rrjrhyf6i1oxx",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "gambling",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T23:08:34.503Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvhe2cmb0033rjxlbothi3k1",
       "channelId": "cmvhe1zzf002xrjxldmkueze1",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
@@ -7160,6 +7127,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-21T00:43:42.615Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvhe3wid003brjxl9t2pih8p",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "/api/gif-file/7mRTq9vChHqmlVBAwY",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-21T00:44:44.245Z",
       "editedAt": null
     }
   ],
@@ -7781,6 +7759,14 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-21T00:43:42.618Z"
+    },
+    {
+      "id": "cmvhe3wif003drjxlxwa0tqgl",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-21T00:44:44.248Z"
     }
   ]
 }
