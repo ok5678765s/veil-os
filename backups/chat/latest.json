@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:51:32.862Z",
+  "exportedAt": "2026-10-21T12:53:08.503Z",
   "counts": {
     "accounts": 91,
     "messages": 483,
@@ -7506,6 +7506,30 @@
       "amount": 110,
       "reason": "gift",
       "createdAt": "2026-10-21T12:51:26.666Z"
+    },
+    {
+      "id": "cmvi44gu50023sjywuku4gdmf",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 110,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T12:53:00.605Z"
+    },
+    {
+      "id": "cmvi44lv20025sjywbn5rmmi9",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 110,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T12:53:07.119Z"
+    },
+    {
+      "id": "cmvi44lv50027sjywuhe1exwt",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 220,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-21T12:53:07.121Z"
     }
   ]
 }
