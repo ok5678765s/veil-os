@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T01:31:54.515Z",
+  "exportedAt": "2026-10-21T01:32:28.772Z",
   "counts": {
     "accounts": 86,
     "messages": 478,
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 88720,
+      "coins": 88620,
       "tag": "Legend",
       "tagColor": "#c0392b",
       "pfpAccessory": null,
@@ -7909,6 +7909,46 @@
       "amount": 100,
       "reason": "slots_win",
       "createdAt": "2026-10-21T01:31:50.369Z"
+    },
+    {
+      "id": "cmvhfsr9g0007rjn29ft5yczn",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-21T01:32:03.461Z"
+    },
+    {
+      "id": "cmvhfsr9i0009rjn2z4jj02an",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-10-21T01:32:03.463Z"
+    },
+    {
+      "id": "cmvhfswlx000brjn2hxuu9tq3",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-21T01:32:10.389Z"
+    },
+    {
+      "id": "cmvhft0xk000drjn259ts3onq",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-21T01:32:15.992Z"
+    },
+    {
+      "id": "cmvhft5x4000frjn2lomsh8q4",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-21T01:32:22.457Z"
     }
   ]
 }
