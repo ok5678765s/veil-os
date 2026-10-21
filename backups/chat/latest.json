@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:58:01.536Z",
+  "exportedAt": "2026-10-21T02:58:36.423Z",
   "counts": {
     "accounts": 86,
     "messages": 479,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 157633,
+      "coins": 154633,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "fight",
@@ -8840,6 +8840,30 @@
       "amount": 4600,
       "reason": "shop_purchase:acc-vrhalo",
       "createdAt": "2026-10-21T02:57:35.114Z"
+    },
+    {
+      "id": "cmvhivm6f001lrj64lt2re8ke",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:58:15.687Z"
+    },
+    {
+      "id": "cmvhivvro001prj64sbi9a1mf",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:58:28.116Z"
+    },
+    {
+      "id": "cmvhiw241001trj64v9m77rss",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:58:36.337Z"
     }
   ]
 }
