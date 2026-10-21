@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T00:33:14.215Z",
+  "exportedAt": "2026-10-21T00:36:52.600Z",
   "counts": {
     "accounts": 86,
     "messages": 484,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 180178,
+      "coins": 100178,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -7612,6 +7612,38 @@
       "amount": 10000,
       "reason": "blackjack_win",
       "createdAt": "2026-10-21T00:32:42.513Z"
+    },
+    {
+      "id": "cmvhdt9yt001rrjxlludqlir7",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 20000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T00:36:28.470Z"
+    },
+    {
+      "id": "cmvhdtcn5001trjxljo0nad9s",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 20000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T00:36:31.938Z"
+    },
+    {
+      "id": "cmvhdtg6a001xrjxlihxp2aqu",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 20000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T00:36:36.515Z"
+    },
+    {
+      "id": "cmvhdtow60021rjxluruvceyn",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 20000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T00:36:47.815Z"
     }
   ]
 }
