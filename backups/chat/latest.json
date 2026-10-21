@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T15:56:01.707Z",
+  "exportedAt": "2026-10-21T16:52:00.349Z",
   "counts": {
     "accounts": 91,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 15,
+      "coins": 16,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -6135,17 +6135,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hug200w9onyter5c2gxx",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:39.747Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hunr00wdonytfcek1kwo",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7233,6 +7222,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-21T15:55:34.522Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvicnenw0009sjrkfo4v8ece",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "hi",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-21T16:51:41.170Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -7650,6 +7650,14 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-21T15:55:34.527Z"
+    },
+    {
+      "id": "cmvicneo8000bsjrkfqxbdx1z",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-21T16:51:41.192Z"
     }
   ]
 }
