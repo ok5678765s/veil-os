@@ -2226,3 +2226,28 @@ Unresolved / risks:
 - Third restore in a row would set a bad precedent — if the "brother" pattern recurs, consider whether the owner wants an actual guard (e.g. bet cap, password change prompt) — needs an explicit owner request first.
 - Both 15-min review crons remain platform-disabled (exec limits); nothing actionable on our side.
 - Pre-v1.3 unequipped purchases remain unrecoverable (documented in earlier tasks).
+
+---
+Task ID: 5 (single-agent session)
+Agent: Z.ai Code (main)
+Task: Owner report — "please give me 57k i stopped my lil bor than my lil sis saw blackjack and clciked"
+
+Work Log:
+- Forensics (119 txs since the 23:34:46 staff_grant, read-only): the "sister" spree ran 00:31:37 → 02:26:25 (~2 hours) — NOT a single click. Blackjack (bets 20→2400) → roulette escalation (100→10,000) → mid-spree shop purchase of tag-pro (4,000) → refund-liquidation of BOTH items (tag-pro +2,800, acc-fight +1,120) for more chips → final all-in coinflip 5,722 → balance EXACTLY 0. Math closes to the coin: 200,178 +4(proxy) +397,785(payouts) −597,887(stakes) −4,000(tag-pro) +3,920(refunds) = 0. Zero outbound transfers; all house gambling; settle math coherent (no bug, no race — the CAS guard from Task 3 held). The owner believed the damage was 57k; the ledger shows the full balance went.
+- Restoration (scripts/restore-veil-sis.ts, idempotent, both steps guarded on createdAt ≥ 02:26:25.151Z):
+  1. Coins: +200,178 `staff_grant` → balance 200,178 (pre-spree exact).
+  2. Fight Logo: compensating `shop_purchase:acc-fight` row (amount 1,600, bookkeeping only — no charge; original 22:09 purchase still stands, spree refund undone by the full coin restore) + re-equip pfpAccessory="fight". Net ownership math: 2 purchases − 1 refund = owned ✓. tag-pro needed NO repair (bought AND refunded inside the spree; wasn't owned pre-spree).
+- Idempotency verified by re-run (both steps skip). Post-restore: coins=200178, pfpAccessory=fight, tag=null ✓.
+- Backup loop auto-committed at 02:44 (7770210); latest.json carries Veil coins=200178 + pfpAccessory=fight + both restore rows → rollback-proof ✓.
+- eslint clean on both new scripts (targeted run — full `bun run lint` was SIGKILLed by box memory pressure last time). Server 200, no app code touched (data-only) → browser QA skipped per the standing memory-hog policy.
+- Added scripts/probe-veil-spree.ts (full spree reconstruction: balance walk + casino/shop/net breakdown + outbound-transfer check) — reusable for the next incident of this pattern.
+
+Stage Summary:
+- Owner made whole (third time): Veil = 200,178 coins + Fight Logo owned & re-equipped; tag state matches pre-spree (none).
+- Root cause: shared-device account access again — this time a ~2h escalating gambling session including deliberate item refund-liquidation. No code defect (all settles coherent, math closes exactly). The Task-3 all-in guard only covers BlackjackGame; the final all-in was a COINFLIP (single-tap, no guard) — noted as an offer, NOT implemented (owner's standing "nothing else" rule).
+- Offered to the owner (not implemented): bet cap / games lock / password change — awaiting an explicit request.
+
+Unresolved / risks:
+- THREE restores in ~3.5h (23:19 glitch_refund 200,178; 23:34 staff_grant 200,178; 02:44 staff_grant 200,178) — the account keeps getting drained by family members on shared devices. Strongly recommend the owner change the chat password / log out shared devices; if they ask, a per-account "games lock" toggle or daily bet cap would end this pattern.
+- Coinflip (and roulette/slots) still lack the two-tap all-in confirm that Blackjack has — final 5,722 loss was one tap. Cheap to add if requested.
+- Both 15-min review crons remain platform-disabled (exec limits).
