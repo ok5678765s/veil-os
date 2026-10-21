@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:54:53.528Z",
+  "exportedAt": "2026-10-21T02:58:01.536Z",
   "counts": {
     "accounts": 86,
     "messages": 479,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 163733,
+      "coins": 157633,
       "tag": "Pro User",
       "tagColor": "#16a085",
-      "pfpAccessory": "wolf",
+      "pfpAccessory": "fight",
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
       "lastRewardClaim": "2026-10-20T12:25:03.726Z",
@@ -8824,6 +8824,22 @@
       "amount": 3000,
       "reason": "shop_purchase:acc-wolf",
       "createdAt": "2026-10-21T02:54:33.085Z"
+    },
+    {
+      "id": "cmvhiuo8p001frj640ki9brb9",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1500,
+      "reason": "shop_purchase:acc-sprout",
+      "createdAt": "2026-10-21T02:57:31.706Z"
+    },
+    {
+      "id": "cmvhiuqvd001hrj64iracos34",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4600,
+      "reason": "shop_purchase:acc-vrhalo",
+      "createdAt": "2026-10-21T02:57:35.114Z"
     }
   ]
 }
