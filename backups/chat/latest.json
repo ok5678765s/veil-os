@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:08:18.192Z",
+  "exportedAt": "2026-10-21T02:09:23.400Z",
   "counts": {
     "accounts": 86,
-    "messages": 478,
+    "messages": 479,
     "dms": 5
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 40151,
+      "coins": 40152,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "fight",
@@ -7073,6 +7073,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-21T02:07:49.211Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvhh46cd002trjn2x882a60w",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "/api/gif-file/V1B6g34O11RHrm9MCD",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-21T02:08:55.837Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -8269,6 +8280,14 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-21T02:07:49.215Z"
+    },
+    {
+      "id": "cmvhh46cs002vrjn2xfv7av9b",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-21T02:08:55.852Z"
     }
   ]
 }
