@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T01:13:18.733Z",
+  "exportedAt": "2026-10-21T01:13:53.005Z",
   "counts": {
     "accounts": 86,
-    "messages": 479,
+    "messages": 478,
     "dms": 5
   },
   "accounts": [
@@ -7039,17 +7039,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:58:46.660Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1r2is000zonw71320v69n",
-      "channelId": "main",
-      "accountId": "cmvh1oilb019aonytzqy24vft",
-      "content": "l",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:58:50.116Z",
       "editedAt": null
     },
     {
