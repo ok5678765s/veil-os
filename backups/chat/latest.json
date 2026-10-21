@@ -1,11 +1,11 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T00:42:55.544Z",
+  "exportedAt": "2026-10-21T00:43:19.646Z",
   "counts": {
     "accounts": 86,
     "messages": 484,
-    "dms": 4
+    "dms": 5
   },
   "accounts": [
     {
@@ -7169,6 +7169,13 @@
       "isGroup": false,
       "ownerId": "cmuhlfo6p0001q5fg3ljxk2lc",
       "createdAt": "2026-10-20T12:27:33.717Z"
+    },
+    {
+      "id": "cmvhe1zzf002xrjxldmkueze1",
+      "name": "Hi",
+      "isGroup": true,
+      "ownerId": "cmuhj14uk0000q5o4uzvh329c",
+      "createdAt": "2026-10-21T00:43:15.435Z"
     }
   ],
   "dmMembers": [
@@ -7186,6 +7193,18 @@
     },
     {
       "dmId": "cmvgnrw0l002htiyssp56781z",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc"
+    },
+    {
+      "dmId": "cmvhe1zzf002xrjxldmkueze1",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c"
+    },
+    {
+      "dmId": "cmvhe1zzf002xrjxldmkueze1",
+      "accountId": "cmvh1oilb019aonytzqy24vft"
+    },
+    {
+      "dmId": "cmvhe1zzf002xrjxldmkueze1",
       "accountId": "cmuhlfo6p0001q5fg3ljxk2lc"
     }
   ],
