@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:30:13.617Z",
+  "exportedAt": "2026-10-21T12:37:57.918Z",
   "counts": {
     "accounts": 85,
     "messages": 483,
@@ -144,13 +144,13 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 14,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
       "pfpOverlay": null,
-      "dailyRewardStreak": 2,
-      "lastRewardClaim": "2026-10-20T12:25:03.726Z",
+      "dailyRewardStreak": 3,
+      "lastRewardClaim": "2026-10-21T12:37:38.186Z",
       "legacy": false,
       "createdAt": "2026-09-25T22:22:50.829Z",
       "passwordHash": "$2b$10$wgZdfrvRghwA3SNf/R1ZwOe0EBEZiT/fJ9AA2lKmaOIX51V9DKNMC"
@@ -7196,6 +7196,14 @@
       "amount": 207,
       "reason": "coinflip_loss",
       "createdAt": "2026-10-21T12:30:05.455Z"
+    },
+    {
+      "id": "cmvi3kp3f0005sjyw0ledo2fb",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 14,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-21T12:37:38.188Z"
     }
   ]
 }
