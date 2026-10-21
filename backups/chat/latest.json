@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T19:49:31.635Z",
+  "exportedAt": "2026-10-21T19:59:51.072Z",
   "counts": {
     "accounts": 92,
     "messages": 482,
@@ -18,7 +18,7 @@
       "role": "moderator",
       "muted": false,
       "banned": true,
-      "coins": 100,
+      "coins": 100100,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 4,
+      "coins": 100004,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 0,
-      "tag": null,
-      "tagColor": null,
-      "pfpAccessory": "fight",
+      "coins": 100000,
+      "tag": "Pro User",
+      "tagColor": "#16a085",
+      "pfpAccessory": "dragon",
       "pfpOverlay": null,
       "dailyRewardStreak": 3,
       "lastRewardClaim": "2026-10-21T12:37:38.186Z",
@@ -354,7 +354,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 101,
+      "coins": 100101,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1719,9 +1719,9 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 0,
-      "tag": null,
-      "tagColor": null,
+      "coins": 100000,
+      "tag": "Legend",
+      "tagColor": "#c0392b",
       "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
@@ -7724,6 +7724,118 @@
       "amount": 4,
       "reason": "coinflip_loss",
       "createdAt": "2026-10-21T19:48:58.345Z"
+    },
+    {
+      "id": "cmvijcv900001sjx4jvf11bnx",
+      "fromId": "cmuhlfo4o0000q5fg1rxadq76",
+      "toId": "cmuhlfo4o0000q5fg1rxadq76",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-21T19:59:26.773Z"
+    },
+    {
+      "id": "cmvijcv960003sjx4y8t37t2t",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-21T19:59:26.778Z"
+    },
+    {
+      "id": "cmvijcv9a0005sjx4dhljxidv",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-21T19:59:26.782Z"
+    },
+    {
+      "id": "cmvijcv9f0007sjx4tynl7ixh",
+      "fromId": "cmutz4ibx0000jkxecl2b490e",
+      "toId": "cmutz4ibx0000jkxecl2b490e",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-21T19:59:26.787Z"
+    },
+    {
+      "id": "cmvijcv9j0009sjx472hw2f6g",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 100000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-21T19:59:26.792Z"
+    },
+    {
+      "id": "cmvijcv9o000bsjx4ca6ag0xb",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4000,
+      "reason": "shop_purchase:tag-pro",
+      "createdAt": "2026-10-21T19:59:26.797Z"
+    },
+    {
+      "id": "cmvijcv9s000dsjx4b680qv79",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "shop_purchase:tag-mythic",
+      "createdAt": "2026-10-21T19:59:26.800Z"
+    },
+    {
+      "id": "cmvijcv9u000fsjx42fl4rlxa",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2400,
+      "reason": "shop_purchase:acc-visor",
+      "createdAt": "2026-10-21T19:59:26.803Z"
+    },
+    {
+      "id": "cmvijcv9x000hsjx4ivtopd3x",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-wolf",
+      "createdAt": "2026-10-21T19:59:26.806Z"
+    },
+    {
+      "id": "cmvijcva0000jsjx4cflpvogl",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1500,
+      "reason": "shop_purchase:acc-sprout",
+      "createdAt": "2026-10-21T19:59:26.809Z"
+    },
+    {
+      "id": "cmvijcva3000lsjx476k8c03q",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4600,
+      "reason": "shop_purchase:acc-vrhalo",
+      "createdAt": "2026-10-21T19:59:26.811Z"
+    },
+    {
+      "id": "cmvijcva6000nsjx4n3natnxg",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5000,
+      "reason": "shop_purchase:acc-dragon",
+      "createdAt": "2026-10-21T19:59:26.814Z"
+    },
+    {
+      "id": "cmvijcvab000psjx4llos5mnk",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 8000,
+      "reason": "shop_purchase:tag-legend",
+      "createdAt": "2026-10-21T19:59:26.820Z"
+    },
+    {
+      "id": "cmvijcvdp0001sjxf0jp9mehn",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1600,
+      "reason": "shop_purchase:acc-fight",
+      "createdAt": "2026-10-21T19:59:26.942Z"
     }
   ]
 }
