@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T01:59:15.874Z",
+  "exportedAt": "2026-10-21T01:59:50.184Z",
   "counts": {
     "accounts": 86,
     "messages": 478,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 42185,
+      "coins": 45185,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -7989,6 +7989,54 @@
       "amount": 2000,
       "reason": "coinflip_win",
       "createdAt": "2026-10-21T01:59:09.544Z"
+    },
+    {
+      "id": "cmvhgrt6p000trjn260sj9l38",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T01:59:18.913Z"
+    },
+    {
+      "id": "cmvhgrt6r000vrjn2warloogc",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-21T01:59:18.915Z"
+    },
+    {
+      "id": "cmvhgs232000xrjn2njbl8s8i",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T01:59:30.446Z"
+    },
+    {
+      "id": "cmvhgs234000zrjn2uxcjki3p",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-21T01:59:30.449Z"
+    },
+    {
+      "id": "cmvhgsclu0011rjn2svf0upkx",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T01:59:44.083Z"
+    },
+    {
+      "id": "cmvhgsclw0013rjn2hvp9obce",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-21T01:59:44.084Z"
     }
   ]
 }
