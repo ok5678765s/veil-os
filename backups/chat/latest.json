@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:55:26.983Z",
+  "exportedAt": "2026-10-21T13:22:41.942Z",
   "counts": {
     "accounts": 91,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 400,076,
+      "coins": 15,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -273,7 +273,7 @@
       "coins": 100,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": nuveilll,
+      "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 0,
       "lastRewardClaim": null,
@@ -6135,17 +6135,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hu2n00w1onytkhjs9x3v",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:39.264Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hu6z00w5onyt4hxpo1np",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7233,6 +7222,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-20T19:07:10.591Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvi566ez0001sjrk6q2ks87j",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "/api/chat-file?id=haU_F95BO4blawJWw5uBTA&n=chat.html&s=13008&t=text%2Fhtml",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-21T13:22:20.027Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -7634,6 +7634,14 @@
       "amount": 110,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-21T12:55:00.138Z"
+    },
+    {
+      "id": "cmvi566f40003sjrkeodr4gs5",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-21T13:22:20.032Z"
     }
   ]
 }
