@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T00:32:06.080Z",
+  "exportedAt": "2026-10-21T00:32:40.059Z",
   "counts": {
     "accounts": 86,
     "messages": 484,
@@ -7564,6 +7564,46 @@
       "amount": 10000,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-21T00:32:03.021Z"
+    },
+    {
+      "id": "cmvhdnsi10019rjxl1x5otbfe",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T00:32:12.553Z"
+    },
+    {
+      "id": "cmvhdnw3p001brjxlxdfbzuqv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T00:32:17.222Z"
+    },
+    {
+      "id": "cmvhdnw3u001drjxljdg5zkgj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 40000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-21T00:32:17.226Z"
+    },
+    {
+      "id": "cmvhdo111001hrjxluhsf1h4d",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T00:32:23.606Z"
+    },
+    {
+      "id": "cmvhdod30001lrjxlljcwo80g",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T00:32:39.229Z"
     }
   ]
 }
