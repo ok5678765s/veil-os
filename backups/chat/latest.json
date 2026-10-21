@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T00:43:19.646Z",
+  "exportedAt": "2026-10-21T00:43:54.015Z",
   "counts": {
     "accounts": 86,
-    "messages": 484,
+    "messages": 486,
     "dms": 5
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 40178,
+      "coins": 40180,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -7139,6 +7139,28 @@
       "replyToUsername": null,
       "createdAt": "2026-10-20T23:08:34.503Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvhe2cmb0033rjxlbothi3k1",
+      "channelId": "cmvhe1zzf002xrjxldmkueze1",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "Wsp",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-21T00:43:31.812Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvhe2kyf0037rjxlb4qk85t5",
+      "channelId": "cmvhe1zzf002xrjxldmkueze1",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "y'all will probably never find ts",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-21T00:43:42.615Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -7743,6 +7765,22 @@
       "amount": 100000,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-21T00:42:33.979Z"
+    },
+    {
+      "id": "cmvhe2cme0035rjxlwipmgc97",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-21T00:43:31.815Z"
+    },
+    {
+      "id": "cmvhe2kyh0039rjxlo84ktgnc",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-21T00:43:42.618Z"
     }
   ]
 }
