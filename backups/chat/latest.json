@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T01:11:42.740Z",
+  "exportedAt": "2026-10-21T01:13:18.733Z",
   "counts": {
     "accounts": 86,
-    "messages": 484,
+    "messages": 479,
     "dms": 5
   },
   "accounts": [
@@ -7042,28 +7042,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1r18z000ronw7j5iabj6y",
-      "channelId": "main",
-      "accountId": "cmvh1oilb019aonytzqy24vft",
-      "content": "l",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:58:48.468Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1r1y3000vonw7ivfndx0x",
-      "channelId": "main",
-      "accountId": "cmvh1oilb019aonytzqy24vft",
-      "content": "o",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:58:49.372Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1r2is000zonw71320v69n",
       "channelId": "main",
       "accountId": "cmvh1oilb019aonytzqy24vft",
@@ -7072,39 +7050,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:58:50.116Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh21o680035onw7u1e0mqcr",
-      "channelId": "main",
-      "accountId": "cmvh1oilb019aonytzqy24vft",
-      "content": "gmabling",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T19:07:04.736Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh21qtm003donw750wdrmgp",
-      "channelId": "main",
-      "accountId": "cmvh1oilb019aonytzqy24vft",
-      "content": "mmhh",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T19:07:08.170Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh21sou003honw7wh09o8uw",
-      "channelId": "main",
-      "accountId": "cmvh1oilb019aonytzqy24vft",
-      "content": "hmm",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T19:07:10.591Z",
       "editedAt": null
     },
     {
