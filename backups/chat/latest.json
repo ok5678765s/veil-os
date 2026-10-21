@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T19:04:16.884Z",
+  "exportedAt": "2026-10-21T19:48:56.322Z",
   "counts": {
     "accounts": 92,
-    "messages": 483,
+    "messages": 482,
     "dms": 4
   },
   "accounts": [
@@ -7242,17 +7242,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-21T16:51:41.170Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvihdiot0005sj5vw99qgxr6",
-      "channelId": "main",
-      "accountId": "cmv7dpge00008r72agw1f5ot6",
-      "content": "Yo this sub is bad",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-21T19:03:57.918Z",
       "editedAt": null
     }
   ],
