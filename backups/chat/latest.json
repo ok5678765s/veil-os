@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:06:04.690Z",
+  "exportedAt": "2026-10-21T02:06:38.967Z",
   "counts": {
     "accounts": 86,
     "messages": 478,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 44200,
+      "coins": 44150,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -8221,6 +8221,38 @@
       "amount": 50,
       "reason": "slots_loss",
       "createdAt": "2026-10-21T02:06:03.526Z"
+    },
+    {
+      "id": "cmvhh0m9u002frjn2vtyoztnm",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-21T02:06:09.859Z"
+    },
+    {
+      "id": "cmvhh0u5j002hrjn200m3dmo0",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-21T02:06:20.071Z"
+    },
+    {
+      "id": "cmvhh14ch002jrjn2dq5c8nrp",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-21T02:06:33.281Z"
+    },
+    {
+      "id": "cmvhh14ci002lrjn217114u36",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-10-21T02:06:33.283Z"
     }
   ]
 }
