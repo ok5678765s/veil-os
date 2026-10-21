@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:03:51.583Z",
+  "exportedAt": "2026-10-21T02:04:25.746Z",
   "counts": {
     "accounts": 86,
     "messages": 478,
@@ -8157,6 +8157,38 @@
       "amount": 200,
       "reason": "roulette_win",
       "createdAt": "2026-10-21T02:03:40.728Z"
+    },
+    {
+      "id": "cmvhgxw6x001zrjn29zb69ibb",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-21T02:04:02.746Z"
+    },
+    {
+      "id": "cmvhgxw700021rjn2zc1jylld",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_win",
+      "createdAt": "2026-10-21T02:04:02.748Z"
+    },
+    {
+      "id": "cmvhgy7kp0023rjn2ynuqe6b3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-21T02:04:17.497Z"
+    },
+    {
+      "id": "cmvhgy7ks0025rjn2ie86s1s1",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_win",
+      "createdAt": "2026-10-21T02:04:17.500Z"
     }
   ]
 }
