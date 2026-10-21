@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:49:15.272Z",
+  "exportedAt": "2026-10-21T12:49:49.256Z",
   "counts": {
-    "accounts": 88,
+    "accounts": 90,
     "messages": 483,
     "dms": 4
   },
@@ -1855,6 +1855,48 @@
       "legacy": false,
       "createdAt": "2026-10-21T12:48:46.996Z",
       "passwordHash": "$2b$10$aZGjnhSlCC/vNzBrTlAx4uhAxiBJ2U3VaVuA0kPNinZYjnYvP30Ei"
+    },
+    {
+      "id": "cmvi3zuxf001jsjywlf2h2u2j",
+      "username": "sdfghj",
+      "displayName": "sdfghj",
+      "avatarColor": "#c0392b",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 0,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-21T12:49:30.096Z",
+      "legacy": false,
+      "createdAt": "2026-10-21T12:49:25.588Z",
+      "passwordHash": "$2b$10$afx7oevaATygtGH/wStSeOL4JmMT/Wy6qaEI/JCINo2OOAiilNRSC"
+    },
+    {
+      "id": "cmvi40d0d001osjywy7qdxovz",
+      "username": "hjmk,mjhgfdxsz",
+      "displayName": "hjmk,mjhgfdxsz",
+      "avatarColor": "#9b59b6",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-21T12:49:49.021Z",
+      "passwordHash": "$2b$10$tH9BkXqnUZIjyQA58BSmduAcwOpg.bgbT4owResoj0UPdgohsujeW"
     }
   ],
   "messages": [
@@ -7379,6 +7421,22 @@
       "amount": 110,
       "reason": "coinflip_loss",
       "createdAt": "2026-10-21T12:49:12.009Z"
+    },
+    {
+      "id": "cmvi3zyep001lsjywx8fdy10r",
+      "fromId": "cmvi3zuxf001jsjywlf2h2u2j",
+      "toId": "cmvi3zuxf001jsjywlf2h2u2j",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-21T12:49:30.097Z"
+    },
+    {
+      "id": "cmvi403bk001nsjywi7q9ti49",
+      "fromId": "cmvi3zuxf001jsjywlf2h2u2j",
+      "toId": "cmvi3zuxf001jsjywlf2h2u2j",
+      "amount": 110,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T12:49:36.465Z"
     }
   ]
 }
