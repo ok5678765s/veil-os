@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:59:10.306Z",
+  "exportedAt": "2026-10-21T02:59:44.894Z",
   "counts": {
     "accounts": 86,
     "messages": 479,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 157633,
+      "coins": 152633,
       "tag": "Pro User",
       "tagColor": "#16a085",
-      "pfpAccessory": "fight",
+      "pfpAccessory": "dragon",
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
       "lastRewardClaim": "2026-10-20T12:25:03.726Z",
@@ -8904,6 +8904,14 @@
       "amount": 2000,
       "reason": "blackjack_win",
       "createdAt": "2026-10-21T02:59:08.522Z"
+    },
+    {
+      "id": "cmvhixfqh0029rj64o59lpnfb",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5000,
+      "reason": "shop_purchase:acc-dragon",
+      "createdAt": "2026-10-21T02:59:40.649Z"
     }
   ]
 }
