@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T20:36:30.017Z",
+  "exportedAt": "2026-10-21T20:37:03.870Z",
   "counts": {
     "accounts": 92,
     "messages": 481,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 99600,
+      "coins": 99700,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "dragon",
@@ -7865,6 +7865,38 @@
       "amount": 200,
       "reason": "roulette_loss",
       "createdAt": "2026-10-21T20:36:15.684Z"
+    },
+    {
+      "id": "cmvikomdd000msj5vcakoiuwu",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-21T20:36:34.754Z"
+    },
+    {
+      "id": "cmvikomdg000osj5vdkr2vsfs",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_win",
+      "createdAt": "2026-10-21T20:36:34.756Z"
+    },
+    {
+      "id": "cmvikp3dw000qsj5vqyinp6xl",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-21T20:36:56.804Z"
+    },
+    {
+      "id": "cmvikp3dy000ssj5vu4f4fksi",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 300,
+      "reason": "roulette_win",
+      "createdAt": "2026-10-21T20:36:56.806Z"
     }
   ]
 }
