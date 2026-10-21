@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:53:45.732Z",
+  "exportedAt": "2026-10-21T02:54:19.828Z",
   "counts": {
     "accounts": 86,
     "messages": 479,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 183133,
-      "tag": null,
-      "tagColor": null,
-      "pfpAccessory": "fight",
+      "coins": 166733,
+      "tag": "Pro User",
+      "tagColor": "#16a085",
+      "pfpAccessory": "visor",
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
       "lastRewardClaim": "2026-10-20T12:25:03.726Z",
@@ -8792,6 +8792,30 @@
       "amount": 200,
       "reason": "roulette_loss",
       "createdAt": "2026-10-21T02:53:30.400Z"
+    },
+    {
+      "id": "cmvhiq0290017rj64z62swd1p",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4000,
+      "reason": "shop_purchase:tag-pro",
+      "createdAt": "2026-10-21T02:53:53.745Z"
+    },
+    {
+      "id": "cmvhiq6n70019rj64zocb9ygo",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "shop_purchase:tag-mythic",
+      "createdAt": "2026-10-21T02:54:02.276Z"
+    },
+    {
+      "id": "cmvhiqi10001brj64ese1i2c8",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2400,
+      "reason": "shop_purchase:acc-visor",
+      "createdAt": "2026-10-21T02:54:17.028Z"
     }
   ]
 }
