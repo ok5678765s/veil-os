@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:12:43.943Z",
+  "exportedAt": "2026-10-21T02:13:18.361Z",
   "counts": {
     "accounts": 86,
     "messages": 479,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 37012,
+      "coins": 33162,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "fight",
@@ -8368,6 +8368,62 @@
       "amount": 1100,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-21T02:12:35.823Z"
+    },
+    {
+      "id": "cmvhh93ht003vrjn2upnryqol",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1100,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:12:45.425Z"
+    },
+    {
+      "id": "cmvhh93hv003xrjn2d5zc731z",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2750,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-21T02:12:45.427Z"
+    },
+    {
+      "id": "cmvhh98vh0041rjn2dekyk039",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1100,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:12:52.398Z"
+    },
+    {
+      "id": "cmvhh9buy0043rjn2ai7ipue0",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1100,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:12:56.266Z"
+    },
+    {
+      "id": "cmvhh9hd50047rjn20uukxlw8",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1100,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:13:03.402Z"
+    },
+    {
+      "id": "cmvhh9k440049rjn209dmq0ja",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1100,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:13:06.964Z"
+    },
+    {
+      "id": "cmvhh9pf2004drjn2aiesrq77",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1100,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T02:13:13.838Z"
     }
   ]
 }
