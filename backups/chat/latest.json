@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T01:09:30.216Z",
+  "exportedAt": "2026-10-21T01:10:04.336Z",
   "counts": {
     "accounts": 86,
     "messages": 484,
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 95470,
+      "coins": 93970,
       "tag": "Legend",
       "tagColor": "#c0392b",
       "pfpAccessory": null,
@@ -7887,6 +7887,14 @@
       "amount": 3000,
       "reason": "blackjack_win",
       "createdAt": "2026-10-21T01:09:25.008Z"
+    },
+    {
+      "id": "cmvhezy99004lrjxllt0btuce",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 1500,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-21T01:09:39.501Z"
     }
   ]
 }
