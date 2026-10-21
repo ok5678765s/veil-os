@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T18:36:49.640Z",
+  "exportedAt": "2026-10-21T18:59:30.291Z",
   "counts": {
     "accounts": 91,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 19,
+      "coins": 9,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -7682,6 +7682,14 @@
       "amount": 4,
       "reason": "proxy_earn",
       "createdAt": "2026-10-21T18:36:27.834Z"
+    },
+    {
+      "id": "cmvih7cw40001sj5v5lu58tbd",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T18:59:10.468Z"
     }
   ]
 }
