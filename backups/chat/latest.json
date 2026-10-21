@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:49:49.256Z",
+  "exportedAt": "2026-10-21T12:50:23.770Z",
   "counts": {
     "accounts": 90,
     "messages": 483,
@@ -1887,13 +1887,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-21T12:49:57.718Z",
       "legacy": false,
       "createdAt": "2026-10-21T12:49:49.021Z",
       "passwordHash": "$2b$10$tH9BkXqnUZIjyQA58BSmduAcwOpg.bgbT4owResoj0UPdgohsujeW"
@@ -7437,6 +7437,38 @@
       "amount": 110,
       "reason": "coinflip_loss",
       "createdAt": "2026-10-21T12:49:36.465Z"
+    },
+    {
+      "id": "cmvi40jpz001qsjywkiabvra6",
+      "fromId": "cmvi40d0d001osjywy7qdxovz",
+      "toId": "cmvi40d0d001osjywy7qdxovz",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-21T12:49:57.719Z"
+    },
+    {
+      "id": "cmvi40ml4001ssjywu3lzucjd",
+      "fromId": "cmvi40d0d001osjywy7qdxovz",
+      "toId": "cmvi40d0d001osjywy7qdxovz",
+      "amount": 10,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T12:50:01.432Z"
+    },
+    {
+      "id": "cmvi40ml6001usjywqqse1b7r",
+      "fromId": "cmvi40d0d001osjywy7qdxovz",
+      "toId": "cmvi40d0d001osjywy7qdxovz",
+      "amount": 20,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-21T12:50:01.435Z"
+    },
+    {
+      "id": "cmvi40rz4001wsjyw3vl2yi1n",
+      "fromId": "cmvi40d0d001osjywy7qdxovz",
+      "toId": "cmvi40d0d001osjywy7qdxovz",
+      "amount": 120,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T12:50:08.416Z"
     }
   ]
 }
