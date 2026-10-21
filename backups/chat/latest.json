@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:43:16.866Z",
+  "exportedAt": "2026-10-21T12:45:55.564Z",
   "counts": {
-    "accounts": 85,
+    "accounts": 86,
     "messages": 483,
     "dms": 4
   },
@@ -1792,6 +1792,27 @@
       "legacy": false,
       "createdAt": "2026-10-20T19:08:07.619Z",
       "passwordHash": "$2b$10$DumIsQof5Fq11iqrqyKNXO6AojYBwBnvPaWxDpjDaw2A/SudbGRoO"
+    },
+    {
+      "id": "cmvi3up9h0014sjywg1vnth7j",
+      "username": "d75srxyfcguvinnn",
+      "displayName": "d75srxyfcguvinnn",
+      "avatarColor": "#9b59b6",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 110,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-21T12:45:31.455Z",
+      "legacy": false,
+      "createdAt": "2026-10-21T12:45:24.966Z",
+      "passwordHash": "$2b$10$kU/iN/S9NRR47xiJHqv/geqfafrH6aKU73oLdWY.txHu7FbXhNzIC"
     }
   ],
   "messages": [
@@ -7268,6 +7289,14 @@
       "amount": 4,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-21T12:42:48.578Z"
+    },
+    {
+      "id": "cmvi3uu9s0016sjywzoz70a5m",
+      "fromId": "cmvi3up9h0014sjywg1vnth7j",
+      "toId": "cmvi3up9h0014sjywg1vnth7j",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-21T12:45:31.457Z"
     }
   ]
 }
