@@ -79,78 +79,157 @@ function gitShowOriginBackup(): Record<string, unknown> | null {
   }
 }
 
+/** The backup JSON as it exists at an arbitrary commit — used by the
+ * history high-water detector to reach backups that are newer than the
+ * origin tip (e.g. after the gutted state was already pushed). Returns
+ * the parsed object, or null. */
+function gitShowBackupAt(ref: string): Record<string, unknown> | null {
+  try {
+    const r = spawnSync(
+      "git",
+      ["show", `${ref}:backups/chat/latest.json`],
+      {
+        cwd: ROOT,
+        encoding: "utf-8",
+        maxBuffer: 64 * 1024 * 1024,
+        env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
+      },
+    )
+    if (r.status !== 0 || !r.stdout) return null
+    const data = JSON.parse(r.stdout) as Record<string, unknown>
+    if (data.veil !== "chat-backup") return null
+    return data
+  } catch {
+    return null
+  }
+}
+
+/** Newest `newestTxMs(coinTxs)` helper shared by the detectors. */
+function newestTxMs(txs: { createdAt?: string }[] | undefined): number {
+  let newest = 0
+  for (const t of txs ?? []) {
+    const ms = t.createdAt ? new Date(t.createdAt).getTime() : 0
+    if (Number.isFinite(ms) && ms > newest) newest = ms
+  }
+  return newest
+}
+
+/** Walk the recent backup commit SUBJECTS ("chat backup: N messages, M
+ * txs @ …" — the txCount tag exists since 2026-10-21) and return the
+ * commit carrying the LARGEST ledger count. Cheap: no file contents are
+ * read, only `git log` subjects. Null when no tagged commit exists. */
+function gitBestTxCommit(): { hash: string; txCount: number } | null {
+  const out = gitOut([
+    "log", "-n", "40", "--format=%H %s", "--", "backups/chat/latest.json",
+  ])
+  let best: { hash: string; txCount: number } | null = null
+  for (const line of out.split("\n")) {
+    const m = line.match(/^([0-9a-f]{7,40}) .*?, (\d+) txs @ /)
+    if (!m) continue
+    const txCount = Number(m[2])
+    if (!best || txCount > best.txCount) best = { hash: m[1], txCount }
+  }
+  return best
+}
+
 /** Rollback detection + auto-heal (2026-10-20 "it keeps erasing my items"
- * fix). The platform snapshot-restores this box from time to time,
- * reverting the live SQLite file to an older moment while the PUSHED
- * backup is newer. Until now nothing noticed — the loop just snapshotted
- * the older DB and moved on, permanently losing every purchase made
- * after the rollback point (accounts could be re-imported by hand, but
- * the ledger was never in the backup format, so lockers emptied on every
- * device).
+ * fix; hardened 2026-10-21 after the suspension-resume incident). The
+ * platform snapshot-restores this box from time to time, reverting the
+ * live SQLite file to an older moment while the PUSHED backup is newer.
  *
- * Two detectors, either fires the re-import:
+ * 2026-10-21 incident: the box suspended overnight; on resume the
+ * platform restored an old snapshot that emptied the ledger AND reverted
+ * backups/chat/.state.json — the old `!state?.lastCounts` early-return
+ * disabled the heal exactly when it was needed, and the first push then
+ * clobbered the good remote backup. The state file can NEVER gate the
+ * ledger detectors again.
+ *
+ * Three detectors, any fires the re-import:
  *   (a) a big BACKWARD drop in accounts AND messages vs lastCounts
- *       (a full community revert);
+ *       (a full community revert; needs a trusted state file);
  *   (b) the pushed backup's newest ledger row is >2min newer than the
- *       live DB's newest row (a tx-only rollback — the exact case that
- *       hit on 2026-10-20: message counts were flat, but the transaction
- *       table silently reverted).
+ *       live DB's newest row — runs UNCONDITIONALLY (state-independent);
+ *   (c) history high-water: the newest commits' subjects carry ledger
+ *       counts, so even when the gutted state was already pushed
+ *       (origin tip clobbered), the last good backup is still findable.
+ *       Fires only when that backup's ledger is >100 rows bigger than
+ *       live AND its newest tx is >10min newer than live's newest — a
+ *       live DB with fresh activity has moved on and must not be
+ *       clobbered by an older restore.
  *
  * The re-import is the same idempotent restoreChatBackup the owner's
  * Backup panel uses, so a false positive just no-ops. */
 async function healRollback(): Promise<void> {
   try {
     const state = readBackupState()
-    if (!state?.lastCounts) return
-    const [accCount, msgCount, lastTx] = await Promise.all([
+    const [accCount, msgCount, lastTx, liveTxCount] = await Promise.all([
       db.chatAccount.count(),
       db.chatMessage.count(),
       db.coinTransaction.findFirst({
         orderBy: { createdAt: "desc" },
         select: { createdAt: true },
       }),
+      db.coinTransaction.count(),
     ])
-    const lc = state.lastCounts
+    const liveLast = lastTx ? lastTx.createdAt.getTime() : 0
+
+    const lc = state?.lastCounts ?? null
     const countDrop =
+      !!lc &&
       lc.accounts > 0 &&
       accCount <= Math.floor(lc.accounts * 0.9) &&
       lc.messages > 0 &&
       msgCount <= Math.floor(lc.messages * 0.6)
 
     let source: Record<string, unknown> | null = null
-    let restoredFrom = ""
+    let detector = ""
+
     if (countDrop) {
       source = gitShowOriginBackup()
-      restoredFrom = "rollback-auto-heal:origin/main"
+      detector = "count-drop"
       if (!source) {
         const local = readLocalBackup("latest.json")
         if (!("error" in local)) {
           source = local.data as Record<string, unknown>
-          restoredFrom = "rollback-auto-heal:local"
         }
       }
-    } else {
+    }
+
+    // (b) ledger-gap vs the origin tip — state-independent (2026-10-21).
+    if (!source) {
       const remote = gitShowOriginBackup()
       const remoteTxs = (remote?.coinTxs as { createdAt?: string }[] | undefined) ?? []
-      if (remoteTxs.length === 0 || !remote) return
-      let remoteLast = 0
-      for (const t of remoteTxs) {
-        const ms = t.createdAt ? new Date(t.createdAt).getTime() : 0
-        if (Number.isFinite(ms) && ms > remoteLast) remoteLast = ms
+      const remoteLast = newestTxMs(remoteTxs)
+      if (remoteTxs.length > 0 && remoteLast - liveLast > 120_000) {
+        source = remote
+        detector = "ledger-gap"
       }
-      const liveLast = lastTx ? lastTx.createdAt.getTime() : 0
-      if (remoteLast - liveLast <= 120_000) return
-      source = remote
-      restoredFrom = "rollback-auto-heal:origin/main"
     }
+
+    // (c) history high-water — the origin tip was already clobbered by
+    // the gutted state, but git history still holds the last good backup.
+    if (!source) {
+      const best = gitBestTxCommit()
+      if (best && best.txCount > liveTxCount + 100) {
+        const data = gitShowBackupAt(best.hash)
+        const newest = newestTxMs(data?.coinTxs as { createdAt?: string }[] | undefined)
+        if (newest - liveLast > 600_000) {
+          source = data
+          detector = "history-highwater"
+        }
+      }
+    }
+
     if (!source) return
 
-    const res = await restoreChatBackup(source, { restoredFrom })
+    const res = await restoreChatBackup(source, {
+      restoredFrom: `rollback-auto-heal:${detector}`,
+    })
     console.error(
       "ROLLBACK-HEALED " +
         JSON.stringify({
-          detector: countDrop ? "count-drop" : "ledger-gap",
-          live: { accounts: accCount, messages: msgCount },
+          detector,
+          live: { accounts: accCount, messages: msgCount, txs: liveTxCount },
           lastCounts: lc,
           ok: res.ok,
           accountsCreated: res.accountsCreated,
@@ -232,7 +311,9 @@ async function main(): Promise<void> {
     const c = git([
       "commit",
       "-m",
-      `chat backup: ${backup.counts.messages} messages @ ${stamp}`,
+      // The ", M txs @ " tag feeds the heal's history high-water
+      // detector (gitBestTxCommit) — keep the format stable.
+      `chat backup: ${backup.counts.messages} messages, ${backup.coinTxs.length} txs @ ${stamp}`,
     ])
     committed = c.code === 0
     if (!committed) console.error("COMMIT-FAIL " + c.err)
@@ -272,7 +353,7 @@ async function main(): Promise<void> {
           git([
             "commit",
             "-m",
-            `chat backup (recovered): ${backup.counts.messages} messages @ ${stamp}`,
+            `chat backup (recovered): ${backup.counts.messages} messages, ${backup.coinTxs.length} txs @ ${stamp}`,
           ])
           push = git(["push", "origin", "main"])
         }
