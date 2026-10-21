@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:48:40.554Z",
+  "exportedAt": "2026-10-21T12:49:15.272Z",
   "counts": {
-    "accounts": 87,
+    "accounts": 88,
     "messages": 483,
     "dms": 4
   },
@@ -1834,6 +1834,27 @@
       "legacy": false,
       "createdAt": "2026-10-21T12:47:42.812Z",
       "passwordHash": "$2b$10$LvsrgOywpiGXNkzyulccme8QszgdNUCX5J30kUS4Tn6y0jo.jgKv2"
+    },
+    {
+      "id": "cmvi3z15f001esjywv93uarqc",
+      "username": "dfgh",
+      "displayName": "dfgh",
+      "avatarColor": "#27ae60",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 0,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-21T12:48:56.749Z",
+      "legacy": false,
+      "createdAt": "2026-10-21T12:48:46.996Z",
+      "passwordHash": "$2b$10$aZGjnhSlCC/vNzBrTlAx4uhAxiBJ2U3VaVuA0kPNinZYjnYvP30Ei"
     }
   ],
   "messages": [
@@ -7342,6 +7363,22 @@
       "amount": 110,
       "reason": "gift",
       "createdAt": "2026-10-21T12:48:25.658Z"
+    },
+    {
+      "id": "cmvi3z8oe001gsjywuz2810zq",
+      "fromId": "cmvi3z15f001esjywv93uarqc",
+      "toId": "cmvi3z15f001esjywv93uarqc",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-21T12:48:56.751Z"
+    },
+    {
+      "id": "cmvi3zkg9001isjyw5ptl94q1",
+      "fromId": "cmvi3z15f001esjywv93uarqc",
+      "toId": "cmvi3z15f001esjywv93uarqc",
+      "amount": 110,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-21T12:49:12.009Z"
     }
   ]
 }
