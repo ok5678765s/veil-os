@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:25:34.626Z",
+  "exportedAt": "2026-10-21T02:26:09.325Z",
   "counts": {
     "accounts": 86,
     "messages": 479,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1802,
-      "tag": "Pro User",
-      "tagColor": "#16a085",
-      "pfpAccessory": "fight",
+      "coins": 5722,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
       "lastRewardClaim": "2026-10-20T12:25:03.726Z",
@@ -8680,6 +8680,22 @@
       "amount": 10000,
       "reason": "roulette_loss",
       "createdAt": "2026-10-21T02:25:19.850Z"
+    },
+    {
+      "id": "cmvhhq2lq000drj64gubh93v0",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_refund:tag-pro",
+      "createdAt": "2026-10-21T02:25:57.422Z"
+    },
+    {
+      "id": "cmvhhq91h000frj64ogwu9nno",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1120,
+      "reason": "shop_refund:acc-fight",
+      "createdAt": "2026-10-21T02:26:05.765Z"
     }
   ]
 }
