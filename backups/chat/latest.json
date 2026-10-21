@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T18:19:14.580Z",
+  "exportedAt": "2026-10-21T18:32:39.432Z",
   "counts": {
     "accounts": 91,
     "messages": 483,
@@ -1005,13 +1005,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 16,
+      "coins": 26,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-21T18:32:30.608Z",
       "legacy": false,
       "createdAt": "2026-10-14T00:35:48.409Z",
       "passwordHash": "$2b$10$FXw2z.pRKqKA8qt48QvFh..0P9UN5naeK2/k50d.U1o6qBvASpg4y"
@@ -7666,6 +7666,14 @@
       "amount": 3,
       "reason": "proxy_earn",
       "createdAt": "2026-10-21T18:19:12.566Z"
+    },
+    {
+      "id": "cmvig92fl0003sjo9bj11598w",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-21T18:32:30.610Z"
     }
   ]
 }
