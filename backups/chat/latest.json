@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:53:08.503Z",
+  "exportedAt": "2026-10-21T12:53:42.793Z",
   "counts": {
     "accounts": 91,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 330,
+      "coins": 420,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -7530,6 +7530,30 @@
       "amount": 220,
       "reason": "coinflip_win",
       "createdAt": "2026-10-21T12:53:07.121Z"
+    },
+    {
+      "id": "cmvi44vy70029sjywfbzlp4bn",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 100,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-21T12:53:20.191Z"
+    },
+    {
+      "id": "cmvi44vzq002bsjyw7w6mjnqo",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_win",
+      "createdAt": "2026-10-21T12:53:20.247Z"
+    },
+    {
+      "id": "cmvi4573s002dsjywwlo53lr0",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-21T12:53:34.649Z"
     }
   ]
 }
