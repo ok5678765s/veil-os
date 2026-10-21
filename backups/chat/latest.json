@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:46:49.401Z",
+  "exportedAt": "2026-10-21T02:47:23.189Z",
   "counts": {
     "accounts": 86,
     "messages": 479,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 196073,
+      "coins": 198773,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -8728,6 +8728,22 @@
       "amount": 4105,
       "reason": "roulette_loss",
       "createdAt": "2026-10-21T02:46:34.429Z"
+    },
+    {
+      "id": "cmvhihgqb000lrj64a2z0l24p",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2700,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-21T02:47:15.444Z"
+    },
+    {
+      "id": "cmvhihgqg000nrj64ap043osf",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5400,
+      "reason": "roulette_win",
+      "createdAt": "2026-10-21T02:47:15.448Z"
     }
   ]
 }
