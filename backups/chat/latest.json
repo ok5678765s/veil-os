@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T12:50:58.122Z",
+  "exportedAt": "2026-10-21T12:51:32.862Z",
   "counts": {
     "accounts": 91,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 220,
+      "coins": 330,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": "fight",
@@ -1908,13 +1908,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-21T12:51:11.803Z",
       "legacy": false,
       "createdAt": "2026-10-21T12:50:26.115Z",
       "passwordHash": "$2b$10$E8sVFgTAr1gQ4FOrpS1y/u9qGYl.5c3Wra.D6zWhofb5.qvsX558e"
@@ -7490,6 +7490,22 @@
       "amount": 120,
       "reason": "coinflip_loss",
       "createdAt": "2026-10-21T12:50:08.416Z"
+    },
+    {
+      "id": "cmvi424vx001zsjywbnhksdcu",
+      "fromId": "cmvi415mr001xsjywm7uyqusg",
+      "toId": "cmvi415mr001xsjywm7uyqusg",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-21T12:51:11.805Z"
+    },
+    {
+      "id": "cmvi42gcq0021sjywcqszuujb",
+      "fromId": "cmvi415mr001xsjywm7uyqusg",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 110,
+      "reason": "gift",
+      "createdAt": "2026-10-21T12:51:26.666Z"
     }
   ]
 }
