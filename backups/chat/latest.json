@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-21T02:18:23.806Z",
+  "exportedAt": "2026-10-21T02:18:58.439Z",
   "counts": {
     "accounts": 86,
     "messages": 479,
@@ -8592,6 +8592,22 @@
       "amount": 400,
       "reason": "roulette_win",
       "createdAt": "2026-10-21T02:18:06.037Z"
+    },
+    {
+      "id": "cmvhhgxnu005xrjn2qb7dwmk2",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-21T02:18:51.114Z"
+    },
+    {
+      "id": "cmvhhgxnw005zrjn2ox8nn4e9",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200,
+      "reason": "roulette_win",
+      "createdAt": "2026-10-21T02:18:51.117Z"
     }
   ]
 }
