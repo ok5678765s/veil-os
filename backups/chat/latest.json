@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:54:59.154Z",
+  "exportedAt": "2026-10-22T18:56:04.760Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -9248,6 +9248,30 @@
       "amount": 25,
       "reason": "slots_loss",
       "createdAt": "2026-10-22T18:54:42.928Z"
+    },
+    {
+      "id": "cmvjwir9k004rrb74ixh5ib4q",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:55:42.728Z"
+    },
+    {
+      "id": "cmvjwj48x004trb74768o6xug",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:55:59.553Z"
+    },
+    {
+      "id": "cmvjwj48z004vrb74i2vzifak",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:55:59.555Z"
     }
   ]
 }
