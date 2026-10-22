@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T01:02:34.576Z",
+  "exportedAt": "2026-10-22T01:03:08.633Z",
   "counts": {
     "accounts": 92,
     "messages": 482,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 256500,
+      "coins": 239700,
       "tag": "Pro User",
       "tagColor": "#16a085",
-      "pfpAccessory": "bunny",
+      "pfpAccessory": "stars",
       "pfpOverlay": null,
       "dailyRewardStreak": 3,
       "lastRewardClaim": "2026-10-21T12:37:38.186Z",
@@ -8412,6 +8412,54 @@
       "amount": 2600,
       "reason": "shop_purchase:acc-bunny",
       "createdAt": "2026-10-22T01:02:33.258Z"
+    },
+    {
+      "id": "cmviu6sf90045sjnqx8ib57h8",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-wolf",
+      "createdAt": "2026-10-22T01:02:38.949Z"
+    },
+    {
+      "id": "cmviu6t4y0047sjnqwzz3x3pe",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-blackcat",
+      "createdAt": "2026-10-22T01:02:39.875Z"
+    },
+    {
+      "id": "cmviu6vc00049sjnq838wbafv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-seal",
+      "createdAt": "2026-10-22T01:02:42.721Z"
+    },
+    {
+      "id": "cmviu73wy004bsjnq3wykl64k",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-potion",
+      "createdAt": "2026-10-22T01:02:53.842Z"
+    },
+    {
+      "id": "cmviu76z8004dsjnq0acw8376",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2400,
+      "reason": "shop_purchase:acc-visor",
+      "createdAt": "2026-10-22T01:02:57.813Z"
+    },
+    {
+      "id": "cmviu79cd004fsjnqwqqia6qn",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-stars",
+      "createdAt": "2026-10-22T01:03:00.878Z"
     }
   ]
 }
