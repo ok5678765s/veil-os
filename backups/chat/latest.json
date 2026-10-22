@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T01:01:59.305Z",
+  "exportedAt": "2026-10-22T01:02:34.576Z",
   "counts": {
     "accounts": 92,
     "messages": 482,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 276800,
+      "coins": 256500,
       "tag": "Pro User",
       "tagColor": "#16a085",
-      "pfpAccessory": "earL",
+      "pfpAccessory": "bunny",
       "pfpOverlay": null,
       "dailyRewardStreak": 3,
       "lastRewardClaim": "2026-10-21T12:37:38.186Z",
@@ -8348,6 +8348,70 @@
       "amount": 1200,
       "reason": "shop_purchase:acc-ear-l",
       "createdAt": "2026-10-22T01:01:58.273Z"
+    },
+    {
+      "id": "cmviu5y5f003psjnqjnl8el3m",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-l",
+      "createdAt": "2026-10-22T01:01:59.716Z"
+    },
+    {
+      "id": "cmviu62f3003rsjnqlllqv5ep",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1200,
+      "reason": "shop_purchase:acc-ear-r",
+      "createdAt": "2026-10-22T01:02:05.248Z"
+    },
+    {
+      "id": "cmviu67wo003tsjnqzt7wzctd",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4600,
+      "reason": "shop_purchase:acc-vrhalo",
+      "createdAt": "2026-10-22T01:02:12.361Z"
+    },
+    {
+      "id": "cmviu6a4m003vsjnqbduo84vv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-r",
+      "createdAt": "2026-10-22T01:02:15.238Z"
+    },
+    {
+      "id": "cmviu6gch003xsjnq59ef1bgv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3500,
+      "reason": "shop_purchase:acc-catears",
+      "createdAt": "2026-10-22T01:02:23.297Z"
+    },
+    {
+      "id": "cmviu6gp9003zsjnq3o9zzl0r",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1800,
+      "reason": "shop_purchase:acc-clover",
+      "createdAt": "2026-10-22T01:02:23.757Z"
+    },
+    {
+      "id": "cmviu6n8w0041sjnqou8tu4pe",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-fur",
+      "createdAt": "2026-10-22T01:02:32.240Z"
+    },
+    {
+      "id": "cmviu6o150043sjnq192mznf6",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2600,
+      "reason": "shop_purchase:acc-bunny",
+      "createdAt": "2026-10-22T01:02:33.258Z"
     }
   ]
 }
