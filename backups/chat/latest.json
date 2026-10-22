@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T08:46:05.942Z",
+  "exportedAt": "2026-10-22T12:27:35.946Z",
   "counts": {
     "accounts": 92,
     "messages": 488,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 192105,
+      "coins": 192110,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -8654,6 +8654,14 @@
       "amount": 3,
       "reason": "proxy_earn",
       "createdAt": "2026-10-22T02:49:29.658Z"
+    },
+    {
+      "id": "cmvjin77s0005rbyetilgtd0c",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-22T12:27:15.400Z"
     }
   ]
 }
