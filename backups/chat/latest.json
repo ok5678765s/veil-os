@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:49:17.010Z",
+  "exportedAt": "2026-10-22T18:49:51.340Z",
   "counts": {
     "accounts": 92,
     "messages": 488,
@@ -39,10 +39,10 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 53779,
+      "coins": 42779,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
-      "pfpAccessory": "snowglobe",
+      "pfpAccessory": "cyber",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-10-22T18:45:03.344Z",
@@ -8894,6 +8894,30 @@
       "amount": 3400,
       "reason": "shop_purchase:acc-snowglobe",
       "createdAt": "2026-10-22T18:49:12.987Z"
+    },
+    {
+      "id": "cmvjwanyu001lrb74tbrr7jiz",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3600,
+      "reason": "shop_purchase:acc-batring",
+      "createdAt": "2026-10-22T18:49:25.207Z"
+    },
+    {
+      "id": "cmvjwaoh3001nrb74udbx5d0w",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3600,
+      "reason": "shop_purchase:acc-y2025",
+      "createdAt": "2026-10-22T18:49:25.863Z"
+    },
+    {
+      "id": "cmvjwapbs001prb747mugjh6g",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3800,
+      "reason": "shop_purchase:acc-cyber",
+      "createdAt": "2026-10-22T18:49:26.969Z"
     }
   ]
 }
