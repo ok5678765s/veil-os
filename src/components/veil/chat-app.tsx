@@ -3099,12 +3099,17 @@ function BackupPanel({
         messagesImported: number
         messagesSkipped: number
         accountsCreated: number
+        exportedAt?: string | null
       }>("/api/chat-backup", {
         method: "POST",
         body: JSON.stringify({ token, action: "restore", source: "jsdelivr" }),
       })
+      const stamp = data.exportedAt
+        ? new Date(data.exportedAt).toLocaleTimeString()
+        : null
       toast(
-        `Restore done — ${data.messagesImported} message(s) imported, ${data.messagesSkipped} already present.`,
+        `Restore done — ${data.messagesImported} message(s) imported, ${data.messagesSkipped} already present.` +
+          (stamp ? ` (backup snapshot from ${stamp})` : ""),
       )
       onRestored()
       await refresh()

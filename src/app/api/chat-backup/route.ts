@@ -7,8 +7,10 @@ import { cors, corsOptions } from "@/lib/veil/cors"
 import {
   restoreChatBackup,
   fetchJsDelivrBackup,
+  fetchRawGithubBackup,
   readLocalBackup,
   readBackupState,
+  purgeJSDelivrData,
   BACKUP_HISTORY_DIR,
   BACKUP_REPO,
   JSDELIVR_LATEST,
@@ -150,16 +152,43 @@ async function handlePost(req: NextRequest): Promise<Response> {
     }
 
     if (body.action === "restore") {
-      const loaded =
-        body.source === "local" && body.name
-          ? readLocalBackup(body.name)
-          : await fetchJsDelivrBackup()
+      // "Restore from GitHub" must pull WHAT IS ON GITHUB RIGHT NOW.
+      // 2026-10-22 incident: the owner hand-edited latest.json on GitHub
+      // (coins 0 → 250k) and clicked Restore — but the jsDelivr edge was
+      // still serving its cached pre-edit copy (and even after purges,
+      // different edges kept serving 9- and 75-tx-older files), so
+      // nothing landed. Strategy now:
+      //   1. purge the CDN data files (best-effort; keeps the fallback
+      //      and the public jsDelivr link converging toward fresh),
+      //   2. fetch raw.githubusercontent.com FIRST — it tracks the repo
+      //      at ~minute granularity,
+      //   3. fall back to the jsDelivr CDN (2s after the purge) only if
+      //      raw is unreachable.
+      let loaded: { data: unknown; restoredFrom: string } | { error: string }
+      if (body.source === "local" && body.name) {
+        loaded = readLocalBackup(body.name)
+      } else {
+        await purgeJSDelivrData()
+        loaded = await fetchRawGithubBackup()
+        if ("error" in loaded) {
+          // Edge invalidation lands within a few seconds — give the purge
+          // a beat before pulling from the CDN fallback.
+          await new Promise((r) => setTimeout(r, 2000))
+          loaded = await fetchJsDelivrBackup()
+        }
+      }
       if ("error" in loaded) {
         return NextResponse.json(
           { ok: false, error: loaded.error },
           { status: 400 },
         )
       }
+      // Surface WHICH backup version this was, so a mod can see the
+      // restore actually pulled the fresh state (and not a stale edge
+      // copy that predates their GitHub edit).
+      const raw = loaded.data as { exportedAt?: unknown }
+      const exportedAt =
+        typeof raw?.exportedAt === "string" ? raw.exportedAt : null
       const res = await restoreChatBackup(loaded.data, {
         restoredFrom: loaded.restoredFrom,
       })
@@ -168,7 +197,7 @@ async function handlePost(req: NextRequest): Promise<Response> {
       }
       // The daemon loop notices the DB change within 30s and snapshots +
       // publishes the restored state automatically.
-      return NextResponse.json(res)
+      return NextResponse.json({ ...res, exportedAt })
     }
 
     return NextResponse.json(

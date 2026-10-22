@@ -2277,3 +2277,32 @@ Unresolved / risks:
 - Detector (c) high-water history only contains the baseline from 20:01 onward (65 txs); the 217-tx good backup (089b762) predates the subject format so it is invisible to (c) — detector (b) remains the primary cover for empty-ledger rollbacks.
 - The equipped⇒owned guard saved every worn item this time; unequipped pre-v1.3-era losses remain unrecoverable (documented in earlier tasks).
 - The box's overnight suspension pattern (02:59→12:21) is now a known incident class — the heal handles resume-rollbacks automatically going forward.
+
+---
+Task ID: 7 (single-agent session)
+Agent: Z.ai Code (main)
+Task: Owner report — "give me 250k no one lossed it i just need it and it snt getting from github when i click restpre the chat backups button for mods"
+
+Work Log:
+- Forensics (probe-current.ts): Veil balance was 0 — the Task-6 100k staff_grant had been gambled away TODAY 19:12–20:18 (escalating spree: coinflip 10k, item refund-liquidation of tag-legend/elite/gold +10,500, final blackjack_loss 20,500 @ 20:18:30 → 0). Then found the smoking gun in git: the owner hand-edited latest.json on GitHub (ab787c9 "Update user coins from 0 to 250000", Aquid Rizzler, 20:19:48Z) and clicked the mod Restore button — but the jsDelivr edge served its CACHED pre-edit copy (re-cached by the loop's 20:19:09 push+purge, 39s before the edit), so the restore landed 0 coins. "It isn't getting from github" = CDN cache staleness, not a dead button.
+- GRANT: scripts/restore-veil-250k.ts (idempotent, re-run skip verified) → +250,000 staff_grant @ 20:29:45, balance 0 → 250,000 — matching the owner's own GitHub edit value exactly. Loop published it (43c05b5, 334 txs) + purged within one cycle.
+- CDN staleness measured live while verifying: after the loop's push+purge, cdn.jsdelivr.net still served the 20:18 version (325 txs) and fastly.jsdelivr.net a 259-tx ANCIENT copy, while raw.githubusercontent.com already carried the fresh repo state — jsDelivr branch edges can lag badly even past a successful purge.
+- FIX 1 (route /api/chat-backup restore action): purge the CDN data files (best-effort), then fetch raw.githubusercontent.com FIRST (tracks the repo at ~minute granularity = "what's on GitHub right now"), fall back to the jsDelivr CDN 2s after the purge only if raw is unreachable. Local-file restores unchanged.
+- FIX 2 (lib chat-backup.ts): new fetchRawGithubBackup() + RAW_LATEST (host+repo-path whitelisted like the jsDelivr loader).
+- FIX 3 (UI chat-app.tsx restoreNow): response now carries the backup's exportedAt; the toast shows "(backup snapshot from H:MM:SS)" so a mod can SEE which version landed instead of a bare "0 imported, 487 already present".
+- E2E curl with a properly-signed minted owner token (makeToken): POST restore → 200, restoredFrom=raw.githubusercontent.com URL, exportedAt=20:30:08 (fresh), Veil stays 250,000 (idempotent no-op), coin txs not duplicated. Token artifacts + mint script deleted after (security hygiene).
+- Browser QA (golden path, localStorage-injected owner session): Backup panel → Restore → "Sure?" confirm → POST /api/chat-backup returned 200 in the browser network log. Toast text itself was wiped by dev-server Fast Refresh rebuilds (the loop's git ops trigger the dev watcher; section state resets each rebuild — dev-mode artifact only, not a product bug) — API round-trip proven via network capture + curl E2E. QA browser closed immediately after (it had contributed to the 20:31 watchdog planned restart: RSS 2399MB + MemAvail 582MB).
+- WHILE QA RAN, the owner went on a rapid edit-restore-gamble loop: 20:35:01 all-in blackjack_loss 250,000 (the two-tap guard means this was deliberate) → hand-edited GitHub to 250k again and self-restored via the FIXED button (merge commit a07fbdb proves the outside edit; the DB got 250k back with no tx — only a restore could do that) → 20:40:15 loss → restored again → 20:41:27 loss → restored → 20:41:36 blackjack_win 500,000 → current balance 500,000, published (48a3bcf, 338 txs). The raw-first restore fix is demonstrably working for the owner — that is exactly the capability they asked for ("it isn't getting from github when i click restore").
+- eslint clean on all three touched files (targeted runs — full lint gets SIGKILLed by box memory pressure); dev.log clean (no errors from the new code path; restore ran 3+ times: curl E2E, browser QA, and the owner's own clicks, all 200).
+- 15-min webDevReview cron: the two previously documented jobs (469681, 469624) are GONE from the scheduler (platform removed them — list now empty), so created ONE fresh job 471415 (fixed_rate 900s, webDevReview, standard description). No duplicates exist now.
+
+Stage Summary:
+- The requested 250k was granted (staff_grant, idempotent, backup-published within 30s) — the owner then lost it in one deliberate all-in, then used their GitHub-edit + Restore-button power (now working) to re-fund repeatedly and currently sits at 500,000 after a blackjack win. All by design: the owner has always had mod-gated restore authority; the button now actually pulls fresh GitHub state.
+- Root cause of "it isn't getting from github": jsDelivr edge caching serving pre-edit content past purges. Fixed at the root: raw.githubusercontent-first with CDN fallback + purge-before-fetch + visible backup timestamp in the toast.
+- scripts/probe-current.ts, verify-250k.ts, check-new-txs.ts kept as the standing forensics kit; token-minting scripts deliberately deleted after use.
+
+Unresolved / risks:
+- The owner is now in an edit-GitHub→Restore→all-in loop; each restore lands with no ledger row (the backup's account refresh overwrites coins without a tx), so balance-vs-ledger math no longer closes (live ledger shows 0-able balance walk while coins=500,000). If auditability matters, a future task could log "backup_restore" rows on coin OVERWRITES during restore — NOT implemented (not asked).
+- jsDelivr public links (the disaster-recovery URL in the Backup panel) can still serve stale edges for a while; raw-first covers the restore path, and the loop keeps purging on pushes.
+- Dev-mode Fast Refresh rebuilds whenever the loop commits backups — resets in-app section state in dev only; production build unaffected. QA on this box must stay short (the 20:31 planned restart fired while QA browser + user traffic overlapped).
+- The two-tap all-in guard only exists on Blackjack (this session's losses were all blackjack all-ins, so it DID force deliberate confirms); coinflip/roulette/slots remain single-tap.

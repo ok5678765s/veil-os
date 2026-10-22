@@ -676,6 +676,43 @@ export async function fetchJsDelivrBackup(
   }
 }
 
+/* Direct-from-GitHub fetch for the mod Restore button (2026-10-22).
+ *
+ * WHY: the jsDelivr edges can serve STALE branch content for a long while
+ * even after a successful purge — observed live: purge API returned OK,
+ * cdn.jsdelivr.net still served a 9-tx-older file and fastly.jsdelivr.net
+ * a 75-tx-older one, while raw.githubusercontent.com already carried the
+ * fresh repo state. "Restore from GitHub" must mean WHAT IS ON GITHUB
+ * RIGHT NOW (the owner hand-edits latest.json on GitHub and clicks
+ * Restore), so raw is tried FIRST; the jsDelivr URL remains the
+ * disaster-recovery fallback for environments where raw is unreachable. */
+export const RAW_LATEST = `https://raw.githubusercontent.com/${BACKUP_REPO}/main/backups/chat/latest.json`
+
+export async function fetchRawGithubBackup(
+  url: string = RAW_LATEST,
+): Promise<{ data: unknown; restoredFrom: string } | { error: string }> {
+  let u: URL
+  try {
+    u = new URL(url)
+  } catch {
+    return { error: "Invalid URL." }
+  }
+  if (u.hostname !== "raw.githubusercontent.com" || !u.pathname.startsWith(`/${BACKUP_REPO}/`)) {
+    return { error: "Only raw.githubusercontent.com backup URLs are allowed." }
+  }
+  try {
+    const r = await fetch(url, {
+      signal: AbortSignal.timeout(15000),
+      headers: { accept: "application/json" },
+      cache: "no-store",
+    })
+    if (!r.ok) return { error: `raw.githubusercontent.com answered ${r.status}.` }
+    return { data: await r.json(), restoredFrom: url }
+  } catch (e) {
+    return { error: `Could not fetch backup: ${(e as Error).message}` }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Backup loop state (.state.json — local only, gitignored)
 // ---------------------------------------------------------------------------
