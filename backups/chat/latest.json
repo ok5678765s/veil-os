@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:53:19.636Z",
+  "exportedAt": "2026-10-22T18:53:54.483Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 52779,
+      "coins": 62779,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": "cyber",
@@ -9216,6 +9216,22 @@
       "amount": 20000,
       "reason": "coinflip_win",
       "createdAt": "2026-10-22T18:53:17.423Z"
+    },
+    {
+      "id": "cmvjwfr0f004jrb74amqgtbtz",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:53:22.431Z"
+    },
+    {
+      "id": "cmvjwfr0i004lrb74o5mpsit2",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:53:22.434Z"
     }
   ]
 }
