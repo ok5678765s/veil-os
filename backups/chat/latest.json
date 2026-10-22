@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T00:53:45.681Z",
+  "exportedAt": "2026-10-22T00:54:20.359Z",
   "counts": {
     "accounts": 92,
     "messages": 482,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 97000,
+      "coins": 90980,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "dragon",
@@ -8132,6 +8132,46 @@
       "amount": 1680,
       "reason": "shop_refund:acc-visor",
       "createdAt": "2026-10-22T00:53:21.178Z"
+    },
+    {
+      "id": "cmvitvepp000lsjnqfqdrng83",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T00:53:47.965Z"
+    },
+    {
+      "id": "cmvitvkr8000psjnqwuzkiic3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T00:53:55.797Z"
+    },
+    {
+      "id": "cmvitvsg7000tsjnqbj0vv6ff",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T00:54:05.768Z"
+    },
+    {
+      "id": "cmvitvvdi000vsjnq3z6yf8kr",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 6020,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T00:54:09.558Z"
+    },
+    {
+      "id": "cmvitw0ew000zsjnqmlcgj5fw",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T00:54:16.088Z"
     }
   ]
 }
