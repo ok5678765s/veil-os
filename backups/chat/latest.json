@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:57:44.959Z",
+  "exportedAt": "2026-10-22T18:58:50.443Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -39,9 +39,9 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 105815,
-      "tag": "Mythic",
-      "tagColor": "#8e44ad",
+      "coins": 94815,
+      "tag": "Elite",
+      "tagColor": "#e67e22",
       "pfpAccessory": "cyber",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
@@ -9328,6 +9328,30 @@
       "amount": 10000,
       "reason": "coinflip_loss",
       "createdAt": "2026-10-22T18:57:31.460Z"
+    },
+    {
+      "id": "cmvjwmibt005brb744f02o5nq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1000,
+      "reason": "shop_purchase:tag-gold",
+      "createdAt": "2026-10-22T18:58:37.769Z"
+    },
+    {
+      "id": "cmvjwmipn005drb74t774lw97",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4000,
+      "reason": "shop_purchase:tag-pro",
+      "createdAt": "2026-10-22T18:58:38.268Z"
+    },
+    {
+      "id": "cmvjwml2w005frb74sanhbir6",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6000,
+      "reason": "shop_purchase:tag-elite",
+      "createdAt": "2026-10-22T18:58:41.336Z"
     }
   ]
 }
