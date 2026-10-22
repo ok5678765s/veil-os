@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:00:36.662Z",
+  "exportedAt": "2026-10-22T19:01:42.354Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -39,10 +39,10 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 73915,
-      "tag": "VIP",
-      "tagColor": "#9b59b6",
-      "pfpAccessory": "earL",
+      "coins": 42115,
+      "tag": "Mythic",
+      "tagColor": "#8e44ad",
+      "pfpAccessory": "dragon",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-10-22T18:45:03.344Z",
@@ -9432,6 +9432,54 @@
       "amount": 1200,
       "reason": "shop_purchase:acc-ear-l",
       "createdAt": "2026-10-22T19:00:34.375Z"
+    },
+    {
+      "id": "cmvjwptsr006nrb743031dhv0",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "shop_purchase:tag-mythic",
+      "createdAt": "2026-10-22T19:01:12.604Z"
+    },
+    {
+      "id": "cmvjwq3nc006prb74qvhdj6ca",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3800,
+      "reason": "shop_purchase:acc-arch",
+      "createdAt": "2026-10-22T19:01:25.368Z"
+    },
+    {
+      "id": "cmvjwq4pn006rrb74j4zuw3bw",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4000,
+      "reason": "shop_purchase:acc-santa",
+      "createdAt": "2026-10-22T19:01:26.747Z"
+    },
+    {
+      "id": "cmvjwq60l006trb74wqf8dkb1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4200,
+      "reason": "shop_purchase:acc-sword",
+      "createdAt": "2026-10-22T19:01:28.437Z"
+    },
+    {
+      "id": "cmvjwqavj006vrb74fl0kd6gr",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4800,
+      "reason": "shop_purchase:acc-wreath",
+      "createdAt": "2026-10-22T19:01:34.736Z"
+    },
+    {
+      "id": "cmvjwqbve006xrb74jwmj331d",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 5000,
+      "reason": "shop_purchase:acc-dragon",
+      "createdAt": "2026-10-22T19:01:36.027Z"
     }
   ]
 }
