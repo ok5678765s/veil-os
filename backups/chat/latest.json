@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:57:10.412Z",
+  "exportedAt": "2026-10-22T18:57:44.959Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 72729,
+      "coins": 105815,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": "cyber",
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 193086,
+      "coins": 150000,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -9288,6 +9288,46 @@
       "amount": 20000,
       "reason": "coinflip_win",
       "createdAt": "2026-10-22T18:56:47.492Z"
+    },
+    {
+      "id": "cmvjwkqrn0051rb74t88zvkp6",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:57:15.396Z"
+    },
+    {
+      "id": "cmvjwkqrp0053rb74ao543ljf",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:57:15.398Z"
+    },
+    {
+      "id": "cmvjwkxfd0055rb74j2d9ofud",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:57:24.026Z"
+    },
+    {
+      "id": "cmvjwl2x80057rb74svfq1us7",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 43086,
+      "reason": "gift",
+      "createdAt": "2026-10-22T18:57:31.149Z"
+    },
+    {
+      "id": "cmvjwl35w0059rb74gmz2febt",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:57:31.460Z"
     }
   ]
 }
