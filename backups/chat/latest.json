@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:46:30.909Z",
+  "exportedAt": "2026-10-22T18:48:07.661Z",
   "counts": {
     "accounts": 92,
     "messages": 488,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 100424,
+      "coins": 97379,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 192126,
+      "coins": 192636,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -8702,6 +8702,46 @@
       "amount": 820,
       "reason": "coinflip_win",
       "createdAt": "2026-10-22T18:46:17.018Z"
+    },
+    {
+      "id": "cmvjw8ere0007rb74kek1sx3r",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2710,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:47:39.963Z"
+    },
+    {
+      "id": "cmvjw8erg0009rb743kyygx90",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6775,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:47:39.965Z"
+    },
+    {
+      "id": "cmvjw8my0000brb74uom0wdmh",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 510,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:47:50.568Z"
+    },
+    {
+      "id": "cmvjw8pmy000drb74lw1en6cz",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:47:54.059Z"
+    },
+    {
+      "id": "cmvjw8qvm000hrb74s4w2dcl1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 7110,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:47:55.667Z"
     }
   ]
 }
