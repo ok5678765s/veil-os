@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:05:26.846Z",
+  "exportedAt": "2026-10-22T19:06:01.642Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -1194,7 +1194,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 25,
+      "coins": 15,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -9504,6 +9504,14 @@
       "amount": 10,
       "reason": "daily_reward",
       "createdAt": "2026-10-22T19:05:22.406Z"
+    },
+    {
+      "id": "cmvjww01q007lrb74mriz4ryg",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:06:00.638Z"
     }
   ]
 }
