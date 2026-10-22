@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:52:44.938Z",
+  "exportedAt": "2026-10-22T18:53:19.636Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 72779,
+      "coins": 52779,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": "cyber",
@@ -9152,6 +9152,70 @@
       "amount": 10000,
       "reason": "coinflip_loss",
       "createdAt": "2026-10-22T18:52:41.688Z"
+    },
+    {
+      "id": "cmvjwezln0043rb74tyf60bn9",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:52:46.907Z"
+    },
+    {
+      "id": "cmvjwf3h50045rb74gf9pwbwq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:52:51.930Z"
+    },
+    {
+      "id": "cmvjwf7mc0047rb74osyhygcq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:52:57.300Z"
+    },
+    {
+      "id": "cmvjwfc2b0049rb74idmc40k4",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:53:03.060Z"
+    },
+    {
+      "id": "cmvjwfc2d004brb74ybdxhsef",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:53:03.062Z"
+    },
+    {
+      "id": "cmvjwfh7w004drb74y17itbi1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:53:09.741Z"
+    },
+    {
+      "id": "cmvjwfn59004frb743o170kpu",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:53:17.422Z"
+    },
+    {
+      "id": "cmvjwfn5b004hrb74oh2dxkm1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:53:17.423Z"
     }
   ]
 }
