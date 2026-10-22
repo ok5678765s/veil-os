@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T01:04:50.834Z",
+  "exportedAt": "2026-10-22T01:05:55.656Z",
   "counts": {
     "accounts": 92,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 193101,
+      "coins": 192102,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -6156,17 +6156,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1husr00whonytyacegl97",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.204Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1huxr00wlonytc17fx2y5",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7253,6 +7242,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-22T01:04:40.965Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmviuaebc0059sjnqlft85pdy",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "thanks to trippling my money by gambling",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-22T01:05:27.289Z",
       "editedAt": null
     }
   ],
@@ -8575,6 +8575,22 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-22T01:04:40.969Z"
+    },
+    {
+      "id": "cmviuaebf005bsjnqmz2md699",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-22T01:05:27.291Z"
+    },
+    {
+      "id": "cmviuawjt005dsjnqbhvr2c7o",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-22T01:05:50.922Z"
     }
   ]
 }
