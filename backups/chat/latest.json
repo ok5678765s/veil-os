@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:09:59.318Z",
+  "exportedAt": "2026-10-22T19:10:33.484Z",
   "counts": {
     "accounts": 92,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 100000,
+      "coins": 10000,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -1005,7 +1005,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 8061,
+      "coins": 9071,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1929,7 +1929,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 11242,
+      "coins": 6142,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -9663,6 +9663,54 @@
       "amount": 10000,
       "reason": "gift",
       "createdAt": "2026-10-22T19:09:58.579Z"
+    },
+    {
+      "id": "cmvjx18me008zrb74pxk0b5x7",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:05.031Z"
+    },
+    {
+      "id": "cmvjx18ml0091rb74z2sgp44m",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:10:05.038Z"
+    },
+    {
+      "id": "cmvjx1b5b0093rb74r48cancv",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 5100,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:08.303Z"
+    },
+    {
+      "id": "cmvjx1dwy0095rb748rkn3zb0",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:11.890Z"
+    },
+    {
+      "id": "cmvjx1dwz0097rb74zgqk2rs7",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:10:11.892Z"
+    },
+    {
+      "id": "cmvjx1p500099rb74l2z6zee1",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:26.436Z"
     }
   ]
 }
