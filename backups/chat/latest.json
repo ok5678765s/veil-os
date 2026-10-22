@@ -1,7 +1,7 @@
- {
+{
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:02:17.162Z",
+  "exportedAt": "2026-10-22T19:05:26.846Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -39,10 +39,10 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 346150,
-      "tag": "Mythic",
-      "tagColor": "#8e44ad",
-      "pfpAccessory": "sprout",
+      "coins": 73915,
+      "tag": "VIP",
+      "tagColor": "#9b59b6",
+      "pfpAccessory": "earL",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-10-22T18:45:03.344Z",
@@ -1194,13 +1194,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 15,
+      "coins": 25,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
-      "lastRewardClaim": "2026-10-20T18:53:31.338Z",
+      "lastRewardClaim": "2026-10-22T19:05:22.403Z",
       "legacy": false,
       "createdAt": "2026-10-15T14:03:44.880Z",
       "passwordHash": "$2b$10$WU.nmuc3WHWYpE2qWDEspOzUasVRd/Zu2Kdupjw4bsaAsd6On9pwa"
@@ -9496,6 +9496,14 @@
       "amount": 1500,
       "reason": "shop_purchase:acc-sprout",
       "createdAt": "2026-10-22T19:01:58.427Z"
+    },
+    {
+      "id": "cmvjwv6jq007jrb74pdac9494",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-22T19:05:22.406Z"
     }
   ]
 }
