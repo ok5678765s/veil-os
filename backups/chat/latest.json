@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:49:51.340Z",
+  "exportedAt": "2026-10-22T18:50:25.759Z",
   "counts": {
     "accounts": 92,
-    "messages": 488,
+    "messages": 486,
     "dms": 4
   },
   "accounts": [
@@ -7286,28 +7286,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-21T20:39:20.898Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmviu9ekk0055sjnqcll8d53e",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "I bought everything it cost 117,900 coins",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-22T01:04:40.965Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmviuaebc0059sjnqlft85pdy",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "thanks to trippling my money by gambling",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-22T01:05:27.289Z",
       "editedAt": null
     }
   ],
