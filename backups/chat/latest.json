@@ -1,4 +1,4 @@
-{
+ {
   "veil": "chat-backup",
   "version": 1,
   "exportedAt": "2026-10-22T19:02:17.162Z",
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 34615,
+      "coins": 346150,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": "sprout",
