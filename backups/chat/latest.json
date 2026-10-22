@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:11:07.920Z",
+  "exportedAt": "2026-10-22T19:11:42.427Z",
   "counts": {
     "accounts": 92,
     "messages": 487,
@@ -1005,7 +1005,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 31,
+      "coins": 62,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1929,7 +1929,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -9787,6 +9787,46 @@
       "amount": 2020,
       "reason": "coinflip_win",
       "createdAt": "2026-10-22T19:10:34.261Z"
+    },
+    {
+      "id": "cmvjx2mqc009zrb74f2koh1u4",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 31,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:11:09.973Z"
+    },
+    {
+      "id": "cmvjx2mqf00a1rb74k8sr9bzn",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 62,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:11:09.976Z"
+    },
+    {
+      "id": "cmvjx2saf00a3rb74mknmuil7",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 100,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:11:17.175Z"
+    },
+    {
+      "id": "cmvjx2saj00a5rb74168xv1ip",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 200,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:11:17.179Z"
+    },
+    {
+      "id": "cmvjx2yk000a7rb74ctljh0bo",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 200,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:11:25.297Z"
     }
   ]
 }
