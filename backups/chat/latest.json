@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:48:42.398Z",
+  "exportedAt": "2026-10-22T18:49:17.010Z",
   "counts": {
     "accounts": 92,
     "messages": 488,
@@ -39,10 +39,10 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 86779,
+      "coins": 53779,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
-      "pfpAccessory": "vrhalo",
+      "pfpAccessory": "snowglobe",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-10-22T18:45:03.344Z",
@@ -8798,6 +8798,102 @@
       "amount": 4600,
       "reason": "shop_purchase:acc-vrhalo",
       "createdAt": "2026-10-22T18:48:35.892Z"
+    },
+    {
+      "id": "cmvjw9tm0000xrb74p5ze9enh",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-stars",
+      "createdAt": "2026-10-22T18:48:45.865Z"
+    },
+    {
+      "id": "cmvjw9ujo000zrb74ttefi8en",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-seal",
+      "createdAt": "2026-10-22T18:48:47.077Z"
+    },
+    {
+      "id": "cmvjw9vfm0011rb74m6kquisf",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-potion",
+      "createdAt": "2026-10-22T18:48:48.226Z"
+    },
+    {
+      "id": "cmvjwa1eg0013rb74pj9oe12g",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2600,
+      "reason": "shop_purchase:acc-bunny",
+      "createdAt": "2026-10-22T18:48:55.961Z"
+    },
+    {
+      "id": "cmvjwa2kn0015rb749gm2b5uo",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-fur",
+      "createdAt": "2026-10-22T18:48:57.479Z"
+    },
+    {
+      "id": "cmvjwa3kj0017rb748pqkrlxz",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2400,
+      "reason": "shop_purchase:acc-visor",
+      "createdAt": "2026-10-22T18:48:58.772Z"
+    },
+    {
+      "id": "cmvjwa5090019rb74yv7s0pfc",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1800,
+      "reason": "shop_purchase:acc-clover",
+      "createdAt": "2026-10-22T18:49:00.634Z"
+    },
+    {
+      "id": "cmvjwa8qk001brb74qkijk72f",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-wolf",
+      "createdAt": "2026-10-22T18:49:05.468Z"
+    },
+    {
+      "id": "cmvjwa9hg001drb74xqesjx1k",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-lightning",
+      "createdAt": "2026-10-22T18:49:06.437Z"
+    },
+    {
+      "id": "cmvjwaad0001frb74ngi8r112",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-blackcat",
+      "createdAt": "2026-10-22T18:49:07.573Z"
+    },
+    {
+      "id": "cmvjwadh0001hrb744jxoaofy",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3200,
+      "reason": "shop_purchase:acc-orb",
+      "createdAt": "2026-10-22T18:49:11.604Z"
+    },
+    {
+      "id": "cmvjwaejf001jrb74hfjac53o",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3400,
+      "reason": "shop_purchase:acc-snowglobe",
+      "createdAt": "2026-10-22T18:49:12.987Z"
     }
   ]
 }
