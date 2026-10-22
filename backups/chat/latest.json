@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T00:54:20.359Z",
+  "exportedAt": "2026-10-22T00:54:54.913Z",
   "counts": {
     "accounts": 92,
     "messages": 482,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 90980,
+      "coins": 92485,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "dragon",
@@ -8172,6 +8172,54 @@
       "amount": 3010,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-22T00:54:16.088Z"
+    },
+    {
+      "id": "cmvitw8z90013sjnq60v0dtck",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T00:54:27.190Z"
+    },
+    {
+      "id": "cmvitw8zb0015sjnqexlpjgbw",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 7525,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T00:54:27.191Z"
+    },
+    {
+      "id": "cmvitwdzm0019sjnq7jybfp37",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T00:54:33.682Z"
+    },
+    {
+      "id": "cmvitwgdj001bsjnqsthpgffj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 6020,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T00:54:36.775Z"
+    },
+    {
+      "id": "cmvitwkrd001fsjnqlt4etc94",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T00:54:42.458Z"
+    },
+    {
+      "id": "cmvitwtqr001jsjnq49jqqu0a",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T00:54:54.099Z"
     }
   ]
 }
