@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T20:16:36.092Z",
+  "exportedAt": "2026-10-22T20:18:14.544Z",
   "counts": {
     "accounts": 92,
     "messages": 487,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 10500,
+      "coins": 20500,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -9947,6 +9947,22 @@
       "amount": 5600,
       "reason": "shop_refund:tag-legend",
       "createdAt": "2026-10-22T20:16:25.314Z"
+    },
+    {
+      "id": "cmvjzgq8k00bbrb74ivnjrgfo",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T20:18:06.933Z"
+    },
+    {
+      "id": "cmvjzgq8m00bdrb74oosxrxq7",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T20:18:06.935Z"
     }
   ]
 }
