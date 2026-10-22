@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T01:04:16.764Z",
+  "exportedAt": "2026-10-22T01:04:50.834Z",
   "counts": {
     "accounts": 92,
-    "messages": 482,
+    "messages": 483,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 193100,
+      "coins": 193101,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -7243,6 +7243,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-21T20:39:20.898Z",
       "editedAt": null
+    },
+    {
+      "id": "cmviu9ekk0055sjnqcll8d53e",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "I bought everything it cost 117,900 coins",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-22T01:04:40.965Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -8556,6 +8567,14 @@
       "amount": 3000,
       "reason": "shop_purchase:acc-lightning",
       "createdAt": "2026-10-22T01:04:09.763Z"
+    },
+    {
+      "id": "cmviu9eko0057sjnqiqixrdsr",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-22T01:04:40.969Z"
     }
   ]
 }
