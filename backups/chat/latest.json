@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T00:53:11.488Z",
+  "exportedAt": "2026-10-22T00:53:45.681Z",
   "counts": {
     "accounts": 92,
     "messages": 482,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 90000,
+      "coins": 97000,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "dragon",
@@ -8108,6 +8108,30 @@
       "amount": 40,
       "reason": "blackjack_win",
       "createdAt": "2026-10-22T00:52:39.034Z"
+    },
+    {
+      "id": "cmvitunk8000dsjnqaj3e3p0l",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3220,
+      "reason": "shop_refund:acc-vrhalo",
+      "createdAt": "2026-10-22T00:53:12.776Z"
+    },
+    {
+      "id": "cmvituq80000fsjnqhbdubarw",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2100,
+      "reason": "shop_refund:acc-wolf",
+      "createdAt": "2026-10-22T00:53:16.225Z"
+    },
+    {
+      "id": "cmvituu1l000hsjnqvwvkxeo2",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1680,
+      "reason": "shop_refund:acc-visor",
+      "createdAt": "2026-10-22T00:53:21.178Z"
     }
   ]
 }
