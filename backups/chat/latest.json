@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:07:10.707Z",
+  "exportedAt": "2026-10-22T19:08:16.241Z",
   "counts": {
     "accounts": 92,
     "messages": 483,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 68915,
+      "coins": 63915,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -1194,7 +1194,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 15,
+      "coins": 5015,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -9503,6 +9503,14 @@
       "amount": 10,
       "reason": "daily_reward",
       "createdAt": "2026-10-22T19:06:53.411Z"
+    },
+    {
+      "id": "cmvjwytwl007vrb744r84v6g1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 5000,
+      "reason": "gift",
+      "createdAt": "2026-10-22T19:08:12.646Z"
     }
   ]
 }
