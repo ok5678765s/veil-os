@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:48:07.661Z",
+  "exportedAt": "2026-10-22T18:48:42.398Z",
   "counts": {
     "accounts": 92,
     "messages": 488,
@@ -39,10 +39,10 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 97379,
+      "coins": 86779,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
-      "pfpAccessory": null,
+      "pfpAccessory": "vrhalo",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-10-22T18:45:03.344Z",
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 192636,
+      "coins": 192086,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -8742,6 +8742,62 @@
       "amount": 7110,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-22T18:47:55.667Z"
+    },
+    {
+      "id": "cmvjw93bk000jrb7479l2kxoj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 600,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-22T18:48:11.792Z"
+    },
+    {
+      "id": "cmvjw9bnc000lrb74ga26e7hm",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-l",
+      "createdAt": "2026-10-22T18:48:22.584Z"
+    },
+    {
+      "id": "cmvjw9e7c000nrb74urkwpj73",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-r",
+      "createdAt": "2026-10-22T18:48:25.896Z"
+    },
+    {
+      "id": "cmvjw9itb000prb74qtzjdkft",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-22T18:48:31.871Z"
+    },
+    {
+      "id": "cmvjw9ivn000rrb74e3ccihmg",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-10-22T18:48:31.955Z"
+    },
+    {
+      "id": "cmvjw9iwr000trb74797j7b75",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1600,
+      "reason": "shop_purchase:acc-fight",
+      "createdAt": "2026-10-22T18:48:31.995Z"
+    },
+    {
+      "id": "cmvjw9lx0000vrb7431q0htsn",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4600,
+      "reason": "shop_purchase:acc-vrhalo",
+      "createdAt": "2026-10-22T18:48:35.892Z"
     }
   ]
 }
