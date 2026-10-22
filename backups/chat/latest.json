@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:08:50.967Z",
+  "exportedAt": "2026-10-22T19:09:25.387Z",
   "counts": {
     "accounts": 92,
     "messages": 483,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 63915,
+      "coins": 58915,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -1005,7 +1005,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 31,
+      "coins": 6041,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1929,7 +1929,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 5121,
+      "coins": 10242,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -9543,6 +9543,46 @@
       "amount": 20,
       "reason": "coinflip_win",
       "createdAt": "2026-10-22T19:08:38.468Z"
+    },
+    {
+      "id": "cmvjwzv830085rb74sthcykul",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 5121,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:01.012Z"
+    },
+    {
+      "id": "cmvjwzv880087rb74dtmi26dp",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 10242,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:09:01.016Z"
+    },
+    {
+      "id": "cmvjx02gr0089rb7463lb9pwg",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 5000,
+      "reason": "gift",
+      "createdAt": "2026-10-22T19:09:10.395Z"
+    },
+    {
+      "id": "cmvjx0cig008brb74kgyi34m1",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:23.416Z"
+    },
+    {
+      "id": "cmvjx0cii008drb74ocjevz9x",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:09:23.419Z"
     }
   ]
 }
