@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:01:42.354Z",
+  "exportedAt": "2026-10-22T19:02:17.162Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -39,10 +39,10 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 42115,
+      "coins": 34615,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
-      "pfpAccessory": "dragon",
+      "pfpAccessory": "sprout",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-10-22T18:45:03.344Z",
@@ -9480,6 +9480,22 @@
       "amount": 5000,
       "reason": "shop_purchase:acc-dragon",
       "createdAt": "2026-10-22T19:01:36.027Z"
+    },
+    {
+      "id": "cmvjwqmd2006zrb74609wvtny",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6000,
+      "reason": "shop_purchase:acc-owlord",
+      "createdAt": "2026-10-22T19:01:49.622Z"
+    },
+    {
+      "id": "cmvjwqt5m0071rb74pnrqkk1k",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1500,
+      "reason": "shop_purchase:acc-sprout",
+      "createdAt": "2026-10-22T19:01:58.427Z"
     }
   ]
 }
