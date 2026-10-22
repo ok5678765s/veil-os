@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T19:10:33.484Z",
+  "exportedAt": "2026-10-22T19:11:07.920Z",
   "counts": {
     "accounts": 92,
-    "messages": 483,
+    "messages": 487,
     "dms": 4
   },
   "accounts": [
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 48915,
+      "coins": 73915,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 10000,
+      "coins": 0,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -1005,7 +1005,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 9071,
+      "coins": 31,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1194,13 +1194,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 10030,
+      "coins": 15,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
-      "lastRewardClaim": "2026-10-22T19:05:22.403Z",
+      "lastRewardClaim": "2026-10-20T18:53:31.338Z",
       "legacy": false,
       "createdAt": "2026-10-15T14:03:44.880Z",
       "passwordHash": "$2b$10$WU.nmuc3WHWYpE2qWDEspOzUasVRd/Zu2Kdupjw4bsaAsd6On9pwa"
@@ -1929,12 +1929,12 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 6142,
+      "coins": 100,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 1,
+      "dailyRewardStreak": 0,
       "lastRewardClaim": "2026-10-22T19:06:53.409Z",
       "legacy": false,
       "createdAt": "2026-10-21T19:04:07.679Z",
@@ -6156,6 +6156,50 @@
       "editedAt": null
     },
     {
+      "id": "cmvh1hu2n00w1onytkhjs9x3v",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.264Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hu6z00w5onyt4hxpo1np",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.419Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hug200w9onyter5c2gxx",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.747Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hunr00wdonytfcek1kwo",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:40.024Z",
+      "editedAt": null
+    },
+    {
       "id": "cmvh1husr00whonytyacegl97",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -9711,6 +9755,38 @@
       "amount": 1010,
       "reason": "coinflip_loss",
       "createdAt": "2026-10-22T19:10:26.436Z"
+    },
+    {
+      "id": "cmvjx1uyy009brb74yt7yslx3",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 6142,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:33.994Z"
+    },
+    {
+      "id": "cmvjx1uz0009drb7471rsb4v0",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 12284,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:10:33.996Z"
+    },
+    {
+      "id": "cmvjx1v6a009frb74i5vyw433",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:34.259Z"
+    },
+    {
+      "id": "cmvjx1v6c009hrb743za9uqdo",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:10:34.261Z"
     }
   ]
 }
