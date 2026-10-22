@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T01:01:25.150Z",
+  "exportedAt": "2026-10-22T01:01:59.305Z",
   "counts": {
     "accounts": 92,
     "messages": 482,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 299000,
-      "tag": "Gold Member",
-      "tagColor": "#d4a017",
-      "pfpAccessory": "dragon",
+      "coins": 276800,
+      "tag": "Pro User",
+      "tagColor": "#16a085",
+      "pfpAccessory": "earL",
       "pfpOverlay": null,
       "dailyRewardStreak": 3,
       "lastRewardClaim": "2026-10-21T12:37:38.186Z",
@@ -8308,6 +8308,46 @@
       "amount": 1000,
       "reason": "shop_purchase:tag-gold",
       "createdAt": "2026-10-22T01:01:24.950Z"
+    },
+    {
+      "id": "cmviu57ij003fsjnq6qdr64u4",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2500,
+      "reason": "shop_purchase:tag-vip",
+      "createdAt": "2026-10-22T01:01:25.195Z"
+    },
+    {
+      "id": "cmviu5njr003hsjnqp0fskkie",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 6000,
+      "reason": "shop_purchase:tag-elite",
+      "createdAt": "2026-10-22T01:01:45.976Z"
+    },
+    {
+      "id": "cmviu5od6003jsjnqnqjjlfut",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 8000,
+      "reason": "shop_purchase:tag-legend",
+      "createdAt": "2026-10-22T01:01:47.035Z"
+    },
+    {
+      "id": "cmviu5w6w003lsjnqv62mwb7y",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4500,
+      "reason": "shop_purchase:acc-puppy",
+      "createdAt": "2026-10-22T01:01:57.177Z"
+    },
+    {
+      "id": "cmviu5x1d003nsjnq0ri2rnxw",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1200,
+      "reason": "shop_purchase:acc-ear-l",
+      "createdAt": "2026-10-22T01:01:58.273Z"
     }
   ]
 }
