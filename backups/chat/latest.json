@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T18:52:10.417Z",
+  "exportedAt": "2026-10-22T18:52:44.938Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 82779,
+      "coins": 72779,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": "cyber",
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 192086,
+      "coins": 193086,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -9128,6 +9128,30 @@
       "amount": 1000,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-22T18:52:06.677Z"
+    },
+    {
+      "id": "cmvjwedix003xrb747sikrkg3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:52:18.298Z"
+    },
+    {
+      "id": "cmvjwekv2003zrb74byjgelfj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:52:27.807Z"
+    },
+    {
+      "id": "cmvjwevkn0041rb74830cric9",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:52:41.688Z"
     }
   ]
 }
