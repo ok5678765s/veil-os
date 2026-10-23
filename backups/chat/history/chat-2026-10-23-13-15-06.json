@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-22T00:56:03.084Z",
+  "exportedAt": "2026-10-23T13:15:06.688Z",
   "counts": {
     "accounts": 92,
-    "messages": 482,
+    "messages": 486,
     "dms": 4
   },
   "accounts": [
@@ -39,13 +39,13 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 100004,
-      "tag": "Mythic",
-      "tagColor": "#8e44ad",
-      "pfpAccessory": null,
+      "coins": 137231,
+      "tag": "VIP",
+      "tagColor": "#9b59b6",
+      "pfpAccessory": "earL",
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
-      "lastRewardClaim": "2026-10-20T12:24:28.059Z",
+      "lastRewardClaim": "2026-10-23T13:12:46.662Z",
       "legacy": false,
       "createdAt": "2026-09-10T16:00:00.000Z",
       "passwordHash": "$2b$10$zF9AIcjWC9no/Ht9cLY2LumVI/Th5b8MjVe4lxrir7HjElha5SWa."
@@ -144,13 +144,13 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 86465,
+      "coins": 1000000,
       "tag": "Pro User",
       "tagColor": "#16a085",
-      "pfpAccessory": "dragon",
+      "pfpAccessory": "lightning",
       "pfpOverlay": null,
-      "dailyRewardStreak": 3,
-      "lastRewardClaim": "2026-10-21T12:37:38.186Z",
+      "dailyRewardStreak": 5,
+      "lastRewardClaim": "2026-10-23T13:13:11.059Z",
       "legacy": false,
       "createdAt": "2026-09-25T22:22:50.829Z",
       "passwordHash": "$2b$10$wgZdfrvRghwA3SNf/R1ZwOe0EBEZiT/fJ9AA2lKmaOIX51V9DKNMC"
@@ -342,7 +342,7 @@
       "lastRewardClaim": null,
       "legacy": true,
       "createdAt": "2026-10-03T21:49:21.956Z",
-      "passwordHash": "!legacy:0e587f0b5e96411e935a7abb46058fbb"
+      "passwordHash": "!legacy:7a538af242344dafb9cecb2fbaa3c3f9"
     },
     {
       "id": "cmutz4ibx0000jkxecl2b490e",
@@ -361,9 +361,9 @@
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-10-21T20:40:05.403Z",
-      "legacy": false,
+      "legacy": true,
       "createdAt": "2026-10-04T15:26:36.237Z",
-      "passwordHash": "$2b$10$2fgj9Xiay7SRF.sP8I4hO.PQpPASb1d/XLeJWn3r1aIE8AB.aOd1G"
+      "passwordHash": "!legacy:5fa4679f04dc481d854556aab8b1596c"
     },
     {
       "id": "cmuwln2d80000n0xx8fu8raov",
@@ -1005,7 +1005,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 31,
+      "coins": 62,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -1194,13 +1194,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 15,
+      "coins": 65,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
-      "lastRewardClaim": "2026-10-20T18:53:31.338Z",
+      "lastRewardClaim": "2026-10-22T19:13:39.473Z",
       "legacy": false,
       "createdAt": "2026-10-15T14:03:44.880Z",
       "passwordHash": "$2b$10$WU.nmuc3WHWYpE2qWDEspOzUasVRd/Zu2Kdupjw4bsaAsd6On9pwa"
@@ -1572,7 +1572,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 105,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1929,13 +1929,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 0,
-      "lastRewardClaim": null,
+      "lastRewardClaim": "2026-10-22T19:06:53.409Z",
       "legacy": false,
       "createdAt": "2026-10-21T19:04:07.679Z",
       "passwordHash": "$2b$10$u3Fg0nLADZvr9WOjfUywaOb3ds9PgDfshqCH06hoItQ9Vd.ZcOmIS"
@@ -6156,6 +6156,50 @@
       "editedAt": null
     },
     {
+      "id": "cmvh1hu2n00w1onytkhjs9x3v",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.264Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hu6z00w5onyt4hxpo1np",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.419Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hug200w9onyter5c2gxx",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:39.747Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvh1hunr00wdonytfcek1kwo",
+      "channelId": "main",
+      "accountId": "cmvgxlsn30000u50vpttnf5vh",
+      "content": "a",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-20T18:51:40.024Z",
+      "editedAt": null
+    },
+    {
       "id": "cmvh1husr00whonytyacegl97",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7234,14 +7278,14 @@
       "editedAt": null
     },
     {
-      "id": "cmviks6ki0018sj5vqhutytiz",
+      "id": "cmvjwwnkc007prb743cwaauxw",
       "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "/api/gif-file/MFsqcBSoOKPbjtmvWz",
+      "accountId": "cmvihdq7z0008sj5vor2jccp3",
+      "content": "tuff",
       "replyTo": null,
       "replyToContent": null,
       "replyToUsername": null,
-      "createdAt": "2026-10-21T20:39:20.898Z",
+      "createdAt": "2026-10-22T19:06:31.116Z",
       "editedAt": null
     }
   ],
@@ -7297,22 +7341,22 @@
     {
       "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
       "friendId": "cmuhj14uk0000q5o4uzvh329c",
-      "createdAt": "2026-10-21T12:21:21.698Z"
+      "createdAt": "2026-10-23T12:59:56.139Z"
     },
     {
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
       "friendId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "createdAt": "2026-10-21T12:21:21.699Z"
+      "createdAt": "2026-10-23T12:59:56.141Z"
     },
     {
       "accountId": "cmvh1oilb019aonytzqy24vft",
       "friendId": "cmuhj14uk0000q5o4uzvh329c",
-      "createdAt": "2026-10-21T12:21:21.700Z"
+      "createdAt": "2026-10-23T12:59:56.143Z"
     },
     {
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
       "friendId": "cmvh1oilb019aonytzqy24vft",
-      "createdAt": "2026-10-21T12:21:21.701Z"
+      "createdAt": "2026-10-23T12:59:56.143Z"
     }
   ],
   "reactions": [],
@@ -8276,6 +8320,1838 @@
       "amount": 3010,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-22T00:55:52.038Z"
+    },
+    {
+      "id": "cmviu2ml20029sjnq81jh42c7",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-22T00:59:24.757Z"
+    },
+    {
+      "id": "cmviu3mqq002tsjnqom0mvn2u",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 100000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T01:00:11.619Z"
+    },
+    {
+      "id": "cmviu4f7s003bsjnqtpbpigaz",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 200000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T01:00:48.520Z"
+    },
+    {
+      "id": "cmviu57bp003dsjnqd5u5gnz7",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "shop_purchase:tag-gold",
+      "createdAt": "2026-10-22T01:01:24.950Z"
+    },
+    {
+      "id": "cmviu57ij003fsjnq6qdr64u4",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2500,
+      "reason": "shop_purchase:tag-vip",
+      "createdAt": "2026-10-22T01:01:25.195Z"
+    },
+    {
+      "id": "cmviu5njr003hsjnqp0fskkie",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 6000,
+      "reason": "shop_purchase:tag-elite",
+      "createdAt": "2026-10-22T01:01:45.976Z"
+    },
+    {
+      "id": "cmviu5od6003jsjnqnqjjlfut",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 8000,
+      "reason": "shop_purchase:tag-legend",
+      "createdAt": "2026-10-22T01:01:47.035Z"
+    },
+    {
+      "id": "cmviu5w6w003lsjnqv62mwb7y",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4500,
+      "reason": "shop_purchase:acc-puppy",
+      "createdAt": "2026-10-22T01:01:57.177Z"
+    },
+    {
+      "id": "cmviu5x1d003nsjnq0ri2rnxw",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1200,
+      "reason": "shop_purchase:acc-ear-l",
+      "createdAt": "2026-10-22T01:01:58.273Z"
+    },
+    {
+      "id": "cmviu5y5f003psjnqjnl8el3m",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-l",
+      "createdAt": "2026-10-22T01:01:59.716Z"
+    },
+    {
+      "id": "cmviu62f3003rsjnqlllqv5ep",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1200,
+      "reason": "shop_purchase:acc-ear-r",
+      "createdAt": "2026-10-22T01:02:05.248Z"
+    },
+    {
+      "id": "cmviu67wo003tsjnqzt7wzctd",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4600,
+      "reason": "shop_purchase:acc-vrhalo",
+      "createdAt": "2026-10-22T01:02:12.361Z"
+    },
+    {
+      "id": "cmviu6a4m003vsjnqbduo84vv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-r",
+      "createdAt": "2026-10-22T01:02:15.238Z"
+    },
+    {
+      "id": "cmviu6gch003xsjnq59ef1bgv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3500,
+      "reason": "shop_purchase:acc-catears",
+      "createdAt": "2026-10-22T01:02:23.297Z"
+    },
+    {
+      "id": "cmviu6gp9003zsjnq3o9zzl0r",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1800,
+      "reason": "shop_purchase:acc-clover",
+      "createdAt": "2026-10-22T01:02:23.757Z"
+    },
+    {
+      "id": "cmviu6n8w0041sjnqou8tu4pe",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-fur",
+      "createdAt": "2026-10-22T01:02:32.240Z"
+    },
+    {
+      "id": "cmviu6o150043sjnq192mznf6",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2600,
+      "reason": "shop_purchase:acc-bunny",
+      "createdAt": "2026-10-22T01:02:33.258Z"
+    },
+    {
+      "id": "cmviu6sf90045sjnqx8ib57h8",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-wolf",
+      "createdAt": "2026-10-22T01:02:38.949Z"
+    },
+    {
+      "id": "cmviu6t4y0047sjnqwzz3x3pe",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-blackcat",
+      "createdAt": "2026-10-22T01:02:39.875Z"
+    },
+    {
+      "id": "cmviu6vc00049sjnq838wbafv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-seal",
+      "createdAt": "2026-10-22T01:02:42.721Z"
+    },
+    {
+      "id": "cmviu73wy004bsjnq3wykl64k",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-potion",
+      "createdAt": "2026-10-22T01:02:53.842Z"
+    },
+    {
+      "id": "cmviu76z8004dsjnq0acw8376",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2400,
+      "reason": "shop_purchase:acc-visor",
+      "createdAt": "2026-10-22T01:02:57.813Z"
+    },
+    {
+      "id": "cmviu79cd004fsjnqwqqia6qn",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-stars",
+      "createdAt": "2026-10-22T01:03:00.878Z"
+    },
+    {
+      "id": "cmviu7qft004hsjnqolv06hep",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3200,
+      "reason": "shop_purchase:acc-orb",
+      "createdAt": "2026-10-22T01:03:23.034Z"
+    },
+    {
+      "id": "cmviu7t4v004jsjnqdgf3ngtl",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3200,
+      "reason": "shop_purchase:acc-owl",
+      "createdAt": "2026-10-22T01:03:26.527Z"
+    },
+    {
+      "id": "cmviu7wd3004lsjnqjdtsn2gx",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3400,
+      "reason": "shop_purchase:acc-snowglobe",
+      "createdAt": "2026-10-22T01:03:30.711Z"
+    },
+    {
+      "id": "cmviu7xuk004nsjnq07mnxl77",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3600,
+      "reason": "shop_purchase:acc-batring",
+      "createdAt": "2026-10-22T01:03:32.637Z"
+    },
+    {
+      "id": "cmviu80u2004psjnq3dopspx2",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3600,
+      "reason": "shop_purchase:acc-y2025",
+      "createdAt": "2026-10-22T01:03:36.506Z"
+    },
+    {
+      "id": "cmviu84cc004rsjnqufro70it",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3800,
+      "reason": "shop_purchase:acc-arch",
+      "createdAt": "2026-10-22T01:03:41.052Z"
+    },
+    {
+      "id": "cmviu8b2p004tsjnqsy2u4955",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3800,
+      "reason": "shop_purchase:acc-cyber",
+      "createdAt": "2026-10-22T01:03:49.778Z"
+    },
+    {
+      "id": "cmviu8cvb004vsjnqtkerbf5w",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4200,
+      "reason": "shop_purchase:acc-sword",
+      "createdAt": "2026-10-22T01:03:52.104Z"
+    },
+    {
+      "id": "cmviu8eo8004xsjnqyfl4ytqq",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4000,
+      "reason": "shop_purchase:acc-santa",
+      "createdAt": "2026-10-22T01:03:54.440Z"
+    },
+    {
+      "id": "cmviu8jn5004zsjnqa5nhwaly",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 6000,
+      "reason": "shop_purchase:acc-owlord",
+      "createdAt": "2026-10-22T01:04:00.881Z"
+    },
+    {
+      "id": "cmviu8mkf0051sjnq65jy8fs9",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4800,
+      "reason": "shop_purchase:acc-wreath",
+      "createdAt": "2026-10-22T01:04:04.671Z"
+    },
+    {
+      "id": "cmviu8qhu0053sjnqmwyqkkjj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-lightning",
+      "createdAt": "2026-10-22T01:04:09.763Z"
+    },
+    {
+      "id": "cmviu9eko0057sjnqiqixrdsr",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-22T01:04:40.969Z"
+    },
+    {
+      "id": "cmviuaebf005bsjnqmz2md699",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-22T01:05:27.291Z"
+    },
+    {
+      "id": "cmviuawjt005dsjnqbhvr2c7o",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-22T01:05:50.922Z"
+    },
+    {
+      "id": "cmviy06yj0001sjfxl524dssh",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-22T02:49:29.658Z"
+    },
+    {
+      "id": "cmvjin77s0005rbyetilgtd0c",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-22T12:27:15.400Z"
+    },
+    {
+      "id": "cmvjiogd00007rbye8ccb8mzd",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 16,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-22T12:28:13.908Z"
+    },
+    {
+      "id": "cmvjnr6ay000nrbeljcyd3nxl",
+      "fromId": "cmvgpi41l007rtiys9w6i4vkh",
+      "toId": "cmvgpi41l007rtiys9w6i4vkh",
+      "amount": 5,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-22T14:50:18.922Z"
+    },
+    {
+      "id": "cmvjw51wz000qrbel5dwod6ta",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-22T18:45:03.347Z"
+    },
+    {
+      "id": "cmvjw6mr30001rb74e3pwwh6y",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 410,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:46:17.008Z"
+    },
+    {
+      "id": "cmvjw6mre0003rb741nzf3lbn",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 820,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:46:17.018Z"
+    },
+    {
+      "id": "cmvjw8ere0007rb74kek1sx3r",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2710,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:47:39.963Z"
+    },
+    {
+      "id": "cmvjw8erg0009rb743kyygx90",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6775,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:47:39.965Z"
+    },
+    {
+      "id": "cmvjw8my0000brb74uom0wdmh",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 510,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:47:50.568Z"
+    },
+    {
+      "id": "cmvjw8pmy000drb74lw1en6cz",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:47:54.059Z"
+    },
+    {
+      "id": "cmvjw8qvm000hrb74s4w2dcl1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 7110,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:47:55.667Z"
+    },
+    {
+      "id": "cmvjw93bk000jrb7479l2kxoj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 600,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-22T18:48:11.792Z"
+    },
+    {
+      "id": "cmvjw9bnc000lrb74ga26e7hm",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-l",
+      "createdAt": "2026-10-22T18:48:22.584Z"
+    },
+    {
+      "id": "cmvjw9e7c000nrb74urkwpj73",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-r",
+      "createdAt": "2026-10-22T18:48:25.896Z"
+    },
+    {
+      "id": "cmvjw9itb000prb74qtzjdkft",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-22T18:48:31.871Z"
+    },
+    {
+      "id": "cmvjw9ivn000rrb74e3ccihmg",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-10-22T18:48:31.955Z"
+    },
+    {
+      "id": "cmvjw9iwr000trb74797j7b75",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1600,
+      "reason": "shop_purchase:acc-fight",
+      "createdAt": "2026-10-22T18:48:31.995Z"
+    },
+    {
+      "id": "cmvjw9lx0000vrb7431q0htsn",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4600,
+      "reason": "shop_purchase:acc-vrhalo",
+      "createdAt": "2026-10-22T18:48:35.892Z"
+    },
+    {
+      "id": "cmvjw9tm0000xrb74p5ze9enh",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-stars",
+      "createdAt": "2026-10-22T18:48:45.865Z"
+    },
+    {
+      "id": "cmvjw9ujo000zrb74ttefi8en",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-seal",
+      "createdAt": "2026-10-22T18:48:47.077Z"
+    },
+    {
+      "id": "cmvjw9vfm0011rb74m6kquisf",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-potion",
+      "createdAt": "2026-10-22T18:48:48.226Z"
+    },
+    {
+      "id": "cmvjwa1eg0013rb74pj9oe12g",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2600,
+      "reason": "shop_purchase:acc-bunny",
+      "createdAt": "2026-10-22T18:48:55.961Z"
+    },
+    {
+      "id": "cmvjwa2kn0015rb749gm2b5uo",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-fur",
+      "createdAt": "2026-10-22T18:48:57.479Z"
+    },
+    {
+      "id": "cmvjwa3kj0017rb748pqkrlxz",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2400,
+      "reason": "shop_purchase:acc-visor",
+      "createdAt": "2026-10-22T18:48:58.772Z"
+    },
+    {
+      "id": "cmvjwa5090019rb74yv7s0pfc",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1800,
+      "reason": "shop_purchase:acc-clover",
+      "createdAt": "2026-10-22T18:49:00.634Z"
+    },
+    {
+      "id": "cmvjwa8qk001brb74qkijk72f",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-wolf",
+      "createdAt": "2026-10-22T18:49:05.468Z"
+    },
+    {
+      "id": "cmvjwa9hg001drb74xqesjx1k",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-lightning",
+      "createdAt": "2026-10-22T18:49:06.437Z"
+    },
+    {
+      "id": "cmvjwaad0001frb74ngi8r112",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3000,
+      "reason": "shop_purchase:acc-blackcat",
+      "createdAt": "2026-10-22T18:49:07.573Z"
+    },
+    {
+      "id": "cmvjwadh0001hrb744jxoaofy",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3200,
+      "reason": "shop_purchase:acc-orb",
+      "createdAt": "2026-10-22T18:49:11.604Z"
+    },
+    {
+      "id": "cmvjwaejf001jrb74hfjac53o",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3400,
+      "reason": "shop_purchase:acc-snowglobe",
+      "createdAt": "2026-10-22T18:49:12.987Z"
+    },
+    {
+      "id": "cmvjwanyu001lrb74tbrr7jiz",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3600,
+      "reason": "shop_purchase:acc-batring",
+      "createdAt": "2026-10-22T18:49:25.207Z"
+    },
+    {
+      "id": "cmvjwaoh3001nrb74udbx5d0w",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3600,
+      "reason": "shop_purchase:acc-y2025",
+      "createdAt": "2026-10-22T18:49:25.863Z"
+    },
+    {
+      "id": "cmvjwapbs001prb747mugjh6g",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3800,
+      "reason": "shop_purchase:acc-cyber",
+      "createdAt": "2026-10-22T18:49:26.969Z"
+    },
+    {
+      "id": "cmvjwc0kx001trb74ycoiz4wn",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:50:28.209Z"
+    },
+    {
+      "id": "cmvjwc4oy001vrb74s8y9y72o",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:50:33.539Z"
+    },
+    {
+      "id": "cmvjwc8y2001zrb74nwjtx8oc",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:50:39.050Z"
+    },
+    {
+      "id": "cmvjwcch40021rb74cpkpddzt",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:50:43.625Z"
+    },
+    {
+      "id": "cmvjwchcs0025rb74nh6t1r9m",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:50:49.949Z"
+    },
+    {
+      "id": "cmvjwcutr0027rb748dhh77yi",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:51:07.407Z"
+    },
+    {
+      "id": "cmvjwcw4h002brb74e2i06yaw",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:51:09.089Z"
+    },
+    {
+      "id": "cmvjwcxov002drb747vz3tx52",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:51:11.120Z"
+    },
+    {
+      "id": "cmvjwcxoz002frb7469ch7ylb",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:51:11.123Z"
+    },
+    {
+      "id": "cmvjwd23z002jrb74bpv7ex7l",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:51:16.847Z"
+    },
+    {
+      "id": "cmvjwd3f6002lrb74q79gl9s3",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:51:18.546Z"
+    },
+    {
+      "id": "cmvjwd4ng002nrb74rzdbqi3v",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:51:20.140Z"
+    },
+    {
+      "id": "cmvjwd6by002prb74ms0dyqn1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:51:22.318Z"
+    },
+    {
+      "id": "cmvjwd6bz002rrb74vmrxht6w",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:51:22.319Z"
+    },
+    {
+      "id": "cmvjwd7rx002vrb74yow51z5a",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:51:24.189Z"
+    },
+    {
+      "id": "cmvjwdboa002xrb74gt329y1c",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:51:29.242Z"
+    },
+    {
+      "id": "cmvjwdboc002zrb7492eo45rc",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:51:29.244Z"
+    },
+    {
+      "id": "cmvjwdf280031rb740sjiwfcd",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:51:33.632Z"
+    },
+    {
+      "id": "cmvjwdhnq0033rb749uys842v",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:51:36.998Z"
+    },
+    {
+      "id": "cmvjwdhnt0035rb74vvjk295m",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:51:37.002Z"
+    },
+    {
+      "id": "cmvjwdife0039rb74ar5cawj1",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:51:37.994Z"
+    },
+    {
+      "id": "cmvjwdmhl003brb74ncy6xvks",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:51:43.257Z"
+    },
+    {
+      "id": "cmvjwdmhn003drb741iy7cdvr",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:51:43.259Z"
+    },
+    {
+      "id": "cmvjwdqs0003frb741x0izcdy",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:51:48.816Z"
+    },
+    {
+      "id": "cmvjwdt68003hrb74oh93vfee",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:51:51.920Z"
+    },
+    {
+      "id": "cmvjwdt6a003jrb741higy0il",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:51:51.922Z"
+    },
+    {
+      "id": "cmvjwdw9y003nrb74zysmaicn",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:51:55.942Z"
+    },
+    {
+      "id": "cmvjwdzio003prb74uwgp960k",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:52:00.144Z"
+    },
+    {
+      "id": "cmvjwe4k4003trb74vycq7u30",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:52:06.677Z"
+    },
+    {
+      "id": "cmvjwedix003xrb747sikrkg3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:52:18.298Z"
+    },
+    {
+      "id": "cmvjwekv2003zrb74byjgelfj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:52:27.807Z"
+    },
+    {
+      "id": "cmvjwevkn0041rb74830cric9",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:52:41.688Z"
+    },
+    {
+      "id": "cmvjwezln0043rb74tyf60bn9",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:52:46.907Z"
+    },
+    {
+      "id": "cmvjwf3h50045rb74gf9pwbwq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:52:51.930Z"
+    },
+    {
+      "id": "cmvjwf7mc0047rb74osyhygcq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:52:57.300Z"
+    },
+    {
+      "id": "cmvjwfc2b0049rb74idmc40k4",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:53:03.060Z"
+    },
+    {
+      "id": "cmvjwfc2d004brb74ybdxhsef",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:53:03.062Z"
+    },
+    {
+      "id": "cmvjwfh7w004drb74y17itbi1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:53:09.741Z"
+    },
+    {
+      "id": "cmvjwfn59004frb743o170kpu",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:53:17.422Z"
+    },
+    {
+      "id": "cmvjwfn5b004hrb74oh2dxkm1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:53:17.423Z"
+    },
+    {
+      "id": "cmvjwfr0f004jrb74amqgtbtz",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:53:22.431Z"
+    },
+    {
+      "id": "cmvjwfr0i004lrb74o5mpsit2",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:53:22.434Z"
+    },
+    {
+      "id": "cmvjwhbk0004nrb74wclwd0rp",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 25,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-22T18:54:35.712Z"
+    },
+    {
+      "id": "cmvjwhh4g004prb74xmt16f85",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 25,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-22T18:54:42.928Z"
+    },
+    {
+      "id": "cmvjwir9k004rrb74ixh5ib4q",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:55:42.728Z"
+    },
+    {
+      "id": "cmvjwj48x004trb74768o6xug",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:55:59.553Z"
+    },
+    {
+      "id": "cmvjwj48z004vrb74i2vzifak",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:55:59.555Z"
+    },
+    {
+      "id": "cmvjwk58h004xrb74vrveeprt",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:56:47.490Z"
+    },
+    {
+      "id": "cmvjwk58k004zrb74zyiluhe4",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:56:47.492Z"
+    },
+    {
+      "id": "cmvjwkqrn0051rb74t88zvkp6",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:57:15.396Z"
+    },
+    {
+      "id": "cmvjwkqrp0053rb74ao543ljf",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T18:57:15.398Z"
+    },
+    {
+      "id": "cmvjwkxfd0055rb74j2d9ofud",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:57:24.026Z"
+    },
+    {
+      "id": "cmvjwl2x80057rb74svfq1us7",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 43086,
+      "reason": "gift",
+      "createdAt": "2026-10-22T18:57:31.149Z"
+    },
+    {
+      "id": "cmvjwl35w0059rb74gmz2febt",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T18:57:31.460Z"
+    },
+    {
+      "id": "cmvjwmibt005brb744f02o5nq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1000,
+      "reason": "shop_purchase:tag-gold",
+      "createdAt": "2026-10-22T18:58:37.769Z"
+    },
+    {
+      "id": "cmvjwmipn005drb74t774lw97",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4000,
+      "reason": "shop_purchase:tag-pro",
+      "createdAt": "2026-10-22T18:58:38.268Z"
+    },
+    {
+      "id": "cmvjwml2w005frb74sanhbir6",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6000,
+      "reason": "shop_purchase:tag-elite",
+      "createdAt": "2026-10-22T18:58:41.336Z"
+    },
+    {
+      "id": "cmvjwn8qk005jrb747ry9m6vs",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 150000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:59:11.996Z"
+    },
+    {
+      "id": "cmvjwnke3005lrb74ap9ephau",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 300000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T18:59:27.099Z"
+    },
+    {
+      "id": "cmvjwnvj4005prb748hx2xotm",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 150000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T18:59:41.537Z"
+    },
+    {
+      "id": "cmvjwonzf005rrb74mctde4eq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 8000,
+      "reason": "shop_purchase:tag-legend",
+      "createdAt": "2026-10-22T19:00:18.411Z"
+    },
+    {
+      "id": "cmvjwopka005trb74y577gf5w",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 2500,
+      "reason": "shop_purchase:tag-vip",
+      "createdAt": "2026-10-22T19:00:20.459Z"
+    },
+    {
+      "id": "cmvjwov8d005vrb74x8qb9drp",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3500,
+      "reason": "shop_purchase:acc-catears",
+      "createdAt": "2026-10-22T19:00:27.806Z"
+    },
+    {
+      "id": "cmvjwowab005xrb74ipydmr10",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1200,
+      "reason": "shop_purchase:acc-ear-r",
+      "createdAt": "2026-10-22T19:00:29.171Z"
+    },
+    {
+      "id": "cmvjwoyp6005zrb74uocezmca",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4500,
+      "reason": "shop_purchase:acc-puppy",
+      "createdAt": "2026-10-22T19:00:32.298Z"
+    },
+    {
+      "id": "cmvjwozmy0063rb74mc0vsn46",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 150000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T19:00:33.514Z"
+    },
+    {
+      "id": "cmvjwp0av0065rb747kar8dnn",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1200,
+      "reason": "shop_purchase:acc-ear-l",
+      "createdAt": "2026-10-22T19:00:34.375Z"
+    },
+    {
+      "id": "cmvjwptsr006nrb743031dhv0",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "shop_purchase:tag-mythic",
+      "createdAt": "2026-10-22T19:01:12.604Z"
+    },
+    {
+      "id": "cmvjwq3nc006prb74qvhdj6ca",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 3800,
+      "reason": "shop_purchase:acc-arch",
+      "createdAt": "2026-10-22T19:01:25.368Z"
+    },
+    {
+      "id": "cmvjwq4pn006rrb74j4zuw3bw",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4000,
+      "reason": "shop_purchase:acc-santa",
+      "createdAt": "2026-10-22T19:01:26.747Z"
+    },
+    {
+      "id": "cmvjwq60l006trb74wqf8dkb1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4200,
+      "reason": "shop_purchase:acc-sword",
+      "createdAt": "2026-10-22T19:01:28.437Z"
+    },
+    {
+      "id": "cmvjwqavj006vrb74fl0kd6gr",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 4800,
+      "reason": "shop_purchase:acc-wreath",
+      "createdAt": "2026-10-22T19:01:34.736Z"
+    },
+    {
+      "id": "cmvjwqbve006xrb74jwmj331d",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 5000,
+      "reason": "shop_purchase:acc-dragon",
+      "createdAt": "2026-10-22T19:01:36.027Z"
+    },
+    {
+      "id": "cmvjwqmd2006zrb74609wvtny",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6000,
+      "reason": "shop_purchase:acc-owlord",
+      "createdAt": "2026-10-22T19:01:49.622Z"
+    },
+    {
+      "id": "cmvjwqt5m0071rb74pnrqkk1k",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1500,
+      "reason": "shop_purchase:acc-sprout",
+      "createdAt": "2026-10-22T19:01:58.427Z"
+    },
+    {
+      "id": "cmvjwv6jq007jrb74pdac9494",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-22T19:05:22.406Z"
+    },
+    {
+      "id": "cmvjww01q007lrb74mriz4ryg",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:06:00.638Z"
+    },
+    {
+      "id": "cmvjwwhxm007nrb74se16bifh",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 5000,
+      "reason": "gift",
+      "createdAt": "2026-10-22T19:06:23.818Z"
+    },
+    {
+      "id": "cmvjwwnkf007rrb7474qj5sv4",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-22T19:06:31.119Z"
+    },
+    {
+      "id": "cmvjwx4rm007trb7437mo7wwm",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-22T19:06:53.411Z"
+    },
+    {
+      "id": "cmvjwytwl007vrb744r84v6g1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 5000,
+      "reason": "gift",
+      "createdAt": "2026-10-22T19:08:12.646Z"
+    },
+    {
+      "id": "cmvjwzdlu007xrb74kojh61hq",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 5015,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:08:38.178Z"
+    },
+    {
+      "id": "cmvjwzdm0007zrb74z5j4ky5j",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10030,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:08:38.185Z"
+    },
+    {
+      "id": "cmvjwzdt30081rb745s8mhejf",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 10,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:08:38.439Z"
+    },
+    {
+      "id": "cmvjwzdtw0083rb74e66bzoli",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 20,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:08:38.468Z"
+    },
+    {
+      "id": "cmvjwzv830085rb74sthcykul",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 5121,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:01.012Z"
+    },
+    {
+      "id": "cmvjwzv880087rb74dtmi26dp",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 10242,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:09:01.016Z"
+    },
+    {
+      "id": "cmvjx02gr0089rb7463lb9pwg",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 5000,
+      "reason": "gift",
+      "createdAt": "2026-10-22T19:09:10.395Z"
+    },
+    {
+      "id": "cmvjx0cig008brb74kgyi34m1",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:23.416Z"
+    },
+    {
+      "id": "cmvjx0cii008drb74ocjevz9x",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:09:23.419Z"
+    },
+    {
+      "id": "cmvjx0i1x008frb74s02w837b",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 1000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:30.598Z"
+    },
+    {
+      "id": "cmvjx0i20008hrb7407e9pgvp",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 2000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:09:30.600Z"
+    },
+    {
+      "id": "cmvjx0ifg008jrb74k0dizvrr",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:31.085Z"
+    },
+    {
+      "id": "cmvjx0ifi008lrb74p7jmvvjv",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:09:31.086Z"
+    },
+    {
+      "id": "cmvjx0ok4008nrb74eormrel5",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:39.028Z"
+    },
+    {
+      "id": "cmvjx0ok6008prb74pbfp4kwx",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:09:39.030Z"
+    },
+    {
+      "id": "cmvjx0xdi008rrb74irpf3289",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:50.455Z"
+    },
+    {
+      "id": "cmvjx13lv008trb74av13uan5",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:09:58.531Z"
+    },
+    {
+      "id": "cmvjx13me008vrb74q6eolf8m",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:09:58.551Z"
+    },
+    {
+      "id": "cmvjx13n7008xrb741ykty74k",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "gift",
+      "createdAt": "2026-10-22T19:09:58.579Z"
+    },
+    {
+      "id": "cmvjx18me008zrb74pxk0b5x7",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:05.031Z"
+    },
+    {
+      "id": "cmvjx18ml0091rb74z2sgp44m",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:10:05.038Z"
+    },
+    {
+      "id": "cmvjx1b5b0093rb74r48cancv",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 5100,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:08.303Z"
+    },
+    {
+      "id": "cmvjx1dwy0095rb748rkn3zb0",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:11.890Z"
+    },
+    {
+      "id": "cmvjx1dwz0097rb74zgqk2rs7",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:10:11.892Z"
+    },
+    {
+      "id": "cmvjx1p500099rb74l2z6zee1",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:26.436Z"
+    },
+    {
+      "id": "cmvjx1uyy009brb74yt7yslx3",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 6142,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:33.994Z"
+    },
+    {
+      "id": "cmvjx1uz0009drb7471rsb4v0",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 12284,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:10:33.996Z"
+    },
+    {
+      "id": "cmvjx1v6a009frb74i5vyw433",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 1010,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:10:34.259Z"
+    },
+    {
+      "id": "cmvjx1v6c009hrb743za9uqdo",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 2020,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:10:34.261Z"
+    },
+    {
+      "id": "cmvjx2mqc009zrb74f2koh1u4",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 31,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:11:09.973Z"
+    },
+    {
+      "id": "cmvjx2mqf00a1rb74k8sr9bzn",
+      "fromId": "cmv7dpge00008r72agw1f5ot6",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 62,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:11:09.976Z"
+    },
+    {
+      "id": "cmvjx2saf00a3rb74mknmuil7",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 100,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:11:17.175Z"
+    },
+    {
+      "id": "cmvjx2saj00a5rb74168xv1ip",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 200,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:11:17.179Z"
+    },
+    {
+      "id": "cmvjx2yk000a7rb74ctljh0bo",
+      "fromId": "cmvihdq7z0008sj5vor2jccp3",
+      "toId": "cmvihdq7z0008sj5vor2jccp3",
+      "amount": 200,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:11:25.297Z"
+    },
+    {
+      "id": "cmvjx3hg200a9rb74ejfk7prs",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 9910,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:11:49.778Z"
+    },
+    {
+      "id": "cmvjx3hg500abrb74ohqnanxt",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 19820,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:11:49.781Z"
+    },
+    {
+      "id": "cmvjx3soq00afrb74804wlu8q",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T19:12:04.346Z"
+    },
+    {
+      "id": "cmvjx41zr00ahrb74qkyh0t62",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 20,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T19:12:16.407Z"
+    },
+    {
+      "id": "cmvjx54we00alrb74w1uid7j7",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T19:13:06.830Z"
+    },
+    {
+      "id": "cmvjx5fed00anrb74j8mlv5un",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 20,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T19:13:20.437Z"
+    },
+    {
+      "id": "cmvjx5u3700aprb74rnt27stf",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-22T19:13:39.475Z"
+    },
+    {
+      "id": "cmvjx6gg900arrb744ozssh26",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 45,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T19:14:08.458Z"
+    },
+    {
+      "id": "cmvjx6ggh00atrb741qtlh8xe",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 90,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T19:14:08.466Z"
+    },
+    {
+      "id": "cmvjx6udz00axrb7422b91qbn",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 60,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T19:14:26.519Z"
+    },
+    {
+      "id": "cmvjx6zes00azrb74wqojeh40",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 120,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T19:14:33.028Z"
+    },
+    {
+      "id": "cmvjx74j300b3rb74weqb8xde",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 85,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T19:14:39.663Z"
+    },
+    {
+      "id": "cmvjzeg0z00b5rb74bbsn48za",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 700,
+      "reason": "shop_refund:tag-gold",
+      "createdAt": "2026-10-22T20:16:20.387Z"
+    },
+    {
+      "id": "cmvjzej5o00b7rb74mm8pbdad",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4200,
+      "reason": "shop_refund:tag-elite",
+      "createdAt": "2026-10-22T20:16:24.445Z"
+    },
+    {
+      "id": "cmvjzejtt00b9rb744uruy4lo",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5600,
+      "reason": "shop_refund:tag-legend",
+      "createdAt": "2026-10-22T20:16:25.314Z"
+    },
+    {
+      "id": "cmvjzgq8k00bbrb74ivnjrgfo",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-22T20:18:06.933Z"
+    },
+    {
+      "id": "cmvjzgq8m00bdrb74oosxrxq7",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-22T20:18:06.935Z"
+    },
+    {
+      "id": "cmvjzh8dx00bhrb74h8rukkq5",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 20500,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T20:18:30.453Z"
+    },
+    {
+      "id": "cmvjztys500cfrb74pxity47p",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1540,
+      "reason": "shop_refund:acc-contr-l",
+      "createdAt": "2026-10-22T20:28:24.533Z"
+    },
+    {
+      "id": "cmvjztzt200chrb74qd2frvd3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1540,
+      "reason": "shop_refund:acc-contr-r",
+      "createdAt": "2026-10-22T20:28:25.863Z"
+    },
+    {
+      "id": "cmvjzu24g00cjrb74zfk3vb28",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1050,
+      "reason": "shop_refund:acc-sprout",
+      "createdAt": "2026-10-22T20:28:28.864Z"
+    },
+    {
+      "id": "cmvjzu32f00clrb74drvqymk8",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3220,
+      "reason": "shop_refund:acc-vrhalo",
+      "createdAt": "2026-10-22T20:28:30.087Z"
+    },
+    {
+      "id": "cmvjzu6n600cnrb74dfn1y3oa",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1680,
+      "reason": "shop_refund:acc-visor",
+      "createdAt": "2026-10-22T20:28:34.722Z"
+    },
+    {
+      "id": "cmvjzu90800cprb742qglv3u3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1959,
+      "reason": "shop_refund:acc-potion",
+      "createdAt": "2026-10-22T20:28:37.784Z"
+    },
+    {
+      "id": "cmvjzu9sp00crrb74d7cpm0j2",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1959,
+      "reason": "shop_refund:acc-stars",
+      "createdAt": "2026-10-22T20:28:38.810Z"
+    },
+    {
+      "id": "cmvjzun4z00cvrb74tdyod2wf",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 12948,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T20:28:56.100Z"
+    },
+    {
+      "id": "cmvjzvoyk0001rbmo7y8ws7kq",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 250000,
+      "reason": "staff_grant",
+      "createdAt": "2026-10-22T20:29:45.117Z"
+    },
+    {
+      "id": "cmvk02h7k000jrbzlretw6s5u",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 250000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T20:35:01.665Z"
+    },
+    {
+      "id": "cmvk097mg000jrbwgymyg52cf",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 250000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T20:40:15.832Z"
+    },
+    {
+      "id": "cmvk0ar5y001jrbwg5bhtz6rs",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 250000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T20:41:27.815Z"
+    },
+    {
+      "id": "cmvk0axrq001lrbwgkheepl9n",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 500000,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T20:41:36.374Z"
+    },
+    {
+      "id": "cmvk0icap001prbwg0g7kgpfc",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 500000,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T20:47:21.793Z"
+    },
+    {
+      "id": "cmvk0krnm002prbwgetng7xd5",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 521763,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-22T20:49:15.011Z"
+    },
+    {
+      "id": "cmvk0kv0r002rrbwg6f5iioiv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1043526,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-22T20:49:19.372Z"
+    },
+    {
+      "id": "cmvkzplc70001slytgjoqbd9p",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 12,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-23T13:12:46.664Z"
+    },
+    {
+      "id": "cmvkzq45w0003slytekil4ufz",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 18,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-23T13:13:11.061Z"
+    },
+    {
+      "id": "cmvkzr3cu0005slyt5mk2h4w6",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-23T13:13:56.671Z"
+    },
+    {
+      "id": "cmvkzr3d40007slytephxx8g4",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-23T13:13:56.680Z"
+    },
+    {
+      "id": "cmvkzr9qm0009slytssful6eo",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 43544,
+      "reason": "gift",
+      "createdAt": "2026-10-23T13:14:04.942Z"
+    },
+    {
+      "id": "cmvkzrofi000bslytvfzvauqi",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-23T13:14:23.982Z"
+    },
+    {
+      "id": "cmvkzrsbm000dslyt7cf1o92b",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-23T13:14:29.026Z"
+    },
+    {
+      "id": "cmvkzrwej000fslyte9hzb7sl",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-23T13:14:34.316Z"
     }
   ]
 }

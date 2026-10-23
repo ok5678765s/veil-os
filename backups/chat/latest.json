@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T13:14:32.871Z",
+  "exportedAt": "2026-10-23T13:15:06.688Z",
   "counts": {
     "accounts": 92,
-    "messages": 487,
+    "messages": 486,
     "dms": 4
   },
   "accounts": [
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 137281,
+      "coins": 137231,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -7278,17 +7278,6 @@
       "editedAt": null
     },
     {
-      "id": "cmviks6ki0018sj5vqhutytiz",
-      "channelId": "main",
-      "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "/api/gif-file/MFsqcBSoOKPbjtmvWz",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-21T20:39:20.898Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvjwwnkc007prb743cwaauxw",
       "channelId": "main",
       "accountId": "cmvihdq7z0008sj5vor2jccp3",
@@ -10155,6 +10144,14 @@
       "amount": 50,
       "reason": "slots_loss",
       "createdAt": "2026-10-23T13:14:29.026Z"
+    },
+    {
+      "id": "cmvkzrwej000fslyte9hzb7sl",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-23T13:14:34.316Z"
     }
   ]
 }
