@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T13:27:22.000Z",
+  "exportedAt": "2026-10-23T13:40:14.310Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 2000000,
+      "coins": 1900000,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -1194,7 +1194,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 9,
+      "coins": 100009,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -10256,6 +10256,14 @@
       "amount": 1000000,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-23T13:27:11.930Z"
+    },
+    {
+      "id": "cmvl0o97j0026slytk9tecyeb",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 100000,
+      "reason": "gift",
+      "createdAt": "2026-10-23T13:39:43.903Z"
     }
   ]
 }
