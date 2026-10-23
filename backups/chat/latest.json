@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T16:24:31.583Z",
+  "exportedAt": "2026-10-23T16:25:37.437Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -1194,10 +1194,10 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 412036,
+      "coins": 388436,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": null,
+      "pfpAccessory": "arch",
       "pfpOverlay": null,
       "dailyRewardStreak": 2,
       "lastRewardClaim": "2026-10-23T13:19:12.477Z",
@@ -10416,6 +10416,46 @@
       "amount": 362036,
       "reason": "blackjack_win",
       "createdAt": "2026-10-23T16:24:10.554Z"
+    },
+    {
+      "id": "cmvl6l158000fsl1kl93n9a0p",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 6000,
+      "reason": "shop_purchase:acc-owlord",
+      "createdAt": "2026-10-23T16:25:11.180Z"
+    },
+    {
+      "id": "cmvl6l1y0000hsl1kbumwudle",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 5000,
+      "reason": "shop_purchase:acc-dragon",
+      "createdAt": "2026-10-23T16:25:12.216Z"
+    },
+    {
+      "id": "cmvl6l2qv000jsl1ko4ghvzxa",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 4800,
+      "reason": "shop_purchase:acc-wreath",
+      "createdAt": "2026-10-23T16:25:13.255Z"
+    },
+    {
+      "id": "cmvl6lbbp000lsl1kzfomhqyr",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 4000,
+      "reason": "shop_purchase:acc-santa",
+      "createdAt": "2026-10-23T16:25:24.373Z"
+    },
+    {
+      "id": "cmvl6lbz4000nsl1kbod78ho6",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 3800,
+      "reason": "shop_purchase:acc-arch",
+      "createdAt": "2026-10-23T16:25:25.216Z"
     }
   ]
 }
