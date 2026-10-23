@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T13:42:21.288Z",
+  "exportedAt": "2026-10-23T13:43:56.968Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1800000,
+      "coins": 1785900,
       "tag": "Pro User",
       "tagColor": "#16a085",
-      "pfpAccessory": "lightning",
+      "pfpAccessory": "vrhalo",
       "pfpOverlay": null,
       "dailyRewardStreak": 5,
       "lastRewardClaim": "2026-10-23T13:13:11.059Z",
@@ -10272,6 +10272,46 @@
       "amount": 100000,
       "reason": "gift",
       "createdAt": "2026-10-23T13:41:56.544Z"
+    },
+    {
+      "id": "cmvl0tc9q002aslytlv0micw4",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-stars",
+      "createdAt": "2026-10-23T13:43:41.151Z"
+    },
+    {
+      "id": "cmvl0tdxm002cslytmezzdief",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_purchase:acc-potion",
+      "createdAt": "2026-10-23T13:43:43.306Z"
+    },
+    {
+      "id": "cmvl0tev8002eslyt20fclli3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2400,
+      "reason": "shop_purchase:acc-visor",
+      "createdAt": "2026-10-23T13:43:44.516Z"
+    },
+    {
+      "id": "cmvl0tgbb002gslytkx5dfl2c",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1500,
+      "reason": "shop_purchase:acc-sprout",
+      "createdAt": "2026-10-23T13:43:46.391Z"
+    },
+    {
+      "id": "cmvl0thev002islytg4dq5zmn",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4600,
+      "reason": "shop_purchase:acc-vrhalo",
+      "createdAt": "2026-10-23T13:43:47.816Z"
     }
   ]
 }
