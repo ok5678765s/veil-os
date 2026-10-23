@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T16:31:31.604Z",
+  "exportedAt": "2026-10-23T16:33:09.352Z",
   "counts": {
     "accounts": 93,
-    "messages": 486,
+    "messages": 483,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1716900,
+      "coins": 1716901,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -6177,50 +6177,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hu2n00w1onytkhjs9x3v",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:39.264Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hu6z00w5onyt4hxpo1np",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:39.419Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hug200w9onyter5c2gxx",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:39.747Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hunr00wdonytfcek1kwo",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.024Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1husr00whonytyacegl97",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7307,6 +7263,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-22T19:06:31.116Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvl6uvss000ysl1kd48s0mks",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "/api/chat-file?id=cyx7jAmLxgiWZQUpohhXUQ&n=index%20(8).html&s=13008&t=text%2Fhtml",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-23T16:32:50.812Z",
       "editedAt": null
     }
   ],
@@ -10509,6 +10476,14 @@
       "amount": 800,
       "reason": "roulette_win",
       "createdAt": "2026-10-23T16:31:09.767Z"
+    },
+    {
+      "id": "cmvl6uvsx0010sl1kolc14n81",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-23T16:32:50.817Z"
     }
   ]
 }
