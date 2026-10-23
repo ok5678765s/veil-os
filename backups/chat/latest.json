@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T13:15:41.330Z",
+  "exportedAt": "2026-10-23T13:19:20.254Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -1194,13 +1194,13 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 65,
+      "coins": 77,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 1,
-      "lastRewardClaim": "2026-10-22T19:13:39.473Z",
+      "dailyRewardStreak": 2,
+      "lastRewardClaim": "2026-10-23T13:19:12.477Z",
       "legacy": false,
       "createdAt": "2026-10-15T14:03:44.880Z",
       "passwordHash": "$2b$10$WU.nmuc3WHWYpE2qWDEspOzUasVRd/Zu2Kdupjw4bsaAsd6On9pwa"
@@ -10176,6 +10176,14 @@
       "amount": 144831,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-23T13:15:37.464Z"
+    },
+    {
+      "id": "cmvkzxv1b000sslyt68wzdweg",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 12,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-23T13:19:12.479Z"
     }
   ]
 }
