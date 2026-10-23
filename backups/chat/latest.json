@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T16:23:22.298Z",
+  "exportedAt": "2026-10-23T16:23:57.130Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -1194,7 +1194,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 181018,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -10392,6 +10392,14 @@
       "amount": 181018,
       "reason": "blackjack_win",
       "createdAt": "2026-10-23T16:23:16.959Z"
+    },
+    {
+      "id": "cmvl6jf4c0009sl1kcm3lhzvh",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 181018,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-23T16:23:55.980Z"
     }
   ]
 }
