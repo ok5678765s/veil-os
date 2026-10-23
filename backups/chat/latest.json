@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T13:44:31.363Z",
+  "exportedAt": "2026-10-23T14:57:30.596Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -1572,7 +1572,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 105,
+      "coins": 108,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -10352,6 +10352,14 @@
       "amount": 1000,
       "reason": "shop_purchase:tag-gold",
       "createdAt": "2026-10-23T13:44:09.985Z"
+    },
+    {
+      "id": "cmvl3g0tt0008slbqnr14icem",
+      "fromId": "cmvgpi41l007rtiys9w6i4vkh",
+      "toId": "cmvgpi41l007rtiys9w6i4vkh",
+      "amount": 3,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-23T14:57:18.641Z"
     }
   ]
 }
