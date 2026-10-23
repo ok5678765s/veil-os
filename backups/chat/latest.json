@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T12:24:02.923Z",
+  "exportedAt": "2026-10-23T12:24:37.232Z",
   "counts": {
     "accounts": 92,
     "messages": 487,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 93837,
+      "coins": 123837,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -10123,6 +10123,54 @@
       "amount": 20000,
       "reason": "coinflip_win",
       "createdAt": "2026-10-23T12:23:53.315Z"
+    },
+    {
+      "id": "cmvkxz1co0007omytjbzqb4gq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-23T12:24:08.088Z"
+    },
+    {
+      "id": "cmvkxz1cq0009omytl85x7wuf",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-23T12:24:08.090Z"
+    },
+    {
+      "id": "cmvkxzfdl000bomyto8mqojii",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-23T12:24:26.265Z"
+    },
+    {
+      "id": "cmvkxzfdn000domyt3s2qyzv0",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-23T12:24:26.267Z"
+    },
+    {
+      "id": "cmvkxzk1b000fomytvthxukne",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-23T12:24:32.303Z"
+    },
+    {
+      "id": "cmvkxzk1g000homyta10zea5t",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 20000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-23T12:24:32.308Z"
     }
   ]
 }
