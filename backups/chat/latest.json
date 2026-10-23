@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T12:39:54.890Z",
+  "exportedAt": "2026-10-23T12:42:02.195Z",
   "counts": {
     "accounts": 92,
-    "messages": 486,
+    "messages": 485,
     "dms": 4
   },
   "accounts": [
@@ -7138,12 +7138,12 @@
       "id": "cmvh1iy0c016bonyt9gqs8und",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "Canadian i snet to you coins no spam",
+      "content": "Canadian i sent to you coins no spam",
       "replyTo": null,
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:52:31.020Z",
-      "editedAt": "2026-10-20T18:56:11.408Z"
+      "editedAt": "2026-10-23T12:40:35.343Z"
     },
     {
       "id": "cmvh1mykk018fonytg1bizydk",
@@ -7187,17 +7187,6 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-20T18:58:46.660Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1r18z000ronw7j5iabj6y",
-      "channelId": "main",
-      "accountId": "cmvh1oilb019aonytzqy24vft",
-      "content": "l",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:58:48.468Z",
       "editedAt": null
     },
     {
