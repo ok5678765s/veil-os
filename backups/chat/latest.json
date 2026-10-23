@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T13:40:14.310Z",
+  "exportedAt": "2026-10-23T13:42:21.288Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1900000,
+      "coins": 1800000,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -1005,7 +1005,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 62,
+      "coins": 100062,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -10264,6 +10264,14 @@
       "amount": 100000,
       "reason": "gift",
       "createdAt": "2026-10-23T13:39:43.903Z"
+    },
+    {
+      "id": "cmvl0r3jz0028slyte2ib15dq",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmv7dpge00008r72agw1f5ot6",
+      "amount": 100000,
+      "reason": "gift",
+      "createdAt": "2026-10-23T13:41:56.544Z"
     }
   ]
 }
