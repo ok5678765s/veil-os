@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T12:42:36.526Z",
+  "exportedAt": "2026-10-23T12:43:11.235Z",
   "counts": {
     "accounts": 92,
     "messages": 485,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1046544,
+      "coins": 1048144,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -10333,6 +10333,46 @@
       "amount": 2000,
       "reason": "coinflip_win",
       "createdAt": "2026-10-23T12:42:30.300Z"
+    },
+    {
+      "id": "cmvkymt0y0027omyty3tmnpa1",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-23T12:42:37.043Z"
+    },
+    {
+      "id": "cmvkymt100029omytotlrzq92",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-23T12:42:37.044Z"
+    },
+    {
+      "id": "cmvkymzhh002bomyt7gjl1oo4",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "coinflip_loss",
+      "createdAt": "2026-10-23T12:42:45.413Z"
+    },
+    {
+      "id": "cmvkymzhj002domytty7j465h",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2000,
+      "reason": "coinflip_win",
+      "createdAt": "2026-10-23T12:42:45.415Z"
+    },
+    {
+      "id": "cmvkynfgw002fomytwhso06un",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 400,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-23T12:43:06.129Z"
     }
   ]
 }
