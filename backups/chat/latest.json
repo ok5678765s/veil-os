@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T16:23:57.130Z",
+  "exportedAt": "2026-10-23T16:24:31.583Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1766500,
+      "coins": 1716500,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -1194,7 +1194,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 412036,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -10400,6 +10400,22 @@
       "amount": 181018,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-23T16:23:55.980Z"
+    },
+    {
+      "id": "cmvl6jibn000bsl1keb5gm7pt",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 50000,
+      "reason": "gift",
+      "createdAt": "2026-10-23T16:24:00.132Z"
+    },
+    {
+      "id": "cmvl6jqd6000dsl1kl19osst4",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 362036,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-23T16:24:10.554Z"
     }
   ]
 }
