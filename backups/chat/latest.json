@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T16:25:37.437Z",
+  "exportedAt": "2026-10-23T16:26:12.345Z",
   "counts": {
-    "accounts": 92,
+    "accounts": 93,
     "messages": 486,
     "dms": 4
   },
@@ -1939,6 +1939,27 @@
       "legacy": false,
       "createdAt": "2026-10-21T19:04:07.679Z",
       "passwordHash": "$2b$10$u3Fg0nLADZvr9WOjfUywaOb3ds9PgDfshqCH06hoItQ9Vd.ZcOmIS"
+    },
+    {
+      "id": "cmvl6lsib000osl1kw319aa7k",
+      "username": "Jacobs dad123",
+      "displayName": "Jacobs dad123",
+      "avatarColor": "#2c3e50",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 100,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-23T16:25:46.643Z",
+      "passwordHash": "$2b$10$7XeVjCZvhyxyWeCfSy6bPeVMzm20tmWOgcJMcym7pU4cm1/oUSUA6"
     }
   ],
   "messages": [
