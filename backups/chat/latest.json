@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T16:27:52.551Z",
+  "exportedAt": "2026-10-23T16:31:31.604Z",
   "counts": {
     "accounts": 93,
     "messages": 486,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1716500,
+      "coins": 1716900,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -10493,6 +10493,22 @@
       "amount": 10,
       "reason": "daily_reward",
       "createdAt": "2026-10-23T16:27:23.680Z"
+    },
+    {
+      "id": "cmvl6sptl000usl1kqky6pz88",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 400,
+      "reason": "roulette_loss",
+      "createdAt": "2026-10-23T16:31:09.754Z"
+    },
+    {
+      "id": "cmvl6spty000wsl1k8ugymghi",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 800,
+      "reason": "roulette_win",
+      "createdAt": "2026-10-23T16:31:09.767Z"
     }
   ]
 }
