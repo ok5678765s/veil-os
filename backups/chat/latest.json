@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T13:13:58.399Z",
+  "exportedAt": "2026-10-23T13:14:32.871Z",
   "counts": {
     "accounts": 92,
     "messages": 487,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 93837,
+      "coins": 137281,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1043544,
+      "coins": 1000000,
       "tag": "Pro User",
       "tagColor": "#16a085",
       "pfpAccessory": "lightning",
@@ -10131,6 +10131,30 @@
       "amount": 20000,
       "reason": "coinflip_win",
       "createdAt": "2026-10-23T13:13:56.680Z"
+    },
+    {
+      "id": "cmvkzr9qm0009slytssful6eo",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 43544,
+      "reason": "gift",
+      "createdAt": "2026-10-23T13:14:04.942Z"
+    },
+    {
+      "id": "cmvkzrofi000bslytvfzvauqi",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-23T13:14:23.982Z"
+    },
+    {
+      "id": "cmvkzrsbm000dslyt7cf1o92b",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-23T13:14:29.026Z"
     }
   ]
 }
