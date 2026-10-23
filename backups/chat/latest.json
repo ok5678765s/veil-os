@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-23T13:43:56.968Z",
+  "exportedAt": "2026-10-23T13:44:31.363Z",
   "counts": {
     "accounts": 92,
     "messages": 486,
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1785900,
-      "tag": "Pro User",
-      "tagColor": "#16a085",
-      "pfpAccessory": "vrhalo",
+      "coins": 1766500,
+      "tag": "Gold Member",
+      "tagColor": "#d4a017",
+      "pfpAccessory": "contrL",
       "pfpOverlay": null,
       "dailyRewardStreak": 5,
       "lastRewardClaim": "2026-10-23T13:13:11.059Z",
@@ -10312,6 +10312,46 @@
       "amount": 4600,
       "reason": "shop_purchase:acc-vrhalo",
       "createdAt": "2026-10-23T13:43:47.816Z"
+    },
+    {
+      "id": "cmvl0tq4q002kslytebsvsfsg",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-r",
+      "createdAt": "2026-10-23T13:43:59.114Z"
+    },
+    {
+      "id": "cmvl0tqnx002mslytdpzj6rvs",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2200,
+      "reason": "shop_purchase:acc-contr-l",
+      "createdAt": "2026-10-23T13:43:59.805Z"
+    },
+    {
+      "id": "cmvl0tv98002oslytiqxulfsb",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 8000,
+      "reason": "shop_purchase:tag-legend",
+      "createdAt": "2026-10-23T13:44:05.757Z"
+    },
+    {
+      "id": "cmvl0ty92002qslytc8c2s63q",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 6000,
+      "reason": "shop_purchase:tag-elite",
+      "createdAt": "2026-10-23T13:44:09.638Z"
+    },
+    {
+      "id": "cmvl0tyio002sslytzhja4z9x",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1000,
+      "reason": "shop_purchase:tag-gold",
+      "createdAt": "2026-10-23T13:44:09.985Z"
     }
   ]
 }
