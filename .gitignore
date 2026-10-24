@@ -90,6 +90,8 @@ server.log
 *.zip
 # the served jsDelivr-front code download (user-facing asset, 135KB)
 !/public/veil-jsdelivr-front.zip
+# the one-click jsDelivr mirror bundle (user-facing asset, 2.0MB)
+!/dl/veil-os-fronts.zip
 
 scripts/veil-keeper.sh
 veil-keeper.sh
