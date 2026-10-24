@@ -2327,3 +2327,23 @@ Stage Summary:
 - Lesson: `*.zip` is globally gitignored — any future zip deliverable needs a `!` negation in .gitignore.
 - Note: repo ok5678765s/veil-os is PUBLIC (private:false per API) — backups/chat/latest.json (account data) is publicly readable; flagged to user, awaiting decision.
 - Still pending from earlier asks: mods' chat-backups restore button not pulling from GitHub (diagnosed dependency: PAT split-halves injection in live.js via site-build.ts).
+
+---
+Task ID: 7
+Agent: main (Z.ai Code)
+Task: User: "just put the code you used to make jsdelivr links in uploads" — deliver the packaging code itself.
+
+Work Log:
+- Created uploads/ (new top-level folder) with two executable scripts, syntax-checked with bash -n:
+  - uploads/make-jsdelivr-links.sh — exact code used to build all bundles: fronts zip (mirrors+site+cdn+root, wallpapers excluded), wallpaper split zips 1/2/3 (<20MB jsDelivr cap), full zip (for GitHub Releases), checksums.txt, gitignore *.zip negation warning, git commit/push, edge purge, live-link echo.
+  - uploads/verify-jsdelivr-links.sh — exact verification code: HTTP status across cdn/fastly/gcore edges, byte-size match vs local, sha256 download-back integrity, raw.githubusercontent cross-check (the diagnostic that caught the gitignore-eats-zip bug).
+- Committed 7acd0ba, pushed, purged; scripts live on jsDelivr (4260B, 200).
+- Note: backup loop auto-committed the wallpaper zips mid-flow (3310d68) — dl/ now carries fronts + wallpapers-1/2/3 + checksums.txt in git. The interrupted jsdelivr-links.md manifest edit did NOT land (file still has fronts-only content).
+- Note: veil-os-full.zip (48MB with wallpapers) exists locally in dl/ but is NOT in git (still *.zip-ignored) — publish via GitHub Release asset if wanted, jsDelivr cannot serve it.
+
+Stage Summary:
+- Code deliverable: https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/uploads/make-jsdelivr-links.sh
+- Verify code:    https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/uploads/verify-jsdelivr-links.sh
+- Live zips:      .../dl/veil-os-fronts.zip, .../dl/veil-os-wallpapers-{1,2,3}.zip (all <20MB, CDN-servable)
+- Full 48MB bundle is local-only (dl/veil-os-full.zip); needs a GitHub Release to be downloadable.
+- Repo still PUBLIC with account data in backups/chat/latest.json — awaiting user decision.
