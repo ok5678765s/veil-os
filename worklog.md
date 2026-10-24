@@ -2306,3 +2306,24 @@ Unresolved / risks:
 - jsDelivr public links (the disaster-recovery URL in the Backup panel) can still serve stale edges for a while; raw-first covers the restore path, and the loop keeps purging on pushes.
 - Dev-mode Fast Refresh rebuilds whenever the loop commits backups — resets in-app section state in dev only; production build unaffected. QA on this box must stay short (the 20:31 planned restart fired while QA browser + user traffic overlapped).
 - The two-tap all-in guard only exists on Blackjack (this session's losses were all blackjack all-ins, so it DID force deliberate confirms); coinflip/roulette/slots remain single-tap.
+
+---
+Task ID: 6
+Agent: main (Z.ai Code)
+Task: User asked "give me download for them" — the jsDelivr version fronts (m1–m10 / site / cdn).
+
+Work Log:
+- Sized the front surfaces: 48MB total but ~35MB is wp-* wallpaper media; app code is tiny.
+- Built dl/veil-os-fronts.zip (2.0MB, 349 files): root index.html/.xhtml + site/ (sans heavy wallpapers) + cdn/ + m1..m10. Wallpapers excluded to stay under jsDelivr's 20MB/gh-file limit.
+- Generated dl/veil-os-fronts.zip.sha256 + dl/jsdelivr-links.md (full per-mirror per-page URL manifest).
+- First push missed the zip: .gitignore line 90 `*.zip` ate it (raw@main 404 was the tell; @sha served 200). Added `!/dl/veil-os-fronts.zip` negation, recommitted (6fd17cc), pushed.
+- Purged jsDelivr edge; verified 200 + exact byte match (1,995,849B) on cdn/fastly/gcore mirrors.
+- Downloaded the zip back and sha256 verified == b3afdc92090583d913fd319922e2637e55191b4e88936a735224cd77ff4d5fbe (matches generated checksum).
+
+Stage Summary:
+- LIVE one-click download: https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/dl/veil-os-fronts.zip
+- Manifest: https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/dl/jsdelivr-links.md
+- Checksum: https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/dl/veil-os-fronts.zip.sha256
+- Lesson: `*.zip` is globally gitignored — any future zip deliverable needs a `!` negation in .gitignore.
+- Note: repo ok5678765s/veil-os is PUBLIC (private:false per API) — backups/chat/latest.json (account data) is publicly readable; flagged to user, awaiting decision.
+- Still pending from earlier asks: mods' chat-backups restore button not pulling from GitHub (diagnosed dependency: PAT split-halves injection in live.js via site-build.ts).
