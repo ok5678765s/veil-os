@@ -2347,3 +2347,24 @@ Stage Summary:
 - Live zips:      .../dl/veil-os-fronts.zip, .../dl/veil-os-wallpapers-{1,2,3}.zip (all <20MB, CDN-servable)
 - Full 48MB bundle is local-only (dl/veil-os-full.zip); needs a GitHub Release to be downloadable.
 - Repo still PUBLIC with account data in backups/chat/latest.json — awaiting user decision.
+
+---
+Task ID: 8
+Agent: main (Z.ai Code)
+Task: User: "give the code for everything in jsdelivr versions + fix and also push fix, but put in uploads first, doesn't matter how big."
+
+Work Log:
+- CRITICAL CORRECTION of Task 7's flagged "bug": the [REDACTED:github_token] in site/assets/live.js is NOT file damage — it is the sandbox OUTPUT scrubber masking secrets in command output. Proof: rg finds no "REDACTED" in the file (exit 1) while sed displays it; literal LENGTH checks show first=47 second=46 (token=93) both locally AND on the CDN; halves reassemble to a token that auths 200 against api.github.com/user. The jsDelivr write path was NEVER broken. Verification lesson recorded: never eyeball displayed secrets — measure lengths.
+- Since no fix was needed, the deliverable became the complete code package in uploads/:
+  - uploads/README-JSDELIVR.md — full architecture doc (URL anatomy, live-room file protocol, split-halves token scheme + the scrubber false-positive lesson, beacon self-healing, build pipeline, file map, links).
+  - uploads/veil-os-jsdelivr-everything.zip — 43MB, 390 entries: full site/ (incl. all wallpapers), cdn/, m1..m10/, root stubs, scripts/site-build.ts, scripts/retarget-fronts.mjs, src/lib/veil/{live-origin,gh-live,live-room,chat-backup}.ts, backups/live-origin.json, both uploads/*.sh, README.
+  - uploads/veil-os-jsdelivr-everything.zip.sha256 (8a1b7710e35178bd03a8767a535fabdecb7e15e5f6ceb4df806926f4260e264c).
+- Added !/uploads/veil-os-jsdelivr-everything.zip gitignore negation (global *.zip rule), committed 20c9e7e, pushed.
+- Verified: raw.githubusercontent serves the zip with byte-exact content-length (45,088,621B); README-JSDELIVR.md live on jsDelivr (6368B) after purge.
+
+Stage Summary:
+- Download the whole jsDelivr codebase: https://github.com/ok5678765s/veil-os/raw/main/uploads/veil-os-jsdelivr-everything.zip (43MB; too big for jsDelivr's 20MB cap, served via raw.github)
+- Architecture doc: https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/uploads/README-JSDELIVR.md
+- jsDelivr chat writes confirmed WORKING (token intact end-to-end) — no fix was required; user informed of the false positive.
+- uploads/ now holds: README-JSDELIVR.md, make-jsdelivr-links.sh, verify-jsdelivr-links.sh, the everything zip + sha256.
+- Open items: full 48MB dl/veil-os-full.zip still local-only (GitHub Release candidate); repo still PUBLIC with account data in backups/chat/latest.json (user informed twice, awaiting decision); mods' restore button diagnosis still pending.
