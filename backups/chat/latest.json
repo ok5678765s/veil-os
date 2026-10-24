@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-24T04:05:12.109Z",
+  "exportedAt": "2026-10-24T04:05:45.991Z",
   "counts": {
     "accounts": 93,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1316905,
+      "coins": 1316908,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -6177,28 +6177,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1huxr00wlonytc17fx2y5",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.383Z",
-      "editedAt": null
-    },
-    {
-      "id": "cmvh1hv4m00wponyt2xs9mn1p",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.631Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hvb500wtonyth9hq8b3r",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7275,6 +7253,28 @@
       "replyToUsername": null,
       "createdAt": "2026-10-24T04:04:38.113Z",
       "editedAt": "2026-10-24T04:05:09.171Z"
+    },
+    {
+      "id": "cmvlvlhkg000hm5z5sobged1x",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m1/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m2/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m3/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m4/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m5/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m6/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m7/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m8/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m9/index.xhtml  https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m10/index.xhtml",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-24T04:05:22.865Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvlvlz6k000pm5z5qhd8wp70",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m1/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m2/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m3/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m4/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m5/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m6/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m7/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m8/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m9/index.xhtml  https://gcore.jsdelivr.net/gh/ok5678765s/veil-os@main/m10/index.xhtml",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-24T04:05:45.692Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -10644,6 +10644,30 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-24T04:04:38.115Z"
+    },
+    {
+      "id": "cmvlvlhkl000jm5z5qxwl9on5",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-24T04:05:22.869Z"
+    },
+    {
+      "id": "cmvlvlqyc000nm5z5nxko8row",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-24T04:05:35.028Z"
+    },
+    {
+      "id": "cmvlvlz6m000rm5z5x4wdcbut",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-24T04:05:45.694Z"
     }
   ]
 }
