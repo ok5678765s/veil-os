@@ -96,6 +96,8 @@ server.log
 !/dl/veil-os-wallpapers-1.zip
 !/dl/veil-os-wallpapers-2.zip
 !/dl/veil-os-wallpapers-3.zip
+# the complete jsDelivr code package (43MB, user-facing download via raw.github)
+!/uploads/veil-os-jsdelivr-everything.zip
 
 scripts/veil-keeper.sh
 veil-keeper.sh
