@@ -92,6 +92,10 @@ server.log
 !/public/veil-jsdelivr-front.zip
 # the one-click jsDelivr mirror bundle (user-facing asset, 2.0MB)
 !/dl/veil-os-fronts.zip
+# the jsDelivr wallpaper split bundles (user-facing assets, each <20MB CDN cap)
+!/dl/veil-os-wallpapers-1.zip
+!/dl/veil-os-wallpapers-2.zip
+!/dl/veil-os-wallpapers-3.zip
 
 scripts/veil-keeper.sh
 veil-keeper.sh
