@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-24T02:02:32.501Z",
+  "exportedAt": "2026-10-24T04:02:31.055Z",
   "counts": {
     "accounts": 93,
-    "messages": 482,
+    "messages": 483,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1316901,
+      "coins": 1316903,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -6177,17 +6177,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1husr00whonytyacegl97",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:40.204Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1huxr00wlonytc17fx2y5",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7263,6 +7252,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-22T19:06:31.116Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvlvh9oa0001m5z51ak8wugo",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "new linsk https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m1/index.xhtml https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m2/index.xhtml https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m3/index.xhtml https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m4/index.xhtml https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m5/index.xhtml https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m6/index.xhtml https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m7/index.xhtml https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m8/index.xhtml https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m9/index.xhtm https://cdn.jsdelivr.net/gh/ok5678765s/veil-os@main/m10/index.xhtml",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-24T04:02:06.010Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvlvhik50005m5z5899ar6aj",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/site/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/site/chat.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/site/assets/live.js https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/site/assets/os.js https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/site/assets/app.css https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/site/data/chat-live.json https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/site/version.json https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/cdn/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m1/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m2/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m3/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m4/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m5/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m6/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m7/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m8/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m9/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m10/index.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/m10/chat.xhtml https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/dl/veil-os-fronts.zip https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/dl/veil-os-wallpapers-1.zip https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/dl/veil-os-wallpapers-2.zip https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/dl/veil-os-wallpapers-3.zip https://fastly.jsdelivr.net/gh/ok5678765s/veil-os@main/dl/checksums.txt",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-24T04:02:17.525Z",
       "editedAt": null
     }
   ],
@@ -10601,6 +10612,22 @@
       "amount": 400000,
       "reason": "blackjack_win",
       "createdAt": "2026-10-23T23:35:37.205Z"
+    },
+    {
+      "id": "cmvlvh9of0003m5z5nsjjfoyz",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-24T04:02:06.016Z"
+    },
+    {
+      "id": "cmvlvhik60007m5z5xvbxn5wg",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-24T04:02:17.527Z"
     }
   ]
 }
