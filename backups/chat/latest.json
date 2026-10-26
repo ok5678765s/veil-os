@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-26T13:52:15.459Z",
+  "exportedAt": "2026-10-26T13:53:51.647Z",
   "counts": {
     "accounts": 94,
     "messages": 483,
@@ -1719,9 +1719,9 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 100860,
-      "tag": "Legend",
-      "tagColor": "#c0392b",
+      "coins": 90860,
+      "tag": "Mythic",
+      "tagColor": "#8e44ad",
       "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
@@ -11009,6 +11009,14 @@
       "amount": 100,
       "reason": "slots_win",
       "createdAt": "2026-10-26T13:51:41.524Z"
+    },
+    {
+      "id": "cmvpbhcj20001n7ozv0rnkhex",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 10000,
+      "reason": "shop_purchase:tag-mythic",
+      "createdAt": "2026-10-26T13:53:22.095Z"
     }
   ]
 }
