@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-26T18:48:38.992Z",
+  "exportedAt": "2026-10-26T18:49:44.826Z",
   "counts": {
     "accounts": 94,
     "messages": 483,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 880010,
+      "coins": 1760020,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -11033,6 +11033,22 @@
       "amount": 800000,
       "reason": "gift",
       "createdAt": "2026-10-26T18:48:29.833Z"
+    },
+    {
+      "id": "cmvpm1u8n0007n73hr5ak74xm",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 880010,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-26T18:49:14.327Z"
+    },
+    {
+      "id": "cmvpm1z4r0009n73hwm1w8tjq",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1760020,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-26T18:49:20.668Z"
     }
   ]
 }
