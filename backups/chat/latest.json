@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-26T13:51:05.523Z",
+  "exportedAt": "2026-10-26T13:51:40.774Z",
   "counts": {
     "accounts": 94,
     "messages": 483,
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 101010,
+      "coins": 100810,
       "tag": "Legend",
       "tagColor": "#c0392b",
       "pfpAccessory": null,
@@ -10937,6 +10937,62 @@
       "amount": 100,
       "reason": "slots_win",
       "createdAt": "2026-10-26T13:51:03.128Z"
+    },
+    {
+      "id": "cmvpbehdl001nn7yvmxxvxjbm",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:51:08.409Z"
+    },
+    {
+      "id": "cmvpbekt2001pn7yvlpes9x4o",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:51:12.855Z"
+    },
+    {
+      "id": "cmvpbepng001rn7yvzv22j6x3",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:51:19.132Z"
+    },
+    {
+      "id": "cmvpbeu7n001tn7yvx6jwqtgm",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:51:25.043Z"
+    },
+    {
+      "id": "cmvpbeu7p001vn7yv8aqvy1mv",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-10-26T13:51:25.046Z"
+    },
+    {
+      "id": "cmvpbextc001xn7yvexcbt56s",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:51:29.713Z"
+    },
+    {
+      "id": "cmvpbf1uf001zn7yvjoav9l0k",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:51:34.935Z"
     }
   ]
 }
