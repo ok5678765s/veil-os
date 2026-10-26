@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-26T13:46:15.463Z",
+  "exportedAt": "2026-10-26T13:49:55.737Z",
   "counts": {
     "accounts": 94,
     "messages": 483,
@@ -144,13 +144,13 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 1316929,
+      "coins": 1316939,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
       "pfpOverlay": null,
-      "dailyRewardStreak": 6,
-      "lastRewardClaim": "2026-10-24T04:05:48.296Z",
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-26T13:49:30.575Z",
       "legacy": false,
       "createdAt": "2026-09-25T22:22:50.829Z",
       "passwordHash": "$2b$10$wgZdfrvRghwA3SNf/R1ZwOe0EBEZiT/fJ9AA2lKmaOIX51V9DKNMC"
@@ -1719,13 +1719,13 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 100000,
+      "coins": 100010,
       "tag": "Legend",
       "tagColor": "#c0392b",
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 2,
-      "lastRewardClaim": "2026-10-21T12:29:28.900Z",
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-26T13:49:28.965Z",
       "legacy": false,
       "createdAt": "2026-10-20T18:56:50.975Z",
       "passwordHash": "$2b$10$aj9p3qsfOdqkGwkr4VHQX.Nwo7EAEPg3YIO6TdvZH070en5CdL.G."
@@ -10713,6 +10713,46 @@
       "amount": 10,
       "reason": "daily_reward",
       "createdAt": "2026-10-26T13:46:01.808Z"
+    },
+    {
+      "id": "cmvpbccnb0003n7yvim018ntt",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-26T13:49:28.967Z"
+    },
+    {
+      "id": "cmvpbcdw00005n7yvphypaq0q",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-26T13:49:30.577Z"
+    },
+    {
+      "id": "cmvpbcq380007n7yvfu4g460o",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:49:46.389Z"
+    },
+    {
+      "id": "cmvpbcq3i0009n7yv7om92aes",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-10-26T13:49:46.399Z"
+    },
+    {
+      "id": "cmvpbct9u000bn7yvwelxcfp4",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:49:50.514Z"
     }
   ]
 }
