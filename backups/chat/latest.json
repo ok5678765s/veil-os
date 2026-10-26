@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-26T13:51:40.774Z",
+  "exportedAt": "2026-10-26T13:52:15.459Z",
   "counts": {
     "accounts": 94,
     "messages": 483,
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 100810,
+      "coins": 100860,
       "tag": "Legend",
       "tagColor": "#c0392b",
       "pfpAccessory": null,
@@ -10993,6 +10993,22 @@
       "amount": 50,
       "reason": "slots_loss",
       "createdAt": "2026-10-26T13:51:34.935Z"
+    },
+    {
+      "id": "cmvpbf6xc0021n7yvhry6if3b",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-10-26T13:51:41.521Z"
+    },
+    {
+      "id": "cmvpbf6xg0023n7yvogw99lbs",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-10-26T13:51:41.524Z"
     }
   ]
 }
