@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-27T17:49:04.315Z",
+  "exportedAt": "2026-10-27T17:56:19.966Z",
   "counts": {
     "accounts": 94,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 20000000,
+      "coins": 15000000,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -1194,7 +1194,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 5000000,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 90872,
+      "coins": 90876,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -11521,6 +11521,22 @@
       "amount": 12,
       "reason": "daily_reward",
       "createdAt": "2026-10-27T17:48:59.767Z"
+    },
+    {
+      "id": "cmvqzl06n000jr6ssfao8kn4i",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 4,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-27T17:55:49.680Z"
+    },
+    {
+      "id": "cmvqzle13000lr6ssjopv1q4x",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 5000000,
+      "reason": "gift",
+      "createdAt": "2026-10-27T17:56:07.623Z"
     }
   ]
 }
