@@ -1,9 +1,9 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-27T18:01:09.014Z",
+  "exportedAt": "2026-10-27T18:35:36.236Z",
   "counts": {
-    "accounts": 95,
+    "accounts": 96,
     "messages": 483,
     "dms": 4
   },
@@ -2002,6 +2002,27 @@
       "legacy": false,
       "createdAt": "2026-10-27T18:00:15.592Z",
       "passwordHash": "$2b$10$Ep4Z2gY.pHwjkRjgLRAXzOR2V7XyrULoxrxhqv08LYBdNYXyKZsVC"
+    },
+    {
+      "id": "cmvr0zi07000tr6ss2ztpfy2r",
+      "username": "aladino676767",
+      "displayName": "aladino676767",
+      "avatarColor": "#2c3e50",
+      "avatarImage": null,
+      "bio": "",
+      "role": "member",
+      "muted": false,
+      "banned": false,
+      "coins": 101,
+      "tag": null,
+      "tagColor": null,
+      "pfpAccessory": null,
+      "pfpOverlay": null,
+      "dailyRewardStreak": 0,
+      "lastRewardClaim": null,
+      "legacy": false,
+      "createdAt": "2026-10-27T18:35:05.574Z",
+      "passwordHash": "$2b$10$Htvl7OlGkSCHs5IFVMbki.2hwruOZ7FcOlas5fiKvtAtM/wmRcPrK"
     }
   ],
   "messages": [
@@ -6219,17 +6240,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hvm400x1onyti1hjz9aj",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:41.261Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwr100x5onyt1wd8brm1",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7316,6 +7326,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-27T18:00:37.014Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvr0zoqr000vr6ss5su9erse",
+      "channelId": "main",
+      "accountId": "cmvr0zi07000tr6ss2ztpfy2r",
+      "content": "hi",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-27T18:35:14.307Z",
       "editedAt": null
     }
   ],
@@ -11574,6 +11595,14 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-27T18:00:37.018Z"
+    },
+    {
+      "id": "cmvr0zoqv000xr6ssc3729sqt",
+      "fromId": "cmvr0zi07000tr6ss2ztpfy2r",
+      "toId": "cmvr0zi07000tr6ss2ztpfy2r",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-27T18:35:14.312Z"
     }
   ]
 }
