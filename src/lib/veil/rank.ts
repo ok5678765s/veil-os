@@ -64,6 +64,12 @@ export interface RankSignals {
   /** "Don't recommend channel" feedback (channel-level): the channel is
    * removed from the For You / Shorts / Popular surfaces entirely. */
   blockedChannels?: string[];
+  /** video id → watched fraction 0..1 (the resume cursors). Feeds the
+   * graded repeat demotion: finished videos sink hard, abandoned ones
+   * sink gently and get the "continue watching" label — the way
+   * YouTube's home treats a half-watched video as an invitation, not
+   * a repeat. */
+  watchFractions?: Record<string, number>;
   /** current time (ms) — injectable for determinism in tests. */
   now?: number;
   /** per-load seed (drives exploration jitter + tie-breaking). */
@@ -351,6 +357,14 @@ function whyLabel(c: RankCard, p: UserProfile, o: Objectives, s: RankSignals): s
   if (freshish && (sub.has(c.authorId) || liked.has(c.authorId) || (p.channel.get(c.authorId) ?? 0) > 1.2)) {
     return author ? `new from ${author}` : "new from your channels";
   }
+  /* the resume invitation outranks freshness — a half-watched video
+   * is the strongest "pick me" signal on the page */
+  {
+    const frac = s.watchFractions?.[c.id] ?? 0;
+    if (frac >= 0.05 && frac < 0.95 && s.history.some((h) => h.card?.id === c.id)) {
+      return "continue watching";
+    }
+  }
   if (o.satisfaction > 0.55 && (c.views ?? 0) > 80_000) return "popular right now";
   if (o.session > 0.5 && p.total > 0) {
     const src = s.history.find((h) => h.card?.authorId === c.authorId && p.sessionChans.has(c.authorId));
@@ -444,9 +458,19 @@ export function rankFeed(candidates: RankCard[], s: RankSignals): RankResult {
       W.freshness * o.freshness +
       W.session * o.session +
       W.explore * o.explore;
-    /* repeat demotion — YouTube's home feed rarely shows what you just
-     * watched (the History page is for that). */
-    if (p.watched.has(c.id)) score *= 0.3;
+    /* repeat demotion — GRADED by how far the watch actually got
+     * (YouTube's home feed rarely shows what you just watched; the
+     * History page is for that):
+     *   finished (≥95%)  → ×0.30  sunk, the re-watch invite lives in
+     *                             the Watch-it-again shelf
+     *   partial (5–95%)  → ×0.82  a gentle dip — the card keeps its red
+     *                             resume bar and the "continue watching"
+     *                             label, exactly the home-feed treatment
+     *   barely started   → ×0.45  a click that didn't stick still counts */
+    if (p.watched.has(c.id)) {
+      const frac = s.watchFractions?.[c.id] ?? 0;
+      score *= frac >= 0.95 ? 0.3 : frac >= 0.05 ? 0.82 : 0.45;
+    }
     /* live events get a small standing boost — they expire, watch them now */
     if (c.live) score *= 1.12;
     /* ε-jitter — the calibrated noise that keeps rankings from ossifying */

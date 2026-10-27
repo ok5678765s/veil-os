@@ -59,6 +59,7 @@ import {
   Pause,
   PictureInPicture2,
   Play,
+  PlayCircle,
   Plus,
   Radio,
   RefreshCw,
@@ -91,6 +92,28 @@ import { Slider } from "@/components/ui/slider";
 import { OfflineDownload } from "@/components/veil/offline-download";
 import { fetchJsonSafe } from "@/lib/veil/shared";
 import { rankFeed, type RankCard, type RankNotInterested, type RankResult } from "@/lib/veil/rank";
+import {
+  getProgress,
+  saveProgress,
+  clearProgress,
+  clearAllProgress,
+  progressSnapshot,
+  watchFraction,
+  WATCHED_FRACTION,
+  PROGRESS_EVENT,
+} from "@/lib/veil/progress-store";
+
+/** Re-render hook: bumps whenever a watch-progress cursor moves
+ * (resume bars on cards live-update while a video plays). */
+function useProgressVersion(): number {
+  const [v, setV] = React.useState(0);
+  React.useEffect(() => {
+    const bump = () => setV((x) => x + 1);
+    window.addEventListener(PROGRESS_EVENT, bump);
+    return () => window.removeEventListener(PROGRESS_EVENT, bump);
+  }, []);
+  return v;
+}
 // Full-device backup engine — circular with this module by design:
 // backup.ts reuses this file's merge-by-id stream importer, this file's
 // data popover offers the backup UI. Both sides only call each other
@@ -2408,7 +2431,16 @@ function VideoCard({
   const reduceMotion = useReducedMotion();
   const histV = useHistoryVersion(); /* re-render when history changes */
   void histV;
+  const progV = useProgressVersion(); /* …and when a resume cursor moves */
+  void progV;
   const watched = watchedIdsSnapshot().has(card.id);
+  /* resume cursor — YouTube's red bar at the thumb's bottom edge:
+   * partial (5–95%) = red sliver + "watched X:XX" chip, finished
+   * (≥95%) = full-width bar under the Watched badge */
+  const prog = getProgress(card.id);
+  const frac = prog && prog.dur > 0 ? Math.max(0, Math.min(1, prog.pos / prog.dur)) : 0;
+  const partial = frac >= 0.05 && frac < WATCHED_FRACTION;
+  const finished = frac >= WATCHED_FRACTION;
   /* hover-preview dwell state — armed by the thumb box's mouseenter
    * after a 600ms dwell, disarmed instantly on mouseleave */
   const [peek, setPeek] = React.useState(false);
@@ -2496,7 +2528,7 @@ function VideoCard({
           {/* watched tag — swaps to "watch again" on hover: the dim's
            * readable label, and the invitation the moment the pointer
            * arrives (both fade, so the swap reads as one motion) */}
-          {watched && dimWatched && (
+          {watched && dimWatched && !partial && (
             <span className="absolute bottom-2 left-2">
               <span className="flex items-center gap-1 rounded-md bg-black/85 px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-zinc-300 transition-opacity duration-200 group-hover:opacity-0">
                 Watched
@@ -2504,6 +2536,32 @@ function VideoCard({
               <span className="absolute inset-0 flex items-center gap-1 rounded-md bg-rose-500/95 px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                 <RotateCcw aria-hidden className="size-3" /> Watch again
               </span>
+            </span>
+          )}
+          {/* partially watched — how far you got + the resume invite:
+             "watched 4:12" swaps to "resume" on hover, the same motion
+             as the Watched badge above */}
+          {partial && prog && (
+            <span className="absolute bottom-2 left-2">
+              <span className="flex items-center gap-1 rounded-md bg-black/85 px-1.5 py-0.5 text-[10.5px] font-semibold tabular-nums text-zinc-300 transition-opacity duration-200 group-hover:opacity-0">
+                watched {fmtTime(prog.pos)}
+              </span>
+              <span className="absolute inset-0 flex items-center gap-1 rounded-md bg-rose-500/95 px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                <Play aria-hidden className="size-3" /> resume
+              </span>
+            </span>
+          )}
+          {/* the resume bar — YouTube's red sliver at the thumb's very
+              bottom edge; full width once the video counts as watched */}
+          {(partial || finished) && (
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-[3px] bg-white/15"
+            >
+              <span
+                className="block h-full bg-rose-500 transition-[width] duration-500"
+                style={{ width: `${(finished ? 1 : frac) * 100}%` }}
+              />
             </span>
           )}
         </div>
@@ -2569,6 +2627,12 @@ function RelatedCard({
   onChannel?: (id: string, name: string) => void;
 }) {
   const reduceMotion = useReducedMotion();
+  /* resume cursor — the red sliver rides the Up-next rail too */
+  const progV = useProgressVersion();
+  void progV;
+  const rprog = getProgress(card.id);
+  const rfrac = rprog && rprog.dur > 0 ? Math.max(0, Math.min(1, rprog.pos / rprog.dur)) : 0;
+  const rbar = rfrac >= 0.05;
   /* NOTE: role=button div, same reason as VideoCard — the channel line
    * inside is a real <button> and button-in-button is invalid HTML. */
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -2600,6 +2664,14 @@ function RelatedCard({
             {fmtTime(card.durationSec)}
           </span>
         ) : null}
+        {rbar && (
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[2.5px] bg-white/15">
+            <span
+              className="block h-full bg-rose-500"
+              style={{ width: `${(rfrac >= WATCHED_FRACTION ? 1 : rfrac) * 100}%` }}
+            />
+          </span>
+        )}
       </div>
       <div className="min-w-0 flex-1 py-0.5 pr-1">
         <h4 className="line-clamp-2 text-[13px] font-medium leading-snug text-zinc-100">{card.title}</h4>
@@ -2846,6 +2918,12 @@ function WatchAgainCard({
 }) {
   const { card, at } = entry;
   const reduceMotion = useReducedMotion();
+  /* resume cursor — the red sliver rides this shelf's cards too; a
+   * partial watch on a re-watch invite says "finish it" */
+  const waProgV = useProgressVersion();
+  void waProgV;
+  const waProg = getProgress(card.id);
+  const waFrac = waProg && waProg.dur > 0 ? Math.max(0, Math.min(1, waProg.pos / waProg.dur)) : 0;
   return (
     <motion.button
       type="button"
@@ -2874,6 +2952,14 @@ function WatchAgainCard({
             {fmtTime(card.durationSec)}
           </span>
         ) : null}
+        {waFrac >= 0.05 && (
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[3px] bg-white/15">
+            <span
+              className="block h-full bg-rose-500"
+              style={{ width: `${(waFrac >= WATCHED_FRACTION ? 1 : waFrac) * 100}%` }}
+            />
+          </span>
+        )}
       </div>
       <div className="mt-2 px-0.5">
         <h4 className="line-clamp-2 text-[13px] font-medium leading-snug text-zinc-100 group-hover:text-white">
@@ -2929,6 +3015,39 @@ function WatchAgainRail({
         {shown.map((h, i) => (
           <div key={`${h.card.id}-${h.at}`} className="w-44 shrink-0 sm:w-52">
             <WatchAgainCard entry={h} index={i} onWatch={onWatch} />
+          </div>
+        ))}
+      </ShelfRow>
+    </section>
+  );
+}
+
+/** "Continue watching" — the resume shelf at the very top of For You:
+ *  every video with a live cursor (5–95% through), newest watch first.
+ *  This is YouTube's strongest home-feed surface — an abandoned watch
+ *  is the single best "pick me" signal a feed ever gets. */
+function ContinueWatchingRail({
+  entries,
+  onWatch,
+}: {
+  entries: HistoryEntry[];
+  onWatch: (id: string, card: YtCard) => void;
+}) {
+  const shown = entries.slice(0, 12);
+  if (shown.length === 0) return null;
+  return (
+    <section aria-label="Continue watching — where you left off" className="group/shelf mb-6">
+      <div className="mb-3 flex items-center gap-2.5">
+        <PlayCircle aria-hidden className="size-5 shrink-0 text-rose-400" />
+        <h3 className="text-[20px] font-bold tracking-tight text-zinc-50">Continue watching</h3>
+        <span className="rounded-md bg-rose-500/15 px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-rose-300 ring-1 ring-rose-500/25">
+          {shown.length}
+        </span>
+      </div>
+      <ShelfRow>
+        {shown.map((h, i) => (
+          <div key={`${h.card.id}-${h.at}`} className="w-44 shrink-0 sm:w-52">
+            <VideoCard card={h.card} index={i} onWatch={onWatch} />
           </div>
         ))}
       </ShelfRow>
@@ -3453,8 +3572,22 @@ function StreamPlayer({
     recoveries.current = 0;
     stallFixes.current = 0;
     const resume = () => {
-      if (resumeAtRef.current > 2 && Number.isFinite(el.duration)) {
-        el.currentTime = Math.min(resumeAtRef.current, Math.max(0, el.duration - 0.5));
+      /* pick up where you left off — a mid-session quality switch has
+       * its own cursor (resumeAtRef); a FRESH open seeds from the
+       * progress store instead (YouTube's resume: >8s in, <95% through) */
+      let at = resumeAtRef.current;
+      if (at <= 2 && meta.id) {
+        const saved = getProgress(meta.id);
+        if (
+          saved && saved.pos > 8 &&
+          Number.isFinite(el.duration) && el.duration > 0 &&
+          saved.pos < el.duration * WATCHED_FRACTION
+        ) {
+          at = saved.pos;
+        }
+      }
+      if (at > 2 && Number.isFinite(el.duration)) {
+        el.currentTime = Math.min(at, Math.max(0, el.duration - 0.5));
       }
       resumeAtRef.current = 0;
       el.play().catch(() => {});
@@ -3596,13 +3729,39 @@ function StreamPlayer({
     }
   }, [ccUrl, video, format]);
 
+  /* ---- watch progress (YouTube's "pick up where you left off") ----
+   * The cursor lives in the progress store (localStorage); the
+   * player seeds it on metadata (when the session doesn't already
+   * have one from a quality switch) and flushes it throttled while
+   * playing + on pause/end/teardown. Refs keep the stable []-deps
+   * listener effect honest about the CURRENT video id. */
+  const metaIdRef = React.useRef("");
+  React.useEffect(() => {
+    metaIdRef.current = meta.id;
+  }, [meta.id]);
+  const lastSaveRef = React.useRef(0);
+  const flushProgress = React.useCallback(() => {
+    const id = metaIdRef.current;
+    const el = videoRef.current;
+    if (!id || !el || !Number.isFinite(el.currentTime) || !Number.isFinite(el.duration) || el.duration <= 0) return;
+    saveProgress(id, el.currentTime, el.duration);
+    lastSaveRef.current = Date.now();
+  }, []);
+
   /* ---- video element events ---- */
   React.useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
-    const onTime = () => setCurrent(el.currentTime);
+    const onTime = () => {
+      setCurrent(el.currentTime);
+      /* throttled cursor flush — every 3s of playback is plenty for a
+       * resume bar; the terminal events (pause/ended/teardown) flush
+       * the exact final position */
+      if (Date.now() - lastSaveRef.current > 3000 && !el.paused) flushProgress();
+    };
     const onMeta = () => setDuration(Number.isFinite(el.duration) ? el.duration : 0);
     const onEndedEv = () => {
+      flushProgress();
       if (!readPrefs().loop) onEndedRef.current?.();
     };
     const onProgress = () => {
@@ -3611,7 +3770,10 @@ function StreamPlayer({
       } catch { /* mid-seek */ }
     };
     const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
+    const onPause = () => {
+      setPlaying(false);
+      flushProgress();
+    };
     const onWaiting = () => setWaiting(true);
     const onPlaying = () => setWaiting(false);
     const onCanPlay = () => setWaiting(false);
@@ -3637,7 +3799,14 @@ function StreamPlayer({
     el.addEventListener("volumechange", onVol);
     el.addEventListener("ended", onEndedEv);
     el.addEventListener("error", onErr);
+    /* page lifecycle — the tab hiding/closing must still land the
+     * cursor (unload is too late for localStorage in some browsers;
+     * pagehide fires reliably) */
+    const onPageHide = () => flushProgress();
+    window.addEventListener("pagehide", onPageHide);
     return () => {
+      flushProgress(); /* unmount / video switch — land the last position */
+      window.removeEventListener("pagehide", onPageHide);
       el.removeEventListener("timeupdate", onTime);
       el.removeEventListener("loadedmetadata", onMeta);
       el.removeEventListener("durationchange", onMeta);
@@ -4873,8 +5042,24 @@ function RelayPlayer({
   const [qNow, setQNow] = React.useState<string>("");
 
   /* position/playing snapshot for lane re-tunes (a quality pick or a stall
-   * re-key) — the fresh embed seeks back to it on ready */
+   * re-key) — the fresh embed seeks back to it on ready. On a FRESH open
+   * it seeds from the progress store so the relay lane resumes too
+   * (the native lane does the same on loadedmetadata). */
   const relayResumeRef = React.useRef<{ at: number; play: boolean } | null>(null);
+  React.useEffect(() => {
+    if (relayResumeRef.current) return; /* a re-tune already holds the cursor */
+    const saved = getProgress(card.id);
+    if (saved && saved.pos > 8 && saved.dur > 0 && saved.pos < saved.dur * WATCHED_FRACTION) {
+      relayResumeRef.current = { at: saved.pos, play: true };
+    }
+  }, [card.id]);
+  /* throttled progress flush — the 500ms clock poll feeds it, the
+   * store write happens at most every 3s (same cadence as native) */
+  const relaySaveRef = React.useRef(0);
+  const durationRef = React.useRef(0);
+  React.useEffect(() => {
+    durationRef.current = duration;
+  }, [duration]);
   /* message liveness — real frame events stamp these; the zombie watchdog
    * compares them against "the embed should be talking right now" */
   const lastMsgAtRef = React.useRef(Date.now());
@@ -4887,6 +5072,16 @@ function RelayPlayer({
   React.useEffect(() => {
     lastClockAtRef.current = Date.now();
   }, [current]);
+  /* relay teardown — land the final progress cursor (the existing
+   * currentRef mirror + the durationRef above carry the position) */
+  React.useEffect(
+    () => () => {
+      if (card.id && durationRef.current > 0 && currentRef.current > 0) {
+        saveProgress(card.id, currentRef.current, durationRef.current);
+      }
+    },
+    [card.id],
+  );
   const stateRef = React.useRef(state);
   React.useEffect(() => {
     stateRef.current = state;
@@ -4941,6 +5136,17 @@ function RelayPlayer({
         };
         if (typeof info.currentTime === "number") setCurrent(info.currentTime);
         if (typeof info.duration === "number" && info.duration > 0) setDuration(info.duration);
+        /* progress cursor — throttled write while the relay plays */
+        if (
+          typeof info.currentTime === "number" &&
+          typeof info.duration === "number" &&
+          info.duration > 0 &&
+          info.playerState === YT_PLAYING &&
+          Date.now() - relaySaveRef.current > 3000
+        ) {
+          relaySaveRef.current = Date.now();
+          saveProgress(card.id, info.currentTime, info.duration);
+        }
         if (typeof info.playbackQuality === "string" && info.playbackQuality) setQNow(info.playbackQuality);
         if (typeof info.playerState === "number") {
           setState(info.playerState);
@@ -7014,6 +7220,18 @@ function SubsPage({
   void subsV; /* re-render on follow-list changes */
   const subs = readSubs();
   const followIds = Object.keys(subs);
+  /* 2026-10-27 — "if a channel hasn't posted videos no need to show
+   * unless posted": once the subs wire has loaded, the manage strip
+   * only lists channels that actually returned uploads (a followed
+   * channel with an empty shelf is noise). While loading (cards ===
+   * null) every follow stays visible — hiding during load would look
+   * like subscriptions vanishing. */
+  const postedIds = React.useMemo(
+    () => new Set((cards ?? []).map((c) => c.authorId).filter((a): a is string => Boolean(a))),
+    [cards],
+  );
+  const stripIds = cards === null ? followIds : followIds.filter((id) => postedIds.has(id));
+  const postedCount = cards === null ? followIds.length : Math.min(followIds.length, postedIds.size);
   /* real logos for the subs grid too (one batched backfill — covers the
    * whole river, not just the first screen, so deep rounds get avatars
    * the moment they append) */
@@ -7049,10 +7267,11 @@ function SubsPage({
         reloading={loading}
         actions={<TakeoutImport onDone={onReload} />}
       />
-      {/* manage strip — followed channels, one-tap unfollow */}
-      {followIds.length > 0 && (
+      {/* manage strip — followed channels WITH uploads, one-tap unfollow
+          (channels that haven't posted anything are hidden until they do) */}
+      {stripIds.length > 0 && (
         <div className="veil-scroll-slim mb-4 flex gap-2 overflow-x-auto pb-1">
-          {followIds.map((id) => {
+          {stripIds.map((id) => {
             const e = subs[id];
             return (
               <span
@@ -7134,8 +7353,8 @@ function SubsPage({
             (cards ?? []).length > 0 && (
               <p className="mt-8 flex items-center justify-center gap-2 text-[12px] text-zinc-600">
                 <span className="size-1.5 rounded-full bg-zinc-700" aria-hidden />
-                You&apos;re all caught up — every upload from your {followIds.length} channel
-                {followIds.length === 1 ? "" : "s"} is on screen
+                You&apos;re all caught up — every upload from your {postedCount} channel
+                {postedCount === 1 ? "" : "s"} is on screen
                 <span className="size-1.5 rounded-full bg-zinc-700" aria-hidden />
               </p>
             )
@@ -8405,6 +8624,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
    * same cards again. */
   const subsVersion = useSubsVersion();
   const ratingsVersion = useRatingsVersion();
+  const progV = useProgressVersion();
   /* the ranker's signal bundle — shared by the round-1 memo and every
    * deep-round batch so the whole river sees the same curation. Only
    * the NEWEST 5,000 rows ride along: recency-weighted ranking is
@@ -8416,10 +8636,28 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
       subs: Object.keys(readSubs()),
       likedChannels: likedChannelIds(),
       ...niSignal(),
+      /* resume cursors — the graded repeat demotion + the "continue
+       * watching" why-label ride these fractions */
+      watchFractions: Object.fromEntries(
+        Object.entries(progressSnapshot())
+          .filter(([, p]) => p.dur > 0)
+          .map(([id, p]) => [id, p.pos / p.dur]),
+      ),
       seed,
     }),
-    [histEntries, subsVersion, ratingsVersion, niVersion],
+    [histEntries, subsVersion, ratingsVersion, niVersion, progV],
   );
+  /* the "Continue watching" shelf — history rows that still have a
+   * live cursor (5–95% through), newest watch first */
+  const continueEntries = React.useMemo(() => {
+    const snap = progressSnapshot();
+    return (histEntries ?? [])
+      .filter((h) => {
+        const p = h.card?.id ? snap[h.card.id] : undefined;
+        return !!p && p.dur > 0 && p.pos / p.dur >= 0.05 && p.pos / p.dur < WATCHED_FRACTION;
+      })
+      .slice(0, 12);
+  }, [histEntries, progV]);
   /* the fresh-deal backfill ranks its deep round with the CURRENT
    * signals without making loadFeed's identity churn on every history
    * bump (which would re-fetch the whole wire) — the ref always points
@@ -8677,6 +8915,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
   const removeHistory = React.useCallback((id: string) => {
     _watchedIds = null;
     historyDelete(id);
+    clearProgress(id); /* the resume cursor goes with the row */
     setHistEntries(readHistory());
   }, []);
   /** Undo target for the removal snackbar — puts the entry back where
@@ -8690,6 +8929,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
   const clearHistory = React.useCallback(() => {
     _watchedIds = null;
     historyClear();
+    clearAllProgress(); /* clear-all owns the resume state too */
     setHistEntries([]);
   }, []);
 
@@ -9304,11 +9544,39 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
    * their own inline rails, so this feeds the native watch only. */
   const upNext = React.useMemo(() => {
     if (!watchId || useRelay) return [];
-    if (video && "related" in video && video.related.length > 0) return video.related.slice(0, 12);
-    const fallback = shownCards.filter((c) => c.id !== watchId).slice(0, 12);
-    if (fallback.length > 0) return fallback;
-    return videoMeta && videoMeta.related.length > 0 ? videoMeta.related.slice(0, 12) : [];
-  }, [watchId, useRelay, video, videoMeta, shownCards]);
+    let pool: YtCard[] = [];
+    if (video && "related" in video && video.related.length > 0) pool = video.related.slice(0, 40);
+    else {
+      const fallback = shownCards.filter((c) => c.id !== watchId).slice(0, 40);
+      if (fallback.length > 0) pool = fallback;
+      else if (videoMeta && videoMeta.related.length > 0) pool = videoMeta.related.slice(0, 40);
+    }
+    if (pool.length === 0) return [];
+    /* Up next is RANKED, not raw — YouTube's autoplay rail runs the
+     * same recommendation objectives as home, seeded by the CURRENT
+     * watch (the session slice reacts to what you're watching right
+     * now). Graded repeat demotion + "continue watching" labels ride
+     * along; the rail keeps its length (12) but the order is earned. */
+    const ranked = rankFeed(
+      pool.map((c) => ({ ...c })) as unknown as RankCard[],
+      {
+        history: (histEntries ?? []).slice(0, 5000).map((h) => ({ card: h.card as RankCard, at: h.at })),
+        subs: Object.keys(readSubs()),
+        likedChannels: likedChannelIds(),
+        ...niSignal(),
+        watchFractions: Object.fromEntries(
+          Object.entries(progressSnapshot())
+            .filter(([, p]) => p.dur > 0)
+            .map(([id, p]) => [id, p.pos / p.dur]),
+        ),
+        seed: (watchId.charCodeAt(0) || 1) + 7,
+      },
+    );
+    return (ranked.cards.slice(0, 12) as unknown as YtCard[]).map((c) => {
+      const src = pool.find((p) => p.id === c.id);
+      return src ? { ...src, why: c.why } : c;
+    });
+  }, [watchId, useRelay, video, videoMeta, shownCards, histEntries, subsVersion, ratingsVersion, niVersion, progV]);
 
   /* latch: the moment a watch needs the relay it stays on it — a later
    * background heal flips relayHealed (the "Play natively" offer) instead
@@ -9790,6 +10058,13 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                         />
                       ) : fyFilter === "all" ? (
                         <>
+                          {/* the resume shelf — the single strongest "pick
+                              me" surface on the page, above everything
+                              else exactly like YouTube home */}
+                          <ContinueWatchingRail
+                            entries={continueEntries}
+                            onWatch={(id, card) => watch(id, card)}
+                          />
                           {/* row 1 — the first eight, full-width cards */}
                           <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {fyFiltered.slice(0, 8).map((c, i) => (

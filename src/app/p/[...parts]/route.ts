@@ -26,6 +26,7 @@ import { assertSafeTarget, allowRequest, clientKeyOf, gate } from "@/lib/veil/qu
 import { isAdUrl } from "@/lib/veil/quasar/adblock";
 import { siteFixFor } from "@/lib/veil/quasar/site-fixes";
 import { QUASAR_VERSION } from "@/lib/veil/quasar/version";
+import { youtubeSpecialFor, youtubeResponse } from "@/lib/veil/quasar/youtube";
 import { curlFetchText } from "@/lib/veil/curl-fetch";
 import {
   cacheLookup,
@@ -123,6 +124,23 @@ async function handle(req: NextRequest): Promise<Response> {
         "access-control-allow-origin": "*",
       },
     });
+  }
+
+  // ---- v2.5.7 YouTube special pages --------------------------------
+  // Watch/search/portal pages on youtube.com get Quasar's own branded,
+  // tunnel-free player (youtube-nocookie embed loaded DIRECTLY by the
+  // browser) + scraped search grid — YouTube's proxied player fails its
+  // own BotGuard checks inside any rewriting proxy.
+  const ytSpecial = method === "GET" ? youtubeSpecialFor(parsed.target) : null;
+  if (ytSpecial) {
+    const r = await youtubeResponse(ytSpecial);
+    finishDebug(
+      r.status,
+      r.headers.get("content-type") ?? "text/html",
+      "yt-special",
+      "youtube"
+    );
+    return r;
   }
 
   // ---- v2.1.0 static cache: fresh hits skip the upstream entirely ----

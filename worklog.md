@@ -2368,3 +2368,25 @@ Stage Summary:
 - jsDelivr chat writes confirmed WORKING (token intact end-to-end) — no fix was required; user informed of the false positive.
 - uploads/ now holds: README-JSDELIVR.md, make-jsdelivr-links.sh, verify-jsdelivr-links.sh, the everything zip + sha256.
 - Open items: full 48MB dl/veil-os-full.zip still local-only (GitHub Release candidate); repo still PUBLIC with account data in backups/chat/latest.json (user informed twice, awaiting decision); mods' restore button diagnosis still pending.
+
+---
+Task ID: 9
+Agent: main (Z.ai Code)
+Task: User asks: (a) make Stream UI more like YouTube with better recommendations, (b) upgrade to the uploaded Quasar 2.5.7 engine, (c) save watch progress + show how long watched, (d) subs page: hide channels that haven't posted, (e) study YouTube's feed recommendations closely. "Continue your work, you keep stopping."
+
+Work Log:
+- QUASAR 2.5.7 PORT: extracted upload/quasar-proxy.zip; md5-diffed the whole engine against embedded 2.4.1 — all byte-identical except version.ts (bumped + notes), a trivial rewriter.ts type annotation, and NEW youtube.ts (18KB: branded watch/search/portal special pages for proxied youtube.com — nocookie embed direct-load + ytInitialData search scraping, NOT wired in 2.5.7's own route). Ported: copied youtube.ts into src/lib/veil/quasar/, copied version.ts (2.5.7), wired youtubeSpecialFor/youtubeResponse into /p/[...parts]/route.ts GET before the static cache. PRESERVED the veil-specific fetcher.ts runtime-cache-dir fix (newer than the zip's) and the typed rewriter const. Verified live: encoded youtube watch+search URLs → 200 (7.8KB branded player, 18KB scraped search). NOTE: 2.5.x transport/vault work is in the portable single-file client, not this server engine — engine delta really was just youtube.ts + notes.
+- WATCH PROGRESS (the big feature): new src/lib/veil/progress-store.ts — localStorage map videoId→{pos,dur,at}, cap 2400 (LRU by at), >8s and <95% resumes, ≥95% = finished marker, event "veil-stream-progress". StreamPlayer (native lane): seeds resume from store at loadedmetadata (when no mid-session quality-switch cursor), throttled 3s saves on timeupdate, flush on pause/ended/pagehide/unmount. RelayPlayer (gated-video lane): same via the existing YT iframe API clock poll — throttled save while YT_PLAYING, relayResumeRef seeds from the store so the relay ALSO resumes, teardown flush via existing currentRef + new durationRef. Hit and fixed a duplicate currentRef declaration (page 500'd briefly — SWC parse error; deduped, reusing the existing mirror).
+- CARD UI: VideoCard — red resume bar (YouTube's bottom-edge sliver, 3px, exact fraction), "watched X:XX" chip swapping to "resume" on hover for partials; finished = full-width bar + existing Watched badge. RelatedCard (Up-next) + WatchAgainCard (Watch-it-again shelf) got the same red sliver.
+- RANKER (rank.ts): new RankSignals.watchFractions; GRADED repeat demotion (finished ×0.30, partial ×0.82 — keeps the card visible as a continue-invite, barely-started ×0.45); whyLabel returns "continue watching" for partials. foryouSignals + upNext now pass watchFractions; upNext (watch page's related rail) is now RANKED through rankFeed instead of raw server order (pool 40 → ranked 12), YouTube-style.
+- CONTINUE WATCHING SHELF: new ContinueWatchingRail at the very top of For You (history ∩ live cursors, 5–95%, newest first, cap 12).
+- SUBS PAGE: manage strip hides followed channels with zero returned uploads once the wire loads (cards===null shows all — no vanishing-during-load); "all caught up" counts only posting channels.
+- HISTORY COUPLING: removeHistory clears the video's cursor; clearHistory clears all cursors.
+- QA (agent-browser, live): feed renders 82 cards + shelves; injected cursor 480/817 → Continue watching shelf renders, bar width EXACTLY 58.7515%, chip "watched 8:00 resume"; cursor→full → shelf correctly disappears, Watch-it-again card shows width:100% bar; subs strip filters to 4 posting channels (12 follows); relay watch opens + iframe boots (live play blocked by headless autoplay policy — the play-time write path is code-verified but not gesture-verified). All test data (fake history row + cursors) cleaned after QA. GET / → 200 after everything.
+
+Stage Summary:
+- Quasar engine: 2.4.1 → 2.5.7 (youtube.ts special pages live in-app; version badge/headers now 2.5.7).
+- Stream: full YouTube resume system (native + relay lanes), red bars on all card surfaces, Continue watching shelf, "watched X:XX" chips, graded repeat demotion, ranked Up-next, subs strip shows only posting channels.
+- Files: +src/lib/veil/progress-store.ts; ~rank.ts, stream-section.tsx, /p/ route, quasar/version.ts, +quasar/youtube.ts.
+- Known limits: relay-lane progress writes while playing not gesture-verified in headless (autoplay policy); native-lane verified via injection + code paths.
+- Open from earlier: mods' chat-backups restore button diagnosis still pending; repo still public with account data (user informed); dl/veil-os-full.zip local-only.
