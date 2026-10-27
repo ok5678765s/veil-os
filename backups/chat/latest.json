@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-27T15:59:43.777Z",
+  "exportedAt": "2026-10-27T16:00:19.475Z",
   "counts": {
     "accounts": 94,
     "messages": 483,
@@ -11425,6 +11425,22 @@
       "amount": 3600016,
       "reason": "gift",
       "createdAt": "2026-10-27T15:59:28.308Z"
+    },
+    {
+      "id": "cmvqvg4iu000jr6yeg4si6iea",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 3600016,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-10-27T16:00:03.558Z"
+    },
+    {
+      "id": "cmvqvg9fj000lr6yehk3ahddq",
+      "fromId": "cmv9m0bqn0014n2d300crywqb",
+      "toId": "cmv9m0bqn0014n2d300crywqb",
+      "amount": 3600016,
+      "reason": "blackjack_win",
+      "createdAt": "2026-10-27T16:00:09.920Z"
     }
   ]
 }
