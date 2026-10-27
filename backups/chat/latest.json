@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-27T18:36:11.425Z",
+  "exportedAt": "2026-10-27T20:57:05.464Z",
   "counts": {
     "accounts": 96,
     "messages": 483,
@@ -342,7 +342,7 @@
       "lastRewardClaim": null,
       "legacy": true,
       "createdAt": "2026-10-03T21:49:21.956Z",
-      "passwordHash": "!legacy:0c3683309fad4cb2a13a81e969d3384f"
+      "passwordHash": "!legacy:540494ce7532485b9a5a5f5a029512c1"
     },
     {
       "id": "cmutz4ibx0000jkxecl2b490e",
@@ -363,7 +363,7 @@
       "lastRewardClaim": "2026-10-21T20:40:05.403Z",
       "legacy": true,
       "createdAt": "2026-10-04T15:26:36.237Z",
-      "passwordHash": "!legacy:205f28e76cc64dc7bc526b2ffc5fd16c"
+      "passwordHash": "!legacy:346bb6bd7a4e477685066231a7af866d"
     },
     {
       "id": "cmuwln2d80000n0xx8fu8raov",
@@ -7392,22 +7392,22 @@
     {
       "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
       "friendId": "cmuhj14uk0000q5o4uzvh329c",
-      "createdAt": "2026-10-27T12:21:54.601Z"
+      "createdAt": "2026-10-27T20:57:04.242Z"
     },
     {
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
       "friendId": "cmuhlfo6p0001q5fg3ljxk2lc",
-      "createdAt": "2026-10-27T12:21:54.602Z"
+      "createdAt": "2026-10-27T20:57:04.242Z"
     },
     {
       "accountId": "cmvh1oilb019aonytzqy24vft",
       "friendId": "cmuhj14uk0000q5o4uzvh329c",
-      "createdAt": "2026-10-27T12:21:54.603Z"
+      "createdAt": "2026-10-27T20:57:04.243Z"
     },
     {
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
       "friendId": "cmvh1oilb019aonytzqy24vft",
-      "createdAt": "2026-10-27T12:21:54.603Z"
+      "createdAt": "2026-10-27T20:57:04.244Z"
     }
   ],
   "reactions": [],
