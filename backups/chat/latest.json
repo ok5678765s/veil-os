@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-27T20:57:05.464Z",
+  "exportedAt": "2026-10-27T23:40:20.207Z",
   "counts": {
     "accounts": 96,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500000,
+      "coins": 13500006,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -6240,17 +6240,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwr200x7onyt1h1hhulg",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "aa",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.735Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwr300x9onytgq4kfiyu",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7337,6 +7326,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-27T18:35:49.189Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvrbvrg50003rbrvswwyrehr",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "new links https://live-ec012f87ecae1baf.htmltowebsite.com/",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-27T23:40:06.966Z",
       "editedAt": null
     }
   ],
@@ -11611,6 +11611,22 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-27T18:35:49.191Z"
+    },
+    {
+      "id": "cmvrbve550001rbrvjv8w9z2x",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5,
+      "reason": "proxy_earn",
+      "createdAt": "2026-10-27T23:39:49.721Z"
+    },
+    {
+      "id": "cmvrbvrg90005rbrvfaslzqde",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-27T23:40:06.969Z"
     }
   ]
 }
