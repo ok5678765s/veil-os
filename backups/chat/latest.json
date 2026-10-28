@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-28T00:05:08.467Z",
+  "exportedAt": "2026-10-28T00:05:43.451Z",
   "counts": {
     "accounts": 96,
-    "messages": 486,
+    "messages": 487,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500010,
+      "coins": 13500011,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -7371,6 +7371,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-28T00:05:05.131Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvrcs5b30009rbtvaks4yew2",
+      "channelId": "links",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "https://hidden-lime-uitalncz.edgeone.dev/",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-28T00:05:17.919Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -11692,6 +11703,14 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-28T00:05:05.133Z"
+    },
+    {
+      "id": "cmvrcs5b5000brbtvbajz4dr3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-28T00:05:17.921Z"
     }
   ]
 }
