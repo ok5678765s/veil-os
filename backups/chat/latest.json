@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-28T00:05:43.451Z",
+  "exportedAt": "2026-10-28T00:11:56.617Z",
   "counts": {
     "accounts": 96,
-    "messages": 487,
+    "messages": 488,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500011,
+      "coins": 13500013,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -6240,17 +6240,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwr300xbonyt16w8v9md",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.736Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwr400xdonyt4wyf16oo",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7381,6 +7370,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-28T00:05:17.919Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvrd0c5o000drbtvpnoe9wwa",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "go to #links for daily links - https://financial-cyan-3rjebxwz.edgeone.dev/",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-28T00:11:40.045Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvrd0jfo000hrbtvj52fz3s3",
+      "channelId": "links",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "https://financial-cyan-3rjebxwz.edgeone.dev/",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-28T00:11:49.477Z",
       "editedAt": null
     }
   ],
@@ -11711,6 +11722,22 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-28T00:05:17.921Z"
+    },
+    {
+      "id": "cmvrd0c5s000frbtv7v3n29vt",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-28T00:11:40.049Z"
+    },
+    {
+      "id": "cmvrd0jfq000jrbtvteole3do",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-28T00:11:49.479Z"
     }
   ]
 }
