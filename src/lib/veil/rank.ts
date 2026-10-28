@@ -70,6 +70,10 @@ export interface RankSignals {
    * YouTube's home treats a half-watched video as an invitation, not
    * a repeat. */
   watchFractions?: Record<string, number>;
+  /** video id → times SHOWN without a pick (impression fatigue —
+   * "stop recommending the same video 10x in a row"). 3+ starts
+   * sinking, 5+ sinks hard, 10+ removes from For You entirely. */
+  impressions?: Record<string, number>;
   /** current time (ms) — injectable for determinism in tests. */
   now?: number;
   /** per-load seed (drives exploration jitter + tie-breaking). */
@@ -444,9 +448,12 @@ export function rankFeed(candidates: RankCard[], s: RankSignals): RankResult {
 
   /* negative-feedback hard filter — "Not interested" videos and
    * "Don't recommend channel" channels never render on the feed, the
-   * same way YouTube's home drops them from the page entirely. */
+   * same way YouTube's home drops them from the page entirely. So do
+   * videos IGNORED ten-plus times: the user has seen them and scrolled
+   * past every single time — that's a no. (Search/channel pages are
+   * untouched; this filter only shapes recommendations.) */
   const visible = pool.filter(
-    (c) => !p.hidden.has(c.id) && !p.blocked.has(c.authorId),
+    (c) => !p.hidden.has(c.id) && !p.blocked.has(c.authorId) && (s.impressions?.[c.id] ?? 0) < 10,
   );
 
   const scored = visible.map((c) => {
@@ -470,6 +477,16 @@ export function rankFeed(candidates: RankCard[], s: RankSignals): RankResult {
     if (p.watched.has(c.id)) {
       const frac = s.watchFractions?.[c.id] ?? 0;
       score *= frac >= 0.95 ? 0.3 : frac >= 0.05 ? 0.82 : 0.45;
+    }
+    /* impression fatigue — a video shown over and over without a pick
+     * loses standing the way YouTube's home stopped letting repeat
+     * impressions dominate: 3+ scrolls-past sink it, 5+ (the user's
+     * "I'm ignoring this" threshold) nearly buries it. A watch resets
+     * the counter entirely (clearImpression on pushHistory). */
+    {
+      const im = s.impressions?.[c.id] ?? 0;
+      if (im >= 5) score *= 0.18;
+      else if (im >= 3) score *= 0.45;
     }
     /* live events get a small standing boost — they expire, watch them now */
     if (c.live) score *= 1.12;

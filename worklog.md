@@ -2390,3 +2390,24 @@ Stage Summary:
 - Files: +src/lib/veil/progress-store.ts; ~rank.ts, stream-section.tsx, /p/ route, quasar/version.ts, +quasar/youtube.ts.
 - Known limits: relay-lane progress writes while playing not gesture-verified in headless (autoplay policy); native-lane verified via injection + code paths.
 - Open from earlier: mods' chat-backups restore button diagnosis still pending; repo still public with account data (user informed); dl/veil-os-full.zip local-only.
+
+---
+Task ID: 10
+Agent: main (Z.ai Code)
+Task: User reports 4 Stream issues: (1) watch UI fades when video loads, (2) same videos recommended 10x when ignored — after 5-8 impressions they're being ignored, (3) shorts loading too slow ("1 trillion times faster"), (4) clicking replies to a comment is bugged.
+
+Work Log:
+- REPLY BUG (root-caused + fixed server-side): "Show N replies" returned the TOP-LEVEL comment list again. Two stacked causes in mini-services/freetube-service/invidious-compat.ts: (a) YouTube's current comment shapes hand out URL-ENCODED continuation tokens (base64 "==" as "%3D%3D") — decoded at use now (Piped JSON-blob tokens pass through); (b) reply continuation pages return BARE commentViewModel items (no commentThreadRenderer wrapper) — commentThreadItems now collects them and the payload-mapping vm lookup handles both shapes. Verified live through the whole chain: /api/yt/comments?continuation=<replyToken> now returns the actual replies (2-item thread on a 2-reply comment; previously 20 top-level). UI-verified in browser: "Show 14 replies" renders the real nested thread. Compat hot-reloaded via bun --hot.
+- IMPRESSION FATIGUE: new src/lib/veil/impression-store.ts (localStorage veil.stream.impressions.v1, cap 3000 LRU, debounced writes). VideoCard gets an IntersectionObserver (≥50% visible → noteImpression, once per mount — YouTube's impression rule). rank.ts: 3+ unclicked impressions ×0.45, 5+ ×0.18 (the user's "5-8 attempts = ignoring me"), 10+ hard-filtered from For You; pushHistory clears the counter (a watch = engagement = fresh start). Signals wired into foryouSignals + upNext. Browser-verified: injected 12x counter → video vanished from display; unmarked peers stayed.
+- SHORTS SPEED: ShortSlide auto-flow now goes RELAY IMMEDIATELY on the first gate (old path: 1.5s wait → soft re-probe → second gate → relay ≈ 9s worst; new: gate-answer → embed boot ≈ 3-4s; server-side warm still parks the native body for retries/revisits). Lookahead widened from 2 to 3 slides. ShortCard hover-warm: pointerenter fires a deduped soft-lane fetch so the click lands on a warm body (native starts instantly). Viewer verified live: 2 relay iframes booted, zero stuck gate/tuning states across 60 shorts.
+- LOAD FADE: the watch page's loading state was a gray pulsing skeleton that swapped to the black player — that swap was the "UI fades when video loads". Now the video's own THUMBNAIL is the loading state (same image as the player's poster → invisible hand-off) + centered spinner + slim red top loading bar. RelayPlayer boot also shows the dimmed thumbnail behind the tuning shimmer instead of a black void. Browser-verified: loading state shows thumb + red bar, no gray skeleton.
+- Dev server died mid-round (next-server child vanished during recompile of the 10k-line file); veil-start.sh revived it cleanly, GET / → 200 after.
+- QA: all four flows browser-verified (agent-browser); eslint clean on every touched file; test data (impressions injection) cleaned.
+
+Stage Summary:
+- Replies: FIXED end-to-end (decode-at-use + bare commentViewModel parsing in the freetube compat service).
+- Fatigue: 3/5/10-tier impression demotion + hard filter, engagement resets, per-device.
+- Shorts: ~2-3x faster worst-case open (instant relay), hover-warm + 3-deep lookahead.
+- Load: thumbnail-is-the-loader on native + relay lanes.
+- Files: invidious-compat.ts, impression-store.ts (new), rank.ts, stream-section.tsx.
+- Dev server now stable again; backup loops running; all committed+pushed.

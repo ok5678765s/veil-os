@@ -102,6 +102,7 @@ import {
   WATCHED_FRACTION,
   PROGRESS_EVENT,
 } from "@/lib/veil/progress-store";
+import { noteImpression, clearImpression, impressionCounts } from "@/lib/veil/impression-store";
 
 /** Re-render hook: bumps whenever a watch-progress cursor moves
  * (resume bars on cards live-update while a video plays). */
@@ -2445,6 +2446,28 @@ function VideoCard({
    * after a 600ms dwell, disarmed instantly on mouseleave */
   const [peek, setPeek] = React.useState(false);
   const peekArm = React.useRef<number | null>(null);
+  /* impression counting — one note per mount when the card is ≥50%
+   * visible (YouTube counts a thumbnail impression the same way);
+   * the ranker sinks anything ignored 3+/5+/10+ times */
+  const notedRef = React.useRef(false);
+  const impressionRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    const el = impressionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && e.intersectionRatio >= 0.5 && !notedRef.current) {
+            notedRef.current = true;
+            noteImpression(card.id);
+          }
+        }
+      },
+      { threshold: [0.5] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [card.id]);
   React.useEffect(
     () => () => {
       if (peekArm.current !== null) window.clearTimeout(peekArm.current);
@@ -2488,8 +2511,8 @@ function VideoCard({
     >
       {/* thumb + feedback ⋮ wrapper — the menu (absolute, expands DOWN
        * past the thumb) must NOT live inside the overflow-hidden thumb
-       * box or it gets clipped */}
-      <div className="relative">
+       * box or it gets clipped; the ref feeds the impression observer */}
+      <div className="relative" ref={impressionRef}>
         <div
           className="veil-hover-lift relative aspect-video w-full overflow-hidden rounded-xl bg-zinc-800/80 ring-1 ring-zinc-800/60 transition duration-300 group-hover:shadow-2xl group-hover:shadow-black/60 group-hover:ring-zinc-700/80"
           onMouseEnter={startPreview}
@@ -2874,6 +2897,9 @@ function ShortsRail({ shorts, onWatch }: { shorts: YtCard[]; onWatch: (id: strin
     </section>
   );
 }
+
+/* hover-warm dedupe — one soft-lane ask per video per session */
+const warmAsked = new Set<string>();
 
 function ShortsRailSkeleton() {
   return (
@@ -4406,6 +4432,15 @@ function MenuItem({ label, active, onClick }: { label: string; active: boolean; 
 /** A vertical shorts card for the channel shelf. */
 function ShortCard({ card, index, onWatch }: { card: YtCard; index: number; onWatch: (id: string, card: YtCard) => void }) {
   const reduceMotion = useReducedMotion();
+  /* hover-warm — the 300ms a pointer spends deciding is enough for the
+   * server's soft lane to park the stream body, so the click lands on a
+   * WARM slide and native playback starts instantly instead of gating
+   * into the relay. Deduped per video per session, fire-and-forget. */
+  const onWarm = React.useCallback(() => {
+    if (warmAsked.has(card.id)) return;
+    warmAsked.add(card.id);
+    void fetch(`/api/yt/video/${encodeURIComponent(card.id)}?quick=1&soft=1`).catch(() => {});
+  }, [card.id]);
   /* NOTE: div[role=button], not a <button> — the feedback ⋮ menu (and
    * its nested <button>s) live inside this card, and button-in-button
    * is invalid HTML (a hydration error). Keyboard users get Enter/Space. */
@@ -4422,6 +4457,7 @@ function ShortCard({ card, index, onWatch }: { card: YtCard; index: number; onWa
       initial={reduceMotion ? false : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, delay: Math.min(index * 0.03, 0.3) }}
+      onPointerEnter={onWarm}
       onClick={() => onWatch(card.id, card)}
       onKeyDown={onKeyDown}
       aria-label={`Watch short: ${card.title}`}
@@ -5553,6 +5589,15 @@ function RelayPlayer({
         }}
         className="group/relay relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl shadow-black/50 ring-1 ring-white/10"
       >
+        {/* the card's thumbnail dims behind the boot — the relay opens
+         * onto a familiar frame instead of a black void (the same
+         * "loading fades" complaint on the native lane) */}
+        {card.thumb && !connected && (
+          <>
+            <Thumb src={card.thumb} alt="" className="absolute inset-0 size-full opacity-40" />
+            <div className="absolute inset-0 bg-black/40" />
+          </>
+        )}
         {qSize && shellBox ? (
           <iframe
             key={`relay:${card.id}:${relayQ}:${reloadKey}`}
@@ -6396,30 +6441,23 @@ function ShortSlide({
       });
   }, [active, preload, card.id, tick]);
 
-  /* auto-flow for a gated short on the ACTIVE slide — it should just
-   * PLAY: one quick soft re-probe (~1.5s later, the background warm can
-   * park the body that fast), then the relay lane takes over the MOMENT
-   * the second answer is also a gate. No Retry / "Play here" interlude —
-   * the embed needs no stream extraction, so the gate can't hold the
-   * slide hostage. (~9s worst case from open to playing.) */
+  /* auto-flow for a gated short on the ACTIVE slide — 2026-10-28, the
+   * "make short loading 1 trillion times faster" round: the relay embed
+   * needs NO stream extraction, so every second spent re-probing native
+   * first is dead time the user watches a shimmer. RELAY NOW on the
+   * first gate (the old 1.5s-then-re-probe-then-relay path was ~9s
+   * worst case; this is gate-answer → embed boot, ~3-4s). The
+   * server-side warm keeps parking the native body regardless — the
+   * relay panel's retry / a later revisit picks it up warm. */
   React.useEffect(() => {
     if (!active || (info.status !== "gate" && info.status !== "error")) return;
     if (autoRef.current >= 1) {
-      /* second gate — relay NOW */
       setInfo({ status: "relay" });
       return;
     }
-    const t = setTimeout(
-      () => {
-        autoRef.current += 1;
-        fetchedRef.current = false;
-        setInfo({ status: "loading" });
-        setTick((v) => v + 1);
-      },
-      1500,
-    );
-    return () => clearTimeout(t);
-  }, [active, info.status, tick]);
+    autoRef.current += 1;
+    setInfo({ status: "relay" });
+  }, [active, info.status]);
 
   /* attach the chosen format */
   React.useEffect(() => {
@@ -7078,7 +7116,7 @@ function ShortsViewer({
             <ShortSlide
               card={card}
               active={i === active}
-              preload={i === active + 1 || i === active + 2}
+              preload={i >= active + 1 && i <= active + 3}
               muted={muted}
               onToggleMute={() => setMuted((v) => !v)}
               onWatched={onWatched}
@@ -8643,6 +8681,8 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
           .filter(([, p]) => p.dur > 0)
           .map(([id, p]) => [id, p.pos / p.dur]),
       ),
+      /* impression fatigue — the ignored-repeat counters */
+      impressions: impressionCounts(),
       seed,
     }),
     [histEntries, subsVersion, ratingsVersion, niVersion, progV],
@@ -8907,6 +8947,9 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
        * feed, since the watched filter rides this same store */
       if (!card?.id || historyPaused()) return;
       _watchedIds = null;
+      /* a pick is ENGAGEMENT — the impression-fatigue counter for this
+       * video resets (the recommendation worked, fresh start) */
+      clearImpression(card.id);
       historyTouch(card);
       setHistEntries(readHistory());
     },
@@ -9569,6 +9612,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
             .filter(([, p]) => p.dur > 0)
             .map(([id, p]) => [id, p.pos / p.dur]),
         ),
+        impressions: impressionCounts(),
         seed: (watchId.charCodeAt(0) || 1) + 7,
       },
     );
@@ -9757,7 +9801,25 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
               >
               {videoLoading && !video ? (
                 <div>
-                  <div className="aspect-video w-full animate-pulse rounded-2xl bg-zinc-800/60" />
+                  {/* the thumbnail IS the loading state — YouTube's watch
+                      page shows the poster the instant you click; the old
+                      gray pulsing skeleton swapping to the black player
+                      read as "the whole UI fades when the video loads".
+                      Same image below as the player's poster → the
+                      hand-off is invisible, spinner and top bar carry
+                      the "working" signal alone. */}
+                  <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-white/10">
+                    {watchCard?.thumb ? (
+                      <Thumb src={watchCard.thumb} alt="" className="size-full" />
+                    ) : null}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <Loader2 aria-hidden className="size-10 animate-spin text-rose-400/90" />
+                    </div>
+                    {/* the slim red loading sliver, YouTube-style */}
+                    <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] overflow-hidden bg-white/10">
+                      <div className="h-full w-1/3 animate-pulse bg-rose-500" />
+                    </div>
+                  </div>
                   <div className="mt-4 space-y-2">
                     <div className="h-5 w-3/4 animate-pulse rounded bg-zinc-800/60" />
                     <div className="h-4 w-1/2 animate-pulse rounded bg-zinc-800/40" />

@@ -570,13 +570,17 @@ function commentsEntryPointToken(json: any): string {
 }
 
 /** commentThreadRenderers + the page's next token off a comments page
- * (first page reloads the results slot; deeper pages append). */
+ * (first page reloads the results slot; deeper pages append). 2026-10-28:
+ * REPLY pages carry bare commentViewModel items — no commentThreadRenderer
+ * wrapper (the newer YouTube shape) — so they're collected as-is; the
+ * mapper's vm lookup handles both shapes. */
 function commentThreadItems(json: any): { threads: any[]; next: string } {
   const threads: any[] = [];
   let next = "";
   const grab = (items: any[]) => {
     for (const it of items || []) {
       if (it?.commentThreadRenderer) threads.push(it.commentThreadRenderer);
+      else if (it?.commentViewModel) threads.push(it);
       else if (it?.continuationItemRenderer) {
         const tok = it.continuationItemRenderer?.continuationEndpoint?.continuationCommand?.token;
         if (typeof tok === "string" && tok.length > 20) next = tok;
@@ -639,6 +643,20 @@ export async function innertubeComments(
   sort = "",
 ): Promise<any | null> {
   let token = continuation;
+  /* 2026-10-28 — THE REPLY BUG: YouTube's current comment shapes hand
+   * out URL-ENCODED continuation tokens (base64 "==" surfaces as
+   * "%3D%3D", "/" as "%2F"). Sending the encoded form back to /next
+   * gets it ignored — the answer carries the video's comments page,
+   * so "Show replies" rendered the TOP-LEVEL list again. Decode once
+   * when the token looks percent-encoded (Piped JSON-blob nextpage
+   * tokens start with "{" and pass through untouched). */
+  if (token && !token.trim().startsWith("{") && /%[0-9A-Fa-f]{2}/.test(token)) {
+    try {
+      token = decodeURIComponent(token);
+    } catch {
+      /* malformed sequence — keep the raw form */
+    }
+  }
   let commentCount = 0;
   if (!token) {
     const next = await innertubeNextCall({ videoId: id });
@@ -695,9 +713,11 @@ export async function innertubeComments(
   const comments = threads
     .map((t: any) => {
       /* the thread links to its payload by commentKey — nested
-       * commentViewModel on the thread itself (current shape) or under
-       * content (older shape) */
-      const vm = t?.commentViewModel?.commentViewModel || t?.content?.commentViewModel || {};
+       * commentViewModel on the thread itself (current shape), the BARE
+       * commentViewModel of a reply item (reply pages, 2026-10-28), or
+       * under content (older shape) */
+      const vm =
+        t?.commentViewModel?.commentViewModel || t?.commentViewModel || t?.content?.commentViewModel || {};
       const key = String(vm.commentKey || "");
       const p = payloads[key];
       if (!p) return null;
