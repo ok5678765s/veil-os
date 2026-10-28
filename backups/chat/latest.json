@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-28T11:55:02.190Z",
+  "exportedAt": "2026-10-28T11:58:10.677Z",
   "counts": {
     "accounts": 97,
     "messages": 483,
@@ -2034,7 +2034,7 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 100,
+      "coins": 101,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -6261,17 +6261,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwr200x7onyt1h1hhulg",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "aa",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.735Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwr300x9onytgq4kfiyu",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7358,6 +7347,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-27T18:35:49.189Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvs28c6e0002u1ypujs7zd0l",
+      "channelId": "main",
+      "accountId": "cmvs24o9q0000u1ypu6va43rn",
+      "content": "what up chat",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-28T11:57:43.718Z",
       "editedAt": null
     }
   ],
@@ -11632,6 +11632,14 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-27T18:35:49.191Z"
+    },
+    {
+      "id": "cmvs28c6i0004u1ypaayi90qv",
+      "fromId": "cmvs24o9q0000u1ypu6va43rn",
+      "toId": "cmvs24o9q0000u1ypu6va43rn",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-28T11:57:43.722Z"
     }
   ]
 }
