@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-29T15:41:32.914Z",
+  "exportedAt": "2026-10-29T20:00:03.304Z",
   "counts": {
     "accounts": 96,
-    "messages": 484,
+    "messages": 485,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500012,
+      "coins": 13500013,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -7349,6 +7349,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-29T14:08:00.135Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvtyw7dl0001ozwha8d7wfqc",
+      "channelId": "links",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "https://financial-gray-d0pjeii5.edgeone.dev/",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-29T19:59:51.129Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -11662,6 +11673,14 @@
       "amount": 770030,
       "reason": "blackjack_loss",
       "createdAt": "2026-10-29T15:41:12.040Z"
+    },
+    {
+      "id": "cmvtyw7dr0003ozwh7zs1wznv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-29T19:59:51.135Z"
     }
   ]
 }
