@@ -74,6 +74,13 @@ export interface RankSignals {
    * "stop recommending the same video 10x in a row"). 3+ starts
    * sinking, 5+ sinks hard, 10+ removes from For You entirely. */
   impressions?: Record<string, number>;
+  /** THE SEED CONTEXT — the video currently being watched (the Up next
+   * rail passes it). Powers the CHAIN objective: binge continuation is
+   * the single strongest retention signal a watch page has (YouTube's
+   * autoplay rail is tuned for "session time", and session time is won
+   * one smooth hand-off at a time). Same-channel, same-series and
+   * sequel-shaped candidates chain hardest. */
+  chainSeed?: { id: string; title: string; authorId: string };
   /** current time (ms) — injectable for determinism in tests. */
   now?: number;
   /** per-load seed (drives exploration jitter + tie-breaking). */
@@ -123,6 +130,18 @@ export function tokens(t: string): string[] {
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
     .filter((w) => w.length > 2 && !/^\d+$/.test(w) && !STOPWORDS.has(w));
+}
+
+/* ------------------------------------------------------------------ */
+/* Series markers — "part 3", "ep 5", "#12": the binge-chain detector   */
+/* ------------------------------------------------------------------ */
+
+const SERIES_RE = /\b(?:part|pt|ep|episode|#)\s*(\d{1,3})\b/i;
+
+/** The episode marker in a title, or null ("Part 2" → 2). */
+export function seriesMark(title: string): number | null {
+  const m = (title || "").match(SERIES_RE);
+  return m ? parseInt(m[1], 10) : null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -268,18 +287,26 @@ interface Objectives {
   session: number;
   /** cold-start exploration for fresh/unknown uploads + ε-jitter. */
   explore: number;
+  /** BINGE CHAIN — continuity with the seed video (Up next only):
+   * same channel, shared title tokens, direct sequels. Retention is
+   * the goal — the rail's job is to make leaving feel like a loss. */
+  chain: number;
 }
 
+/* Retention-tuned weights (sum 1.0). The session + chain pair carries
+ * almost a third of the blend now — "keep them watching" beats "get
+ * the click" (a click that ends the session is a losing click). */
 const W = {
-  expWatch: 0.32,
-  click: 0.22,
-  satisfaction: 0.16,
-  freshness: 0.10,
-  session: 0.12,
-  explore: 0.08,
+  expWatch: 0.28,
+  click: 0.17,
+  satisfaction: 0.13,
+  freshness: 0.08,
+  session: 0.15,
+  explore: 0.05,
+  chain: 0.14,
 };
 
-function scoreCard(c: RankCard, p: UserProfile, rand: () => number): Objectives {
+function scoreCard(c: RankCard, p: UserProfile, rand: () => number, s: RankSignals): Objectives {
   const affinity = Math.min(1, (p.channel.get(c.authorId) ?? 0) / ((p.channel.get(c.authorId) ?? 0) + 3));
 
   /* topic match — the share of the candidate's distinctive tokens the
@@ -341,10 +368,32 @@ function scoreCard(c: RankCard, p: UserProfile, rand: () => number): Objectives 
 
   const expWatch = 0.5 * affinity + 0.28 * durFit + 0.22 * topicMatch;
 
+  /* the binge chain — continuity with the video ON SCREEN right now.
+   * Same channel is half the score (a channel you're mid-session on is
+   * the strongest "one more" predictor there is), shared distinctive
+   * tokens (series names, subjects) add up to half, and a DIRECT
+   * sequel ("part 3" watching → "part 4" candidate) is a straight
+   * +0.35 — the exact moment YouTube's autoplay earns its keep. */
+  let chain = 0;
+  const seed = s.chainSeed;
+  if (seed && seed.id !== c.id) {
+    const seedToks = new Set(tokens(seed.title || ""));
+    if (seedToks.size > 0) {
+      let hits = 0;
+      for (const t of toks) if (seedToks.has(t)) hits++;
+      chain += Math.min(0.5, (hits / Math.max(2, seedToks.size)) * 0.65);
+    }
+    if (seed.authorId && c.authorId === seed.authorId) chain += 0.5;
+    const sm = seriesMark(seed.title || "");
+    const cm = seriesMark(c.title || "");
+    if (sm !== null && cm !== null && cm === sm + 1) chain += 0.35;
+    chain = Math.min(1, chain);
+  }
+
   /* satisfaction refinement — a liked channel is a known-good source */
   // (likedChannels already lifted affinity via the profile)
 
-  return { expWatch, click, satisfaction, freshness, session, explore };
+  return { expWatch, click, satisfaction, freshness, session, explore, chain };
 }
 
 /** The "why" label — derived from the DOMINANT objective, so the chip
@@ -369,6 +418,16 @@ function whyLabel(c: RankCard, p: UserProfile, o: Objectives, s: RankSignals): s
       return "continue watching";
     }
   }
+  /* the binge chain — only in a seeded (Up next) context */
+  if (o.chain > 0.6 && s.chainSeed) {
+    const sm = seriesMark(s.chainSeed.title || "");
+    const cm = seriesMark(c.title || "");
+    if (sm !== null && cm === sm + 1) return `part ${cm} — you're on part ${sm}`;
+    return "next in this series";
+  }
+  if (o.chain > 0.4 && s.chainSeed && s.chainSeed.authorId === c.authorId) {
+    return author ? `more from ${author}` : "more from this channel";
+  }
   if (o.satisfaction > 0.55 && (c.views ?? 0) > 80_000) return "popular right now";
   if (o.session > 0.5 && p.total > 0) {
     const src = s.history.find((h) => h.card?.authorId === c.authorId && p.sessionChans.has(c.authorId));
@@ -389,12 +448,15 @@ function whyLabel(c: RankCard, p: UserProfile, o: Objectives, s: RankSignals): s
 /* screen: cap per channel, enforce spacing, keep the mix breathing    */
 /* ------------------------------------------------------------------ */
 
-function diversify(scored: { c: RankCard; s: number }[]): RankCard[] {
+function diversify(
+  scored: { c: RankCard; s: number }[],
+  mode?: { cap: number; spacing: number },
+): RankCard[] {
   const out: { c: RankCard; s: number }[] = [];
   const perChan = new Map<string, number>();
   const lastAt = new Map<string, number>();
-  const CAP = 3; // max cards per channel in the whole page
-  const SPACING = 3; // min positions between same-channel cards
+  const CAP = mode?.cap ?? 3; // max cards per channel in the whole page
+  const SPACING = mode?.spacing ?? 3; // min positions between same-channel cards
 
   const pending = [...scored];
   while (out.length < scored.length) {
@@ -437,7 +499,15 @@ export interface RankResult {
   };
 }
 
-export function rankFeed(candidates: RankCard[], s: RankSignals): RankResult {
+/** rankFeed options — `rail` loosens the diversity caps for the watch
+ * page's Up next list: a binge chain WANTS consecutive same-channel
+ * cards (that's the whole point of a series), so spacing drops to 1
+ * and the per-channel cap rises. */
+export interface RankOpts {
+  rail?: boolean;
+}
+
+export function rankFeed(candidates: RankCard[], s: RankSignals, opts?: RankOpts): RankResult {
   const now = s.now ?? Date.now();
   const rand = mulberry32((s.seed ?? 1) * 2654435761);
   const p = buildProfile(s);
@@ -457,14 +527,15 @@ export function rankFeed(candidates: RankCard[], s: RankSignals): RankResult {
   );
 
   const scored = visible.map((c) => {
-    const o = scoreCard(c, p, rand);
+    const o = scoreCard(c, p, rand, s);
     let score =
       W.expWatch * o.expWatch +
       W.click * o.click +
       W.satisfaction * o.satisfaction +
       W.freshness * o.freshness +
       W.session * o.session +
-      W.explore * o.explore;
+      W.explore * o.explore +
+      W.chain * o.chain;
     /* repeat demotion — GRADED by how far the watch actually got
      * (YouTube's home feed rarely shows what you just watched; the
      * History page is for that):
@@ -519,7 +590,7 @@ export function rankFeed(candidates: RankCard[], s: RankSignals): RankResult {
     .map(([token, weight]) => ({ token, weight: Math.round(weight * 10) / 10 }));
 
   return {
-    cards: diversify(labeled),
+    cards: diversify(labeled, opts?.rail ? { cap: 6, spacing: 1 } : undefined),
     profile: { topChannels, topTopics, watches: p.total },
   };
 }

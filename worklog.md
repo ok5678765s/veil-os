@@ -2411,3 +2411,24 @@ Stage Summary:
 - Load: thumbnail-is-the-loader on native + relay lanes.
 - Files: invidious-compat.ts, impression-store.ts (new), rank.ts, stream-section.tsx.
 - Dev server now stable again; backup loops running; all committed+pushed.
+
+---
+Task ID: 11
+Agent: main (Z.ai Code)
+Task: User reports: the watch page's side bar (Up next) disappears when a video loads — should be infinite; rework the recommendation system to retain like YouTube or better ("keep them on as long as possible"). Carried over: comment-replies click robustness, load fade.
+
+Work Log:
+- DISAPPEARING SIDEBAR (root cause): upNext returned [] whenever the relay lane engaged (`if (!watchId || useRelay) return []`) — every gated video killed the sticky rail. Fix: the !useRelay gate is GONE; the rail is shared by BOTH lanes (native + relay), pools from video.related → relay meta related (+feed gap-fill) → feed fallback while loading. The aside now renders whenever a video is open — with skeleton rows when the pool is briefly empty — so it NEVER collapses mid-transition. RelayPlayer's own inline "more" grid removed (was the mobile duplication source); the parent's Up-next sections own all widths now.
+- INFINITE RAIL: railCount state (starts 14) + railExtra (chained cards). Desktop: the sticky scroller's onScroll near-bottom reveals +8. Mobile: IntersectionObserver sentinel under the grid. When the ranked pool runs low, railFetchMore CHAINS — fetches ?meta=1 (related list) of the highest not-yet-used rail card, dedupes against everything ever shown + filterFeedback, ranks the fresh batch with the same rail signals, appends (budget 30 fetches/watch). Dedupe guard on the visible memo (a chained card can later arrive in a fresh pool).
+- RETENTION RANKER (rank.ts): new chainSeed signal (the current watch) + CHAIN objective — same channel +0.5, shared distinctive title tokens up to +0.5, direct sequel ("part N" → "part N+1") +0.35 — with why-labels "next in this series" / "part N — you're on part M" / "more from X". Weights retuned for session time: expWatch .28, click .17, satisfaction .13, freshness .08, session .15, chain .14, explore .05. rankFeed opts.rail loosens diversity (cap 6, spacing 1) — a binge chain WANTS consecutive same-channel cards.
+- AUTOPLAY CHAIN (the big retention lever): new autoplay pref (default ON). Both players: on ended (loop off) → marathon Next wins if running, else a 5s countdown overlay (thumb + title + play-now + cancel; backdrop click cancels on relay) hands off to upNext[0]. Toggles: rail header switch (AutoplayToggle) + settings menu rows (native rose / relay amber). Manual replay cancels. Identity guard: the rail re-ranks on every progress flush (the store dispatches on write) — only a change of nextUp VIDEO id may cancel a countdown, object churn must not.
+- LOAD FADE (native): thumbnail underlay behind the video element; element starts opacity-0 and crossfades in 700ms on first playing/canplay; resets on video switch (works with the stale-frame kill — a blanked element shows the new thumb).
+- REPLIES (UI hardening on top of the earlier server fix): thread state gains failed flag — a gate/empty/catch round renders "no replies came back + retry" instead of silent nothing (the click-that-does-nothing feel); parent-echo guard drops an upstream-echoed parent comment.
+- QA (agent-browser, live): rail held 14 cards THROUGH load and INTO relay mode (4 separate observations — the exact old bug scenario); infinite growth 14→22→30 on scroll with chained content leading on the watched artist (SEKAI NO OWARI concert → their songs) then diversifying outward; why-chips render ("new from SEKAI NO OWARI"); autoplay switch present+ON; comments panel loads 20 comments, 18 reply buttons, "Show 42 replies" click fired (thread render lost to a watchdog dev-server restart before readback). env note: the dev watchdog restarts the server ~every 30-60s (Fast Refresh full reloads) and the upstream gate was fully engaged (every watch → relay), so the native-lane fade and the end-of-video countdown could not be gesture-verified in headless — code paths lint-clean + logic-reviewed.
+- Fixed one QA-found crash: railSignals evaluated watchId.charCodeAt(0) with watchId null on the browse page → client-side exception; now (watchId ?? "v").
+
+Stage Summary:
+- Watch page: the Up next rail never disappears, is infinite (chained related-of-related), shared across native+relay lanes, ranked for binge continuation, and hands off automatically at video end (5s countdown, toggleable).
+- Ranker: 7-objective retention blend with the chain objective + rail-mode diversity + series-marker labels.
+- Files: rank.ts, stream-section.tsx (players, rail, prefs, comments panel).
+- Verified: rail persistence (load + relay), growth 14→30, chain quality, chips, toggle, comments+replies buttons; countdown/fade code-verified only (gate + watchdog + headless limits).

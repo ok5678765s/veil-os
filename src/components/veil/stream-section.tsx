@@ -579,16 +579,19 @@ function useHistoryPaused(): boolean {
 /** Everything the player settings menu controls. `maxHeight` caps the
  * adaptive-combo pick (quality preference), `speed` is the playback rate,
  * `loop` replays, `relayQuality` is the YouTube-embed quality preference
- * for the relay lane ("auto" lets YouTube decide). Saved values apply to
- * every NEW video/short; speed applies live to the playing one too. */
+ * for the relay lane ("auto" lets YouTube decide), `autoplay` chains the
+ * next video when one ends (the retention engine — off = the page waits).
+ * Saved values apply to every NEW video/short; speed applies live to the
+ * playing one too. */
 interface StreamPrefs {
   maxHeight: number;
   speed: number;
   loop: boolean;
   relayQuality: string;
+  autoplay: boolean;
 }
 const PREFS_KEY = "veil.stream.prefs.v1";
-const DEFAULT_PREFS: StreamPrefs = { maxHeight: 1080, speed: 1, loop: false, relayQuality: "auto" };
+const DEFAULT_PREFS: StreamPrefs = { maxHeight: 1080, speed: 1, loop: false, relayQuality: "auto", autoplay: true };
 const SPEED_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 /** The relay lane's quality ladder — YouTube's own quality ids (driven over
@@ -640,6 +643,7 @@ function readPrefs(): StreamPrefs {
         typeof p.relayQuality === "string" && RELAY_QUALITY_VALUES.has(p.relayQuality)
           ? p.relayQuality
           : "auto",
+      autoplay: typeof p.autoplay === "boolean" ? p.autoplay : true,
     };
   } catch {
     return { ...DEFAULT_PREFS };
@@ -667,6 +671,40 @@ function usePrefsVersion(): number {
     return () => window.removeEventListener("veil-stream-prefs", bump);
   }, []);
   return v;
+}
+
+/** The Up next header's autoplay switch — the rail + grid headers share
+ * it. Reads/writes the autoplay pref and re-renders itself on any prefs
+ * change (so both headers stay in lock-step with the players' menus). */
+function AutoplayToggle({ accent = "rose" }: { accent?: "rose" | "amber" }) {
+  const prefsV = usePrefsVersion();
+  void prefsV;
+  const on = readPrefs().autoplay;
+  return (
+    <button
+      type="button"
+      onClick={() => savePrefs({ autoplay: !on })}
+      aria-pressed={on}
+      aria-label="Autoplay next video"
+      title={on ? "Autoplay on — the next video plays when this one ends" : "Autoplay off"}
+      className="flex shrink-0 items-center gap-2 rounded-full px-1.5 py-0.5 text-[11px] font-semibold text-zinc-400 transition hover:text-zinc-100"
+    >
+      <span className="hidden sm:inline">Autoplay</span>
+      <span
+        aria-hidden
+        className={cn(
+          "flex h-4.5 w-8 items-center rounded-full px-0.5 transition",
+          on
+            ? accent === "amber"
+              ? "justify-end bg-amber-400"
+              : "justify-end bg-rose-500"
+            : "justify-start bg-zinc-700",
+        )}
+      >
+        <span className="size-3.5 rounded-full bg-white" />
+      </span>
+    </button>
+  );
 }
 
 /** The user's like/dislike per video — local only (nothing leaves the
@@ -1938,8 +1976,11 @@ function CommentsPanel({ videoId, sheet = false }: { videoId: string; /** sheet 
   /** honest-degrade note: set when a newest-first ask came back unsorted
    * (YouTube hides the sort menu for some videos/buckets). */
   const [sortNotice, setSortNotice] = React.useState<string | null>(null);
-  /** reply threads, keyed by parent index: items + paging state. */
-  const [threads, setThreads] = React.useState<Record<string, { items: YtCommentItem[]; next: string | null; open: boolean; busy: boolean }>>({});
+  /** reply threads, keyed by parent index: items + paging state.
+   * `failed` marks a round that came back empty/gated — the thread
+   * shows an honest note + retry instead of silently nothing (the
+   * "clicking replies does nothing" bug). */
+  const [threads, setThreads] = React.useState<Record<string, { items: YtCommentItem[]; next: string | null; open: boolean; busy: boolean; failed?: boolean }>>({});
 
   /* fetch the first page when the panel first expands (or the sort flips) */
   React.useEffect(() => {
@@ -2005,7 +2046,7 @@ function CommentsPanel({ videoId, sheet = false }: { videoId: string; /** sheet 
       .finally(() => setMore(false));
   };
 
-  const loadReplies = (key: string, token: string, pageMore = false) => {
+  const loadReplies = (key: string, token: string, pageMore = false, parent?: YtCommentItem) => {
     const cur = threads[key];
     if (cur?.busy) return;
     /* toggle: an open cached thread closes; a closed cached one reopens */
@@ -2015,11 +2056,11 @@ function CommentsPanel({ videoId, sheet = false }: { videoId: string; /** sheet 
     }
     setThreads((prev) => ({
       ...prev,
-      [key]: { items: prev[key]?.items ?? [], next: prev[key]?.next ?? null, open: true, busy: true },
+      [key]: { items: prev[key]?.items ?? [], next: prev[key]?.next ?? null, open: true, busy: true, failed: false },
     }));
     const useToken = pageMore ? (cur?.next ?? null) : (cur?.next ?? token);
     if (!useToken) {
-      setThreads((prev) => ({ ...prev, [key]: { ...(prev[key] ?? { items: [], next: null, open: true }), busy: false } }));
+      setThreads((prev) => ({ ...prev, [key]: { ...(prev[key] ?? { items: [], next: null, open: true }), busy: false, failed: (prev[key]?.items.length ?? 0) === 0 } }));
       return;
     }
     fetchJsonSafe<YtCommentsAnswer | YtGate>(
@@ -2027,16 +2068,25 @@ function CommentsPanel({ videoId, sheet = false }: { videoId: string; /** sheet 
     )
       .then((body) => {
         if (body && !("gated" in body)) {
+          /* upstream reply threads sometimes ECHO the parent comment as
+           * the first item — drop it so the thread isn't duplicated */
+          let list = body.comments;
+          if (parent && list.length > 0) {
+            const first = list[0];
+            if (first.author === parent.author && first.content.slice(0, 60) === parent.content.slice(0, 60)) {
+              list = list.slice(1);
+            }
+          }
           setThreads((prev) => ({
             ...prev,
-            [key]: { items: [...(prev[key]?.items ?? []), ...body.comments], next: body.next, open: true, busy: false },
+            [key]: { items: [...(prev[key]?.items ?? []), ...list], next: body.next, open: true, busy: false, failed: list.length === 0 && (prev[key]?.items.length ?? 0) === 0 },
           }));
         } else {
-          setThreads((prev) => ({ ...prev, [key]: { items: prev[key]?.items ?? [], next: null, open: true, busy: false } }));
+          setThreads((prev) => ({ ...prev, [key]: { items: prev[key]?.items ?? [], next: null, open: true, busy: false, failed: (prev[key]?.items.length ?? 0) === 0 } }));
         }
       })
       .catch(() => {
-        setThreads((prev) => ({ ...prev, [key]: { items: prev[key]?.items ?? [], next: prev[key]?.next ?? null, open: true, busy: false } }));
+        setThreads((prev) => ({ ...prev, [key]: { items: prev[key]?.items ?? [], next: prev[key]?.next ?? null, open: true, busy: false, failed: (prev[key]?.items.length ?? 0) === 0 } }));
       });
   };
 
@@ -2151,11 +2201,25 @@ function CommentsPanel({ videoId, sheet = false }: { videoId: string; /** sheet 
                     <CommentRow
                       c={c}
                       repliesOpen={Boolean(t?.open)}
-                      onOpenReplies={c.replies > 0 && c.replyToken ? () => loadReplies(key, c.replyToken!) : undefined}
+                      onOpenReplies={c.replies > 0 && c.replyToken ? () => loadReplies(key, c.replyToken!, false, c) : undefined}
                     />
                     {t?.open && (
                       <div className="mt-3 space-y-3.5 border-l-2 border-zinc-800 pl-4">
                         {t.busy && t.items.length === 0 && <Loader2 aria-hidden className="size-4 animate-spin text-zinc-500" />}
+                        {!t.busy && t.failed && t.items.length === 0 && (
+                          <p className="flex items-center gap-2.5 text-[11.5px] text-zinc-500">
+                            no replies came back for this thread
+                            {c.replyToken && (
+                              <button
+                                type="button"
+                                onClick={() => loadReplies(key, c.replyToken!, false, c)}
+                                className="font-semibold text-rose-300/90 transition hover:text-rose-200"
+                              >
+                                retry
+                              </button>
+                            )}
+                          </p>
+                        )}
                         {t.items.map((r, j) => (
                           <CommentRow key={`${r.author}-${j}`} c={r} />
                         ))}
@@ -2722,6 +2786,9 @@ function RelatedCard({
           {card.views > 0 && card.published && <span className="mx-1">·</span>}
           {ageLabel(card.published)}
         </p>
+        {card.why && (
+          <p className="mt-1 truncate text-[10.5px] font-medium text-rose-300/80">{card.why}</p>
+        )}
       </div>
     </motion.div>
   );
@@ -3466,6 +3533,8 @@ function StreamPlayer({
   onEnded,
   healing,
   onStreamError,
+  nextUp,
+  marathonLive,
 }: {
   initialCard: YtCard | null;
   video: YtVideo | null;
@@ -3481,6 +3550,13 @@ function StreamPlayer({
    * re-extracting and hot-swapping `video`, which re-picks the format
    * and resumes at the same timestamp. */
   onStreamError?: () => void;
+  /** AUTOPLAY CHAIN: the top of the Up next rail — when this video ends
+   * (loop off, no marathon) a 5s countdown hands off to it, the way
+   * YouTube's autoplay keeps the session alive. */
+  nextUp?: YtCard | null;
+  /** true while a playlist marathon owns the ended event (the chain
+   * stands down for it — the marathon's Next wins). */
+  marathonLive?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
   const prefsV = usePrefsVersion();
@@ -3525,11 +3601,58 @@ function StreamPlayer({
    * maps 1:1 onto video.captions — mode switches by index. */
   const [ccUrl, setCcUrl] = React.useState<string | null>(null);
 
+  /* ---- the load FADE — YouTube's watch page fades the player in over
+   * the thumbnail: the poster sits as an underlay layer, the element
+   * stays opacity-0 until its first frame is ready, then crossfades
+   * (700ms). A video SWITCH resets it so the new thumbnail takes over
+   * the instant the old stream is torn down. */
+  const [firstFrame, setFirstFrame] = React.useState(false);
+
   /* ---- marathon: notify when the video ends (loop off only) ---- */
   const onEndedRef = React.useRef(onEnded);
   React.useEffect(() => {
     onEndedRef.current = onEnded;
   }, [onEnded]);
+
+  /* ---- AUTOPLAY CHAIN (the retention engine) ----
+   * When a video ends (loop off) and no marathon is running, a 5-second
+   * countdown overlay hands the session to the top of Up next — the
+   * single highest-leverage "keep them watching" control YouTube has.
+   * Everything rides refs so the once-mounted `ended` listener (below)
+   * always reads fresh values without re-attaching media. */
+  const [countdown, setCountdown] = React.useState<number | null>(null);
+  const nextUpRef = React.useRef<YtCard | null>(null);
+  /* identity guard: the rail re-ranks on every progress flush (the
+   * store dispatches on write), so the nextUp OBJECT churns constantly —
+   * only a change of VIDEO (id) may cancel a running countdown */
+  const nextUpIdRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    nextUpRef.current = nextUp ?? null;
+    const id = nextUp?.id ?? null;
+    if (id !== nextUpIdRef.current) {
+      nextUpIdRef.current = id;
+      setCountdown(null);
+    }
+  }, [nextUp]);
+  const marathonLiveRef = React.useRef(Boolean(marathonLive));
+  React.useEffect(() => {
+    marathonLiveRef.current = Boolean(marathonLive);
+  }, [marathonLive]);
+  const onWatchRef = React.useRef(onWatch);
+  React.useEffect(() => {
+    onWatchRef.current = onWatch;
+  }, [onWatch]);
+  React.useEffect(() => {
+    if (countdown === null) return;
+    if (countdown <= 0) {
+      const n = nextUpRef.current;
+      setCountdown(null);
+      if (n) onWatchRef.current?.(n.id, n);
+      return;
+    }
+    const t = setTimeout(() => setCountdown((c) => (c === null ? null : c - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [countdown]);
 
   /* ---- stale-frame kill: switching videos must NEVER keep showing the
    * previous video's last frame while the new stream negotiates (the
@@ -3545,6 +3668,9 @@ function StreamPlayer({
     if (!el || !id || id === lastVideoIdRef.current) return;
     const isFirst = lastVideoIdRef.current === "";
     lastVideoIdRef.current = id;
+    /* the fade resets with the video — the new thumbnail shows while
+     * the fresh stream negotiates */
+    setFirstFrame(false);
     if (isFirst) return; /* nothing loaded yet — nothing to clear */
     try {
       el.pause();
@@ -3788,21 +3914,42 @@ function StreamPlayer({
     const onMeta = () => setDuration(Number.isFinite(el.duration) ? el.duration : 0);
     const onEndedEv = () => {
       flushProgress();
-      if (!readPrefs().loop) onEndedRef.current?.();
+      if (readPrefs().loop) return;
+      /* the marathon's Next wins; otherwise the autoplay chain counts
+       * down into the top of Up next (when on + available) */
+      if (marathonLiveRef.current) {
+        onEndedRef.current?.();
+        return;
+      }
+      if (readPrefs().autoplay && nextUpRef.current) {
+        setCountdown(5);
+        return;
+      }
+      onEndedRef.current?.();
     };
     const onProgress = () => {
       try {
         if (el.buffered.length > 0) setBuffered(el.buffered.end(el.buffered.length - 1));
       } catch { /* mid-seek */ }
     };
-    const onPlay = () => setPlaying(true);
+    const onPlay = () => {
+      setPlaying(true);
+      /* a manual replay cancels any pending autoplay hand-off */
+      setCountdown(null);
+    };
     const onPause = () => {
       setPlaying(false);
       flushProgress();
     };
     const onWaiting = () => setWaiting(true);
-    const onPlaying = () => setWaiting(false);
-    const onCanPlay = () => setWaiting(false);
+    const onPlaying = () => {
+      setWaiting(false);
+      setFirstFrame(true);
+    };
+    const onCanPlay = () => {
+      setWaiting(false);
+      setFirstFrame(true);
+    };
     const onVol = () => {
       setVolume(el.volume);
       setMuted(el.muted);
@@ -4024,6 +4171,12 @@ function StreamPlayer({
         }}
         className="group/player relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl shadow-black/50 ring-1 ring-white/10"
       >
+        {/* the thumbnail underlay — the crossfade source: while the stream
+            negotiates the poster IS the video's own thumbnail, and the
+            first frame fades in over it (the YouTube load feel) */}
+        {meta.thumb ? (
+          <Thumb src={meta.thumb} alt="" className="pointer-events-none absolute inset-0" />
+        ) : null}
         <video
           ref={videoRef}
           onClick={togglePlay}
@@ -4031,8 +4184,10 @@ function StreamPlayer({
           playsInline
           preload="auto"
           crossOrigin="anonymous"
-          poster={meta.thumb || undefined}
-          className="size-full cursor-pointer bg-black"
+          className={cn(
+            "relative size-full cursor-pointer transition-opacity duration-700",
+            firstFrame ? "opacity-100" : "opacity-0",
+          )}
           aria-label={`video player: ${meta.title}`}
         >
           {/* caption tracks render in video.captions order — the mode
@@ -4101,6 +4256,60 @@ function StreamPlayer({
             <Play aria-hidden className="size-6 translate-x-0.5 fill-white" />
           </button>
         )}
+
+        {/* AUTOPLAY CHAIN — the end-of-video hand-off: 5s countdown into
+            the top of Up next (Cancel / play-now always one click away). */}
+        <AnimatePresence>
+          {countdown !== null && nextUp && !fatal && (
+            <motion.div
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduceMotion ? undefined : { opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              role="dialog"
+              aria-label="Up next autoplay"
+              className="absolute inset-0 z-20 flex items-end justify-end bg-black/70 p-4 backdrop-blur-[2px] sm:p-6"
+            >
+              <div className="flex w-full max-w-sm items-center gap-3 rounded-2xl border border-white/10 bg-zinc-950/90 p-3 shadow-2xl">
+                <div className="relative shrink-0">
+                  <Thumb src={nextUp.thumb} alt="" className="h-16 w-28 rounded-xl object-cover" />
+                  {nextUp.durationSec > 0 && (
+                    <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1 py-px text-[10px] font-semibold tabular-nums text-zinc-200">
+                      {fmtTime(nextUp.durationSec)}
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10.5px] font-semibold uppercase tracking-wider text-rose-300">Up next</p>
+                  <p className="mt-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-zinc-100">{nextUp.title}</p>
+                  <p className="mt-0.5 truncate text-[11.5px] text-zinc-500">{nextUp.author}</p>
+                </div>
+                <div className="flex shrink-0 flex-col items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const n = nextUpRef.current;
+                      if (n) onWatchRef.current?.(n.id, n);
+                    }}
+                    aria-label="Play next video now"
+                    className="flex size-11 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg shadow-rose-500/30 transition hover:scale-105 hover:bg-rose-400"
+                  >
+                    <Play aria-hidden className="size-4.5 translate-x-px fill-white" />
+                  </button>
+                  <span className="text-[11px] font-semibold tabular-nums text-zinc-300">{countdown}s</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCountdown(null)}
+                aria-label="Cancel autoplay"
+                className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-white/10 text-zinc-200 ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-white/20"
+              >
+                <X aria-hidden className="size-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── control bar ── */}
         <AnimatePresence>
@@ -4298,6 +4507,26 @@ function StreamPlayer({
                             className={cn(
                               "flex h-4.5 w-8 items-center rounded-full px-0.5 transition",
                               readPrefs().loop ? "justify-end bg-rose-500" : "justify-start bg-zinc-700",
+                            )}
+                          >
+                            <span className="size-3.5 rounded-full bg-white" />
+                          </span>
+                        </button>
+                        {/* autoplay chain — the retention switch */}
+                        <button
+                          type="button"
+                          onClick={() => savePrefs({ autoplay: !readPrefs().autoplay })}
+                          aria-pressed={readPrefs().autoplay}
+                          className="flex w-full items-center justify-between border-t border-zinc-800 px-3 py-2 text-left text-[12.5px] text-zinc-300 transition hover:bg-white/5 hover:text-white"
+                        >
+                          <span className="flex items-center gap-2">
+                            <PlayCircle aria-hidden className="size-3.5" /> Autoplay next
+                          </span>
+                          <span
+                            aria-hidden
+                            className={cn(
+                              "flex h-4.5 w-8 items-center rounded-full px-0.5 transition",
+                              readPrefs().autoplay ? "justify-end bg-rose-500" : "justify-start bg-zinc-700",
                             )}
                           >
                             <span className="size-3.5 rounded-full bg-white" />
@@ -5024,7 +5253,8 @@ function RelayPlayer({
   onWatch,
   onChannel,
   onEnded,
-  more,
+  nextUp,
+  marathonLive,
 }: {
   card: YtCard;
   /** the gate message (kept for the latch decision upstream) */
@@ -5044,8 +5274,11 @@ function RelayPlayer({
   onChannel: (id: string, name: string) => void;
   /** marathon: a playlist is playing — advance on ended (loop off). */
   onEnded?: () => void;
-  /** cards from the browsing context — the "Up next" rail while relaying */
-  more: YtCard[];
+  /** AUTOPLAY CHAIN: the top of the shared Up next rail — when this
+   * video ends (loop off, no marathon) a 5s countdown hands off to it. */
+  nextUp?: YtCard | null;
+  /** true while a playlist marathon owns the ended event. */
+  marathonLive?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
   const shellRef = React.useRef<HTMLDivElement>(null);
@@ -5070,6 +5303,43 @@ function RelayPlayer({
   React.useEffect(() => {
     onEndedRef.current = onEnded;
   }, [onEnded]);
+
+  /* ---- AUTOPLAY CHAIN (same engine as the native lane) ----
+   * The relay counts down into the top of Up next when YouTube's frame
+   * reports ENDED (loop off, no marathon). Refs keep the message
+   * listener honest without re-subscribing. */
+  const [countdown, setCountdown] = React.useState<number | null>(null);
+  const nextUpRef = React.useRef<YtCard | null>(null);
+  /* identity guard (same as the native lane): the rail re-ranks on every
+   * progress flush — only a change of VIDEO (id) cancels the countdown */
+  const nextUpIdRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    nextUpRef.current = nextUp ?? null;
+    const id = nextUp?.id ?? null;
+    if (id !== nextUpIdRef.current) {
+      nextUpIdRef.current = id;
+      setCountdown(null);
+    }
+  }, [nextUp]);
+  const marathonLiveRef = React.useRef(Boolean(marathonLive));
+  React.useEffect(() => {
+    marathonLiveRef.current = Boolean(marathonLive);
+  }, [marathonLive]);
+  const onWatchRef = React.useRef(onWatch);
+  React.useEffect(() => {
+    onWatchRef.current = onWatch;
+  }, [onWatch]);
+  React.useEffect(() => {
+    if (countdown === null) return;
+    if (countdown <= 0) {
+      const n = nextUpRef.current;
+      setCountdown(null);
+      if (n) onWatchRef.current?.(n.id, n);
+      return;
+    }
+    const t = setTimeout(() => setCountdown((c) => (c === null ? null : c - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [countdown]);
   /* relay CC (best-effort): YouTube's own caption renderer, driven over
    * the iframe API — on picks the track, {} turns it off. */
   const [ccOn, setCcOn] = React.useState(false);
@@ -5187,15 +5457,22 @@ function RelayPlayer({
         if (typeof info.playerState === "number") {
           setState(info.playerState);
           if (info.playerState === YT_PLAYING) setReady(true);
-          /* loop the relay lane too — the saved preference drives it */
+          /* loop the relay lane too — the saved preference drives it; with
+           * loop off the AUTOPLAY CHAIN counts down into Up next (the
+           * marathon's Next still wins when one is running) */
           if (info.playerState === YT_ENDED) {
             if (readPrefs().loop) {
               send("seekTo", 0, true);
               send("playVideo");
+            } else if (marathonLiveRef.current) {
+              onEndedRef.current?.();
+            } else if (readPrefs().autoplay && nextUpRef.current) {
+              setCountdown(5);
             } else {
               onEndedRef.current?.();
             }
           }
+          if (info.playerState === YT_PLAYING) setCountdown(null);
         }
         if (typeof info.muted === "boolean") setMuted(info.muted);
         if (typeof info.volume === "number") setVolume(info.volume);
@@ -5686,7 +5963,7 @@ function RelayPlayer({
         )}
 
         {/* center play (before first play / ended — guarantees a user gesture) */}
-        {connected && (state === YT_UNSTARTED || state === YT_CUED || state === YT_PAUSED || state === YT_ENDED) && ready && (
+        {connected && countdown === null && (state === YT_UNSTARTED || state === YT_CUED || state === YT_PAUSED || state === YT_ENDED) && ready && (
           <button
             type="button"
             onClick={togglePlay}
@@ -5696,6 +5973,64 @@ function RelayPlayer({
             <Play aria-hidden className="size-6 translate-x-0.5 fill-white" />
           </button>
         )}
+
+        {/* AUTOPLAY CHAIN — the relay-side end-of-video hand-off (same
+            5s countdown into the top of Up next; backdrop click cancels) */}
+        <AnimatePresence>
+          {countdown !== null && nextUp && (
+            <motion.div
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduceMotion ? undefined : { opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              role="dialog"
+              aria-label="Up next autoplay"
+              onClick={() => setCountdown(null)}
+              className="absolute inset-0 z-20 flex cursor-pointer items-end justify-end bg-black/70 p-4 backdrop-blur-[2px] sm:p-6"
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="flex w-full max-w-sm cursor-default items-center gap-3 rounded-2xl border border-white/10 bg-zinc-950/90 p-3 shadow-2xl"
+              >
+                <div className="relative shrink-0">
+                  <Thumb src={nextUp.thumb} alt="" className="h-16 w-28 rounded-xl object-cover" />
+                  {nextUp.durationSec > 0 && (
+                    <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1 py-px text-[10px] font-semibold tabular-nums text-zinc-200">
+                      {fmtTime(nextUp.durationSec)}
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10.5px] font-semibold uppercase tracking-wider text-amber-300">Up next</p>
+                  <p className="mt-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-zinc-100">{nextUp.title}</p>
+                  <p className="mt-0.5 truncate text-[11.5px] text-zinc-500">{nextUp.author}</p>
+                </div>
+                <div className="flex shrink-0 flex-col items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const n = nextUpRef.current;
+                      if (n) onWatchRef.current?.(n.id, n);
+                    }}
+                    aria-label="Play next video now"
+                    className="flex size-11 items-center justify-center rounded-full bg-amber-400 text-zinc-950 shadow-lg shadow-amber-400/30 transition hover:scale-105 hover:bg-amber-300"
+                  >
+                    <Play aria-hidden className="size-4.5 translate-x-px fill-zinc-950" />
+                  </button>
+                  <span className="text-[11px] font-semibold tabular-nums text-zinc-300">{countdown}s</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCountdown(null)}
+                aria-label="Cancel autoplay"
+                className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-white/10 text-zinc-200 ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-white/20"
+              >
+                <X aria-hidden className="size-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── control bar (ours — the iframe is chrome-less) ── */}
         <AnimatePresence>
@@ -5884,6 +6219,26 @@ function RelayPlayer({
                             <span className="size-3.5 rounded-full bg-white" />
                           </span>
                         </button>
+                        {/* autoplay chain — the retention switch (relay lane) */}
+                        <button
+                          type="button"
+                          onClick={() => savePrefs({ autoplay: !readPrefs().autoplay })}
+                          aria-pressed={readPrefs().autoplay}
+                          className="flex w-full items-center justify-between border-t border-zinc-800 px-3 py-2 text-left text-[12.5px] text-zinc-300 transition hover:bg-white/5 hover:text-white"
+                        >
+                          <span className="flex items-center gap-2">
+                            <PlayCircle aria-hidden className="size-3.5" /> Autoplay next
+                          </span>
+                          <span
+                            aria-hidden
+                            className={cn(
+                              "flex h-4.5 w-8 items-center rounded-full px-0.5 transition",
+                              readPrefs().autoplay ? "justify-end bg-amber-400" : "justify-start bg-zinc-700",
+                            )}
+                          >
+                            <span className="size-3.5 rounded-full bg-white" />
+                          </span>
+                        </button>
                         {/* subtitles — YouTube's own caption renderer, best-effort */}
                         <button
                           type="button"
@@ -5988,18 +6343,6 @@ function RelayPlayer({
 
       {/* ── comments (read-only YouTube threads) ── */}
       <CommentsPanel videoId={card.id} />
-
-      {/* suggestions from the browsing context */}
-      {more.length > 0 && (
-        <section aria-label="More videos" className="mt-8">
-          <h3 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-zinc-500">Up next</h3>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {more.slice(0, 8).map((c, i) => (
-              <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={onWatch} onChannel={onChannel} />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }
@@ -9581,46 +9924,167 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
   const useRelay = relayEngaged || relayNeeded;
   const relayHealed = relayEngaged && !relayNeeded; // native body landed mid-relay
 
-  /* ---- "Up next" — the watch page's related rail. YouTube keeps it
-   * BESIDE the player (a sticky right column on wide screens, a grid
-   * under the video everywhere else). The relay + gate surfaces keep
-   * their own inline rails, so this feeds the native watch only. */
-  const upNext = React.useMemo(() => {
-    if (!watchId || useRelay) return [];
-    let pool: YtCard[] = [];
-    if (video && "related" in video && video.related.length > 0) pool = video.related.slice(0, 40);
-    else {
-      const fallback = shownCards.filter((c) => c.id !== watchId).slice(0, 40);
-      if (fallback.length > 0) pool = fallback;
-      else if (videoMeta && videoMeta.related.length > 0) pool = videoMeta.related.slice(0, 40);
+  /* ---- "Up next" — the watch page's related rail, now INFINITE.
+   * YouTube keeps it BESIDE the player (a sticky right column on wide
+   * screens, a grid under the video everywhere else) and never lets it
+   * run dry. This rail:
+   *   1. seeds from the current video's own related list (or the feed
+   *      while it loads — the rail NEVER disappears mid-transition, the
+   *      old "the sidebar vanishes when the video loads" bug),
+   *   2. ranks the pool with the CHAIN objective seeded by the current
+   *      watch (binge continuation), and
+   *   3. grows forever: scrolling near the end reveals more, and when
+   *      the pool runs low it CHAINS — related-of-related, fetched from
+   *      the rail's own top cards, deduped, re-ranked and appended
+   *      (YouTube's endless "mix" behavior). */
+  const railSignals = React.useMemo(
+    () => ({
+      history: (histEntries ?? []).slice(0, 5000).map((h) => ({ card: h.card as RankCard, at: h.at })),
+      subs: Object.keys(readSubs()),
+      likedChannels: likedChannelIds(),
+      ...niSignal(),
+      watchFractions: Object.fromEntries(
+        Object.entries(progressSnapshot())
+          .filter(([, p]) => p.dur > 0)
+          .map(([id, p]) => [id, p.pos / p.dur]),
+      ),
+      impressions: impressionCounts(),
+      chainSeed: watchCard ? { id: watchCard.id, title: watchCard.title, authorId: watchCard.authorId } : undefined,
+      seed: ((watchId ?? "v").charCodeAt(0) || 1) + 7,
+    }),
+    [histEntries, subsVersion, ratingsVersion, niVersion, progV, watchCard, watchId],
+  );
+
+  /* the raw candidate pool — video.related → feed fallback → relay meta.
+   * The !useRelay gate is GONE: the relay lane shares this rail now (the
+   * sidebar staying up across lane switches is the fix for the
+   * disappearing-bar bug). */
+  const upNextPool = React.useMemo(() => {
+    if (!watchId) return [];
+    if (video && "related" in video && video.related.length > 0) return video.related.slice(0, 60);
+    if (videoMeta && videoMeta.related.length > 0) {
+      /* relay lane — its meta related list leads; the feed fills gaps */
+      const seen = new Set(videoMeta.related.map((c) => c.id));
+      const extra = shownCards.filter((c) => c.id !== watchId && !seen.has(c.id)).slice(0, 20);
+      return [...videoMeta.related, ...extra].slice(0, 60);
     }
-    if (pool.length === 0) return [];
-    /* Up next is RANKED, not raw — YouTube's autoplay rail runs the
-     * same recommendation objectives as home, seeded by the CURRENT
-     * watch (the session slice reacts to what you're watching right
-     * now). Graded repeat demotion + "continue watching" labels ride
-     * along; the rail keeps its length (12) but the order is earned. */
+    return shownCards.filter((c) => c.id !== watchId).slice(0, 60);
+  }, [watchId, video, videoMeta, shownCards]);
+
+  /* the ranked base — full pool, ranked once per context change */
+  const upNextRanked = React.useMemo(() => {
+    if (upNextPool.length === 0) return [] as YtCard[];
     const ranked = rankFeed(
-      pool.map((c) => ({ ...c })) as unknown as RankCard[],
-      {
-        history: (histEntries ?? []).slice(0, 5000).map((h) => ({ card: h.card as RankCard, at: h.at })),
-        subs: Object.keys(readSubs()),
-        likedChannels: likedChannelIds(),
-        ...niSignal(),
-        watchFractions: Object.fromEntries(
-          Object.entries(progressSnapshot())
-            .filter(([, p]) => p.dur > 0)
-            .map(([id, p]) => [id, p.pos / p.dur]),
-        ),
-        impressions: impressionCounts(),
-        seed: (watchId.charCodeAt(0) || 1) + 7,
-      },
+      upNextPool.map((c) => ({ ...c })) as unknown as RankCard[],
+      railSignals,
+      { rail: true },
     );
-    return (ranked.cards.slice(0, 12) as unknown as YtCard[]).map((c) => {
-      const src = pool.find((p) => p.id === c.id);
+    return (ranked.cards as unknown as YtCard[]).map((c) => {
+      const src = upNextPool.find((p) => p.id === c.id);
       return src ? { ...src, why: c.why } : c;
     });
-  }, [watchId, useRelay, video, videoMeta, shownCards, histEntries, subsVersion, ratingsVersion, niVersion, progV]);
+  }, [upNextPool, railSignals]);
+
+  /* ---- the infinite growth state (reset per watch) ---- */
+  const [railCount, setRailCount] = React.useState(14);
+  const [railExtra, setRailExtra] = React.useState<YtCard[]>([]);
+  const railSeedsRef = React.useRef<string[]>([]); /* ids already chained from */
+  const railBusyRef = React.useRef(false);
+  const railChainsRef = React.useRef(0); /* fetch budget per watch */
+  const railSeenRef = React.useRef<Set<string>>(new Set());
+  React.useEffect(() => {
+    setRailCount(14);
+    setRailExtra([]);
+    railSeedsRef.current = [];
+    railChainsRef.current = 0;
+    railSeenRef.current = new Set();
+  }, [watchId]);
+  /* keep the dedupe set in lock-step with whatever is in the rail */
+  React.useEffect(() => {
+    const s = new Set<string>(upNextPool.map((c) => c.id));
+    for (const c of railExtra) s.add(c.id);
+    railSeenRef.current = s;
+  }, [upNextPool, railExtra]);
+
+  /** Chain one level deeper: fetch the related list of the highest rail
+   * card not yet used as a seed, filter out everything already shown
+   * (and everything feedback-hidden), rank the fresh batch in the same
+   * chain context, and append. This is what makes the rail infinite. */
+  const railFetchMore = React.useCallback(() => {
+    if (railBusyRef.current || railChainsRef.current >= 30) return;
+    const all = [...upNextRanked, ...railExtra];
+    const seed = all.find((c) => c.id !== watchId && !railSeedsRef.current.includes(c.id));
+    if (!seed) return;
+    railSeedsRef.current.push(seed.id);
+    railChainsRef.current += 1;
+    railBusyRef.current = true;
+    fetchJsonSafe<{ related: YtCard[] } | YtGate>(`/api/yt/video/${encodeURIComponent(seed.id)}?meta=1`)
+      .then((m) => {
+        if (m && !("gated" in m) && Array.isArray(m.related)) {
+          m.related.forEach(remember);
+          const seen = railSeenRef.current;
+          const fresh = filterFeedback(m.related.filter((c) => c && c.id && c.id !== watchId && !seen.has(c.id)));
+          if (fresh.length > 0) {
+            const ranked = rankFeed(
+              fresh.map((c) => ({ ...c })) as unknown as RankCard[],
+              railSignals,
+              { rail: true },
+            );
+            const withWhy = (ranked.cards as unknown as YtCard[]).map((rc) => {
+              const src = fresh.find((f) => f.id === rc.id);
+              return src ? { ...src, why: rc.why } : rc;
+            });
+            for (const c of withWhy) seen.add(c.id);
+            setRailExtra((prev) => [...prev, ...withWhy]);
+          }
+        }
+      })
+      .catch(() => {
+        /* quiet — the sentinel walks to the next seed on the next pass */
+      })
+      .finally(() => {
+        railBusyRef.current = false;
+      });
+  }, [upNextRanked, railExtra, watchId, railSignals, remember, filterFeedback]);
+
+  /** Reveal more of the rail + top the pool up when it runs low. Fired
+   * by the sticky rail's onScroll (desktop) and the grid sentinel
+   * (mobile) — the rail only ever grows. */
+  const railGrow = React.useCallback(() => {
+    setRailCount((c) => c + 8);
+    if (upNextRanked.length + railExtra.length - railCount < 10) railFetchMore();
+  }, [upNextRanked.length, railExtra.length, railCount, railFetchMore]);
+
+  /* the visible rail — ranked base + chained extras, deduped (a chained
+   * card can later arrive inside a fresh pool too), sliced to count */
+  const upNext = React.useMemo(() => {
+    const seen = new Set<string>();
+    const out: YtCard[] = [];
+    for (const c of [...upNextRanked, ...railExtra]) {
+      if (!c.id || seen.has(c.id)) continue;
+      seen.add(c.id);
+      out.push(c);
+    }
+    return out.slice(0, railCount);
+  }, [upNextRanked, railExtra, railCount]);
+
+  /* the autoplay hand-off target — the rail's top card */
+  const nextUpCard = upNext.length > 0 ? upNext[0] : null;
+
+  /* mobile grid sentinel — bumps the rail when the grid's end scrolls in */
+  const railSentinelRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    const el = railSentinelRef.current;
+    if (!el || !watchId) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) railGrow();
+      },
+      { rootMargin: "700px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [railGrow, watchId]);
 
   /* latch: the moment a watch needs the relay it stays on it — a later
    * background heal flips relayHealed (the "Play natively" offer) instead
@@ -9837,11 +10301,8 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                   onWatch={watch}
                   onChannel={openChannel}
                   onEnded={advanceMarathon}
-                  more={(
-                    videoMeta && videoMeta.related.length > 0
-                      ? videoMeta.related
-                      : shownCards.filter((c) => c.id !== watchId)
-                  ).slice(0, 12)}
+                  nextUp={nextUpCard}
+                  marathonLive={Boolean(marathon)}
                 />
               ) : video && "gated" in video ? (
                 <GatePanel
@@ -9861,6 +10322,8 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                   onEnded={advanceMarathon}
                   healing={healing}
                   onStreamError={healStream}
+                  nextUp={nextUpCard}
+                  marathonLive={Boolean(marathon)}
                 />
               ) : (
                 <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900/50 text-zinc-500">
@@ -9868,42 +10331,88 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                 </div>
               )}
                 {/* Up next — under the player on narrow screens; the sticky
-                    rail beside it takes over at xl */}
-                {upNext.length > 0 && (
-                  <section aria-label="Up next" className="mt-8 xl:hidden">
-                    <h3 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-zinc-500">Up next</h3>
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                      {upNext.map((c, i) => (
-                        <RelatedCard
-                          key={`${c.id}-${i}`}
-                          card={c}
-                          index={i}
-                          onWatch={(id, card) => watch(id, card)}
-                          onChannel={openChannel}
-                        />
+                    rail beside it takes over at xl. BOTH lanes render these
+                    (the rail is shared now) and both grow forever: the grid
+                    via its sentinel, the rail via its own scroll. */}
+                <section aria-label="Up next" className="mt-8 xl:hidden">
+                  <div className="mb-3 flex items-center justify-between gap-2">
+                    <h3 className="text-[13px] font-semibold uppercase tracking-wider text-zinc-500">Up next</h3>
+                    <AutoplayToggle />
+                  </div>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                    {upNext.map((c, i) => (
+                      <RelatedCard
+                        key={`${c.id}-${i}`}
+                        card={c}
+                        index={i}
+                        onWatch={(id, card) => watch(id, card)}
+                        onChannel={openChannel}
+                      />
+                    ))}
+                    {upNext.length === 0 &&
+                      [0, 1, 2, 3, 4, 5].map((i) => (
+                        <div key={`rsk-${i}`} className="flex gap-2.5 rounded-xl p-1" aria-hidden>
+                          <div className="aspect-video w-[160px] shrink-0 animate-pulse rounded-lg bg-zinc-800/60" />
+                          <div className="min-w-0 flex-1 space-y-2 py-0.5">
+                            <div className="h-3 w-full animate-pulse rounded bg-zinc-800/70" />
+                            <div className="h-3 w-2/3 animate-pulse rounded bg-zinc-800/50" />
+                            <div className="h-2.5 w-1/2 animate-pulse rounded bg-zinc-800/40" />
+                          </div>
+                        </div>
                       ))}
-                    </div>
-                  </section>
-                )}
+                  </div>
+                  {/* the infinite sentinel — the grid's end scrolling into
+                      view deals the next hand of the rail */}
+                  <div ref={railSentinelRef} aria-hidden className="mt-3 flex h-9 items-center justify-center">
+                    <Loader2 className="size-4 animate-spin text-zinc-600" />
+                  </div>
+                </section>
               </motion.div>
-              {upNext.length > 0 && (
-                <aside aria-label="Up next" className="hidden w-[402px] shrink-0 xl:block">
-                  <div className="veil-scroll-slim sticky top-1 max-h-[calc(100vh-5rem)] overflow-y-auto pb-8 pr-1">
-                    <h3 className="mb-3 pt-1 text-[13px] font-semibold uppercase tracking-wider text-zinc-500">Up next</h3>
-                    <div className="flex flex-col gap-1.5">
-                      {upNext.map((c, i) => (
-                        <RelatedCard
-                          key={`rail-${c.id}-${i}`}
-                          card={c}
-                          index={i}
-                          onWatch={(id, card) => watch(id, card)}
-                          onChannel={openChannel}
-                        />
+              {/* the sticky rail — ALWAYS up while a video is open (it used
+                  to vanish on the relay lane / mid-load: the "sidebar
+                  disappears when the video loads" bug). Grows forever as
+                  its own scroll nears the end. */}
+              <aside aria-label="Up next" className="hidden w-[402px] shrink-0 xl:block">
+                <div
+                  className="veil-scroll-slim sticky top-1 max-h-[calc(100vh-5rem)] overflow-y-auto pb-8 pr-1"
+                  onScroll={(e) => {
+                    const el = e.currentTarget;
+                    if (el.scrollHeight - el.scrollTop - el.clientHeight < 480) railGrow();
+                  }}
+                >
+                  <div className="mb-3 flex items-center justify-between gap-2 pt-1">
+                    <h3 className="text-[13px] font-semibold uppercase tracking-wider text-zinc-500">Up next</h3>
+                    <AutoplayToggle />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    {upNext.map((c, i) => (
+                      <RelatedCard
+                        key={`rail-${c.id}-${i}`}
+                        card={c}
+                        index={i}
+                        onWatch={(id, card) => watch(id, card)}
+                        onChannel={openChannel}
+                      />
+                    ))}
+                    {upNext.length === 0 &&
+                      [0, 1, 2, 3, 4, 5].map((i) => (
+                        <div key={`sk-${i}`} className="flex gap-2.5 rounded-xl p-1" aria-hidden>
+                          <div className="aspect-video w-[160px] shrink-0 animate-pulse rounded-lg bg-zinc-800/60" />
+                          <div className="min-w-0 flex-1 space-y-2 py-0.5">
+                            <div className="h-3 w-full animate-pulse rounded bg-zinc-800/70" />
+                            <div className="h-3 w-2/3 animate-pulse rounded bg-zinc-800/50" />
+                            <div className="h-2.5 w-1/2 animate-pulse rounded bg-zinc-800/40" />
+                          </div>
+                        </div>
                       ))}
+                    {/* the end-cap spinner — the rail keeps dealing while
+                        there's more to fetch */}
+                    <div className="flex h-8 items-center justify-center" aria-hidden>
+                      <Loader2 className="size-3.5 animate-spin text-zinc-600" />
                     </div>
                   </div>
-                </aside>
-              )}
+                </div>
+              </aside>
             </div>
           </div>
         ) : channelView ? (
