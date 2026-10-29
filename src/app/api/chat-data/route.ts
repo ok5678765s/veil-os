@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { getAccountFromToken, toPublicAccount } from "@/lib/chat-auth"
 import { awardCoins } from "@/lib/coins"
 import { cors, corsOptions } from "@/lib/veil/cors"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 import { liveEditMessage } from "@/lib/veil/live-room"
 
 export const runtime = "nodejs"
@@ -171,14 +172,15 @@ export async function POST(req: NextRequest): Promise<Response> {
 
 async function handlePost(req: NextRequest): Promise<Response> {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       channelId?: string
       content?: string
       replyTo?: string | null
       replyToContent?: string | null
       replyToUsername?: string | null
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const token = body.token
     const channelId = (body.channelId || "").trim()
@@ -344,11 +346,12 @@ export async function PATCH(req: NextRequest): Promise<Response> {
 
 async function handlePatch(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       messageId?: string
       content?: string
-    }
+    }>(req)
+    if (!body) return badBody()
     const messageId = (body.messageId || "").trim()
     const content = (body.content || "").trim()
 

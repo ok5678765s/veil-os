@@ -11,6 +11,7 @@
 import { NextRequest } from "next/server";
 import { clearContainer, jarStats, normContainer, DEFAULT_CONTAINER } from "@/lib/veil/quasar/cookies";
 import { gate } from "@/lib/veil/quasar/security";
+import { readJsonBody, badBody } from "@/lib/veil/body";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,7 +35,8 @@ export async function POST(req: NextRequest): Promise<Response> {
   const denied = gate(req, false);
   if (denied) return denied;
   try {
-    const body = (await req.json()) as { op?: string; container?: string };
+    const body = await readJsonBody<{ op?: string; container?: string }>(req);
+    if (!body) return badBody();
     if (body.op !== "drop") return Response.json({ error: "bad-op" }, { status: 400 });
     const container = normContainer(body.container);
     if (container === DEFAULT_CONTAINER) {

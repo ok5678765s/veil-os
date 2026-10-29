@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getAccountFromToken, toPublicAccount } from "@/lib/chat-auth"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 
 export const runtime = "nodejs"
 
@@ -138,7 +139,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       profile?: {
         displayName?: unknown
@@ -146,7 +147,8 @@ export async function POST(req: NextRequest) {
         avatarColor?: unknown
         avatarImage?: unknown
       }
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const account = await getAccountFromToken(body.token)
     if (!account) {

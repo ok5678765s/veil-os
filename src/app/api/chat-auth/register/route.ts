@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
 import { makeToken, toPublicAccount } from "@/lib/chat-auth"
 import { cors, corsOptions } from "@/lib/veil/cors"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 
 export const runtime = "nodejs"
 
@@ -38,11 +39,12 @@ export async function POST(req: Request): Promise<Response> {
 
 async function handleRegister(req: Request): Promise<Response> {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       username?: string
       password?: string
       displayName?: string
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const username = (body.username || "").trim()
     const password = body.password || ""

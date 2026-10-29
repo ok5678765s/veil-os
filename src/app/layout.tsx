@@ -39,6 +39,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        /* suppressHydrationWarning: browser extensions decorate <body> with
+           their own attributes/classes (data-gr-ext-installed, cz-shortcut-
+           listen, …) between SSR and hydration — attribute-only mismatches
+           here are harmless and must not tear down the tree. */
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         {/* Zone-prefix bootstrap — MUST run before any app chunk.

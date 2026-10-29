@@ -7,6 +7,7 @@ import {
   liveSetUserFlag,
   readLiveRoom,
 } from "@/lib/veil/live-room"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 
 export const runtime = "nodejs"
 
@@ -111,7 +112,7 @@ function isMod(account: { role: string; username: string }): boolean {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       action?: string
       targetUsername?: string
@@ -120,7 +121,8 @@ export async function POST(req: NextRequest) {
       password?: string
       displayName?: string
       durationMins?: number
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const token = body.token
     const action = body.action || ""

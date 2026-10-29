@@ -12,6 +12,7 @@ import {
   type Card,
 } from "@/lib/blackjack"
 import { staffLuckTrigger } from "@/lib/staff-luck"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 
 export const runtime = "nodejs"
 
@@ -94,11 +95,12 @@ function serializeGame(g: {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       action?: string
       bet?: number
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const token = body.token
     const action = body.action || ""

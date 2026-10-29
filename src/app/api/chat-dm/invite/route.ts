@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { getAccountFromToken, toPublicAccount } from "@/lib/chat-auth"
 import { emitToRooms } from "@/lib/veil/chat-emit"
 import { cors, corsOptions } from "@/lib/veil/cors"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 
 export const runtime = "nodejs"
 
@@ -34,11 +35,12 @@ export async function POST(req: NextRequest): Promise<Response> {
 
 async function handlePost(req: NextRequest): Promise<Response> {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       dmId?: string
       targetUsernames?: string[]
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const account = await getAccountFromToken(body.token)
     if (!account) {

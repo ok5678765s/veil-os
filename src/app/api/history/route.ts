@@ -33,7 +33,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const viewer = viewerFromRequest(req);
   try {
-    const body = await req.json();
+    const body = (await req.json().catch(() => null)) as
+      | { url?: unknown; title?: unknown }
+      | null;
     const url: unknown = body?.url;
     const title: string | null =
       typeof body?.title === "string" && body.title.trim() ? body.title.trim().slice(0, 200) : null;

@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { getAccountFromToken, toPublicAccount } from "@/lib/chat-auth"
 import { emitToRooms } from "@/lib/veil/chat-emit"
 import { cors, corsOptions } from "@/lib/veil/cors"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 
 export const runtime = "nodejs"
 
@@ -95,7 +96,7 @@ export async function GET(req: NextRequest) {
 // Body: { token, targetUsernames: string[], name?: string } — create a group DM.
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       targetUsername?: string
       targetUsernames?: string[]
@@ -104,7 +105,8 @@ export async function POST(req: NextRequest) {
        * named groups even with a single friend ("Squad" with one person
        * is a group, NOT a silent reuse of the 1:1 DM). */
       makeGroup?: boolean
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const token = body.token
     const account = await getAccountFromToken(token)
@@ -285,11 +287,12 @@ export async function PATCH(req: NextRequest): Promise<Response> {
 
 async function handlePatch(req: NextRequest): Promise<Response> {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       dmId?: string
       name?: string
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const account = await getAccountFromToken(body.token)
     if (!account) {

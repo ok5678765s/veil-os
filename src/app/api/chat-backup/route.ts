@@ -4,6 +4,7 @@ import { readdirSync, openSync } from "fs"
 import { db } from "@/lib/db"
 import { getAccountFromToken } from "@/lib/chat-auth"
 import { cors, corsOptions } from "@/lib/veil/cors"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 import {
   restoreChatBackup,
   fetchJsDelivrBackup,
@@ -112,12 +113,13 @@ export async function POST(req: NextRequest): Promise<Response> {
 
 async function handlePost(req: NextRequest): Promise<Response> {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       action?: string
       source?: string // "jsdelivr" | "local"
       name?: string // local snapshot file name
-    }
+    }>(req)
+    if (!body) return badBody()
     const account = await getAccountFromToken(body.token)
     if (!account) {
       return NextResponse.json(

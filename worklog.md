@@ -2432,3 +2432,31 @@ Stage Summary:
 - Ranker: 7-objective retention blend with the chain objective + rail-mode diversity + series-marker labels.
 - Files: rank.ts, stream-section.tsx (players, rail, prefs, comments panel).
 - Verified: rail persistence (load + relay), growth 14→30, chain quality, chips, toggle, comments+replies buttons; countdown/fade code-verified only (gate + watchdog + headless limits).
+
+---
+Task ID: 12
+Agent: main (Z.ai Code)
+Task: User reports a fatal hydration error (server HTML didn't match client — an injected id="x9kq7-widget" display:none div hijacked the StartPage root node) + "massive bug fixing" pass. Nothing else — features from the last batch were already committed (8a2b73f, e30f81e).
+
+Work Log:
+- FORENSICS: the mismatched node (id="x9kq7-widget", className=null, display:none) exists nowhere in the codebase — it is a BROWSER EXTENSION injecting a hidden widget div into the page before React hydrates; React matched it against StartPage's <div class="fixed inset-0..."> and tore the whole server tree down ("Hydration failed… this tree will be regenerated on the client" + dev overlay). Side-quest: sed/cat -A output showed "const istory, setHistory]" — looked like corrupted source; od -c proved the bytes are fine ("const [history") — the sandbox's OUTPUT DISPLAY layer eats "[h"; never "fixed" that non-bug.
+- HYDRATION ARMOR (the real fix, two layers):
+  1. Home render gate — `if (!hydrated) return null` before the page's return (reuses the existing `hydrated` flag the tab-restore effect already flips on mount). SSR now emits ZERO nodes from the page → there is nothing for an extension to collide with during hydration; the post-mount client render owns every node it creates. Verified: curl'd SSR HTML contains no page content (no "fixed inset-0", no "Veil pages", no "hide UI" — only the shell + scripts).
+  2. <body suppressHydrationWarning> in layout.tsx — extensions also decorate body with their own attrs/classes (data-gr-*, cz-shortcut-listen); attribute-only mismatches there must not kill the tree. (<html> already had it.)
+- EMPTY-BODY POST 500s (chat-data + chat-blackjack seen live in dev.log: "SyntaxError: Unexpected end of JSON input" → catch-all 500): new shared helper src/lib/veil/body.ts (readJsonBody — text→trim→parse, null on empty/invalid; badBody — standard 400). Applied to every unguarded `await req.json()` site: chat-data (POST + PATCH), chat-blackjack, chat-coinflip, chat-shop, chat-profile, chat-backup, chat-dm (POST + PATCH), chat-dm/invite, chat-dm/leave, chat-dm/delete, chat-auth/login, chat-auth/register, chat-mod, chat-takeout, container, history (inline .catch). Already-guarded routes (slots, coins, presence, live-bridge, cookies, codec, debug, yt/feed, notes, dev-requests, chat-friends) left alone. One QA-found slip: chat-shop initially 500'd (import forgotten) — fixed, now 400/401 correctly.
+- llm "401 missing X-Token" log lines: traced to z-ai-web-dev-sdk internals; llm-client already retries-with-fresh-instance by design (self-healing) — log noise is informational, not a bug. Left as-is.
+- Comments count:-1 (ok-but-empty upstream answers on some videos): upstream piped instances sometimes return no comment payload with commentCount -1; UI degrades gracefully (disabled sort, no crash). Data condition, not a code bug — left as-is.
+
+QA (agent-browser, live, after fixes):
+- / : full start page renders (dock, command bar, suggestions, weather), ZERO page errors, ZERO hydration errors, console clean.
+- SSR structural proof: served HTML has no interactive tree (see above) — extension collision is impossible now.
+- Stream: For You feed renders full cards + shorts shelf; 0 console errors.
+- Watch page: relay player iframe alive, title/channel/subscribe/like/save all present; Up-next infinite rail holds 12+ cards with autoplay toggle; comments panel "20 on YouTube" loads, replies click → "Hide 11 replies" + reply threads render inline (previous bug, verified fixed); video switch keeps the rail.
+- Shorts: grid "47 shorts" loads, short player opens ("short: I CAUGHT CRUZ IN 4K").
+- Mobile 390px: no horizontal scroll; start page controls all present.
+- API: empty-body POSTs → 400 {"ok":false,"error":"Invalid or empty request body."} on all 17 patched sites; valid paths regression-tested (login 401 bad-creds, history records visit 200, chat-data GET 200, chat-shop 401 with valid JSON + bad token).
+- eslint: clean on all 19 touched files (targeted run).
+
+Stage Summary:
+- The reported hydration failure is structurally eliminated (no SSR'd page nodes + body attr suppression); every POST route now answers empty/garbage bodies with a clean 400 instead of a synthetic 500; no regressions found in any exercised flow.
+- Files: page.tsx, layout.tsx, body.ts (new), 17 API route files.

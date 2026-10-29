@@ -1062,6 +1062,19 @@ export default function Home() {
     }
   };
 
+  /* Hydration armor — render NOTHING until React has taken over.
+     Browser extensions (e.g. the reported id="x9kq7-widget" hidden div)
+     inject DOM nodes into the page before hydration; any server-rendered
+     interactive tree then mismatches and React tears the whole page down
+     ("Hydration failed because the server rendered HTML didn't match the
+     client"), regenerating it with a flash + dev overlay. Gating the
+     render on `hydrated` (flipped in the mount effect, after the
+     localStorage tab restore) means the SSR HTML contains zero nodes
+     from this page — there is nothing to mismatch — and the post-mount
+     client render owns every node it creates, so foreign injected nodes
+     are simply never visited. */
+  if (!hydrated) return null;
+
   return (
     <>
       <AnimatePresence mode="wait">

@@ -8,6 +8,7 @@ import {
   netOwnedIds,
   type ShopItem,
 } from "@/lib/veil/shop"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 
 export const runtime = "nodejs"
 
@@ -59,11 +60,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       itemId?: string
       action?: string
-    }
+    }>(req)
+    if (!body) return badBody()
     const token = body.token
     const account = await getAccountFromToken(token)
     if (!account) {

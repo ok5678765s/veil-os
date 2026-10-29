@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getAccountFromToken, toPublicAccount } from "@/lib/chat-auth"
+import { readJsonBody, badBody } from "@/lib/veil/body"
 
 export const runtime = "nodejs"
 
@@ -24,12 +25,13 @@ function dataUrlByteLength(s: string): number {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
+    const body = await readJsonBody<{
       token?: string
       avatarImage?: string | null
       bio?: string
       displayName?: string
-    }
+    }>(req)
+    if (!body) return badBody()
 
     const token = body.token
     const account = await getAccountFromToken(token)
