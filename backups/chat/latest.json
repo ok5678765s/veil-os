@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-29T13:35:30.319Z",
+  "exportedAt": "2026-10-29T14:07:53.886Z",
   "counts": {
     "accounts": 96,
     "messages": 483,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500010,
+      "coins": 13500011,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -6240,17 +6240,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwr200x7onyt1h1hhulg",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "aa",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.735Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwr300x9onytgq4kfiyu",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7337,6 +7326,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-27T18:35:49.189Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvtmbhqd0001ozhe7w7e460r",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "new links everyday in #links",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-29T14:07:49.382Z",
       "editedAt": null
     }
   ],
@@ -11619,6 +11619,14 @@
       "amount": 10,
       "reason": "daily_reward",
       "createdAt": "2026-10-29T13:35:24.395Z"
+    },
+    {
+      "id": "cmvtmbhqh0003ozhegdae4wen",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-29T14:07:49.385Z"
     }
   ]
 }
