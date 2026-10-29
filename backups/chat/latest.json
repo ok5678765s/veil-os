@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-29T01:34:23.214Z",
+  "exportedAt": "2026-10-29T02:14:00.227Z",
   "counts": {
     "accounts": 96,
-    "messages": 483,
+    "messages": 484,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500015,
+      "coins": 13500017,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -6240,17 +6240,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwr300x9onytgq4kfiyu",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.735Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwr300xbonyt16w8v9md",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7337,6 +7326,28 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-29T01:34:10.909Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvswsvwy0001r2j471w91o8r",
+      "channelId": "links",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "https://veil.staticdomains.app/index8",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-29T02:13:30.897Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvswtfl10005r2j45yble64z",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "main link:https://veil.staticdomains.app/index8",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-29T02:13:56.389Z",
       "editedAt": null
     }
   ],
@@ -11627,6 +11638,22 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-29T01:34:10.912Z"
+    },
+    {
+      "id": "cmvswsvx40003r2j4kfzm303z",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-29T02:13:30.904Z"
+    },
+    {
+      "id": "cmvswtfl80007r2j4skx7ocyk",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-29T02:13:56.396Z"
     }
   ]
 }
