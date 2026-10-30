@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-30T16:55:40.772Z",
+  "exportedAt": "2026-10-30T18:25:58.404Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -60,12 +60,12 @@
       "role": "member",
       "muted": false,
       "banned": false,
-      "coins": 4010,
+      "coins": 0,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
       "pfpOverlay": null,
-      "dailyRewardStreak": 1,
+      "dailyRewardStreak": 0,
       "lastRewardClaim": "2026-10-30T16:55:19.519Z",
       "legacy": false,
       "createdAt": "2026-09-10T16:00:00.000Z",
@@ -144,13 +144,13 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500013,
+      "coins": 13500024,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
       "pfpOverlay": null,
-      "dailyRewardStreak": 2,
-      "lastRewardClaim": "2026-10-27T12:52:43.198Z",
+      "dailyRewardStreak": 1,
+      "lastRewardClaim": "2026-10-30T18:25:51.103Z",
       "legacy": false,
       "createdAt": "2026-09-25T22:22:50.829Z",
       "passwordHash": "$2b$10$wgZdfrvRghwA3SNf/R1ZwOe0EBEZiT/fJ9AA2lKmaOIX51V9DKNMC"
@@ -6240,17 +6240,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwzo00xponyto2w7c457",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:43.044Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hx1k00xtonytaqumi33m",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7392,6 +7381,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-30T15:38:32.287Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvvaz917002hr4yvqrpw1jc2",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "W",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-30T18:25:54.812Z",
       "editedAt": null
     }
   ],
@@ -11882,6 +11882,22 @@
       "amount": 4000,
       "reason": "blackjack_win",
       "createdAt": "2026-10-30T16:55:31.856Z"
+    },
+    {
+      "id": "cmvvaz66a002fr4yvqrvxxjxc",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-30T18:25:51.105Z"
+    },
+    {
+      "id": "cmvvaz91a002jr4yvrue93w52",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-30T18:25:54.815Z"
     }
   ]
 }
