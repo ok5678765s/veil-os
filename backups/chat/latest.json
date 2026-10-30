@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-30T15:38:16.274Z",
+  "exportedAt": "2026-10-30T15:38:51.164Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -39,13 +39,13 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 1540040,
+      "coins": 1540051,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
-      "lastRewardClaim": "2026-10-26T13:46:01.806Z",
+      "lastRewardClaim": "2026-10-30T15:38:34.327Z",
       "legacy": false,
       "createdAt": "2026-09-10T16:00:00.000Z",
       "passwordHash": "$2b$10$zF9AIcjWC9no/Ht9cLY2LumVI/Th5b8MjVe4lxrir7HjElha5SWa."
@@ -6240,17 +6240,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwr400xdonyt4wyf16oo",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.736Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwzo00xponyto2w7c457",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7392,6 +7381,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-28T00:11:49.477Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvv500670007r4yv67ah7jtb",
+      "channelId": "main",
+      "accountId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "content": "I doubled my money now I'm at 1.5M",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-30T15:38:32.287Z",
       "editedAt": null
     }
   ],
@@ -11754,6 +11754,22 @@
       "amount": 1540040,
       "reason": "blackjack_win",
       "createdAt": "2026-10-30T15:38:07.805Z"
+    },
+    {
+      "id": "cmvv5006a0009r4yv4p1vn8qj",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-30T15:38:32.291Z"
+    },
+    {
+      "id": "cmvv501qv000br4yvdc8yme8g",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-10-30T15:38:34.328Z"
     }
   ]
 }
