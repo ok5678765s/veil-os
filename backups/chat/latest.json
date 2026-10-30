@@ -1,10 +1,10 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-10-30T18:25:58.404Z",
+  "exportedAt": "2026-10-30T18:27:05.199Z",
   "counts": {
     "accounts": 96,
-    "messages": 488,
+    "messages": 489,
     "dms": 4
   },
   "accounts": [
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500024,
+      "coins": 13500025,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -7393,6 +7393,17 @@
       "replyToUsername": null,
       "createdAt": "2026-10-30T18:25:54.812Z",
       "editedAt": null
+    },
+    {
+      "id": "cmvvb0hqy002lr4yv3iixl31j",
+      "channelId": "links",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "veil-os.edgeone.dev",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-10-30T18:26:52.763Z",
+      "editedAt": null
     }
   ],
   "dms": [
@@ -11898,6 +11909,14 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-30T18:25:54.815Z"
+    },
+    {
+      "id": "cmvvb0hr0002nr4yvjnzqlxs2",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-10-30T18:26:52.765Z"
     }
   ]
 }
