@@ -72,6 +72,7 @@ import {
   ShieldCheck,
   SkipForward,
   Sparkles,
+  Square,
   StopCircle,
   Subtitles,
   ThumbsDown,
@@ -2547,21 +2548,44 @@ function Thumb({ src, alt, className }: { src: string; alt: string; className?: 
 }
 
 /* ------------------------------------------------------------------ */
-/* Hover preview — YouTube-style storyboard peek                        */
+/* Hover preview — the 5-second storyboard peek with a stop button      */
 /* ------------------------------------------------------------------ */
 
-/** Desktop-hover card preview in YouTube's shape: while `active` (the
- * parent arms it after a 600ms pointer dwell — touch taps navigate
- * before the dwell completes, so phones never see it), cycle through
- * the per-video frame thumbnails YouTube serves for every upload
- * (hq1/hq2/hq3 — start/middle/end samples) with a storyboard progress
- * bar. The real storyboards are player-response sprites; these static
- * frames are the honest lightweight equivalent, proxied through
- * /api/yt/s like every other image. */
-function HoverPreview({ videoId, active }: { videoId: string; active: boolean }) {
+/** how long a hover preview runs before stopping itself. Five seconds
+ * is the hook window: enough motion to sell the video, short enough
+ * to cut it mid-action and leave the viewer wanting the rest — the
+ * click. (An interrupted sequence pulls hardest; finishing it is what
+ * the card is for.) */
+const PREVIEW_RUN_MS = 5_000;
+/** ms per storyboard frame hop while inside the window */
+const PREVIEW_FRAME_MS = 700;
+
+/** Desktop-hover card preview in YouTube's shape, plus the stop-within-
+ * 5s control: while `active` (the parent arms it after a 600ms pointer
+ * dwell — touch taps navigate before the dwell completes, so phones
+ * never see it), cycle through the per-video frame thumbnails YouTube
+ * serves for every upload (hq1/hq2/hq3 — start/middle/end samples)
+ * for FIVE SECONDS, then stop itself:
+ *   • a live pill top-left — muted · 4s · ■ — clicking it stops early;
+ *   • when the window closes the pill flips to a ↻ replay button and
+ *     a "keep watching" chip teases the click (the whole card is it);
+ *   • a slim rose bar drains the window at the thumb's bottom edge.
+ * Not every upload has numbered frames (premieres and fresh uploads
+ * often don't — hq1/2/3 404 upstream), so on frame failure the preview
+ * falls back to a slow Ken Burns drift over the card's own (already
+ * cached) thumbnail — every card gets the same 5s interaction, frames
+ * or no frames. Everything is proxied through /api/yt/s. */
+function HoverPreview({ videoId, thumb, active }: { videoId: string; thumb?: string; active: boolean }) {
   const reduceMotion = useReducedMotion();
   const [frame, setFrame] = React.useState(0);
   const [failed, setFailed] = React.useState(false);
+  /* the 5s run — `runId` bumps to (re)start, `done` latches the stop.
+   * doneRef mirrors `done` for the interval closure (state reads inside
+   * an interval see stale values; a ref doesn't). */
+  const [runId, setRunId] = React.useState(0);
+  const [done, setDone] = React.useState(false);
+  const [pct, setPct] = React.useState(0);
+  const doneRef = React.useRef(false);
 
   const frames = React.useMemo(
     () =>
@@ -2573,40 +2597,136 @@ function HoverPreview({ videoId, active }: { videoId: string; active: boolean })
     [videoId],
   );
 
+  /* the run clock — one interval per run; it stops itself at the
+   * window's end, when the user hits stop, or when the pointer leaves
+   * (the cleanup). Re-arming after a replay bumps `runId`. The clock
+   * runs even when the frames failed — the Ken Burns fallback needs
+   * the same countdown, stop and replay as the frame cycling. */
   React.useEffect(() => {
-    if (!active) {
-      setFrame(0);
-      return;
-    }
-    if (reduceMotion || failed) return;
-    const t = window.setInterval(() => setFrame((f) => (f + 1) % 3), 900);
-    return () => window.clearInterval(t);
-  }, [active, reduceMotion, failed]);
+    if (!active || reduceMotion) return;
+    const t0 = Date.now();
+    const iv = window.setInterval(() => {
+      if (doneRef.current) {
+        window.clearInterval(iv);
+        return;
+      }
+      const el = Date.now() - t0;
+      const p = Math.min(1, el / PREVIEW_RUN_MS);
+      setFrame(Math.floor(el / PREVIEW_FRAME_MS));
+      setPct(p);
+      if (p >= 1) {
+        doneRef.current = true;
+        setDone(true);
+        window.clearInterval(iv);
+      }
+    }, 120);
+    return () => window.clearInterval(iv);
+  }, [active, runId, reduceMotion]);
 
-  if (!active || reduceMotion || failed) return null;
+  /* leaving the card resets everything — the next hover is a fresh run */
+  React.useEffect(() => {
+    if (active) return;
+    doneRef.current = false;
+    setFrame(0);
+    setPct(0);
+    setDone(false);
+  }, [active]);
+
+  const stopNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    doneRef.current = true;
+    setDone(true);
+  };
+  const replay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    doneRef.current = false;
+    setDone(false);
+    setPct(0);
+    setFrame(0);
+    setRunId((n) => n + 1);
+  };
+
+  if (!active || reduceMotion) return null;
+
+  const secsLeft = Math.max(0, Math.ceil((1 - pct) * (PREVIEW_RUN_MS / 1000)));
 
   return (
-    <div className="pointer-events-none absolute inset-0" aria-hidden>
-      {frames.map((src, i) => (
-        <img
-          key={src}
-          src={src}
-          alt=""
-          decoding="async"
-          onError={() => setFailed(true)}
-          className={cn(
-            "absolute inset-0 size-full object-cover transition-opacity duration-200",
-            i === frame ? "opacity-100" : "opacity-0",
-          )}
-        />
-      ))}
-      {/* storyboard scrub progress */}
-      <div className="absolute inset-x-0 bottom-0 h-[3px] bg-black/60">
+    <div className="pointer-events-none absolute inset-0">
+      {failed ? (
+        /* Ken Burns fallback — this upload has no numbered frames
+         * upstream (hq1/2/3 404), so drift slowly over the card's own
+         * thumbnail: same window, same pill, same stop. The img is the
+         * browser-cached thumb URL — zero extra requests. */
+        thumb ? (
+          <img
+            src={thumb}
+            alt=""
+            aria-hidden
+            decoding="async"
+            className="absolute inset-0 size-full object-cover transition-transform duration-150 ease-linear"
+            style={{
+              transform: `scale(${1.04 + (done ? 1 : pct) * 0.12}) translate(${(done ? 1 : pct) * 1.5}%, ${(done ? 1 : pct) * -1}%)`,
+            }}
+          />
+        ) : null
+      ) : (
+        frames.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            decoding="async"
+            onError={() => setFailed(true)}
+            className={cn(
+              "absolute inset-0 size-full object-cover transition-opacity duration-200",
+              i === frame % 3 ? "opacity-100" : "opacity-0",
+            )}
+          />
+        ))
+      )}
+      {/* the run's drain — a slim rose bar eating the 5s window */}
+      <div aria-hidden className="absolute inset-x-0 bottom-0 h-[3px] bg-black/60">
         <div
-          className="h-full bg-rose-500 transition-[width] duration-500 ease-linear"
-          style={{ width: `${((frame + 1) / 3) * 100}%` }}
+          className="h-full bg-rose-500 transition-[width] duration-150 ease-linear"
+          style={{ width: `${(done ? 1 : pct) * 100}%` }}
         />
       </div>
+      {/* the control pill — top-left (the ⋮ feedback menu owns
+          top-right). While the window is live it counts down and stops
+          on click; once stopped it flips to a replay invite. */}
+      {done ? (
+        <button
+          type="button"
+          onClick={replay}
+          aria-label="Replay the 5-second preview"
+          className="pointer-events-auto absolute left-1.5 top-1.5 z-10 flex items-center gap-1.5 rounded-full bg-black/80 px-2 py-1 text-[10.5px] font-semibold text-zinc-100 shadow-lg shadow-black/50 ring-1 ring-white/10 backdrop-blur-sm transition hover:bg-black hover:text-white"
+        >
+          <RotateCcw aria-hidden className="size-3" />
+          replay
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={stopNow}
+          aria-label="Stop the preview"
+          className="pointer-events-auto absolute left-1.5 top-1.5 z-10 flex items-center gap-1.5 rounded-full bg-black/80 px-2 py-1 text-[10.5px] font-semibold tabular-nums text-zinc-100 shadow-lg shadow-black/50 ring-1 ring-white/10 backdrop-blur-sm transition hover:bg-black hover:text-white"
+        >
+          <VolumeX aria-hidden className="size-3 text-zinc-400" />
+          {secsLeft}s
+          <Square aria-hidden className="size-2.5 fill-current" />
+        </button>
+      )}
+      {/* the window closed mid-action — the tease that sells the click.
+          bottom-8 keeps it clear of the duration/watched badges. */}
+      {done && (
+        <span
+          aria-hidden
+          className="absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-rose-500/95 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide text-white shadow-lg shadow-rose-500/40"
+        >
+          <Play aria-hidden className="size-3 translate-x-px fill-current" />
+          keep watching
+        </span>
+      )}
     </div>
   );
 }
@@ -2706,7 +2826,10 @@ function VideoCard({
       tabIndex={0}
       initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: Math.min(index * 0.035, 0.4) }}
+      /* modulo stagger — every fresh batch of 12 (the first deal AND every
+       * load-more page) cascades in like its own reveal, instead of every
+       * appended card popping in together at the capped delay */
+      transition={{ duration: 0.3, delay: Math.min((index % 12) * 0.035, 0.4) }}
       onClick={() => onWatch(card.id, card)}
       onKeyDown={onKeyDown}
       aria-label={`Watch ${card.title} by ${card.author}`}
@@ -2724,7 +2847,7 @@ function VideoCard({
           <Thumb src={card.thumb} alt={card.title} />
           {/* hover storyboard peek — desktop pointers only, never for
            * live streams (no frame thumbnails exist mid-broadcast) */}
-          {!card.live && <HoverPreview videoId={card.id} active={peek} />}
+          {!card.live && <HoverPreview videoId={card.id} thumb={card.thumb} active={peek} />}
           {/* watched dim — YouTube's "Watched" treatment. It lifts on
              hover: the card is still one click from a re-watch, and the
              lightening says so before the label swaps to "watch again". */}
@@ -2859,6 +2982,31 @@ function RelatedCard({
   const rprog = getProgress(card.id);
   const rfrac = rprog && rprog.dur > 0 ? Math.max(0, Math.min(1, rprog.pos / rprog.dur)) : 0;
   const rbar = rfrac >= 0.05;
+  /* hover-preview dwell — the same 600ms arm as the big cards: the
+   * Up-next rail is the binge lane, and a 5s storyboard peek is the
+   * strongest "start the next one" nudge a rail card can make */
+  const [peek, setPeek] = React.useState(false);
+  const peekArm = React.useRef<number | null>(null);
+  React.useEffect(
+    () => () => {
+      if (peekArm.current !== null) window.clearTimeout(peekArm.current);
+    },
+    [],
+  );
+  const startPreview = React.useCallback(() => {
+    if (peekArm.current !== null) return;
+    peekArm.current = window.setTimeout(() => {
+      peekArm.current = null;
+      setPeek(true);
+    }, 600);
+  }, []);
+  const stopPreview = React.useCallback(() => {
+    if (peekArm.current !== null) {
+      window.clearTimeout(peekArm.current);
+      peekArm.current = null;
+    }
+    setPeek(false);
+  }, []);
   /* NOTE: role=button div, same reason as VideoCard — the channel line
    * inside is a real <button> and button-in-button is invalid HTML. */
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -2873,14 +3021,21 @@ function RelatedCard({
       tabIndex={0}
       initial={reduceMotion ? false : { opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: Math.min(index * 0.03, 0.3) }}
+      transition={{ duration: 0.25, delay: Math.min((index % 12) * 0.03, 0.3) }}
       onClick={() => onWatch(card.id, card)}
       onKeyDown={onKeyDown}
       aria-label={`Watch ${card.title} by ${card.author}`}
       className="group flex cursor-pointer gap-2.5 rounded-xl p-1 text-left outline-none transition hover:bg-zinc-800/40 focus-visible:ring-2 focus-visible:ring-rose-500/40"
     >
-      <div className="veil-hover-lift relative aspect-video w-[160px] shrink-0 overflow-hidden rounded-lg bg-zinc-800/80 ring-1 ring-zinc-800/60 transition group-hover:ring-zinc-700/80">
+      <div
+        className="veil-hover-lift relative aspect-video w-[160px] shrink-0 overflow-hidden rounded-lg bg-zinc-800/80 ring-1 ring-zinc-800/60 transition group-hover:ring-zinc-700/80"
+        onMouseEnter={startPreview}
+        onMouseLeave={stopPreview}
+      >
         <Thumb src={card.thumb} alt={card.title} />
+        {/* the 5s storyboard peek — same stop-within-5s control as the
+            big cards; never for live streams (no frames mid-broadcast) */}
+        {!card.live && <HoverPreview videoId={card.id} thumb={card.thumb} active={peek} />}
         {card.live ? (
           <span className="absolute bottom-1.5 right-1.5 flex items-center gap-1 rounded bg-rose-600/95 px-1 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
             <Radio aria-hidden className="size-2.5" /> live
@@ -5208,8 +5363,11 @@ function ChannelPanel({
           videos.length > 0 ? (
             <>
               <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {/* id-keyed, NOT index-keyed: a load-more page appends new
+                    cards without remounting (and re-animating) the whole
+                    wall — the index in the key was what made paging flash */}
                 {videos.map((c, i) => (
-                  <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={onWatch} onChannel={onChannel} />
+                  <VideoCard key={c.id} card={c} index={i} onWatch={onWatch} onChannel={onChannel} />
                 ))}
               </div>
               {/* the endless wall: skeletons while a page streams in, a
@@ -5221,6 +5379,9 @@ function ChannelPanel({
                     <div aria-hidden className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       <ShelfSkeletonCard /><ShelfSkeletonCard /><ShelfSkeletonCard /><ShelfSkeletonCard />
                     </div>
+                  )}
+                  {vMore && (
+                    <p className="mt-3 text-center text-[11.5px] text-zinc-600">pulling the next uploads…</p>
                   )}
                   <div ref={vSentinel} aria-hidden className="h-px w-full" />
                   {vErr && (
@@ -5246,7 +5407,7 @@ function ChannelPanel({
           <>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {shorts.map((c, i) => (
-                <ShortCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => onOpenShort(card)} />
+                <ShortCard key={c.id} card={c} index={i} onWatch={(id, card) => onOpenShort(card)} />
               ))}
             </div>
             {/* the same endless wall, shorts edition */}
@@ -5257,6 +5418,9 @@ function ChannelPanel({
                     <ShelfSkeletonCard short /><ShelfSkeletonCard short /><ShelfSkeletonCard short />
                     <ShelfSkeletonCard short /><ShelfSkeletonCard short /><ShelfSkeletonCard short />
                   </div>
+                )}
+                {sMore && (
+                  <p className="mt-3 text-center text-[11.5px] text-zinc-600">pulling the next shorts…</p>
                 )}
                 <div ref={sSentinel} aria-hidden className="h-px w-full" />
                 {sErr && (
@@ -5296,7 +5460,7 @@ function ChannelPanel({
             <>
               <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {liveCards.map((c, i) => (
-                  <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={onWatch} onChannel={onChannel} />
+                  <VideoCard key={c.id} card={c} index={i} onWatch={onWatch} onChannel={onChannel} />
                 ))}
               </div>
               {streamsNext ? (
@@ -7825,7 +7989,7 @@ function SubsPage({
             {(cards ?? []).map((c, i) => {
               const isNew = !watched.has(c.id);
               return (
-                <div key={`${c.id}-${i}`} className="relative">
+                <div key={c.id} className="relative">
                   {isNew && (
                     <span
                       aria-label="new upload"
@@ -9530,8 +9694,20 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
    * freshest drops, live right now, your likes, what you've watched ---- */
   const [fyFilter, setFyFilter] = React.useState<FyFilter>("all");
   /* the whole on-screen river — the ranked round-1 head + the deep-round
-   * tail, so chips and counts see everything the user can scroll to */
-  const fyAll = React.useMemo(() => [...(foryouCards ?? []), ...fyTail], [foryouCards, fyTail]);
+   * tail, so chips and counts see everything the user can scroll to.
+   * Id-unique: the grids below key by id (stable keys mean appended
+   * cards mount fresh while the wall above holds still), and a subs-wire
+   * card can occasionally also arrive in a deep round — fold the dup. */
+  const fyAll = React.useMemo(() => {
+    const seen = new Set<string>();
+    const out: YtCard[] = [];
+    for (const c of [...(foryouCards ?? []), ...fyTail]) {
+      if (!c.id || seen.has(c.id)) continue;
+      seen.add(c.id);
+      out.push(c);
+    }
+    return out;
+  }, [foryouCards, fyTail]);
   /* the river after live negative feedback ("not interested" /
    * blocked channels) — shared by the filter and the chip counts so
    * they never disagree */
@@ -10463,7 +10639,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                     {upNext.map((c, i) => (
                       <RelatedCard
-                        key={`${c.id}-${i}`}
+                        key={c.id}
                         card={c}
                         index={i}
                         onWatch={(id, card) => watch(id, card)}
@@ -10508,7 +10684,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                   <div className="flex flex-col gap-1.5">
                     {upNext.map((c, i) => (
                       <RelatedCard
-                        key={`rail-${c.id}-${i}`}
+                        key={`rail-${c.id}`}
                         card={c}
                         index={i}
                         onWatch={(id, card) => watch(id, card)}
@@ -10760,7 +10936,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                           {/* row 1 — the first eight, full-width cards */}
                           <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {fyFiltered.slice(0, 8).map((c, i) => (
-                              <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
+                              <VideoCard key={c.id} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
                             ))}
                           </div>
                           {/* the Shorts shelf — right after the first row,
@@ -10773,7 +10949,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                           {/* row 2 */}
                           <div className="mt-1 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {fyFiltered.slice(8, 20).map((c, i) => (
-                              <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
+                              <VideoCard key={c.id} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
                             ))}
                           </div>
                           {/* watch it again — the re-watch shelf (history-
@@ -10790,7 +10966,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                           {/* row 3+ — the rest of the river */}
                           <div className="mt-1 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {fyFiltered.slice(20).map((c, i) => (
-                              <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
+                              <VideoCard key={c.id} card={c} index={i} onWatch={(id, card) => watch(id, card)} onChannel={openChannel} />
                             ))}
                           </div>
                           {shortsShown.length > 8 ? (
@@ -10842,7 +11018,7 @@ export function StreamSection({ onBack }: { onBack: () => void }) {
                           <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {fyFiltered.map((c, i) => (
                               <VideoCard
-                                key={`${c.id}-${i}`}
+                                key={c.id}
                                 card={c}
                                 index={i}
                                 onWatch={(id, card) => watch(id, card)}

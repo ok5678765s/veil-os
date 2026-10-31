@@ -2485,3 +2485,29 @@ Stage Summary:
 - Channel pages: real views/dates on every card (first + continued pages), meaningful Newest/Oldest sorts, and an endless auto-paging grid with skeletons — no more button dead-end.
 - Autoplay hand-off: YouTube-style ring countdown with "Playing in Xs", play-now, cancel-once, and an honest sticky "Stop autoplay" brake; shared component across both player lanes.
 - Files: mini-services/freetube-service/invidious-compat.ts (metadataRows + parseAgeText + uploaded), src/components/veil/stream-section.tsx (useShelfSentinel, ShelfSkeletonCard, shelf footers, AutoplayCountdownOverlay, both player overlays).
+
+---
+Task ID: 14
+Agent: main (Z.ai Code)
+Task: User: "make feed more addicting and retention" (follow-up on the channel load-more + 5s-stop-preview ask). Card-level hover previews that stop within 5s, load-more display fix, retention polish. "Do this and only this."
+
+Work Log:
+- LOAD-MORE "DOESN'T SHOW WELL" — THE REMOUNT CASCADE (the real display bug this time): every growing grid keyed cards by `${c.id}-${index}` — on each load-more append (and any re-sort) the shifted indices CHANGED every key, so React unmounted + remounted the entire wall: the whole grid flashed and re-ran its stagger animation. Fix: stable `key={c.id}` on ALL growing grids — channel Videos/Shorts/Live, For You rows 1/2/3 + chip-filtered grid, Subscriptions river, Up Next grid AND the xl sticky rail. fyAll memo now folds duplicate ids (a subs-wire card can straddle a deep round) so id-keys stay collision-free.
+- THE 5s HOVER PREVIEW (HoverPreview rebuilt): a 5-second run window (PREVIEW_RUN_MS=5000) cycling the hq1/hq2/hq3 CDN frames every 700ms, with:
+  · a live control pill top-left (the ⋮ feedback menu owns top-right): 🔇 muted glyph + countdown "5s…0s" + ■ stop square — clicking it stops the run instantly;
+  · at 5s the preview STOPS ITSELF: the pill flips to a ↻ replay button and a rose "KEEP WATCHING ▸" chip fades in mid-thumb (bottom-8, clear of the duration/watched badges) — the interrupted-motion tease that sells the click;
+  · a slim rose progress bar drains the window at the thumb's bottom edge; replay restarts a fresh 5s; leaving the card resets everything; touch never sees it (600ms dwell arm, unchanged); reduce-motion exempt.
+- KEN BURNS FALLBACK (found live: video f17J3AXVK5w 404s ALL numbered frames — hq1/sd1/mq1/maxres1 all 404 upstream; only defaults exist): when the frame imgs error, the preview now drift-zooms over the card's OWN already-cached thumbnail (scale 1.04→1.16 + micro-pan, driven by the same pct clock) with the identical pill/countdown/stop/replay — every card gets the same interaction, frames or not. The run clock no longer aborts on frame failure.
+- BINGE LANE: RelatedCard (the Up Next grid + rail) got the same dwell-armed HoverPreview — hovering a related card previews it 5s before committing the next watch.
+- RETENTION POLISH: modulo stagger (`index % 12`) so every load-more batch cascades in like its own reveal instead of popping in unison at the capped delay (first deal AND every appended page); "pulling the next uploads…" / "pulling the next shorts…" labels under the channel skeleton rows so the wall reads as alive while a page streams in.
+
+QA (agent-browser, all verified live):
+- Hover preview FULL CYCLE on feed cards, channel cards, AND the up-next rail: arm on dwell → countdown pill ("5s") → auto-stop at exactly 5s → replay pill + KEEP WATCHING chip (VLM screenshot-confirmed) → replay restarts → stop button mid-run: STOPPED-OK + chip.
+- Remount fix PROVEN: marked a channel card's DOM node (data-qa), toggled Popular sort (full 30-card reorder) — the marked node SURVIVED (with index-keys every card would have remounted); load-more round appended 30 → 60 cards with the tab counter updating live; skeleton row observed pulsing mid-round; VLM-verified clean grid (thumbs, duration overlays, titles, avatars, no glitches).
+- eslint clean on stream-section.tsx; no new dev.log errors (the two "Error: aborted" entries are page-reload cancels of in-flight requests — env noise).
+- Env note for future QA: the app scrolls inside `div.veil-scroll-slim.min-h-0` — window.scrollTo is a no-op; scroll THAT container to hit sentinels. Headless tab still gets reset every ~30-60s (watchdog/sandbox — beforeunload marker proved it; not caused by app code; race long flows inside one window).
+
+Stage Summary:
+- Every growing grid now appends pages smoothly (stable id-keys, batch cascade, skeleton labels) — no more whole-wall flash on load-more or re-sort.
+- Video cards + the up-next rail play a muted 5-second preview on hover that stops itself, with a live countdown/stop pill, replay, a "keep watching" tease, and a Ken Burns fallback for frame-less uploads — the retention hook the user asked for.
+- Files: src/components/veil/stream-section.tsx only (HoverPreview rebuild + call sites, VideoCard/RelatedCard stagger, 10 grid key fixes, fyAll dedupe, shelf loading labels).
