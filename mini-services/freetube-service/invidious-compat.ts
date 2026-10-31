@@ -818,6 +818,32 @@ function parseLenText(s: unknown): number {
   return parts.reduce((acc, n) => acc * 60 + n, 0);
 }
 
+/** Relative age text ("10 days ago", "Streamed 2 months ago",
+ * "Premiered 1 year ago") → approximate upload epoch in SECONDS.
+ * Powers the channel grids' Newest/Oldest sorts + publishedAt — without
+ * it every lockup card inherits "now" and the sort is meaningless. */
+function parseAgeText(s: unknown): number {
+  const m =
+    /(\d+(?:\.\d+)?)\s*(second|minute|hour|day|week|month|year)s?\s+ago/i.exec(
+      String(s || ""),
+    );
+  if (!m) return 0;
+  const n = parseFloat(m[1]!);
+  const unit = m[2]!.toLowerCase();
+  const secs: Record<string, number> = {
+    second: 1,
+    minute: 60,
+    hour: 3600,
+    day: 86400,
+    week: 604800,
+    month: 2592000, // 30 days
+    year: 31536000, // 365 days
+  };
+  /* MILLISECONDS — mapStreamItem divides `uploaded` by 1000 (Piped's
+   * wire convention), so match it or every date lands 1000x off. */
+  return Math.floor(Date.now() - n * (secs[unit] ?? 0) * 1000);
+}
+
 /** One lockupViewModel / videoRenderer / shortsLockupViewModel → a piped
  * stream item. */
 function lockupToPipedItem(lu: any, chName: string, chId: string, forceShort: boolean): any {
@@ -854,11 +880,17 @@ function lockupToPipedItem(lu: any, chName: string, chId: string, forceShort: bo
     ? parseLenText(lenText)
     : parseLenText(lu?.lengthText?.simpleText ?? lu?.lengthText?.runs?.[0]?.text);
   /* view + published rows under the lockup metadata ("88M views" / "7 days
-   * ago"), or the classic viewCountText/publishedTimeText */
+   * ago"), or the classic viewCountText/publishedTimeText. YouTube
+   * renamed the field to `metadataRows` (2025+ lockup shape) — read BOTH
+   * so channel grids + their continuation pages keep their stat lines
+   * (the "every card shows no views/date" bug). */
   let views = 0;
   let uploadedDate = "";
-  const rows =
-    lu?.metadata?.lockupMetadataViewModel?.metadata?.contentMetadataViewModel?.rows || [];
+  const cmv = lu?.metadata?.lockupMetadataViewModel?.metadata?.contentMetadataViewModel;
+  const rows = [
+    ...((cmv?.metadataRows || []) as any[]),
+    ...((cmv?.rows || []) as any[]),
+  ];
   for (const r of rows) {
     for (const p of r?.metadataParts || []) {
       const t = String(p?.text?.content || "");
@@ -893,6 +925,9 @@ function lockupToPipedItem(lu: any, chName: string, chId: string, forceShort: bo
     duration,
     views,
     uploadedDate,
+    /* real (approximate) upload epoch for mapStreamItem's `published` —
+     * 0 = unknown, the mapper falls back to "now" */
+    uploaded: parseAgeText(uploadedDate),
     isShort: forceShort || /SHORTS/i.test(String(lu?.contentType || "")) || !!reelId,
     isLive: liveBadge || /watching now/i.test(String(lu?.shortViewCountText?.simpleText || "")),
   };

@@ -72,6 +72,7 @@ import {
   ShieldCheck,
   SkipForward,
   Sparkles,
+  StopCircle,
   Subtitles,
   ThumbsDown,
   ThumbsUp,
@@ -704,6 +705,144 @@ function AutoplayToggle({ accent = "rose" }: { accent?: "rose" | "amber" }) {
         <span className="size-3.5 rounded-full bg-white" />
       </span>
     </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* The end-of-video hand-off overlay (both player lanes share this)     */
+/* ------------------------------------------------------------------ */
+
+/** The autoplay countdown — the moment the session is most at risk of
+ * ending (a video just finished; the thumb hovers over the close tab).
+ * YouTube wins those seconds with a countdown ring around the play
+ * button and a cancel that means it. This is our version, tuned to keep
+ * people glued WITHOUT trapping them:
+ *
+ *   · a circular ring drains around the Play button (visual momentum —
+ *     the next video feels already on its way),
+ *   · the label reads "Playing in Xs" (what is about to happen),
+ *   · Play now — skip the wait entirely,
+ *   · ✕ dismisses ONCE (autoplay stays on for the next hand-off),
+ *   · Stop autoplay is the real brake: cancels the countdown AND flips
+ *     the autoplay pref off (the rail switch + player menus follow via
+ *     the prefs event). One honest click, no dark patterns.
+ *
+ * `total` is the countdown's starting seconds (the ring needs it to
+ * compute its sweep), `countdown` the live value. */
+function AutoplayCountdownOverlay({
+  nextUp,
+  countdown,
+  total,
+  accent,
+  onPlayNow,
+  onDismiss,
+  backdropClickDismiss = false,
+}: {
+  nextUp: YtCard;
+  countdown: number;
+  total: number;
+  accent: "rose" | "amber";
+  onPlayNow: () => void;
+  onDismiss: () => void;
+  /** the relay lane's backdrop click dismisses (matching its old
+   * behavior); the native lane's backdrop is the player chrome. */
+  backdropClickDismiss?: boolean;
+}) {
+  const reduceMotion = useReducedMotion();
+  const R = 26; /* ring radius — sized to hug the 60px play button */
+  const CIRC = 2 * Math.PI * R;
+  const frac = total > 0 ? Math.max(0, Math.min(1, countdown / total)) : 0;
+  const ringColor = accent === "amber" ? "#fbbf24" : "#f43f5e";
+  const playBg = accent === "amber" ? "bg-amber-400 text-zinc-950 hover:bg-amber-300" : "bg-rose-500 text-white hover:bg-rose-400";
+  return (
+    <motion.div
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={reduceMotion ? undefined : { opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      role="dialog"
+      aria-label="Up next autoplay"
+      onClick={backdropClickDismiss ? onDismiss : undefined}
+      className={cn(
+        "absolute inset-0 z-20 flex items-end justify-end bg-black/70 p-4 backdrop-blur-[2px] sm:p-6",
+        backdropClickDismiss && "cursor-pointer",
+      )}
+    >
+      <div
+        onClick={backdropClickDismiss ? (e) => e.stopPropagation() : undefined}
+        className="w-full max-w-sm cursor-default rounded-2xl border border-white/10 bg-zinc-950/92 p-4 shadow-2xl"
+      >
+        <div className="flex items-center gap-3.5">
+          <div className="relative shrink-0">
+            <Thumb src={nextUp.thumb} alt="" className="h-16 w-28 rounded-xl object-cover" />
+            {nextUp.durationSec > 0 && (
+              <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1 py-px text-[10px] font-semibold tabular-nums text-zinc-200">
+                {fmtTime(nextUp.durationSec)}
+              </span>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className={cn("text-[10.5px] font-semibold uppercase tracking-wider", accent === "amber" ? "text-amber-300" : "text-rose-300")}>
+              Up next
+            </p>
+            <p className="mt-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-zinc-100">{nextUp.title}</p>
+            <p className="mt-0.5 truncate text-[11.5px] text-zinc-500">{nextUp.author}</p>
+          </div>
+          {/* play-now wrapped in the draining ring — the countdown IS
+              the button, exactly like YouTube's */}
+          <div className="relative flex size-[60px] shrink-0 items-center justify-center">
+            <svg aria-hidden className="absolute inset-0 -rotate-90" viewBox="0 0 60 60">
+              <circle cx="30" cy="30" r={R} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="3" />
+              <circle
+                cx="30" cy="30" r={R} fill="none"
+                stroke={ringColor} strokeWidth="3" strokeLinecap="round"
+                strokeDasharray={CIRC}
+                strokeDashoffset={CIRC * (1 - frac)}
+                style={{ transition: "stroke-dashoffset 1s linear" }}
+              />
+            </svg>
+            <button
+              type="button"
+              onClick={onPlayNow}
+              aria-label="Play next video now"
+              className={cn("flex size-11 items-center justify-center rounded-full shadow-lg transition hover:scale-105", playBg, accent === "amber" ? "shadow-amber-400/30" : "shadow-rose-500/30")}
+            >
+              <Play aria-hidden className="size-4.5 translate-x-px fill-current" />
+            </button>
+          </div>
+        </div>
+        {/* the honest controls row: what's happening + the real brake */}
+        <div className="mt-3 flex items-center justify-between gap-3 border-t border-white/[0.07] pt-2.5">
+          <p className="text-[12px] font-medium text-zinc-400">
+            Playing in <span className="font-bold tabular-nums text-zinc-100">{countdown}s</span>
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onDismiss}
+              aria-label="Cancel this once"
+              title="Cancel this once — autoplay stays on"
+              className="flex size-8 items-center justify-center rounded-full text-zinc-400 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-zinc-100"
+            >
+              <X aria-hidden className="size-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                savePrefs({ autoplay: false });
+                onDismiss();
+              }}
+              aria-label="Stop autoplay"
+              title="Stop autoplaying next videos for good"
+              className="flex h-8 items-center gap-1.5 rounded-full bg-white/10 px-3 text-[11.5px] font-semibold text-zinc-200 ring-1 ring-white/15 transition hover:bg-red-500/20 hover:text-white"
+            >
+              <StopCircle aria-hidden className="size-3.5" />
+              Stop autoplay
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -4258,56 +4397,21 @@ function StreamPlayer({
         )}
 
         {/* AUTOPLAY CHAIN — the end-of-video hand-off: 5s countdown into
-            the top of Up next (Cancel / play-now always one click away). */}
+            the top of Up next (ring countdown, play-now, and an honest
+            Stop-autoplay brake — see AutoplayCountdownOverlay). */}
         <AnimatePresence>
           {countdown !== null && nextUp && !fatal && (
-            <motion.div
-              initial={reduceMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={reduceMotion ? undefined : { opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              role="dialog"
-              aria-label="Up next autoplay"
-              className="absolute inset-0 z-20 flex items-end justify-end bg-black/70 p-4 backdrop-blur-[2px] sm:p-6"
-            >
-              <div className="flex w-full max-w-sm items-center gap-3 rounded-2xl border border-white/10 bg-zinc-950/90 p-3 shadow-2xl">
-                <div className="relative shrink-0">
-                  <Thumb src={nextUp.thumb} alt="" className="h-16 w-28 rounded-xl object-cover" />
-                  {nextUp.durationSec > 0 && (
-                    <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1 py-px text-[10px] font-semibold tabular-nums text-zinc-200">
-                      {fmtTime(nextUp.durationSec)}
-                    </span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10.5px] font-semibold uppercase tracking-wider text-rose-300">Up next</p>
-                  <p className="mt-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-zinc-100">{nextUp.title}</p>
-                  <p className="mt-0.5 truncate text-[11.5px] text-zinc-500">{nextUp.author}</p>
-                </div>
-                <div className="flex shrink-0 flex-col items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const n = nextUpRef.current;
-                      if (n) onWatchRef.current?.(n.id, n);
-                    }}
-                    aria-label="Play next video now"
-                    className="flex size-11 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg shadow-rose-500/30 transition hover:scale-105 hover:bg-rose-400"
-                  >
-                    <Play aria-hidden className="size-4.5 translate-x-px fill-white" />
-                  </button>
-                  <span className="text-[11px] font-semibold tabular-nums text-zinc-300">{countdown}s</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setCountdown(null)}
-                aria-label="Cancel autoplay"
-                className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-white/10 text-zinc-200 ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-white/20"
-              >
-                <X aria-hidden className="size-4" />
-              </button>
-            </motion.div>
+            <AutoplayCountdownOverlay
+              nextUp={nextUp}
+              countdown={countdown}
+              total={5}
+              accent="rose"
+              onPlayNow={() => {
+                const n = nextUpRef.current;
+                if (n) onWatchRef.current?.(n.id, n);
+              }}
+              onDismiss={() => setCountdown(null)}
+            />
           )}
         </AnimatePresence>
 
@@ -4725,6 +4829,56 @@ function ShortCard({ card, index, onWatch }: { card: YtCard; index: number; onWa
  * compat service emits; `published` text is the fallback. */
 type ChannelSort = "popular" | "newest" | "oldest";
 
+/** YouTube-style channel browsing: the shelf NEVER dead-ends on a
+ * "Load more" button — a sentinel row under the grid auto-pulls the
+ * next page as it scrolls into view, with pulsing skeleton cards while
+ * the page is in flight (the page feels like it's already there).
+ * Returns a ref for the sentinel element. */
+function useShelfSentinel(
+  active: boolean,
+  hasMore: boolean,
+  busy: boolean,
+  onLoadMore: () => void,
+): React.RefObject<HTMLDivElement | null> {
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  const loadRef = React.useRef(onLoadMore);
+  React.useEffect(() => {
+    loadRef.current = onLoadMore;
+  }, [onLoadMore]);
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!active || !hasMore || busy || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) loadRef.current();
+      },
+      { rootMargin: "600px 0px" }, /* start BEFORE the user hits the wall */
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [active, hasMore, busy]);
+  return ref;
+}
+
+/** One pulsing placeholder card — the grid keeps its rhythm while the
+ * next page streams in (a sudden pop-in wall of cards reads as broken;
+ * skeletons read as "more is coming", which is the whole point). */
+function ShelfSkeletonCard({ short = false }: { short?: boolean }) {
+  return (
+    <div aria-hidden className="flex flex-col" >
+      <div className={cn("animate-pulse rounded-xl bg-zinc-800/70 ring-1 ring-zinc-800/50", short ? "aspect-[9/16] w-full" : "aspect-video w-full")} />
+      <div className="mt-3 flex gap-3">
+        <div className={cn("shrink-0 animate-pulse rounded-full bg-zinc-800/70", short ? "size-7" : "size-9")} />
+        <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+          <div className="h-3 w-[92%] animate-pulse rounded bg-zinc-800/70" />
+          <div className="h-3 w-[65%] animate-pulse rounded bg-zinc-800/50" />
+          <div className="h-2.5 w-[45%] animate-pulse rounded bg-zinc-800/40" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function sortChannelCards(cards: YtCard[], sort: ChannelSort): YtCard[] {
   const list = [...cards];
   if (sort === "popular") list.sort((a, b) => b.views - a.views);
@@ -4928,6 +5082,11 @@ function ChannelPanel({
 
   const videos = sortChannelCards(vidList, sort);
   const shorts = sortChannelCards(shortList, sort);
+  /* auto-paging sentinels — the shelf loads its next page as the wall
+   * approaches, skeletons pulse meanwhile, and the grid never ends on
+   * a button (YouTube's channel pages work exactly this way). */
+  const vSentinel = useShelfSentinel(tab === "videos", !!vNext, vMore, () => loadMoreShelf("videos"));
+  const sSentinel = useShelfSentinel(tab === "shorts", !!sNext, sMore, () => loadMoreShelf("shorts"));
   const liveCards = React.useMemo(() => (streams ? sortChannelCards(streams, sort) : []), [streams, sort]);
   return (
     <motion.div
@@ -5053,28 +5212,29 @@ function ChannelPanel({
                   <VideoCard key={`${c.id}-${i}`} card={c} index={i} onWatch={onWatch} onChannel={onChannel} />
                 ))}
               </div>
-              {/* load the next page of uploads (~30 per page upstream) */}
+              {/* the endless wall: skeletons while a page streams in, a
+                  sentinel that pulls the next page as it nears the
+                  viewport, and a soft end-cap when the channel runs dry */}
               {vNext ? (
-                <div className="mt-6 flex flex-col items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => loadMoreShelf("videos")}
-                    disabled={vMore}
-                    className="h-9 gap-1.5 rounded-xl border-zinc-700 text-zinc-300 hover:border-rose-500/40 hover:text-rose-300"
-                  >
-                    {vMore ? (
-                      <Loader2 aria-hidden className="size-3.5 animate-spin" />
-                    ) : (
-                      <ChevronDown aria-hidden className="size-3.5" />
-                    )}
-                    {vMore ? "loading…" : "Load more videos"}
-                  </Button>
-                  {vErr && <p className="text-[11.5px] text-amber-300/80">{vErr}</p>}
+                <div className="mt-8">
+                  {vMore && (
+                    <div aria-hidden className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      <ShelfSkeletonCard /><ShelfSkeletonCard /><ShelfSkeletonCard /><ShelfSkeletonCard />
+                    </div>
+                  )}
+                  <div ref={vSentinel} aria-hidden className="h-px w-full" />
+                  {vErr && (
+                    <div className="mt-4 flex flex-col items-center gap-2">
+                      <p className="text-[11.5px] text-amber-300/80">{vErr}</p>
+                      <button type="button" onClick={() => loadMoreShelf("videos")} className="text-[12px] text-zinc-400 underline-offset-4 transition hover:text-rose-300 hover:underline">
+                        try again
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p className="mt-6 text-center text-[11.5px] text-zinc-600">
-                  that's every upload on the first pages — the shelf ends here
+                  you've reached the end of this channel's uploads
                 </p>
               )}
             </>
@@ -5089,24 +5249,24 @@ function ChannelPanel({
                 <ShortCard key={`${c.id}-${i}`} card={c} index={i} onWatch={(id, card) => onOpenShort(card)} />
               ))}
             </div>
-            {/* load the next page of shorts (~48 per page upstream) */}
+            {/* the same endless wall, shorts edition */}
             {sNext ? (
-              <div className="mt-6 flex flex-col items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => loadMoreShelf("shorts")}
-                  disabled={sMore}
-                  className="h-9 gap-1.5 rounded-xl border-zinc-700 text-zinc-300 hover:border-fuchsia-500/40 hover:text-fuchsia-300"
-                >
-                  {sMore ? (
-                    <Loader2 aria-hidden className="size-3.5 animate-spin" />
-                  ) : (
-                    <ChevronDown aria-hidden className="size-3.5" />
-                  )}
-                  {sMore ? "loading…" : "Load more shorts"}
-                </Button>
-                {sErr && <p className="text-[11.5px] text-amber-300/80">{sErr}</p>}
+              <div className="mt-8">
+                {sMore && (
+                  <div aria-hidden className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                    <ShelfSkeletonCard short /><ShelfSkeletonCard short /><ShelfSkeletonCard short />
+                    <ShelfSkeletonCard short /><ShelfSkeletonCard short /><ShelfSkeletonCard short />
+                  </div>
+                )}
+                <div ref={sSentinel} aria-hidden className="h-px w-full" />
+                {sErr && (
+                  <div className="mt-4 flex flex-col items-center gap-2">
+                    <p className="text-[11.5px] text-amber-300/80">{sErr}</p>
+                    <button type="button" onClick={() => loadMoreShelf("shorts")} className="text-[12px] text-zinc-400 underline-offset-4 transition hover:text-fuchsia-300 hover:underline">
+                      try again
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <p className="mt-6 text-center text-[11.5px] text-zinc-600">that's the whole shorts shelf</p>
@@ -5978,57 +6138,18 @@ function RelayPlayer({
             5s countdown into the top of Up next; backdrop click cancels) */}
         <AnimatePresence>
           {countdown !== null && nextUp && (
-            <motion.div
-              initial={reduceMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={reduceMotion ? undefined : { opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              role="dialog"
-              aria-label="Up next autoplay"
-              onClick={() => setCountdown(null)}
-              className="absolute inset-0 z-20 flex cursor-pointer items-end justify-end bg-black/70 p-4 backdrop-blur-[2px] sm:p-6"
-            >
-              <div
-                onClick={(e) => e.stopPropagation()}
-                className="flex w-full max-w-sm cursor-default items-center gap-3 rounded-2xl border border-white/10 bg-zinc-950/90 p-3 shadow-2xl"
-              >
-                <div className="relative shrink-0">
-                  <Thumb src={nextUp.thumb} alt="" className="h-16 w-28 rounded-xl object-cover" />
-                  {nextUp.durationSec > 0 && (
-                    <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1 py-px text-[10px] font-semibold tabular-nums text-zinc-200">
-                      {fmtTime(nextUp.durationSec)}
-                    </span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10.5px] font-semibold uppercase tracking-wider text-amber-300">Up next</p>
-                  <p className="mt-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-zinc-100">{nextUp.title}</p>
-                  <p className="mt-0.5 truncate text-[11.5px] text-zinc-500">{nextUp.author}</p>
-                </div>
-                <div className="flex shrink-0 flex-col items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const n = nextUpRef.current;
-                      if (n) onWatchRef.current?.(n.id, n);
-                    }}
-                    aria-label="Play next video now"
-                    className="flex size-11 items-center justify-center rounded-full bg-amber-400 text-zinc-950 shadow-lg shadow-amber-400/30 transition hover:scale-105 hover:bg-amber-300"
-                  >
-                    <Play aria-hidden className="size-4.5 translate-x-px fill-zinc-950" />
-                  </button>
-                  <span className="text-[11px] font-semibold tabular-nums text-zinc-300">{countdown}s</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setCountdown(null)}
-                aria-label="Cancel autoplay"
-                className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-white/10 text-zinc-200 ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-white/20"
-              >
-                <X aria-hidden className="size-4" />
-              </button>
-            </motion.div>
+            <AutoplayCountdownOverlay
+              nextUp={nextUp}
+              countdown={countdown}
+              total={5}
+              accent="amber"
+              onPlayNow={() => {
+                const n = nextUpRef.current;
+                if (n) onWatchRef.current?.(n.id, n);
+              }}
+              onDismiss={() => setCountdown(null)}
+              backdropClickDismiss
+            />
           )}
         </AnimatePresence>
 

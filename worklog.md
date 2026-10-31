@@ -2460,3 +2460,28 @@ QA (agent-browser, live, after fixes):
 Stage Summary:
 - The reported hydration failure is structurally eliminated (no SSR'd page nodes + body attr suppression); every POST route now answers empty/garbage bodies with a clean 400 instead of a synthetic 500; no regressions found in any exercised flow.
 - Files: page.tsx, layout.tsx, body.ts (new), 17 API route files.
+
+---
+Task ID: 13
+Agent: main (Z.ai Code)
+Task: User: (1) channel "load more videos" doesn't show well — fix; (2) the autoplay hand-off should have a "stop in the playing-in-5s" button, make it more glued/retention-y. "do this and only this."
+
+Work Log:
+- CHANNEL CARDS "DON'T SHOW WELL" (root cause, service-side): YouTube renamed the lockup metadata field — innertube lockupMetadataViewModel's contentMetadataViewModel now sends `metadataRows` (2025+ shape); our mapper read only `rows`, so EVERY channel card (grid AND continuation pages) rendered with views:0 + published:"" — a wall of cards with empty stat lines. Fix (mini-services/freetube-service/invidious-compat.ts): read BOTH `metadataRows` + legacy `rows`.
+- SECOND SERVICE FIX (sort was meaningless): lockupToPipedItem never set `uploaded`, so mapStreamItem's `published` fell back to Date.now() — every card "uploaded now", Newest/Oldest sorts random. Added parseAgeText("10 days ago"/"Streamed 2 months ago"/"Premiered 1 year ago" → epoch ms, Piped's wire convention — the first attempt returned seconds and every date landed 1000x off; caught + fixed by testing publishedAgo≈10.0d exactly) and set `uploaded` on the lockup item.
+- Live-verified after fix: channel page cards show "87 views · 3 minutes ago", "2.8K views · 1 hour ago", "142K views"…; continuation pages carry views+dates+real epochs ("2 years ago" → 730.0d exact).
+- CHANNEL INFINITE SCROLL (the "shows well" UX): killed the "Load more videos/shorts" BUTTON entirely — YouTube channel pages never dead-end on a button. New useShelfSentinel hook (IntersectionObserver, rootMargin 600px — starts fetching BEFORE the user hits the wall) auto-pulls the next page for the videos + shorts shelves; ShelfSkeletonCard (pulsing thumb+avatar+text lines, aspect-correct for both grids) fills the gap while a page streams in; soft end-cap ("you've reached the end of this channel's uploads"); try-again link on error. Live-verified: 30 → 65+ cards growing on scroll, 0 load-more buttons left, skeletons observed in flight.
+- AUTOPLAY COUNTDOWN REDESIGN ("stop in the play in 5s button"): new shared AutoplayCountdownOverlay component (both player lanes — the two old copy-pasted overlays deleted):
+  · circular countdown ring (SVG, drains around the Play-now button, 1s linear sweep; rose on native / amber on relay),
+  · "Playing in Xs" label (what's about to happen),
+  · Play now = skip the wait,
+  · ✕ = cancel ONCE (autoplay stays on),
+  · "Stop autoplay" (StopCircle icon, labeled pill) = the real brake: cancels + flips the autoplay pref off — rail switch + player menus follow via the prefs event. One honest click, no dark patterns.
+  · relay lane keeps backdrop-click-dismiss.
+- QA: channel fixes + infinite scroll live-verified via agent-browser (stat lines, growth 30→65, skeletons, 0 buttons); countdown overlay code-complete + compile/lint clean, but live gesture verification was blocked — headless Chromium refuses to start relay-lane playback (0:00 forever, mute+playVideo postMessage ignored; known env limitation from the previous session) and the dev watchdog restarts the server every 30-60s, resetting the session mid-flow. Both overlay call sites replaced; the ENDED→setCountdown(5)→overlay path is the same engine that was live-verified last session (rail hand-off worked); only the new visual shell is code-verified.
+- Env notes: history.back() during QA navigates to about:blank (app nav is internal); Fast Refresh storms after edits + watchdog restarts make long watch-page QA windows unreliable — verified everything reachable inside one window.
+
+Stage Summary:
+- Channel pages: real views/dates on every card (first + continued pages), meaningful Newest/Oldest sorts, and an endless auto-paging grid with skeletons — no more button dead-end.
+- Autoplay hand-off: YouTube-style ring countdown with "Playing in Xs", play-now, cancel-once, and an honest sticky "Stop autoplay" brake; shared component across both player lanes.
+- Files: mini-services/freetube-service/invidious-compat.ts (metadataRows + parseAgeText + uploaded), src/components/veil/stream-section.tsx (useShelfSentinel, ShelfSkeletonCard, shelf footers, AutoplayCountdownOverlay, both player overlays).
