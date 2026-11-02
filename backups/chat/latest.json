@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T20:04:56.298Z",
+  "exportedAt": "2026-11-02T20:05:30.310Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 733370,
+      "coins": 744300,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -144,9 +144,9 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 0,
-      "tag": "Gold Member",
-      "tagColor": "#d4a017",
+      "coins": 19530,
+      "tag": null,
+      "tagColor": null,
       "pfpAccessory": "contrL",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
@@ -11890,6 +11890,94 @@
       "amount": 6110,
       "reason": "blackjack_loss",
       "createdAt": "2026-11-02T20:04:55.911Z"
+    },
+    {
+      "id": "cmvzou7lh004fsyiafdbljf2p",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6110,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:04:58.998Z"
+    },
+    {
+      "id": "cmvzou7lj004hsyiat9kq43pc",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 24440,
+      "reason": "blackjack_win",
+      "createdAt": "2026-11-02T20:04:58.999Z"
+    },
+    {
+      "id": "cmvzouilz004jsyiauvdm0ikv",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 700,
+      "reason": "shop_refund:tag-gold",
+      "createdAt": "2026-11-02T20:05:13.271Z"
+    },
+    {
+      "id": "cmvzouk27004lsyiazjjqb9c3",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1750,
+      "reason": "shop_refund:tag-vip",
+      "createdAt": "2026-11-02T20:05:15.151Z"
+    },
+    {
+      "id": "cmvzoukyc004nsyiaahvitntm",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2800,
+      "reason": "shop_refund:tag-pro",
+      "createdAt": "2026-11-02T20:05:16.308Z"
+    },
+    {
+      "id": "cmvzouog8004psyiawdr4qpsd",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 7000,
+      "reason": "shop_refund:tag-mythic",
+      "createdAt": "2026-11-02T20:05:20.840Z"
+    },
+    {
+      "id": "cmvzoupw9004rsyiac6bnbfma",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3150,
+      "reason": "shop_refund:acc-puppy",
+      "createdAt": "2026-11-02T20:05:22.714Z"
+    },
+    {
+      "id": "cmvzouqax004tsyiafx7qwcli",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2450,
+      "reason": "shop_refund:acc-catears",
+      "createdAt": "2026-11-02T20:05:23.241Z"
+    },
+    {
+      "id": "cmvzourkg004xsyiapmq6knjr",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 7400,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:05:24.881Z"
+    },
+    {
+      "id": "cmvzouskw004zsyiajaa8va8k",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 840,
+      "reason": "shop_refund:acc-ear-l",
+      "createdAt": "2026-11-02T20:05:26.192Z"
+    },
+    {
+      "id": "cmvzout660051syiadd8pxboz",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 840,
+      "reason": "shop_refund:acc-ear-r",
+      "createdAt": "2026-11-02T20:05:26.959Z"
     }
   ]
 }
