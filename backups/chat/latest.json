@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T21:39:29.592Z",
+  "exportedAt": "2026-11-02T21:40:03.874Z",
   "counts": {
     "accounts": 96,
     "messages": 489,
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 91486,
+      "coins": 91786,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -12093,6 +12093,38 @@
       "amount": 100,
       "reason": "slots_win",
       "createdAt": "2026-11-02T21:39:28.673Z"
+    },
+    {
+      "id": "cmvzs7wne0015nlygi31b0kr1",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T21:39:36.842Z"
+    },
+    {
+      "id": "cmvzs7wno0017nlygt10ok347",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-11-02T21:39:36.852Z"
+    },
+    {
+      "id": "cmvzs80dm0019nlyg6nn6q3jk",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T21:39:41.675Z"
+    },
+    {
+      "id": "cmvzs80do001bnlygu2hhohl0",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 300,
+      "reason": "slots_win",
+      "createdAt": "2026-11-02T21:39:41.677Z"
     }
   ]
 }
