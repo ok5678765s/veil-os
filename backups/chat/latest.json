@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T20:06:05.087Z",
+  "exportedAt": "2026-11-02T20:06:39.065Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 759000,
+      "coins": 758800,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 39060,
+      "coins": 52076,
       "tag": null,
       "tagColor": null,
       "pfpAccessory": null,
@@ -12082,6 +12082,118 @@
       "amount": 50,
       "reason": "slots_loss",
       "createdAt": "2026-11-02T20:06:03.376Z"
+    },
+    {
+      "id": "cmvzovr0a005vsyiag6peflvy",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T20:06:10.810Z"
+    },
+    {
+      "id": "cmvzovvoc005xsyialefztdu8",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T20:06:16.861Z"
+    },
+    {
+      "id": "cmvzovzvn005zsyia0k8dutd4",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T20:06:22.307Z"
+    },
+    {
+      "id": "cmvzow4ie0061syiayb0tmvb7",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T20:06:28.310Z"
+    },
+    {
+      "id": "cmvzow7wj0063syiaqtcqr8ko",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1540,
+      "reason": "shop_refund:acc-fur",
+      "createdAt": "2026-11-02T20:06:32.708Z"
+    },
+    {
+      "id": "cmvzow8ab0065syiav8njxe44",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1680,
+      "reason": "shop_refund:acc-visor",
+      "createdAt": "2026-11-02T20:06:33.203Z"
+    },
+    {
+      "id": "cmvzow8bf0067syiaagcpayu0",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T20:06:33.244Z"
+    },
+    {
+      "id": "cmvzow8bg0069syia25poj63c",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-11-02T20:06:33.245Z"
+    },
+    {
+      "id": "cmvzow9us006bsyiapwr2v1vj",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1959,
+      "reason": "shop_refund:acc-potion",
+      "createdAt": "2026-11-02T20:06:35.236Z"
+    },
+    {
+      "id": "cmvzowa0q006dsyiachiossyk",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1819,
+      "reason": "shop_refund:acc-bunny",
+      "createdAt": "2026-11-02T20:06:35.451Z"
+    },
+    {
+      "id": "cmvzowauw006fsyiaggsjn1fq",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1959,
+      "reason": "shop_refund:acc-stars",
+      "createdAt": "2026-11-02T20:06:36.536Z"
+    },
+    {
+      "id": "cmvzowbbl006hsyiavsj9n64k",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 2100,
+      "reason": "shop_refund:acc-wolf",
+      "createdAt": "2026-11-02T20:06:37.137Z"
+    },
+    {
+      "id": "cmvzowbwr006jsyiaa81tdl69",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T20:06:37.899Z"
+    },
+    {
+      "id": "cmvzowcs2006lsyian3nupig2",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1959,
+      "reason": "shop_refund:acc-seal",
+      "createdAt": "2026-11-02T20:06:39.026Z"
     }
   ]
 }
