@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T13:20:49.925Z",
+  "exportedAt": "2026-11-02T14:15:13.685Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500013,
+      "coins": 0,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -7376,12 +7376,12 @@
       "id": "cmvrd0c5o000drbtvpnoe9wwa",
       "channelId": "main",
       "accountId": "cmuhj14uk0000q5o4uzvh329c",
-      "content": "go to #links for daily links - https://financial-cyan-3rjebxwz.edgeone.dev/",
+      "content": "go to #links for links - https://financial-cyan-3rjebxwz.edgeone.dev/",
       "replyTo": null,
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-28T00:11:40.045Z",
-      "editedAt": null
+      "editedAt": "2026-11-02T14:15:00.721Z"
     },
     {
       "id": "cmvrd0jfo000hrbtvj52fz3s3",
@@ -11738,6 +11738,14 @@
       "amount": 1,
       "reason": "message_reward",
       "createdAt": "2026-10-28T00:11:49.479Z"
+    },
+    {
+      "id": "cmvzccd9l0003qkyu6p3cck48",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 13500013,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T14:15:11.146Z"
     }
   ]
 }
