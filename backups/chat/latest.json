@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T19:59:07.231Z",
+  "exportedAt": "2026-11-02T20:03:47.750Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -39,13 +39,13 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 770020,
+      "coins": 770030,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
-      "lastRewardClaim": "2026-10-26T13:46:01.806Z",
+      "lastRewardClaim": "2026-11-02T20:03:19.436Z",
       "legacy": false,
       "createdAt": "2026-09-10T16:00:00.000Z",
       "passwordHash": "$2b$10$zF9AIcjWC9no/Ht9cLY2LumVI/Th5b8MjVe4lxrir7HjElha5SWa."
@@ -144,13 +144,12 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 27000026,
+      "coins": 0,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
-      
       "lastRewardClaim": "2026-11-02T19:58:22.958Z",
       "legacy": false,
       "createdAt": "2026-09-25T22:22:50.829Z",
@@ -11835,6 +11834,14 @@
       "amount": 13500023,
       "reason": "blackjack_loss",
       "createdAt": "2026-11-02T19:58:58.272Z"
+    },
+    {
+      "id": "cmvzos2ry003tsyia5msu57uz",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 10,
+      "reason": "daily_reward",
+      "createdAt": "2026-11-02T20:03:19.438Z"
     }
   ]
 }
