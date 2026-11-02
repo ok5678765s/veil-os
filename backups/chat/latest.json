@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T14:17:52.084Z",
+  "exportedAt": "2026-11-02T14:18:26.303Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 0,
+      "coins": 27000027,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -6240,17 +6240,6 @@
       "editedAt": null
     },
     {
-      "id": "cmvh1hwr400xdonyt4wyf16oo",
-      "channelId": "main",
-      "accountId": "cmvgxlsn30000u50vpttnf5vh",
-      "content": "a",
-      "replyTo": null,
-      "replyToContent": null,
-      "replyToUsername": null,
-      "createdAt": "2026-10-20T18:51:42.736Z",
-      "editedAt": null
-    },
-    {
       "id": "cmvh1hwzo00xponyto2w7c457",
       "channelId": "main",
       "accountId": "cmvgxlsn30000u50vpttnf5vh",
@@ -7392,6 +7381,17 @@
       "replyToContent": null,
       "replyToUsername": null,
       "createdAt": "2026-10-28T00:11:49.477Z",
+      "editedAt": null
+    },
+    {
+      "id": "cmvzcgij2000rqkyuzqmhfcgx",
+      "channelId": "main",
+      "accountId": "cmuhj14uk0000q5o4uzvh329c",
+      "content": "I'm so flipping rich",
+      "replyTo": null,
+      "replyToContent": null,
+      "replyToUsername": null,
+      "createdAt": "2026-11-02T14:18:24.591Z",
       "editedAt": null
     }
   ],
@@ -11754,6 +11754,22 @@
       "amount": 13500013,
       "reason": "blackjack_loss",
       "createdAt": "2026-11-02T14:17:23.315Z"
+    },
+    {
+      "id": "cmvzcg1yq000pqkyu80rvgxts",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 27000026,
+      "reason": "blackjack_win",
+      "createdAt": "2026-11-02T14:18:03.122Z"
+    },
+    {
+      "id": "cmvzcgij6000tqkyu8z9tjb37",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1,
+      "reason": "message_reward",
+      "createdAt": "2026-11-02T14:18:24.594Z"
     }
   ]
 }
