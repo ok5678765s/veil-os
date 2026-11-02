@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T20:05:30.310Z",
+  "exportedAt": "2026-11-02T20:06:05.087Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 744300,
+      "coins": 759000,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -144,10 +144,10 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 19530,
+      "coins": 39060,
       "tag": null,
       "tagColor": null,
-      "pfpAccessory": "contrL",
+      "pfpAccessory": null,
       "pfpOverlay": null,
       "dailyRewardStreak": 1,
       "lastRewardClaim": "2026-11-02T19:58:22.958Z",
@@ -11978,6 +11978,110 @@
       "amount": 840,
       "reason": "shop_refund:acc-ear-r",
       "createdAt": "2026-11-02T20:05:26.959Z"
+    },
+    {
+      "id": "cmvzouwne0053syiae81vou2i",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1540,
+      "reason": "shop_refund:acc-contr-l",
+      "createdAt": "2026-11-02T20:05:31.466Z"
+    },
+    {
+      "id": "cmvzoux2x0055syiawdzbhdyg",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1540,
+      "reason": "shop_refund:acc-contr-r",
+      "createdAt": "2026-11-02T20:05:32.025Z"
+    },
+    {
+      "id": "cmvzouy950057syiaenwivfp1",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 4200,
+      "reason": "shop_refund:tag-elite",
+      "createdAt": "2026-11-02T20:05:33.546Z"
+    },
+    {
+      "id": "cmvzouyjr0059syiaok5lc63k",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 5600,
+      "reason": "shop_refund:tag-legend",
+      "createdAt": "2026-11-02T20:05:33.927Z"
+    },
+    {
+      "id": "cmvzouz45005dsyiapz74su40",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 7400,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:05:34.661Z"
+    },
+    {
+      "id": "cmvzov2m9005fsyiartnsh4fl",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 7400,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:05:39.201Z"
+    },
+    {
+      "id": "cmvzov2ma005hsyiapr7acccg",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 29600,
+      "reason": "blackjack_win",
+      "createdAt": "2026-11-02T20:05:39.202Z"
+    },
+    {
+      "id": "cmvzov2rb005jsyia2r5bxsk0",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 3220,
+      "reason": "shop_refund:acc-vrhalo",
+      "createdAt": "2026-11-02T20:05:39.384Z"
+    },
+    {
+      "id": "cmvzov413005lsyiao69vi4jf",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1260,
+      "reason": "shop_refund:acc-clover",
+      "createdAt": "2026-11-02T20:05:41.031Z"
+    },
+    {
+      "id": "cmvzov4cv005nsyiaaa3bu89w",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1050,
+      "reason": "shop_refund:acc-sprout",
+      "createdAt": "2026-11-02T20:05:41.456Z"
+    },
+    {
+      "id": "cmvzov5ai005psyia1xjsbs9a",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 1120,
+      "reason": "shop_refund:acc-fight",
+      "createdAt": "2026-11-02T20:05:42.666Z"
+    },
+    {
+      "id": "cmvzoveyd005rsyiat49uroyd",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T20:05:55.189Z"
+    },
+    {
+      "id": "cmvzovl9r005tsyiakca0yiz1",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T20:06:03.376Z"
     }
   ]
 }
