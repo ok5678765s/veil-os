@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T20:04:21.958Z",
+  "exportedAt": "2026-11-02T20:04:56.298Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -39,7 +39,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 763920,
+      "coins": 733370,
       "tag": "VIP",
       "tagColor": "#9b59b6",
       "pfpAccessory": "earL",
@@ -11850,6 +11850,46 @@
       "amount": 6110,
       "reason": "blackjack_loss",
       "createdAt": "2026-11-02T20:04:14.499Z"
+    },
+    {
+      "id": "cmvzotqv70041syia65vrpag3",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6110,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:04:37.315Z"
+    },
+    {
+      "id": "cmvzotuah0043syia5kxlerqz",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6110,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:04:41.754Z"
+    },
+    {
+      "id": "cmvzotxrs0047syiau6fkvo3t",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6110,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:04:46.264Z"
+    },
+    {
+      "id": "cmvzou1zm0049syiadxcz4vma",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6110,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:04:51.731Z"
+    },
+    {
+      "id": "cmvzou57r004dsyia3es510h9",
+      "fromId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "toId": "cmuhlfo6p0001q5fg3ljxk2lc",
+      "amount": 6110,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T20:04:55.911Z"
     }
   ]
 }
