@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T14:15:34.929Z",
+  "exportedAt": "2026-11-02T14:17:52.084Z",
   "counts": {
     "accounts": 96,
     "messages": 488,
@@ -144,7 +144,7 @@
       "role": "admin",
       "muted": false,
       "banned": false,
-      "coins": 13500013,
+      "coins": 0,
       "tag": "Gold Member",
       "tagColor": "#d4a017",
       "pfpAccessory": "contrL",
@@ -11746,6 +11746,14 @@
       "amount": 13500013,
       "reason": "blackjack_loss",
       "createdAt": "2026-11-02T14:15:11.146Z"
+    },
+    {
+      "id": "cmvzcf78y000nqkyultgjixtt",
+      "fromId": "cmuhj14uk0000q5o4uzvh329c",
+      "toId": "cmuhj14uk0000q5o4uzvh329c",
+      "amount": 13500013,
+      "reason": "blackjack_loss",
+      "createdAt": "2026-11-02T14:17:23.315Z"
     }
   ]
 }
