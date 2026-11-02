@@ -1,7 +1,7 @@
 {
   "veil": "chat-backup",
   "version": 1,
-  "exportedAt": "2026-11-02T21:38:55.302Z",
+  "exportedAt": "2026-11-02T21:39:29.592Z",
   "counts": {
     "accounts": 96,
     "messages": 489,
@@ -1719,7 +1719,7 @@
       "role": "moderator",
       "muted": false,
       "banned": false,
-      "coins": 91286,
+      "coins": 91486,
       "tag": "Mythic",
       "tagColor": "#8e44ad",
       "pfpAccessory": null,
@@ -12005,6 +12005,94 @@
       "amount": 100,
       "reason": "slots_win",
       "createdAt": "2026-11-02T21:38:54.526Z"
+    },
+    {
+      "id": "cmvzs75b6000jnlyg703xerij",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T21:39:01.411Z"
+    },
+    {
+      "id": "cmvzs75b8000lnlygq6q4muow",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-11-02T21:39:01.412Z"
+    },
+    {
+      "id": "cmvzs79b2000nnlygv53kt7jd",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T21:39:06.591Z"
+    },
+    {
+      "id": "cmvzs79b4000pnlygr89zncpw",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-11-02T21:39:06.592Z"
+    },
+    {
+      "id": "cmvzs7cx6000rnlygmksfbpfg",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T21:39:11.274Z"
+    },
+    {
+      "id": "cmvzs7cx9000tnlyg9gkxgoyt",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-11-02T21:39:11.278Z"
+    },
+    {
+      "id": "cmvzs7hq9000vnlygug0btyjs",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T21:39:17.506Z"
+    },
+    {
+      "id": "cmvzs7lv7000xnlygzqfy3brh",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T21:39:22.867Z"
+    },
+    {
+      "id": "cmvzs7lv9000znlygfrfu7wnw",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-11-02T21:39:22.869Z"
+    },
+    {
+      "id": "cmvzs7qcf0011nlygglg113aq",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 50,
+      "reason": "slots_loss",
+      "createdAt": "2026-11-02T21:39:28.672Z"
+    },
+    {
+      "id": "cmvzs7qch0013nlygnrqds5gv",
+      "fromId": "cmvh1oilb019aonytzqy24vft",
+      "toId": "cmvh1oilb019aonytzqy24vft",
+      "amount": 100,
+      "reason": "slots_win",
+      "createdAt": "2026-11-02T21:39:28.673Z"
     }
   ]
 }
